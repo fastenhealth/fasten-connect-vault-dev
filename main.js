@@ -1160,6 +1160,7 @@ class AuthService {
   constructor(_httpClient, vaultConfigService) {
     this._httpClient = _httpClient;
     this.vaultConfigService = vaultConfigService;
+    this.ORG_CREDENTIAL_PUBLIC_ID = 'public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l8vm9eq29ftu';
     this.IsAuthenticatedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_5__.BehaviorSubject(false);
   }
   Signin(email) {
@@ -1168,7 +1169,10 @@ class AuthService {
       let currentVaultProfile = new _models_fasten_vaultProfile__WEBPACK_IMPORTED_MODULE_1__.VaultProfile();
       currentVaultProfile.email = email;
       let resp = yield _this._httpClient.post(`${_environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.connect_api_endpoint_base}/bridge/vault_auth_begin`, currentVaultProfile, {
-        withCredentials: true
+        withCredentials: true,
+        params: {
+          "public_id": _this.ORG_CREDENTIAL_PUBLIC_ID
+        }
       }).toPromise();
       return resp;
     })();
