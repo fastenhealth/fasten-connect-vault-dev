@@ -579,10 +579,10 @@ class VaultProfileSigninCodeComponent {
         this.loading = false;
         this.errorMsg = "";
         this.currentEmail = "";
+        // @ts-ignore
+        this.currentEmail = this.router.getCurrentNavigation().extras.state["email"];
     }
     ngOnInit() {
-        // @ts-ignore
-        // this.currentEmail = this.router.getCurrentNavigation().extras.state["email"]
     }
     onCodeCompleted(code) {
         this.loading = true;
