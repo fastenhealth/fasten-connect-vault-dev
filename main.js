@@ -115,13 +115,15 @@ AppComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["�
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ApiMode": () => (/* binding */ ApiMode)
+/* harmony export */   "ApiMode": () => (/* binding */ ApiMode),
+/* harmony export */   "ORG_CREDENTIAL_PUBLIC_ID": () => (/* binding */ ORG_CREDENTIAL_PUBLIC_ID)
 /* harmony export */ });
 var ApiMode;
 (function (ApiMode) {
     ApiMode["Live"] = "live";
     ApiMode["Test"] = "test";
 })(ApiMode || (ApiMode = {}));
+const ORG_CREDENTIAL_PUBLIC_ID = 'public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l8vm9eq29ftu';
 
 
 /***/ }),
@@ -985,11 +987,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 1670);
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../environments/environment */ 2340);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 6317);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 6317);
 /* harmony import */ var jose__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jose */ 8042);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var _vault_config_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./vault-config.service */ 7877);
+/* harmony import */ var _app_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../app.constants */ 2976);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var _vault_config_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./vault-config.service */ 7877);
+
 
 
 
@@ -1002,8 +1006,7 @@ class AuthService {
   constructor(_httpClient, vaultConfigService) {
     this._httpClient = _httpClient;
     this.vaultConfigService = vaultConfigService;
-    this.ORG_CREDENTIAL_PUBLIC_ID = 'public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l8vm9eq29ftu';
-    this.IsAuthenticatedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_4__.BehaviorSubject(false);
+    this.IsAuthenticatedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_5__.BehaviorSubject(false);
   }
   VaultAuthBegin(email) {
     var _this = this;
@@ -1013,7 +1016,7 @@ class AuthService {
       }, {
         withCredentials: true,
         params: {
-          "public_id": _this.ORG_CREDENTIAL_PUBLIC_ID
+          "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_3__.ORG_CREDENTIAL_PUBLIC_ID
         }
       }).toPromise();
       return resp;
@@ -1028,7 +1031,7 @@ class AuthService {
       }, {
         withCredentials: true,
         params: {
-          "public_id": _this2.ORG_CREDENTIAL_PUBLIC_ID
+          "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_3__.ORG_CREDENTIAL_PUBLIC_ID
         }
       }).toPromise();
       return resp;
@@ -1115,9 +1118,9 @@ class AuthService {
   }
 }
 AuthService.ɵfac = function AuthService_Factory(t) {
-  return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](_vault_config_service__WEBPACK_IMPORTED_MODULE_3__.VaultConfigService));
+  return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_7__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_vault_config_service__WEBPACK_IMPORTED_MODULE_4__.VaultConfigService));
 };
-AuthService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjectable"]({
+AuthService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
   token: AuthService,
   factory: AuthService.ɵfac,
   providedIn: 'root'
@@ -1206,16 +1209,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "VaultService": () => (/* binding */ VaultService)
 /* harmony export */ });
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../environments/environment */ 2340);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 3280);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 7580);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 116);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 155);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 635);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 3158);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs */ 5474);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var ngx_device_detector__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ngx-device-detector */ 7454);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 3280);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 7580);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 116);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 155);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 635);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs */ 3158);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs */ 5474);
+/* harmony import */ var _app_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app.constants */ 2976);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var ngx_device_detector__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-device-detector */ 7454);
+
 
 
 
@@ -1230,7 +1235,8 @@ class VaultService {
     // public verificationWithPopup(publicId: string, brandId: string, portalId: string, endpointId: string, reconnectOrgConnectionId?: string, connectMode?: ConnectMode, externalId?: string, externalState?: string): Observable<OrganizationConnectionCallbackEvent> {
     verificationWithPopup() {
         //todo, this should use a bridge/connect or vault endpoint
-        let redirectUrl = "https://fastenhealth.withpersona.com/verify?environment-id=env_i1Gpdtz72AxDueLEjwfLQjWLD7F3&inquiry-template-id=itmpl_kKXRjPqEYiBtU5XMr3LazvJWzJjX";
+        const redirectUrl = new URL(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
+        redirectUrl.searchParams.set("public_id", _app_constants__WEBPACK_IMPORTED_MODULE_1__.ORG_CREDENTIAL_PUBLIC_ID);
         const isDesktop = this.deviceService.isDesktop();
         var features = "";
         if (isDesktop) {
@@ -1238,29 +1244,29 @@ class VaultService {
             features = "popup=true,width=700,height=600";
         }
         //open a external url in a new window
-        let openedWindow = window.open(redirectUrl, "_blank", features);
+        let openedWindow = window.open(redirectUrl.toString(), "_blank", features);
         return this.waitForOrgConnectionOrTimeout(openedWindow);
     }
     waitForOrgConnectionOrTimeout(openedWindow) {
         console.log(`waiting for postMessage notification from popup window`);
         //new code to listen to post message
-        return (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.fromEvent)(window, 'message')
+        return (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(window, 'message')
             .pipe(
         //throw an error if we wait more than 2 minutes (this will close the window)
-        (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.timeout)(ConnectWindowTimeout), 
+        (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.timeout)(ConnectWindowTimeout), 
         //make sure we're only listening to events from the "opened" window.
-        (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.filter)((event) => event.source == openedWindow), 
+        (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.filter)((event) => event.source == openedWindow), 
         //after filtering, we should only have one event to handle.
-        (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.first)(), (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.map)((event) => {
+        (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.first)(), (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((event) => {
             console.log(`received postMessage notification from popup window & sending acknowledgment`);
             // @ts-ignore
             event.source.postMessage(JSON.stringify({ close: true }), event.origin);
             console.log("postmessage data", event.data);
             return JSON.parse(event.data);
-        }), (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.catchError)((err) => {
+        }), (0,rxjs__WEBPACK_IMPORTED_MODULE_7__.catchError)((err) => {
             console.warn(`timed out waiting for notification from popup (${ConnectWindowTimeout / 1000}s), closing window`);
             openedWindow.self.close();
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_7__.throwError)(err);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.throwError)(err);
         }));
     }
     //OLD code
@@ -1272,7 +1278,7 @@ class VaultService {
             newPassword: newPass
         });
         return this._httpClient.put(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/user`, userUpdateJson)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_5__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
             console.log("Updated User", response);
             return response.data;
         }));
@@ -1308,14 +1314,14 @@ class VaultService {
             formData.append("logo", logoBlob);
         }
         return this._httpClient.put(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/org/${orgId}`, formData)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_5__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
             console.log("Updated Organization", response);
             return response.data;
         }));
     }
     getOrg(orgId) {
         return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/org/${orgId}`)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_5__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
             console.log("Organization", response);
             return response.data;
         }));
@@ -1342,14 +1348,14 @@ class VaultService {
     // }
     getOrgCredentials(orgId) {
         return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/org/${orgId}/credentials`)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_5__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
             console.log("Organization Credentials", response);
             return response.data;
         }));
     }
 }
-VaultService.ɵfac = function VaultService_Factory(t) { return new (t || VaultService)(_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_9__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵinject"](ngx_device_detector__WEBPACK_IMPORTED_MODULE_10__.DeviceDetectorService)); };
-VaultService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefineInjectable"]({ token: VaultService, factory: VaultService.ɵfac, providedIn: 'root' });
+VaultService.ɵfac = function VaultService_Factory(t) { return new (t || VaultService)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_10__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](ngx_device_detector__WEBPACK_IMPORTED_MODULE_11__.DeviceDetectorService)); };
+VaultService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjectable"]({ token: VaultService, factory: VaultService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),
