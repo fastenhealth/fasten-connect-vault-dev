@@ -29,7 +29,7 @@ __webpack_require__.r(__webpack_exports__);
 const routes = [
     { path: 'auth/signin', component: _pages_vault_profile_signin_vault_profile_signin_component__WEBPACK_IMPORTED_MODULE_1__.VaultProfileSigninComponent },
     { path: 'auth/signin/code', component: _pages_vault_profile_signin_code_vault_profile_signin_code_component__WEBPACK_IMPORTED_MODULE_3__.VaultProfileSigninCodeComponent },
-    { path: 'identity-verification', component: _pages_identity_verification_identity_verification_component__WEBPACK_IMPORTED_MODULE_4__.IdentityVerificationComponent },
+    { path: 'auth/identity-verification', component: _pages_identity_verification_identity_verification_component__WEBPACK_IMPORTED_MODULE_4__.IdentityVerificationComponent },
     { path: '', redirectTo: '/auth/signin', pathMatch: 'full' },
     { path: 'dashboard', component: _pages_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_0__.DashboardComponent, canActivate: [_auth_guards_is_authenticated_auth_guard__WEBPACK_IMPORTED_MODULE_2__.IsAuthenticatedAuthGuard] },
     //must be at bottom of list
@@ -259,9 +259,9 @@ class IsAuthenticatedAuthGuard {
       //check if the user is authenticated, if not, redirect to login
       if (!jwtPayload) {
         return yield _this.router.navigate(['/auth/signin']);
-      } else if (jwtPayload.org_id == '' || jwtPayload.org_id == null) {
-        console.log("User is not associated with an organization, redirecting to org signup", jwtPayload);
-        return yield _this.router.navigate(['/auth/signup/org']);
+      } else if (!jwtPayload.has_verified_identity) {
+        console.log("Profile does not have a verified identity, redirecting to id verification step", jwtPayload);
+        return yield _this.router.navigate(['/auth/identity-verification']);
       }
       // continue as normal
       return true;
@@ -645,7 +645,7 @@ class VaultProfileSigninCodeComponent {
         this.authService.VaultAuthFinish(this.currentEmail, code)
             .then(() => {
             this.loading = false;
-            this.router.navigateByUrl('/auth/signin/code', { state: {} });
+            this.router.navigateByUrl('/dashboard', { state: {} });
         })
             .catch((err) => {
             this.loading = false;
