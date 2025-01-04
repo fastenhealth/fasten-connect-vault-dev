@@ -1274,6 +1274,13 @@ class VaultService {
             return (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.throwError)(err);
         }));
     }
+    getRecordLocator(orgId) {
+        return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/record_locator`)
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            console.log("Record Locator Response", response);
+            return response.data;
+        }));
+    }
     //OLD code
     updateUser(oldPass, oldEmail, newEmail, newPass = "") {
         const userUpdateJson = JSON.stringify({
