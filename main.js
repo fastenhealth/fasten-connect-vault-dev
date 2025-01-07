@@ -606,21 +606,21 @@ class IdentityVerificationComponent {
     }
 }
 IdentityVerificationComponent.ɵfac = function IdentityVerificationComponent_Factory(t) { return new (t || IdentityVerificationComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_vault_service__WEBPACK_IMPORTED_MODULE_0__.VaultService)); };
-IdentityVerificationComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: IdentityVerificationComponent, selectors: [["app-identity-verification"]], decls: 13, vars: 0, consts: [["id", "step-verification", 1, "step-panel", "showing"], [1, "brand-header", "brand-fast"], [1, "brand-title"], [1, "verification-content"], [1, "verification-title"], [1, "verification-subtitle"], ["type", "button", 1, "btn", "btn-primary", "w-full", 3, "click"]], template: function IdentityVerificationComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "section", 0)(1, "div", 1)(2, "h1", 2);
+IdentityVerificationComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: IdentityVerificationComponent, selectors: [["app-identity-verification"]], decls: 14, vars: 0, consts: [[1, "space-y-6", "text-center"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-2"], [1, "text-xl", "font-semibold"], ["id", "verification-hint", 1, "text-sm", "text-gray-600"], ["type", "button", 1, "btn", "btn-primary", "w-full", 3, "click"]], template: function IdentityVerificationComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h1", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3, "fasten");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "div", 3)(5, "h2", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](6, "Verify your identity");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](6, " Verify your identity");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](7, "br");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](8, "just once");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](8, "just once ");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](9, "p", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](10, "Your leaving Acme Labs to verify your identity with our partner, Clear. This one-time step will bring you right back after your ID has been verified.");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](11, "button", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function IdentityVerificationComponent_Template_button_click_11_listener() { return ctx.verifyIdentity(); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](12, " Continue ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](10, " Your leaving Acme Labs to verify your identity with our partner, Clear. This one-time step will bring you right back after your ID has been verified. ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](11, "div", 3)(12, "button", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function IdentityVerificationComponent_Template_button_click_12_listener() { return ctx.verifyIdentity(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](13, " Continue ");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
     } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJpZGVudGl0eS12ZXJpZmljYXRpb24uY29tcG9uZW50LnNjc3MifQ== */"] });
 
