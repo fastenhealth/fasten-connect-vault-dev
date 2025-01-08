@@ -674,6 +674,9 @@ video {
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -842,6 +845,10 @@ video {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -918,6 +925,10 @@ video {
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity, 1));
+}
+.text-red-600 {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity, 1));
 }
 .text-white {
   --tw-text-opacity: 1;
@@ -1267,6 +1278,13 @@ video {
 }
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
+}
+@media (prefers-color-scheme: dark) {
+
+  .dark\:text-red-500 {
+    --tw-text-opacity: 1;
+    color: rgb(239 68 68 / var(--tw-text-opacity, 1));
+  }
 }
 
 /*# sourceMappingURL=styles.css.map*/
