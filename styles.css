@@ -601,9 +601,6 @@ video {
 .h-10 {
   height: 2.5rem;
 }
-.h-12 {
-  height: 3rem;
-}
 .h-16 {
   height: 4rem;
 }
@@ -624,6 +621,12 @@ video {
 }
 .h-full {
   height: 100%;
+}
+.max-h-12 {
+  max-height: 3rem;
+}
+.max-h-8 {
+  max-height: 2rem;
 }
 .w-10 {
   width: 2.5rem;
