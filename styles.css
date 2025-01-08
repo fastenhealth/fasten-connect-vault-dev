@@ -730,6 +730,9 @@ video {
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
+.overflow-scroll {
+  overflow: scroll;
+}
 .rounded {
   border-radius: 0.25rem;
 }
@@ -754,6 +757,10 @@ video {
 }
 .border {
   border-width: 1px;
+}
+.border-\[\#5B47FB\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(91 71 251 / var(--tw-border-opacity, 1));
 }
 .border-gray-200 {
   --tw-border-opacity: 1;
@@ -1199,9 +1206,17 @@ video {
 .hover\:border-\[\#5B47FB\]\/30:hover {
   border-color: rgb(91 71 251 / 0.3);
 }
+.hover\:border-gray-400:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(156 163 175 / var(--tw-border-opacity, 1));
+}
 .hover\:bg-\[\#4936E8\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(73 54 232 / var(--tw-bg-opacity, 1));
+}
+.hover\:bg-\[\#5B47FB\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 71 251 / var(--tw-bg-opacity, 1));
 }
 .hover\:bg-\[\#5B47FB\]\/5:hover {
   background-color: rgb(91 71 251 / 0.05);
@@ -1221,6 +1236,10 @@ video {
 .hover\:text-gray-600:hover {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
+}
+.hover\:text-white:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 .hover\:underline:hover {
   text-decoration-line: underline;
