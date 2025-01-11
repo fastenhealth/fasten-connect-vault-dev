@@ -39,6 +39,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const routes = [
+    // @Input routing
+    // https://www.freecodecamp.org/news/use-input-for-angular-route-parameters/
+    // https://angular.love/router-data-as-components-inputs-in-angular-v16
     { path: 'auth/signin', component: _pages_vault_profile_signin_vault_profile_signin_component__WEBPACK_IMPORTED_MODULE_1__.VaultProfileSigninComponent },
     { path: 'auth/signin/code', component: _pages_vault_profile_signin_code_vault_profile_signin_code_component__WEBPACK_IMPORTED_MODULE_3__.VaultProfileSigninCodeComponent },
     { path: 'auth/identity-verification', component: _pages_identity_verification_identity_verification_component__WEBPACK_IMPORTED_MODULE_4__.IdentityVerificationComponent },
@@ -48,7 +51,7 @@ const routes = [
     { path: 'brand-details', component: _pages_health_system_brand_details_health_system_brand_details_component__WEBPACK_IMPORTED_MODULE_6__.HealthSystemBrandDetailsComponent },
     { path: 'form-request', component: _pages_form_health_system_request_form_health_system_request_component__WEBPACK_IMPORTED_MODULE_7__.FormHealthSystemRequestComponent },
     { path: 'form-support', component: _pages_form_support_request_form_support_request_component__WEBPACK_IMPORTED_MODULE_8__.FormSupportRequestComponent },
-    { path: 'portal-connecting', component: _pages_health_system_connecting_health_system_connecting_component__WEBPACK_IMPORTED_MODULE_9__.HealthSystemConnectingComponent },
+    { path: 'portal-connecting/:brandId/:portalId/:endpointId', component: _pages_health_system_connecting_health_system_connecting_component__WEBPACK_IMPORTED_MODULE_9__.HealthSystemConnectingComponent },
     { path: 'complete', component: _pages_complete_complete_component__WEBPACK_IMPORTED_MODULE_10__.CompleteComponent },
     //must be at bottom of list
     { path: '**', redirectTo: 'auth/signin' },
@@ -686,6 +689,7 @@ class VaultProfileConfig {
  * "PortalConfigService" to set the default configuration.
  */
 const vaultConfigDefaults = {
+    publicId: '',
     apiMode: _app_constants__WEBPACK_IMPORTED_MODULE_0__.ApiMode.Test
 };
 
@@ -790,7 +794,7 @@ function DashboardComponent_div_12_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](10, "p", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](11, "Sign in required");
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](12, "button", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](12, "a", 31);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](13, " Sign in ");
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
   }
@@ -801,6 +805,8 @@ function DashboardComponent_div_12_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpropertyInterpolate"]("alt", pendingAccount_r3.brand == null ? null : pendingAccount_r3.brand.name);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtextInterpolate"](pendingAccount_r3.portal.name);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("routerLink", "/portal-connecting/" + (pendingAccount_r3.brand == null ? null : pendingAccount_r3.brand.id) + "/" + (pendingAccount_r3.portal == null ? null : pendingAccount_r3.portal.id) + "/" + (pendingAccount_r3.endpoint == null ? null : pendingAccount_r3.endpoint.id));
   }
 }
 const _c0 = function () {
@@ -828,7 +834,7 @@ DashboardComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2
   selectors: [["app-dashboard"]],
   decls: 31,
   vars: 9,
-  consts: [["id", "step-connecting-systems", 1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-2"], [1, "text-xl", "font-bold"], [1, "text-sm", "text-gray-600"], ["id", "connecting-systems-list", 1, "space-y-3"], ["class", "flex items-center p-3 border rounded-lg hover:border-[#5B47FB]/30 hover:shadow-sm transition-all", 4, "ngFor", "ngForOf"], ["id", "search-button", 1, "w-full", "border", "border-gray-200", "rounded-lg", "flex", "justify-between", "items-center", "px-4", "py-3", "text-sm", "font-medium", "hover:border-[#5B47FB]", "hover:bg-[#5B47FB]/5", "transition-all", 3, "routerLink"], [1, "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", 1, "w-5", "h-5"], ["d", "M21 21l-5.2-5.2m2.2-5.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-chevron-right", "w-5", "h-5", "text-gray-400"], ["points", "9 6 15 12 9 18"], [1, "flex", "items-center", "justify-between", "pt-4"], [1, "flex", "items-center", "gap-2", "text-sm", "text-gray-600"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-lock", "w-4", "h-4"], ["width", "18", "height", "11", "x", "3", "y", "11", "rx", "2", "ry", "2"], ["d", "M7 11V7a5 5 0 0 1 10 0v4"], ["id", "connecting-continue", "disabled", "", 1, "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "py-2", "px-4", "rounded-md", "disabled:opacity-50"], [1, "flex", "items-center", "p-3", "border", "rounded-lg", "hover:border-[#5B47FB]/30", "hover:shadow-sm", "transition-all"], [1, "connect-btn", "w-8", "h-8", "rounded-full", "border", "border-gray-300", "transition-all", "hover:bg-gray-50", "hover:border-[#5B47FB]/30"], ["imageFallback", "", "src", "https://logo.clearbit.com/kp.org", 1, "w-8", "h-8", "mx-4", "rounded", 3, "alt"], [1, "flex-1", "min-w-0"], [1, "font-semibold"], [1, "w-8", "h-8", "flex", "items-center", "justify-center", "animate-bounce"], ["xmlns", "http://www.w3.org/2000/svg", "width", "20", "height", "20", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.5", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "text-amber-500"], ["d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"], ["x1", "12", "y1", "9", "x2", "12", "y2", "13"], ["x1", "12", "y1", "17", "x2", "12.01", "y2", "17"], ["imageFallback", "", 1, "w-8", "max-h-8", "mx-3", "rounded", 3, "src", "alt"], [1, "border", "border-[#5B47FB]", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "px-4", "py-1.5", "rounded-lg", "text-sm", "font-medium", "transition-colors"]],
+  consts: [["id", "step-connecting-systems", 1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-2"], [1, "text-xl", "font-bold"], [1, "text-sm", "text-gray-600"], ["id", "connecting-systems-list", 1, "space-y-3"], ["class", "flex items-center p-3 border rounded-lg hover:border-[#5B47FB]/30 hover:shadow-sm transition-all", 4, "ngFor", "ngForOf"], ["id", "search-button", 1, "w-full", "border", "border-gray-200", "rounded-lg", "flex", "justify-between", "items-center", "px-4", "py-3", "text-sm", "font-medium", "hover:border-[#5B47FB]", "hover:bg-[#5B47FB]/5", "transition-all", 3, "routerLink"], [1, "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", 1, "w-5", "h-5"], ["d", "M21 21l-5.2-5.2m2.2-5.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-chevron-right", "w-5", "h-5", "text-gray-400"], ["points", "9 6 15 12 9 18"], [1, "flex", "items-center", "justify-between", "pt-4"], [1, "flex", "items-center", "gap-2", "text-sm", "text-gray-600"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-lock", "w-4", "h-4"], ["width", "18", "height", "11", "x", "3", "y", "11", "rx", "2", "ry", "2"], ["d", "M7 11V7a5 5 0 0 1 10 0v4"], ["id", "connecting-continue", "disabled", "", 1, "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "py-2", "px-4", "rounded-md", "disabled:opacity-50"], [1, "flex", "items-center", "p-3", "border", "rounded-lg", "hover:border-[#5B47FB]/30", "hover:shadow-sm", "transition-all"], [1, "connect-btn", "w-8", "h-8", "rounded-full", "border", "border-gray-300", "transition-all", "hover:bg-gray-50", "hover:border-[#5B47FB]/30"], ["imageFallback", "", "src", "https://logo.clearbit.com/kp.org", 1, "w-8", "h-8", "mx-4", "rounded", 3, "alt"], [1, "flex-1", "min-w-0"], [1, "font-semibold"], [1, "w-8", "h-8", "flex", "items-center", "justify-center", "animate-bounce"], ["xmlns", "http://www.w3.org/2000/svg", "width", "20", "height", "20", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.5", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "text-amber-500"], ["d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"], ["x1", "12", "y1", "9", "x2", "12", "y2", "13"], ["x1", "12", "y1", "17", "x2", "12.01", "y2", "17"], ["imageFallback", "", 1, "w-8", "max-h-8", "mx-3", "rounded", 3, "src", "alt"], [1, "border", "border-[#5B47FB]", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "px-4", "py-1.5", "rounded-lg", "text-sm", "font-medium", "transition-colors", 3, "routerLink"]],
   template: function DashboardComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h1", 2);
@@ -843,7 +849,7 @@ DashboardComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](9, "div", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](10, DashboardComponent_div_10_Template, 8, 2, "div", 7);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipe"](11, "async");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](12, DashboardComponent_div_12_Template, 14, 3, "div", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](12, DashboardComponent_div_12_Template, 14, 4, "div", 7);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipe"](13, "async");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](14, "button", 8)(15, "div", 9);
@@ -884,7 +890,7 @@ DashboardComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("routerLink", "/search");
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_3__.NgForOf, _angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterLink, _angular_common__WEBPACK_IMPORTED_MODULE_3__.AsyncPipe],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_3__.NgForOf, _angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterLink, _angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterLinkWithHref, _angular_common__WEBPACK_IMPORTED_MODULE_3__.AsyncPipe],
   styles: [".blurred[_ngcontent-%COMP%] {\n  \n  filter: blur(3px);\n  \n  filter: url(\"/assets/blur.svg#gaussian_blur\");\n  \n  -webkit-filter: blur(3px);\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImRhc2hib2FyZC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUVFLG9DQUFBO0VBQ0EsaUJBQUE7RUFFQSxtQ0FBQTtFQUNBLDZDQUFBO0VBRUEseURBQUE7RUFDQSx5QkFBQTtBQUZGIiwiZmlsZSI6ImRhc2hib2FyZC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5ibHVycmVkIHtcblxuICAvKiBBbnkgYnJvd3NlciB3aGljaCBzdXBwb3J0cyBDU1MzICovXG4gIGZpbHRlcjogYmx1cigzcHgpO1xuXG4gIC8qIEZpcmVmb3ggdmVyc2lvbiAzNCBhbmQgZWFybGllciAqL1xuICBmaWx0ZXI6IHVybChcIi9hc3NldHMvYmx1ci5zdmcjZ2F1c3NpYW5fYmx1clwiKTtcblxuICAvKiBXZWJraXQgaW4gQ2hyb21lIDUyLCBTYWZhcmkgOSwgT3BlcmEgMzksIGFuZCBlYXJsaWVyICovXG4gIC13ZWJraXQtZmlsdGVyOiBibHVyKDNweCk7XG59XG4iXX0= */"]
 });
 
@@ -1456,27 +1462,72 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HealthSystemConnectingComponent": () => (/* binding */ HealthSystemConnectingComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _utils_connect_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/connect-helper */ 7968);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _services_vault_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/vault.service */ 3843);
+/* harmony import */ var _services_config_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/config.service */ 946);
+
+
+
+
 
 class HealthSystemConnectingComponent {
-    constructor() { }
+    constructor(route, vaultService, configService, router) {
+        this.route = route;
+        this.vaultService = vaultService;
+        this.configService = configService;
+        this.router = router;
+        this.brandId = "";
+        this.portalId = "";
+        this.endpointId = "";
+        this.route.params.subscribe((params) => {
+            this.brandId = params['brandId'];
+            this.portalId = params['portalId'];
+            this.endpointId = params['endpointId'];
+        });
+    }
     ngOnInit() {
+        (0,_utils_connect_helper__WEBPACK_IMPORTED_MODULE_0__.ConnectHelper)(this.vaultService, this.router, {
+            public_id: this.configService.systemConfig$.publicId,
+            catalog_brand_id: this.brandId,
+            catalog_portal_id: this.portalId,
+            catalog_endpoint_id: this.endpointId,
+            // org_connection_id: this.reconnectOrgConnectionId,
+            // external_id: this.externalId,
+            // external_state: this.externalState,
+            // connect_mode: this.connectMode,
+        });
     }
 }
-HealthSystemConnectingComponent.ɵfac = function HealthSystemConnectingComponent_Factory(t) { return new (t || HealthSystemConnectingComponent)(); };
-HealthSystemConnectingComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: HealthSystemConnectingComponent, selectors: [["app-health-system-connecting"]], decls: 15, vars: 0, consts: [["id", "redirect-overlay", 1, "flex", "items-center", "justify-center", "z-50", "redirect-overlay-enter"], [1, "bg-white", "rounded-2xl", "p-8", "w-[90%]", "max-w-[360px]", "relative", "redirect-overlay-content"], [1, "relative", "w-24", "h-24", "mx-auto", "mb-8", "redirect-logo-container"], [1, "absolute", "inset-0", "bg-white", "rounded-2xl", "shadow-sm", "p-4"], ["id", "redirect-logo", "src", "", "alt", "", 1, "w-full", "h-full", "object-contain"], [1, "text-center", "space-y-3"], ["id", "redirect-name", 1, "text-xl", "font-semibold", "text-gray-900"], ["id", "redirect-website", 1, "text-sm", "text-gray-500", 2, "display", "none"], [1, "bg-[#5B47FB]/5", "rounded-xl", "p-4", "mt-6"], [1, "redirect-dots"], [1, "redirect-dot"], [1, "text-sm", "text-gray-600"]], template: function HealthSystemConnectingComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](4, "img", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "div", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](6, "h3", 6)(7, "p", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "div", 8)(9, "div", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "div", 10)(11, "div", 10)(12, "div", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](13, "p", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](14, "Redirecting to sign in...");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()()();
-    } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJoZWFsdGgtc3lzdGVtLWNvbm5lY3RpbmcuY29tcG9uZW50LnNjc3MifQ== */"] });
+HealthSystemConnectingComponent.ɵfac = function HealthSystemConnectingComponent_Factory(t) { return new (t || HealthSystemConnectingComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__.ActivatedRoute), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_services_vault_service__WEBPACK_IMPORTED_MODULE_1__.VaultService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_services_config_service__WEBPACK_IMPORTED_MODULE_2__.ConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_4__.Router)); };
+HealthSystemConnectingComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: HealthSystemConnectingComponent, selectors: [["app-health-system-connecting"]], inputs: { brandId: "brandId", portalId: "portalId", endpointId: "endpointId" }, decls: 22, vars: 2, consts: [[1, "space-y-6"], ["id", "request-form-nav", 1, "relative", "flex", "justify-center", "items-center"], ["type", "button", "id", "request-back", 1, "absolute", "left-0", "top-1/2", "-translate-y-1/2", "text-gray-700", "p-2", "hover:bg-gray-100", "rounded-md", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "w-5", "h-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "az-logo"], ["id", "redirect-overlay", 1, "flex", "items-center", "justify-center", "z-50", "redirect-overlay-enter"], [1, "bg-white", "rounded-2xl", "p-8", "w-[90%]", "max-w-[360px]", "relative", "redirect-overlay-content"], [1, "relative", "w-24", "h-24", "mx-auto", "mb-8", "redirect-logo-container"], [1, "absolute", "inset-0", "bg-white", "rounded-2xl", "shadow-sm", "p-4"], ["imageFallback", "", "alt", "", 1, "w-full", "h-full", "object-contain", 3, "src"], [1, "text-center", "space-y-3"], ["id", "redirect-name", 1, "text-xl", "font-semibold", "text-gray-900"], ["id", "redirect-website", 1, "text-sm", "text-gray-500", 2, "display", "none"], [1, "bg-[#5B47FB]/5", "rounded-xl", "p-4", "mt-6"], [1, "redirect-dots"], [1, "redirect-dot"], [1, "text-sm", "text-gray-600"]], template: function HealthSystemConnectingComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "button", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](3, "svg", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](4, "path", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "h1", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](6, "fasten");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div", 6)(8, "div", 7)(9, "div", 8)(10, "div", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](11, "img", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](12, "div", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](13, "h3", 12)(14, "p", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](15, "div", 14)(16, "div", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](17, "div", 16)(18, "div", 16)(19, "div", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](20, "p", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](21, "Redirecting to sign in...");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()()()()()();
+    } if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("routerLink", "/dashboard");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpropertyInterpolate1"]("src", "https://cdn.fastenhealth.com/logos/sources/", ctx.brandId, ".png", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsanitizeUrl"]);
+    } }, dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterLink], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJoZWFsdGgtc3lzdGVtLWNvbm5lY3RpbmcuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
@@ -2386,34 +2437,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ConfigService": () => (/* binding */ ConfigService)
 /* harmony export */ });
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 6317);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 6317);
 /* harmony import */ var _models_vault_config__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/vault-config */ 5567);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash */ 2938);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _vault_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./vault.service */ 3843);
-
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
 
 
 
 
 class ConfigService {
-    constructor(vaultApi) {
+    constructor() {
         this._defaultSystemConfig = _models_vault_config__WEBPACK_IMPORTED_MODULE_0__.vaultConfigDefaults;
-        this.systemConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject(this._defaultSystemConfig);
-        this.vaultProfileConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject(Object.setPrototypeOf({}, _models_vault_config__WEBPACK_IMPORTED_MODULE_0__.VaultProfileConfig.prototype));
-        this.searchConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject({});
-        //always watch for changes to the vault
-        this.systemConfigSubject.subscribe((systemConfig) => {
-            console.log("System configuration changed:", systemConfig, this.systemConfig$);
-            if (systemConfig.org_id && !systemConfig.org) {
-                console.log("attempt to download org information, and store in config");
-                vaultApi.getOrg(systemConfig.org_id).subscribe((org) => {
-                    console.log("org:", org);
-                    this.systemConfig = { org: org };
-                });
-            }
-        });
+        this.systemConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_2__.BehaviorSubject(this._defaultSystemConfig);
+        this.vaultProfileConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_2__.BehaviorSubject(Object.setPrototypeOf({}, _models_vault_config__WEBPACK_IMPORTED_MODULE_0__.VaultProfileConfig.prototype));
+        this.searchConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_2__.BehaviorSubject({});
     }
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -2477,8 +2515,8 @@ class ConfigService {
         return this.searchConfigSubject.getValue();
     }
 }
-ConfigService.ɵfac = function ConfigService_Factory(t) { return new (t || ConfigService)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵinject"](_vault_service__WEBPACK_IMPORTED_MODULE_2__.VaultService)); };
-ConfigService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjectable"]({ token: ConfigService, factory: ConfigService.ɵfac, providedIn: 'root' });
+ConfigService.ɵfac = function ConfigService_Factory(t) { return new (t || ConfigService)(); };
+ConfigService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({ token: ConfigService, factory: ConfigService.ɵfac, providedIn: 'root' });
 
 
 /***/ }),
@@ -2496,17 +2534,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "VaultService": () => (/* binding */ VaultService)
 /* harmony export */ });
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../environments/environment */ 2340);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 3280);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 7580);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 116);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 155);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 635);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs */ 3158);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs */ 5474);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 3280);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 7580);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 116);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 155);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs */ 635);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs */ 3158);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ 5474);
 /* harmony import */ var _app_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../app.constants */ 2976);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var ngx_device_detector__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-device-detector */ 7454);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var ngx_device_detector__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ngx-device-detector */ 7454);
+/* harmony import */ var _config_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config.service */ 946);
+
 
 
 
@@ -2515,51 +2555,48 @@ __webpack_require__.r(__webpack_exports__);
 
 const ConnectWindowTimeout = 2 * 60 * 1000; //wait 2 minutes (in milliseconds)
 class VaultService {
-    constructor(_httpClient, deviceService) {
+    constructor(_httpClient, deviceService, configService) {
         this._httpClient = _httpClient;
         this.deviceService = deviceService;
-    }
-    // public verificationWithPopup(publicId: string, brandId: string, portalId: string, endpointId: string, reconnectOrgConnectionId?: string, connectMode?: ConnectMode, externalId?: string, externalState?: string): Observable<OrganizationConnectionCallbackEvent> {
-    verificationWithPopup() {
-        //todo, this should use a bridge/connect or vault endpoint
-        const redirectUrl = new URL(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
-        redirectUrl.searchParams.set("public_id", _app_constants__WEBPACK_IMPORTED_MODULE_1__.ORG_CREDENTIAL_PUBLIC_ID);
-        const isDesktop = this.deviceService.isDesktop();
-        var features = "";
-        if (isDesktop) {
-            //add optons for window.open, popup only for desktop (mobile and table will open a new tab)
-            features = "popup=true,width=700,height=600";
-        }
-        //open a external url in a new window
-        let openedWindow = window.open(redirectUrl.toString(), "_blank");
-        return this.waitForOrgConnectionOrTimeout(openedWindow);
+        this.configService = configService;
+        //always watch for changes to the vault
+        this.configService.systemConfigSubject.subscribe((systemConfig) => {
+            console.log("System configuration changed:", systemConfig, this.configService.systemConfig$);
+            if (systemConfig.org_id && !systemConfig.org) {
+                console.log("attempt to download org information, and store in config");
+                this.getOrg(systemConfig.org_id).subscribe((org) => {
+                    console.log("org:", org);
+                    this.configService.systemConfig = { org: org };
+                });
+            }
+        });
     }
     //This function must be ".subscribed()" to work. If not, the handler will not be registered and messages will be ignored.
     waitForOrgConnectionOrTimeout(openedWindow) {
         console.log(`waiting for postMessage notification from popup window`);
         //new code to listen to post message
-        return (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(window, 'message')
+        return (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.fromEvent)(window, 'message')
             .pipe(
         //throw an error if we wait more than 2 minutes (this will close the window)
-        (0,rxjs__WEBPACK_IMPORTED_MODULE_3__.timeout)(ConnectWindowTimeout), 
+        (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.timeout)(ConnectWindowTimeout), 
         //make sure we're only listening to events from the "opened" window.
-        (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.filter)((event) => event.source == openedWindow), 
+        (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.filter)((event) => event.source == openedWindow), 
         //after filtering, we should only have one event to handle.
-        (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.first)(), (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((event) => {
+        (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.first)(), (0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((event) => {
             console.log(`received postMessage notification from popup window & sending acknowledgment`);
             // @ts-ignore
             event.source.postMessage(JSON.stringify({ close: true }), event.origin);
             console.log("postmessage data", event.data);
             return JSON.parse(event.data);
-        }), (0,rxjs__WEBPACK_IMPORTED_MODULE_7__.catchError)((err) => {
+        }), (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.catchError)((err) => {
             console.warn(`timed out waiting for notification from popup (${ConnectWindowTimeout / 1000}s), closing window`);
             openedWindow.self.close();
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.throwError)(err);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.throwError)(err);
         }));
     }
     getRecordLocatorFacilities() {
         return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/record_locator`, { params: { "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_1__.ORG_CREDENTIAL_PUBLIC_ID } })
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             console.log("Record Locator Response", response);
             return response.data;
         }));
@@ -2575,14 +2612,14 @@ class VaultService {
         return this._httpClient.post(endpointUrl.toString(), filter, { params: {
                 'api_mode': apiMode
             } })
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             console.log("Metadata RESPONSE", response);
             return response.data;
         }));
     }
     getOrg(orgId) {
         return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/org/${orgId}`)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             console.log("Organization", response);
             return response.data;
         }));
@@ -2590,7 +2627,7 @@ class VaultService {
     requestHealthSystem(requestHealth) {
         const endpointUrl = new URL(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/support/healthsystem`);
         return this._httpClient.post(endpointUrl.toString(), requestHealth)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             // @ts-ignore
             return {};
         }));
@@ -2598,10 +2635,55 @@ class VaultService {
     requestSupport(request) {
         const endpointUrl = new URL(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/support/request`);
         return this._httpClient.post(endpointUrl.toString(), request)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             // @ts-ignore
             return {};
         }));
+    }
+    // public verificationWithPopup(publicId: string, brandId: string, portalId: string, endpointId: string, reconnectOrgConnectionId?: string, connectMode?: ConnectMode, externalId?: string, externalState?: string): Observable<OrganizationConnectionCallbackEvent> {
+    verificationWithPopup() {
+        //todo, this should use a bridge/connect or vault endpoint
+        const redirectUrl = new URL(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
+        redirectUrl.searchParams.set("public_id", _app_constants__WEBPACK_IMPORTED_MODULE_1__.ORG_CREDENTIAL_PUBLIC_ID);
+        const isDesktop = this.deviceService.isDesktop();
+        let features = "";
+        if (isDesktop) {
+            //add optons for window.open, popup only for desktop (mobile and table will open a new tab)
+            features = "popup=true,width=700,height=600";
+        }
+        //open a external url in a new window
+        let openedWindow = window.open(redirectUrl.toString(), "_blank", features);
+        return this.waitForOrgConnectionOrTimeout(openedWindow);
+    }
+    accountConnectWithPopup(brandId, portalId, endpointId, reconnectOrgConnectionId, externalId, externalState) {
+        const redirectUrlParts = new URL(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/connect`);
+        const redirectParams = new URLSearchParams();
+        redirectParams.set("public_id", this.configService.systemConfig$.publicId);
+        redirectParams.set("brand_id", brandId);
+        redirectParams.set("portal_id", portalId);
+        redirectParams.set("endpoint_id", endpointId);
+        redirectParams.set("connect_mode", "popup");
+        if (reconnectOrgConnectionId) {
+            redirectParams.set("reconnect_org_connection_id", reconnectOrgConnectionId);
+        }
+        if (externalId) {
+            redirectParams.set("external_id", externalId);
+        }
+        if (externalState) {
+            redirectParams.set("external_state", externalState);
+        }
+        redirectUrlParts.search = redirectParams.toString();
+        console.log(redirectUrlParts.toString());
+        const isDesktop = this.deviceService.isDesktop();
+        let features = "";
+        if (isDesktop) {
+            //add optons for window.open, popup only for desktop (mobile and table will open a new tab)
+            features = "popup=true,width=700,height=600";
+        }
+        //We're always in popup mode, we can open a new window, rather than redirecting the current window (which is an app frame)
+        //open a external url in a new window
+        let openedWindow = window.open(redirectUrlParts.toString(), "_blank", features);
+        return this.waitForOrgConnectionOrTimeout(openedWindow);
     }
     //OLD code
     updateUser(oldPass, oldEmail, newEmail, newPass = "") {
@@ -2612,7 +2694,7 @@ class VaultService {
             newPassword: newPass
         });
         return this._httpClient.put(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/user`, userUpdateJson)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             console.log("Updated User", response);
             return response.data;
         }));
@@ -2648,7 +2730,7 @@ class VaultService {
             formData.append("logo", logoBlob);
         }
         return this._httpClient.put(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/org/${orgId}`, formData)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             console.log("Updated Organization", response);
             return response.data;
         }));
@@ -2675,14 +2757,45 @@ class VaultService {
     // }
     getOrgCredentials(orgId) {
         return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/org/${orgId}/credentials`)
-            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
+            .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_7__.map)((response) => {
             console.log("Organization Credentials", response);
             return response.data;
         }));
     }
 }
-VaultService.ɵfac = function VaultService_Factory(t) { return new (t || VaultService)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_10__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](ngx_device_detector__WEBPACK_IMPORTED_MODULE_11__.DeviceDetectorService)); };
-VaultService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjectable"]({ token: VaultService, factory: VaultService.ɵfac, providedIn: 'root' });
+VaultService.ɵfac = function VaultService_Factory(t) { return new (t || VaultService)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_11__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵinject"](ngx_device_detector__WEBPACK_IMPORTED_MODULE_12__.DeviceDetectorService), _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵinject"](_config_service__WEBPACK_IMPORTED_MODULE_2__.ConfigService)); };
+VaultService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineInjectable"]({ token: VaultService, factory: VaultService.ɵfac, providedIn: 'root' });
+
+
+/***/ }),
+
+/***/ 7968:
+/*!*****************************************!*\
+  !*** ./src/app/utils/connect-helper.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ConnectHelper": () => (/* binding */ ConnectHelper)
+/* harmony export */ });
+function ConnectHelper(vaultApi, routerService, connectData) {
+    vaultApi.accountConnectWithPopup(connectData.catalog_brand_id, connectData.catalog_portal_id, connectData.catalog_endpoint_id, connectData.org_connection_id, connectData.external_id, connectData.external_state).subscribe((orgConnectionCallbackData) => {
+        console.log(orgConnectionCallbackData);
+        if (!orgConnectionCallbackData) {
+            return; //wait for redirect
+        }
+        //Note: this code will only run when this.connectMode == popup
+        //when connectMode == 'redirect', the user is redirected in the same window, and this code is never executed.
+        // messageBus.orgConnectionCallbackSubject.next(orgConnectionCallbackData)
+        // //redirect the browser back to the search page (TODO: this should show the support request page if an error occurred)
+        // messageBus.componentNavigationSubject.next({
+        //   page: ComponentNavPage.Search,
+        // } as ComponentNavigationEvent)
+        routerService.navigateByUrl('/dashboard');
+    });
+}
 
 
 /***/ }),
