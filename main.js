@@ -756,16 +756,35 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function DashboardComponent_div_18_Template(rf, ctx) {
+function DashboardComponent_div_10_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 7)(1, "div", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](1, "button", 21)(2, "img", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](3, "div", 23)(4, "p", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](6, "p", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](7, "Ready to connect");
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()();
+  }
+  if (rf & 2) {
+    const connectedAccount_r2 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("alt", connectedAccount_r2.display_name);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtextInterpolate"](connectedAccount_r2.display_name);
+  }
+}
+function DashboardComponent_div_12_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 20)(1, "div", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceSVG"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](2, "svg", 26);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](3, "path", 27)(4, "line", 28)(5, "line", 29);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceHTML"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](6, "img", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](7, "div", 10)(8, "p", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](7, "div", 23)(8, "p", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](9);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](10, "p", 5);
@@ -776,12 +795,12 @@ function DashboardComponent_div_18_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
-    const pendingAccount_r1 = ctx.$implicit;
+    const pendingAccount_r3 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpropertyInterpolate1"]("src", "https://cdn.fastenhealth.com/logos/sources/", pendingAccount_r1.brand == null ? null : pendingAccount_r1.brand.id, ".png", _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵsanitizeUrl"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpropertyInterpolate"]("alt", pendingAccount_r1.brand == null ? null : pendingAccount_r1.brand.name);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpropertyInterpolate1"]("src", "https://cdn.fastenhealth.com/logos/sources/", pendingAccount_r3.brand == null ? null : pendingAccount_r3.brand.id, ".png", _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpropertyInterpolate"]("alt", pendingAccount_r3.brand == null ? null : pendingAccount_r3.brand.name);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtextInterpolate"](pendingAccount_r1.portal.name);
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtextInterpolate"](pendingAccount_r3.portal.name);
   }
 }
 const _c0 = function () {
@@ -807,9 +826,9 @@ DashboardComponent.ɵfac = function DashboardComponent_Factory(t) {
 DashboardComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
   type: DashboardComponent,
   selectors: [["app-dashboard"]],
-  decls: 37,
-  vars: 5,
-  consts: [["id", "step-connecting-systems", 1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-2"], [1, "text-xl", "font-bold"], [1, "text-sm", "text-gray-600"], ["id", "connecting-systems-list", 1, "space-y-3"], [1, "flex", "items-center", "p-3", "border", "rounded-lg", "hover:border-[#5B47FB]/30", "hover:shadow-sm", "transition-all"], [1, "connect-btn", "w-8", "h-8", "rounded-full", "border", "border-gray-300", "transition-all", "hover:bg-gray-50", "hover:border-[#5B47FB]/30"], ["src", "https://logo.clearbit.com/kp.org", "alt", "Kaiser Permanente", 1, "w-8", "h-8", "mx-4", "rounded"], [1, "flex-1", "min-w-0"], [1, "font-semibold"], ["class", "flex items-center p-3 border rounded-lg hover:border-[#5B47FB]/30 hover:shadow-sm transition-all", 4, "ngFor", "ngForOf"], ["id", "search-button", 1, "w-full", "border", "border-gray-200", "rounded-lg", "flex", "justify-between", "items-center", "px-4", "py-3", "text-sm", "font-medium", "hover:border-[#5B47FB]", "hover:bg-[#5B47FB]/5", "transition-all", 3, "routerLink"], [1, "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", 1, "w-5", "h-5"], ["d", "M21 21l-5.2-5.2m2.2-5.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-chevron-right", "w-5", "h-5", "text-gray-400"], ["points", "9 6 15 12 9 18"], [1, "flex", "items-center", "justify-between", "pt-4"], [1, "flex", "items-center", "gap-2", "text-sm", "text-gray-600"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-lock", "w-4", "h-4"], ["width", "18", "height", "11", "x", "3", "y", "11", "rx", "2", "ry", "2"], ["d", "M7 11V7a5 5 0 0 1 10 0v4"], ["id", "connecting-continue", "disabled", "", 1, "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "py-2", "px-4", "rounded-md", "disabled:opacity-50"], [1, "w-8", "h-8", "flex", "items-center", "justify-center", "animate-bounce"], ["xmlns", "http://www.w3.org/2000/svg", "width", "20", "height", "20", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.5", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "text-amber-500"], ["d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"], ["x1", "12", "y1", "9", "x2", "12", "y2", "13"], ["x1", "12", "y1", "17", "x2", "12.01", "y2", "17"], ["imageFallback", "", 1, "w-8", "max-h-8", "mx-3", "rounded", 3, "src", "alt"], [1, "border", "border-[#5B47FB]", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "px-4", "py-1.5", "rounded-lg", "text-sm", "font-medium", "transition-colors"]],
+  decls: 31,
+  vars: 9,
+  consts: [["id", "step-connecting-systems", 1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-2"], [1, "text-xl", "font-bold"], [1, "text-sm", "text-gray-600"], ["id", "connecting-systems-list", 1, "space-y-3"], ["class", "flex items-center p-3 border rounded-lg hover:border-[#5B47FB]/30 hover:shadow-sm transition-all", 4, "ngFor", "ngForOf"], ["id", "search-button", 1, "w-full", "border", "border-gray-200", "rounded-lg", "flex", "justify-between", "items-center", "px-4", "py-3", "text-sm", "font-medium", "hover:border-[#5B47FB]", "hover:bg-[#5B47FB]/5", "transition-all", 3, "routerLink"], [1, "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", 1, "w-5", "h-5"], ["d", "M21 21l-5.2-5.2m2.2-5.3a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-chevron-right", "w-5", "h-5", "text-gray-400"], ["points", "9 6 15 12 9 18"], [1, "flex", "items-center", "justify-between", "pt-4"], [1, "flex", "items-center", "gap-2", "text-sm", "text-gray-600"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-lock", "w-4", "h-4"], ["width", "18", "height", "11", "x", "3", "y", "11", "rx", "2", "ry", "2"], ["d", "M7 11V7a5 5 0 0 1 10 0v4"], ["id", "connecting-continue", "disabled", "", 1, "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "py-2", "px-4", "rounded-md", "disabled:opacity-50"], [1, "flex", "items-center", "p-3", "border", "rounded-lg", "hover:border-[#5B47FB]/30", "hover:shadow-sm", "transition-all"], [1, "connect-btn", "w-8", "h-8", "rounded-full", "border", "border-gray-300", "transition-all", "hover:bg-gray-50", "hover:border-[#5B47FB]/30"], ["imageFallback", "", "src", "https://logo.clearbit.com/kp.org", 1, "w-8", "h-8", "mx-4", "rounded", 3, "alt"], [1, "flex-1", "min-w-0"], [1, "font-semibold"], [1, "w-8", "h-8", "flex", "items-center", "justify-center", "animate-bounce"], ["xmlns", "http://www.w3.org/2000/svg", "width", "20", "height", "20", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.5", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "text-amber-500"], ["d", "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"], ["x1", "12", "y1", "9", "x2", "12", "y2", "13"], ["x1", "12", "y1", "17", "x2", "12.01", "y2", "17"], ["imageFallback", "", 1, "w-8", "max-h-8", "mx-3", "rounded", 3, "src", "alt"], [1, "border", "border-[#5B47FB]", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "px-4", "py-1.5", "rounded-lg", "text-sm", "font-medium", "transition-colors"]],
   template: function DashboardComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h1", 2);
@@ -821,48 +840,46 @@ DashboardComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](7, "p", 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](8, " Choose the health systems you'd like to connect ");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](9, "div", 6)(10, "div", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](11, "button", 8)(12, "img", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](13, "div", 10)(14, "p", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](15, "Kaiser Permanente");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](9, "div", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](10, DashboardComponent_div_10_Template, 8, 2, "div", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipe"](11, "async");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](12, DashboardComponent_div_12_Template, 14, 3, "div", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipe"](13, "async");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](16, "p", 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](17, "Ready to connect");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](18, DashboardComponent_div_18_Template, 14, 3, "div", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipe"](19, "async");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](20, "button", 13)(21, "div", 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](14, "button", 8)(15, "div", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceSVG"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](22, "svg", 15);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](23, "path", 16);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](16, "svg", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](17, "path", 11);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceHTML"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](24, "span");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](25, "Connect a new health system");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](18, "span");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](19, "Connect a new health system");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceSVG"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](26, "svg", 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](27, "polyline", 18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](20, "svg", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](21, "polyline", 13);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceHTML"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](28, "div", 19)(29, "div", 20);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](22, "div", 14)(23, "div", 15);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceSVG"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](30, "svg", 21);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](31, "rect", 22)(32, "path", 23);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](24, "svg", 16);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](25, "rect", 17)(26, "path", 18);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵnamespaceHTML"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](33, "span");
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](34, "Your medical records are secure");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](27, "span");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](28, "Your medical records are secure");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](35, "button", 24);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](36, " Continue ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](29, "button", 19);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](30, " Continue ");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()();
     }
     if (rf & 2) {
       let tmp_0_0;
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](18);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ((tmp_0_0 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipeBind1"](19, 2, ctx.configService.vaultProfileConfigSubject)) == null ? null : tmp_0_0.pendingPatientAccounts) || _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction0"](4, _c0));
+      let tmp_1_0;
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ((tmp_0_0 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipeBind1"](11, 3, ctx.configService.vaultProfileConfigSubject)) == null ? null : tmp_0_0.connectedPatientAccounts) || _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction0"](7, _c0));
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ((tmp_1_0 = _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpipeBind1"](13, 5, ctx.configService.vaultProfileConfigSubject)) == null ? null : tmp_1_0.pendingPatientAccounts) || _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction0"](8, _c0));
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("routerLink", "/search");
     }
