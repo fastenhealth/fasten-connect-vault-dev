@@ -670,6 +670,12 @@ class VaultProfileConfig {
         }
         this.pendingPatientAccounts?.push({ brand, portal, endpoint });
     }
+    addConnectedAccount(recordLocatorFacility) {
+        if (!this.connectedPatientAccounts) {
+            this.connectedPatientAccounts = [];
+        }
+        this.connectedPatientAccounts?.push(recordLocatorFacility);
+    }
 }
 // - apiMode
 // - organization information
@@ -787,9 +793,12 @@ class DashboardComponent {
     this.configService = configService;
   }
   ngOnInit() {
-    // this.vaultService.getRecordLocator().subscribe((result)=>{
-    //   console.log("record locator", result)
-    // })
+    this.vaultService.getRecordLocatorFacilities().subscribe(facilities => {
+      console.log("record locator facilities", facilities);
+      for (let facility of facilities) {
+        this.configService.vaultProfileAddConnectedAccount(facility);
+      }
+    });
   }
 }
 DashboardComponent.ɵfac = function DashboardComponent_Factory(t) {
@@ -2430,6 +2439,11 @@ class ConfigService {
         updatedVaultProfile.addPendingAccount(brand, portal, endpoint);
         this.vaultProfileConfig = updatedVaultProfile;
     }
+    vaultProfileAddConnectedAccount(recordLocatorFacility) {
+        let updatedVaultProfile = this.vaultProfileConfig$;
+        updatedVaultProfile.addConnectedAccount(recordLocatorFacility);
+        this.vaultProfileConfig = updatedVaultProfile;
+    }
     //Setter
     set searchConfig(value) {
         // get the current config, merge the new values, and then submit.
@@ -2526,7 +2540,7 @@ class VaultService {
             return (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.throwError)(err);
         }));
     }
-    getRecordLocator() {
+    getRecordLocatorFacilities() {
         return this._httpClient.get(`${_environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.connect_api_endpoint_base}/bridge/record_locator`, { params: { "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_1__.ORG_CREDENTIAL_PUBLIC_ID } })
             .pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.map)((response) => {
             console.log("Record Locator Response", response);
