@@ -2349,7 +2349,7 @@ class ConfigService {
     constructor(vaultApi) {
         this._defaultSystemConfig = _models_vault_config__WEBPACK_IMPORTED_MODULE_0__.vaultConfigDefaults;
         this.systemConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject(this._defaultSystemConfig);
-        this.vaultProfileConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject({});
+        this.vaultProfileConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject(Object.setPrototypeOf({}, _models_vault_config__WEBPACK_IMPORTED_MODULE_0__.VaultProfileConfig.prototype));
         this.searchConfigSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject({});
         //always watch for changes to the vault
         this.subscribeSystemConfig((systemConfig) => {
