@@ -595,7 +595,7 @@ const dashboardRoutes = [
     { path: 'dashboard',
         component: _pages_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_0__.DashboardComponent,
         children: [
-            { path: '', redirectTo: 'apps' },
+            { path: '', redirectTo: 'apps', pathMatch: 'full' },
             { path: 'apps', pathMatch: 'full', component: _components_connected_apps_tab_connected_apps_tab_component__WEBPACK_IMPORTED_MODULE_1__.ConnectedAppsTabComponent },
             { path: 'accounts', pathMatch: 'full', component: _components_connected_accounts_tab_connected_accounts_tab_component__WEBPACK_IMPORTED_MODULE_2__.ConnectedAccountsTabComponent },
             { path: 'settings', pathMatch: 'full', component: _components_settings_tab_settings_tab_component__WEBPACK_IMPORTED_MODULE_3__.SettingsTabComponent }
@@ -608,6 +608,28 @@ DashboardRoutingModule.ɵfac = function DashboardRoutingModule_Factory(t) { retu
 DashboardRoutingModule.ɵmod = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({ type: DashboardRoutingModule });
 DashboardRoutingModule.ɵinj = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({ imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forChild(dashboardRoutes), _angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule] });
 (function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](DashboardRoutingModule, { imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule], exports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule] }); })();
+
+
+/***/ }),
+
+/***/ 3587:
+/*!************************************************!*\
+  !*** ./src/app/models/fasten/vault-profile.ts ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "VaultProfile": () => (/* binding */ VaultProfile)
+/* harmony export */ });
+class VaultProfile {
+    constructor() {
+        //not sent to the server
+        this.password_confirm = "";
+        this.agree_terms = false;
+    }
+}
 
 
 /***/ }),
@@ -678,45 +700,128 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "VaultSigninCodeComponent": () => (/* binding */ VaultSigninCodeComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8947);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 635);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 2566);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../services/auth.service */ 7556);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 4666);
+/* harmony import */ var angular_code_input__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! angular-code-input */ 3891);
 
 
-class VaultSigninCodeComponent {
-    constructor() { }
-    ngOnInit() {
-    }
+
+
+
+
+function VaultSigninCodeComponent_p_13_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx_r0.errorMsg);
+  }
 }
-VaultSigninCodeComponent.ɵfac = function VaultSigninCodeComponent_Factory(t) { return new (t || VaultSigninCodeComponent)(); };
-VaultSigninCodeComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: VaultSigninCodeComponent, selectors: [["app-vault-signin-code"]], decls: 21, vars: 1, consts: [["id", "step-verification", 1, "step-view", "p-8", "space-y-6"], [1, "text-center", "space-y-2"], [1, "text-2xl", "font-semibold", "text-gray-900"], ["id", "verification-hint", 1, "text-gray-600"], [1, "space-y-6"], ["id", "verification-inputs", 1, "flex", "justify-between", "gap-2"], ["id", "verification-error", 1, "text-sm", "text-red-500", "text-center", 2, "display", "none"], [1, "text-center", "space-y-4"], [1, "text-sm", "text-gray-600"], ["id", "verification-countdown"], [1, "space-x-2"], ["id", "resend-code", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", 3, "routerLink"], [1, "text-gray-300"], ["id", "use-other-method", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium"]], template: function VaultSigninCodeComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h2", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3, "Check your email");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "p", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5, "A code was sent to your email");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "div", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](7, "div", 5)(8, "p", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "div", 7)(10, "div", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, " Code expires in ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](12, "span", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](13, "4:59");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](14, "div", 10)(15, "button", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](16, " Resend code ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "span", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](18, "|");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](19, "button", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](20, " Use another method ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()();
-    } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", "/dashboard");
-    } }, dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_1__.RouterLink], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ2YXVsdC1zaWduaW4tY29kZS5jb21wb25lbnQuc2NzcyJ9 */"] });
-
+class VaultSigninCodeComponent {
+  constructor(routerService, authService) {
+    this.routerService = routerService;
+    this.authService = authService;
+    this.loading = false;
+    this.errorMsg = "";
+    this.currentEmail = "test@example.com";
+    this.codeExpirySeconds = 300;
+    this.timeRemaining$ = (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.timer)(0, 1000).pipe((0,rxjs__WEBPACK_IMPORTED_MODULE_3__.map)(n => (this.codeExpirySeconds - n) * 1000), (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.takeWhile)(n => n >= 0));
+    this.currentEmail = this.routerService.getCurrentNavigation()?.extras.state?.["currentEmail"];
+  }
+  ngOnInit() {}
+  onCodeCompleted(code) {
+    this.loading = true;
+    console.log("submit finish", this.currentEmail, code);
+    this.authService.VaultAuthFinish(this.currentEmail, code).then(() => {
+      this.loading = false;
+      //this will attempt to redirect to Dashboard, then fallback to ID verification if not provided
+      this.routerService.navigateByUrl("dashboard");
+    }).catch(err => {
+      console.error(err);
+      this.loading = false;
+      if (err?.name) {
+        this.errorMsg = "code is incorrect";
+      } else {
+        this.errorMsg = "an unknown error occurred during sign-in";
+      }
+      // const toastNotification = new ToastNotification()
+      // toastNotification.type = ToastType.Error
+      // toastNotification.message = this.errorMsg
+      // this.toastService.show(toastNotification)
+    });
+  }
+}
+VaultSigninCodeComponent.ɵfac = function VaultSigninCodeComponent_Factory(t) {
+  return new (t || VaultSigninCodeComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService));
+};
+VaultSigninCodeComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
+  type: VaultSigninCodeComponent,
+  selectors: [["app-vault-signin-code"]],
+  inputs: {
+    currentEmail: "currentEmail"
+  },
+  decls: 28,
+  vars: 10,
+  consts: [["id", "step-verification", 1, "step-view", "p-8", "space-y-6"], [1, "text-center", "space-y-2"], [1, "text-2xl", "font-semibold", "text-gray-900"], ["id", "verification-hint", 1, "text-gray-600"], [1, "space-y-6"], ["id", "verification-inputs", 1, "flex", "justify-between", "gap-2"], [3, "isCodeHidden", "codeLength", "codeCompleted"], ["id", "verification-error", "class", "text-sm text-red-500 text-center", 4, "ngIf"], [1, "text-center", "space-y-4"], [1, "text-sm", "text-gray-600"], ["id", "verification-countdown", 1, "font-semibold", "text-gray-900"], [1, "space-x-2"], ["id", "resend-code", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium"], [1, "text-gray-300"], ["id", "use-other-method", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", 2, "display", "none"], ["id", "verification-error", 1, "text-sm", "text-red-500", "text-center"]],
+  template: function VaultSigninCodeComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h2", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3, " Enter authentication code");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](4, "br");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5, "from your email ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "p", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](7, " A code was sent to ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](8, "span");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "div", 4)(11, "div", 5)(12, "code-input", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("codeCompleted", function VaultSigninCodeComponent_Template_code_input_codeCompleted_12_listener($event) {
+        return ctx.onCodeCompleted($event);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](13, VaultSigninCodeComponent_p_13_Template, 2, 1, "p", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](14, "div", 8)(15, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](16, " Code expires in ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](17, "span", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipe"](19, "date");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipe"](20, "async");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](21, "div", 11)(22, "button", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](23, " Resend code ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](24, "span", 13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](25, "|");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](26, "button", 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](27, " Use another method ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()()();
+    }
+    if (rf & 2) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx.currentEmail);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("isCodeHidden", false)("codeLength", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx.errorMsg);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipeBind2"](19, 5, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpipeBind1"](20, 8, ctx.timeRemaining$), "mm:ss"));
+    }
+  },
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.NgIf, angular_code_input__WEBPACK_IMPORTED_MODULE_7__.CodeInputComponent, _angular_common__WEBPACK_IMPORTED_MODULE_6__.AsyncPipe, _angular_common__WEBPACK_IMPORTED_MODULE_6__.DatePipe],
+  styles: ["code-input[_ngcontent-%COMP%] {\n  --item-width: 2.5rem;\n  --item-height: 2.5rem;\n  --item-border: 1px solid #d1d5db;\n  --item-border-radius: 0.5rem;\n  --item-font-size: 1.25rem;\n  --item-font-weight: 600;\n  --item-color: #111827;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInZhdWx0LXNpZ25pbi1jb2RlLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usb0JBQUE7RUFDQSxxQkFBQTtFQUNBLGdDQUFBO0VBQ0EsNEJBQUE7RUFDQSx5QkFBQTtFQUNBLHVCQUFBO0VBQ0EscUJBQUE7QUFDRiIsImZpbGUiOiJ2YXVsdC1zaWduaW4tY29kZS5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbImNvZGUtaW5wdXQge1xuICAtLWl0ZW0td2lkdGg6IDIuNXJlbTtcbiAgLS1pdGVtLWhlaWdodDogMi41cmVtO1xuICAtLWl0ZW0tYm9yZGVyOiAxcHggc29saWQgI2QxZDVkYjtcbiAgLS1pdGVtLWJvcmRlci1yYWRpdXM6IDAuNXJlbTtcbiAgLS1pdGVtLWZvbnQtc2l6ZTogMS4yNXJlbTtcbiAgLS1pdGVtLWZvbnQtd2VpZ2h0OiA2MDA7XG4gIC0taXRlbS1jb2xvcjogIzExMTgyNztcbiAgLy8tLWl0ZW0tYm9yZGVyLWJvdHRvbTogbm9uZTtcbiAgLy8tLWl0ZW0tYm9yZGVyLWhhcy12YWx1ZTogbm9uZTtcbiAgLy8tLWl0ZW0tYm9yZGVyLWJvdHRvbS1oYXMtdmFsdWU6IDJweCBzb2xpZCAjODg4ODg4O1xuICAvLy0taXRlbS1ib3JkZXItZm9jdXNlZDogbm9uZTtcbiAgLy8tLWl0ZW0tYm9yZGVyLWJvdHRvbS1mb2N1c2VkOiAycHggc29saWQgIzgwOTA3MDtcbiAgLy8tLWl0ZW0tc2hhZG93LWZvY3VzZWQ6IG5vbmU7XG59XG4iXX0= */"]
+});
 
 /***/ }),
 
@@ -731,115 +836,232 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "VaultSigninComponent": () => (/* binding */ VaultSigninComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ 2508);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _models_fasten_vault_profile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../models/fasten/vault-profile */ 3587);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _services_config_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/config.service */ 946);
+/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/auth.service */ 7556);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ 2508);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
+/* harmony import */ var _components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/spinner/spinner.component */ 4132);
 
 
 
+
+
+
+
+
+function VaultSigninComponent_p_44_span_3_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1, " Email is required. ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} }
+function VaultSigninComponent_p_44_span_4_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1, " Email must be at least 4 characters long. ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} }
+function VaultSigninComponent_p_44_span_5_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1, " Email must be a valid email address. ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} }
+function VaultSigninComponent_p_44_span_6_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 67)(1, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "Error");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r7.errorMsg, " ");
+} }
+function VaultSigninComponent_p_44_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "p", 63);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "svg", 64);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "path", 65);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, VaultSigninComponent_p_44_span_3_Template, 2, 0, "span", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](4, VaultSigninComponent_p_44_span_4_Template, 2, 0, "span", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](5, VaultSigninComponent_p_44_span_5_Template, 2, 0, "span", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](6, VaultSigninComponent_p_44_span_6_Template, 4, 1, "span", 66);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
+    const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", _r1.errors == null ? null : _r1.errors["required"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", _r1.errors == null ? null : _r1.errors["minlength"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", _r1.errors == null ? null : _r1.errors["email"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r2.errorMsg);
+} }
+function VaultSigninComponent_app_spinner_46_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "app-spinner");
+} }
 class VaultSigninComponent {
-    constructor() { }
+    constructor(configService, authService, routerService) {
+        this.configService = configService;
+        this.authService = authService;
+        this.routerService = routerService;
+        this.loading = false;
+        this.showMessage = false;
+        this.submitted = false;
+        this.existingVaultProfile = new _models_fasten_vault_profile__WEBPACK_IMPORTED_MODULE_0__.VaultProfile();
+        this.errorMsg = "";
+        this.message = "";
+    }
     ngOnInit() {
+        const urlParams = new URLSearchParams(window.location.search);
+        //TODO: parse urlParameters to determine the API mode
+    }
+    signinSubmit() {
+        this.submitted = true;
+        this.loading = true;
+        console.log("Signin", this.existingVaultProfile.email);
+        this.authService.VaultAuthBegin(this.existingVaultProfile.email)
+            .then(() => {
+            this.loading = false;
+            this.routerService.navigateByUrl('auth/signin/code', {
+                state: {
+                    currentEmail: this.existingVaultProfile.email
+                }
+            });
+        })
+            .catch((err) => {
+            this.loading = false;
+            if (err?.name) {
+                this.errorMsg = "email or password is incorrect";
+            }
+            else {
+                this.errorMsg = "an unknown error occurred during sign-in";
+            }
+            // const toastNotification = new ToastNotification()
+            // toastNotification.type = ToastType.Error
+            // toastNotification.message = this.errorMsg
+            // this.toastService.show(toastNotification)
+        });
     }
 }
-VaultSigninComponent.ɵfac = function VaultSigninComponent_Factory(t) { return new (t || VaultSigninComponent)(); };
-VaultSigninComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: VaultSigninComponent, selectors: [["app-vault-signin"]], decls: 87, vars: 1, consts: [[1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], ["id", "initial-form", 1, "space-y-6"], ["for", "initial-email", 1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["id", "initial-email", "type", "email", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2", 2, "display", "none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", 3, "routerLink"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"]], template: function VaultSigninComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h1", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "fasten");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "span", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "BETA");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "div", 5)(8, "h2", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "Your health data, ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "span", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, "unified");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](12, "div", 5)(13, "div", 8)(14, "div", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "svg", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](16, "path", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "div")(18, "h3", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](19, "Secure Access");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "p", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](21, "Safely connect your health records to trusted apps and services");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](22, "div", 8)(23, "div", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](24, "svg", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](25, "path", 14)(26, "path", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](27, "div")(28, "h3", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](29, "Full Control");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](30, "p", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](31, "Control your data sharing preferences with a simple tap");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](32, "div", 16)(33, "form", 17)(34, "div")(35, "label", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](36, "Email address");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](37, "div", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](38, "input", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](39, "div", 21);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](40, "svg", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](41, "path", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](42, "p", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](43, "svg", 25);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](44, "path", 26);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](45, "span");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](46, "button", 27);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](47, " Get Started ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](48, "div", 28);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](49, "svg", 29);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](50, "path", 30);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](51, "span");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](52, "Need help? ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](53, "a", 31);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](54, "Learn more");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](55, "div", 32);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](56, "svg", 33);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](57, "circle", 34);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](58, "g", 35);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](59, "rect", 36)(60, "rect", 37);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](61, "g");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](62, "rect", 38)(63, "rect", 39)(64, "circle", 40);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](65, "g")(66, "g", 41);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](67, "rect", 42)(68, "path", 43)(69, "path", 44);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](70, "g", 45);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](71, "rect", 46)(72, "path", 47)(73, "path", 48);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](74, "g", 49);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](75, "rect", 50)(76, "path", 51)(77, "path", 52);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](78, "g", 53);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](79, "rect", 54)(80, "path", 55)(81, "path", 56);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](82, "g", 57);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](83, "circle", 58)(84, "circle", 59)(85, "circle", 60)(86, "circle", 61);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()();
+VaultSigninComponent.ɵfac = function VaultSigninComponent_Factory(t) { return new (t || VaultSigninComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_services_config_service__WEBPACK_IMPORTED_MODULE_1__.ConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_services_auth_service__WEBPACK_IMPORTED_MODULE_2__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_5__.Router)); };
+VaultSigninComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: VaultSigninComponent, selectors: [["app-vault-signin"]], decls: 87, vars: 4, consts: [[1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "space-y-6", 3, "ngSubmit"], ["vaultProfileForm", "ngForm"], [1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["type", "email", "name", "email", "required", "", "email", "", "minlength", "4", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200", 3, "ngModel", "ngModelChange"], ["email", "ngModel"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", "class", "mt-2 text-sm text-red-500 flex items-center gap-2", 4, "ngIf"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", 3, "disabled"], [4, "ngIf"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["class", "alert alert-danger mt-3", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-3"]], template: function VaultSigninComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h1", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](4, "fasten");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "span", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](6, "BETA");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](7, "div", 5)(8, "h2", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9, "Your health data, ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "span", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "unified");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](12, "div", 5)(13, "div", 8)(14, "div", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](15, "svg", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](16, "path", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](17, "div")(18, "h3", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](19, "Secure Access");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](20, "p", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](21, "Safely connect your health records to trusted apps and services");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](22, "div", 8)(23, "div", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](24, "svg", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](25, "path", 14)(26, "path", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](27, "div")(28, "h3", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](29, "Full Control");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](30, "p", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](31, "Control your data sharing preferences with a simple tap");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](32, "div", 16)(33, "form", 17, 18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngSubmit", function VaultSigninComponent_Template_form_ngSubmit_33_listener() { return ctx.signinSubmit(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](35, "div")(36, "label", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](37, "Email address");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](38, "div", 20)(39, "input", 21, 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function VaultSigninComponent_Template_input_ngModelChange_39_listener($event) { return ctx.existingVaultProfile.email = $event; });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](41, "div", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](42, "svg", 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](43, "path", 25);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](44, VaultSigninComponent_p_44_Template, 7, 4, "p", 26);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](45, "button", 27);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](46, VaultSigninComponent_app_spinner_46_Template, 1, 0, "app-spinner", 28);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](47, " Get Started ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](48, "div", 29);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](49, "svg", 30);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](50, "path", 31);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](51, "span");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](52, "Need help? ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](53, "a", 32);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](54, "Learn more");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](55, "div", 33);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](56, "svg", 34);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](57, "circle", 35);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](58, "g", 36);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](59, "rect", 37)(60, "rect", 38);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](61, "g");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](62, "rect", 39)(63, "rect", 40)(64, "circle", 41);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](65, "g")(66, "g", 42);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](67, "rect", 43)(68, "path", 44)(69, "path", 45);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](70, "g", 46);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](71, "rect", 47)(72, "path", 48)(73, "path", 49);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](74, "g", 50);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](75, "rect", 51)(76, "path", 52)(77, "path", 53);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](78, "g", 54);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](79, "rect", 55)(80, "path", 56)(81, "path", 57);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](82, "g", 58);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](83, "circle", 59)(84, "circle", 60)(85, "circle", 61)(86, "circle", 62);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](46);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", "/auth/signin/code");
-    } }, dependencies: [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_1__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_1__.NgForm, _angular_router__WEBPACK_IMPORTED_MODULE_2__.RouterLink], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ2YXVsdC1zaWduaW4uY29tcG9uZW50LnNjc3MifQ== */"] });
+        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](34);
+        const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵreference"](40);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](39);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngModel", ctx.existingVaultProfile.email);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", _r1.invalid && (_r1.dirty || _r1.touched));
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("disabled", !_r0.form.valid || ctx.loading);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.loading);
+    } }, dependencies: [_angular_forms__WEBPACK_IMPORTED_MODULE_6__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.RequiredValidator, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.MinLengthValidator, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.EmailValidator, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgModel, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgForm, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf, _components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_3__.SpinnerComponent], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ2YXVsdC1zaWduaW4uY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
