@@ -1,9 +1,9 @@
 (self["webpackChunkfasten_connect_vault"] = self["webpackChunkfasten_connect_vault"] || []).push([["main"],{
 
-/***/ 158:
-/*!***************************************!*\
-  !*** ./src/app/app-routing.module.ts ***!
-  \***************************************/
+/***/ 4473:
+/*!*********************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/app-routing.module.ts ***!
+  \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -12,9 +12,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "AppRoutingModule": () => (/* binding */ AppRoutingModule)
 /* harmony export */ });
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var _pages_vault_signin_vault_signin_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pages/vault-signin/vault-signin.component */ 8363);
-/* harmony import */ var _pages_vault_signin_code_vault_signin_code_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pages/vault-signin-code/vault-signin-code.component */ 8956);
-/* harmony import */ var _dashboard_routing_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dashboard-routing.module */ 4228);
+/* harmony import */ var _pages_vault_signin_vault_signin_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pages/vault-signin/vault-signin.component */ 9290);
+/* harmony import */ var _pages_vault_signin_code_vault_signin_code_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pages/vault-signin-code/vault-signin-code.component */ 1642);
+/* harmony import */ var _dashboard_routing_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dashboard-routing.module */ 3176);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 2560);
 
 
@@ -45,10 +45,10 @@ AppRoutingModule.ɵinj = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_3_
 
 /***/ }),
 
-/***/ 5041:
-/*!**********************************!*\
-  !*** ./src/app/app.component.ts ***!
-  \**********************************/
+/***/ 6371:
+/*!****************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/app.component.ts ***!
+  \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -99,30 +99,34 @@ class AppComponent {
     }
 }
 AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_0__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_2__.NgbModal)); };
-AppComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 8, vars: 1, consts: [["id", "test-mode-banner", 1, "mx-auto", "w-full", "max-w-[440px]", "bg-[#DC3545]", "text-white", "text-center", "py-2", "px-4", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+AppComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["app-root"]], decls: 11, vars: 1, consts: [["id", "test-mode-banner", 1, "mx-auto", "w-full", "max-w-[440px]", "bg-[#DC3545]", "text-white", "text-center", "py-2", "px-4", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "svg", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "path", 2)(3, "path", 3)(4, "path", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5, " You are using Fasten in Test mode\n");
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5, " You are using Fasten in");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "div", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](7, "router-outlet");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "strong");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](7, "Test");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](8, "mode\n");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](9, "div", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](10, "router-outlet");
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](9);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngClass", ctx.router.url == "/auth/signin" ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
     } }, dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_3__.NgClass, _angular_router__WEBPACK_IMPORTED_MODULE_0__.RouterOutlet], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAuY29tcG9uZW50LnNjc3MifQ== */"] });
 
 
 /***/ }),
 
-/***/ 2976:
-/*!**********************************!*\
-  !*** ./src/app/app.constants.ts ***!
-  \**********************************/
+/***/ 3974:
+/*!****************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/app.constants.ts ***!
+  \****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -141,10 +145,10 @@ const ORG_CREDENTIAL_PUBLIC_ID = 'public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l
 
 /***/ }),
 
-/***/ 6747:
-/*!*******************************!*\
-  !*** ./src/app/app.module.ts ***!
-  \*******************************/
+/***/ 2924:
+/*!*************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/app.module.ts ***!
+  \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -155,24 +159,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/forms */ 2508);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app-routing.module */ 158);
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app.component */ 5041);
+/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app-routing.module */ 4473);
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app.component */ 6371);
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ 9306);
 /* harmony import */ var _fortawesome_free_regular_svg_icons__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @fortawesome/free-regular-svg-icons */ 2898);
 /* harmony import */ var ngx_infinite_scroll__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ngx-infinite-scroll */ 7364);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 3191);
 /* harmony import */ var _fortawesome_angular_fontawesome__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @fortawesome/angular-fontawesome */ 9200);
-/* harmony import */ var _pages_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/dashboard/dashboard.component */ 4789);
-/* harmony import */ var _auth_guards_is_authenticated_auth_guard__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./auth-guards/is-authenticated-auth-guard */ 6056);
-/* harmony import */ var _services_auth_interceptor_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./services/auth-interceptor.service */ 2993);
+/* harmony import */ var _pages_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pages/dashboard/dashboard.component */ 5688);
+/* harmony import */ var _auth_guards_is_authenticated_auth_guard__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./auth-guards/is-authenticated-auth-guard */ 869);
+/* harmony import */ var _services_auth_interceptor_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./services/auth-interceptor.service */ 928);
 /* harmony import */ var ngx_moment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ngx-moment */ 728);
 /* harmony import */ var angular_code_input__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! angular-code-input */ 3891);
-/* harmony import */ var _components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/spinner/spinner.component */ 4132);
-/* harmony import */ var _pages_vault_signin_vault_signin_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/vault-signin/vault-signin.component */ 8363);
-/* harmony import */ var _pages_vault_signin_code_vault_signin_code_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pages/vault-signin-code/vault-signin-code.component */ 8956);
-/* harmony import */ var _components_connected_apps_tab_connected_apps_tab_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/connected-apps-tab/connected-apps-tab.component */ 2475);
-/* harmony import */ var _components_connected_accounts_tab_connected_accounts_tab_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/connected-accounts-tab/connected-accounts-tab.component */ 1287);
-/* harmony import */ var _components_settings_tab_settings_tab_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/settings-tab/settings-tab.component */ 8440);
+/* harmony import */ var _components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/spinner/spinner.component */ 4285);
+/* harmony import */ var _pages_vault_signin_vault_signin_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pages/vault-signin/vault-signin.component */ 9290);
+/* harmony import */ var _pages_vault_signin_code_vault_signin_code_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./pages/vault-signin-code/vault-signin-code.component */ 1642);
+/* harmony import */ var _components_connected_apps_tab_connected_apps_tab_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/connected-apps-tab/connected-apps-tab.component */ 6842);
+/* harmony import */ var _components_connected_accounts_tab_connected_accounts_tab_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/connected-accounts-tab/connected-accounts-tab.component */ 8593);
+/* harmony import */ var _components_settings_tab_settings_tab_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/settings-tab/settings-tab.component */ 2192);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/core */ 2560);
 
 
@@ -243,10 +247,10 @@ AppModule.ɵinj = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵ�
 
 /***/ }),
 
-/***/ 6056:
-/*!************************************************************!*\
-  !*** ./src/app/auth-guards/is-authenticated-auth-guard.ts ***!
-  \************************************************************/
+/***/ 869:
+/*!******************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/auth-guards/is-authenticated-auth-guard.ts ***!
+  \******************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -254,9 +258,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "IsAuthenticatedAuthGuard": () => (/* binding */ IsAuthenticatedAuthGuard)
 /* harmony export */ });
-/* harmony import */ var _home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 1670);
+/* harmony import */ var _home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 1670);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/auth.service */ 7556);
+/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/auth.service */ 4213);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ 124);
 
 
@@ -270,7 +274,7 @@ class IsAuthenticatedAuthGuard {
   }
   canActivate(route, state) {
     var _this = this;
-    return (0,_home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let jwtPayload = yield _this.authService.GetJWTPayload();
       //check if the user is authenticated, if not, redirect to login
       if (!jwtPayload) {
@@ -294,10 +298,10 @@ IsAuthenticatedAuthGuard.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_M
 
 /***/ }),
 
-/***/ 1287:
-/*!***************************************************************************************!*\
-  !*** ./src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts ***!
-  \***************************************************************************************/
+/***/ 8593:
+/*!*********************************************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts ***!
+  \*********************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -363,10 +367,10 @@ ConnectedAccountsTabComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPOR
 
 /***/ }),
 
-/***/ 2475:
-/*!*******************************************************************************!*\
-  !*** ./src/app/components/connected-apps-tab/connected-apps-tab.component.ts ***!
-  \*******************************************************************************/
+/***/ 6842:
+/*!*************************************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts ***!
+  \*************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -457,10 +461,10 @@ ConnectedAppsTabComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_
 
 /***/ }),
 
-/***/ 8440:
-/*!*******************************************************************!*\
-  !*** ./src/app/components/settings-tab/settings-tab.component.ts ***!
-  \*******************************************************************/
+/***/ 2192:
+/*!*************************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts ***!
+  \*************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -537,10 +541,10 @@ SettingsTabComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
-/***/ 4132:
-/*!*********************************************************!*\
-  !*** ./src/app/components/spinner/spinner.component.ts ***!
-  \*********************************************************/
+/***/ 4285:
+/*!***************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts ***!
+  \***************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -566,10 +570,10 @@ SpinnerComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_0_
 
 /***/ }),
 
-/***/ 4228:
-/*!*********************************************!*\
-  !*** ./src/app/dashboard-routing.module.ts ***!
-  \*********************************************/
+/***/ 3176:
+/*!***************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/dashboard-routing.module.ts ***!
+  \***************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -578,10 +582,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "DashboardRoutingModule": () => (/* binding */ DashboardRoutingModule),
 /* harmony export */   "dashboardRoutes": () => (/* binding */ dashboardRoutes)
 /* harmony export */ });
-/* harmony import */ var _pages_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pages/dashboard/dashboard.component */ 4789);
-/* harmony import */ var _components_connected_apps_tab_connected_apps_tab_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/connected-apps-tab/connected-apps-tab.component */ 2475);
-/* harmony import */ var _components_connected_accounts_tab_connected_accounts_tab_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/connected-accounts-tab/connected-accounts-tab.component */ 1287);
-/* harmony import */ var _components_settings_tab_settings_tab_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/settings-tab/settings-tab.component */ 8440);
+/* harmony import */ var _pages_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pages/dashboard/dashboard.component */ 5688);
+/* harmony import */ var _components_connected_apps_tab_connected_apps_tab_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/connected-apps-tab/connected-apps-tab.component */ 6842);
+/* harmony import */ var _components_connected_accounts_tab_connected_accounts_tab_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/connected-accounts-tab/connected-accounts-tab.component */ 8593);
+/* harmony import */ var _components_settings_tab_settings_tab_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/settings-tab/settings-tab.component */ 2192);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
 
@@ -612,10 +616,10 @@ DashboardRoutingModule.ɵinj = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MOD
 
 /***/ }),
 
-/***/ 3587:
-/*!************************************************!*\
-  !*** ./src/app/models/fasten/vault-profile.ts ***!
-  \************************************************/
+/***/ 5277:
+/*!******************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/models/fasten/vault-profile.ts ***!
+  \******************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -634,10 +638,10 @@ class VaultProfile {
 
 /***/ }),
 
-/***/ 4789:
-/*!********************************************************!*\
-  !*** ./src/app/pages/dashboard/dashboard.component.ts ***!
-  \********************************************************/
+/***/ 5688:
+/*!**************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts ***!
+  \**************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -689,10 +693,10 @@ DashboardComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_
 
 /***/ }),
 
-/***/ 8956:
-/*!************************************************************************!*\
-  !*** ./src/app/pages/vault-signin-code/vault-signin-code.component.ts ***!
-  \************************************************************************/
+/***/ 1642:
+/*!******************************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/pages/vault-signin-code/vault-signin-code.component.ts ***!
+  \******************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -705,7 +709,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 2566);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 2560);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
-/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../services/auth.service */ 7556);
+/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../services/auth.service */ 4213);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 4666);
 /* harmony import */ var angular_code_input__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! angular-code-input */ 3891);
 
@@ -825,10 +829,10 @@ VaultSigninCodeComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MO
 
 /***/ }),
 
-/***/ 8363:
-/*!**************************************************************!*\
-  !*** ./src/app/pages/vault-signin/vault-signin.component.ts ***!
-  \**************************************************************/
+/***/ 9290:
+/*!********************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts ***!
+  \********************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -836,14 +840,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "VaultSigninComponent": () => (/* binding */ VaultSigninComponent)
 /* harmony export */ });
-/* harmony import */ var _models_fasten_vault_profile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../models/fasten/vault-profile */ 3587);
+/* harmony import */ var _models_fasten_vault_profile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../models/fasten/vault-profile */ 5277);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _services_config_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/config.service */ 946);
-/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/auth.service */ 7556);
+/* harmony import */ var _services_config_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/config.service */ 3673);
+/* harmony import */ var _services_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/auth.service */ 4213);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 124);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ 2508);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4666);
-/* harmony import */ var _components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/spinner/spinner.component */ 4132);
+/* harmony import */ var _components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/spinner/spinner.component */ 4285);
 
 
 
@@ -1066,10 +1070,10 @@ VaultSigninComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
-/***/ 2993:
-/*!******************************************************!*\
-  !*** ./src/app/services/auth-interceptor.service.ts ***!
-  \******************************************************/
+/***/ 928:
+/*!************************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/services/auth-interceptor.service.ts ***!
+  \************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1080,9 +1084,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 745);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 5474);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 3158);
-/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../environments/environment */ 2340);
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../environments/environment */ 6803);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./auth.service */ 7556);
+/* harmony import */ var _auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./auth.service */ 4213);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 124);
 
 
@@ -1130,10 +1134,10 @@ AuthInterceptorService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MO
 
 /***/ }),
 
-/***/ 7556:
-/*!******************************************!*\
-  !*** ./src/app/services/auth.service.ts ***!
-  \******************************************/
+/***/ 4213:
+/*!************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/services/auth.service.ts ***!
+  \************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1142,14 +1146,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "AuthService": () => (/* binding */ AuthService),
 /* harmony export */   "FASTEN_AUTH_VAULT_COOKIE_NAME": () => (/* binding */ FASTEN_AUTH_VAULT_COOKIE_NAME)
 /* harmony export */ });
-/* harmony import */ var _home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 1670);
-/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../environments/environment */ 2340);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 6317);
-/* harmony import */ var jose__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! jose */ 8042);
-/* harmony import */ var _app_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../app.constants */ 2976);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common/http */ 8987);
-/* harmony import */ var _config_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./config.service */ 946);
+/* harmony import */ var _home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 1670);
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../environments/environment */ 6803);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 6317);
+/* harmony import */ var jose__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! jose */ 1979);
+/* harmony import */ var jose__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! jose */ 1231);
+/* harmony import */ var _app_constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../app.constants */ 3974);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 2560);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common/http */ 8987);
+/* harmony import */ var _config_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config.service */ 3673);
 
 
 
@@ -1163,17 +1168,17 @@ class AuthService {
   constructor(_httpClient, vaultConfigService) {
     this._httpClient = _httpClient;
     this.vaultConfigService = vaultConfigService;
-    this.IsAuthenticatedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_5__.BehaviorSubject(false);
+    this.IsAuthenticatedSubject = new rxjs__WEBPACK_IMPORTED_MODULE_4__.BehaviorSubject(false);
   }
   VaultAuthBegin(email) {
     var _this = this;
-    return (0,_home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let resp = yield _this._httpClient.post(`${_environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.connect_api_endpoint_base}/bridge/vault_auth_begin`, {
         "email": email
       }, {
         withCredentials: true,
         params: {
-          "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_3__.ORG_CREDENTIAL_PUBLIC_ID
+          "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_2__.ORG_CREDENTIAL_PUBLIC_ID
         }
       }).toPromise();
       return resp;
@@ -1181,14 +1186,14 @@ class AuthService {
   }
   VaultAuthFinish(email, code) {
     var _this2 = this;
-    return (0,_home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let resp = yield _this2._httpClient.post(`${_environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.connect_api_endpoint_base}/bridge/vault_auth_finish`, {
         "email": email,
         "code": code
       }, {
         withCredentials: true,
         params: {
-          "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_3__.ORG_CREDENTIAL_PUBLIC_ID
+          "public_id": _app_constants__WEBPACK_IMPORTED_MODULE_2__.ORG_CREDENTIAL_PUBLIC_ID
         }
       }).toPromise();
       return resp;
@@ -1196,7 +1201,7 @@ class AuthService {
   }
   Signout() {
     var _this3 = this;
-    return (0,_home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.publishAuthenticationState(false);
       return _this3.deleteCookie(FASTEN_AUTH_VAULT_COOKIE_NAME);
       // // let remotePouchDb = new PouchDB(this.getRemoteUserDb(localStorage.getItem("current_user")), {skip_setup: true});
@@ -1208,19 +1213,19 @@ class AuthService {
   }
   GetJWTPayload() {
     var _this4 = this;
-    return (0,_home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let authToken = _this4.getCookie(FASTEN_AUTH_VAULT_COOKIE_NAME);
       if (!authToken) {
         return null;
       }
-      let jwks = jose__WEBPACK_IMPORTED_MODULE_2__.createRemoteJWKSet(new URL(_environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.jwks_uri));
+      let jwks = jose__WEBPACK_IMPORTED_MODULE_5__.createRemoteJWKSet(new URL(_environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.jwks_uri));
       let issuerHost = _environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.connect_api_jwt_issuer_host;
       try {
         //audience and issuer must be the same. This token is only valid on the fasten connect api
         const {
           payload,
           protectedHeader
-        } = yield jose__WEBPACK_IMPORTED_MODULE_2__.jwtVerify(authToken, jwks, {
+        } = yield jose__WEBPACK_IMPORTED_MODULE_6__.jwtVerify(authToken, jwks, {
           issuer: issuerHost,
           audience: issuerHost
         });
@@ -1237,7 +1242,7 @@ class AuthService {
   }
   IsAuthenticated() {
     var _this5 = this;
-    return (0,_home_runner_work_fasten_connect_vault_fasten_connect_vault_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_runner_work_fasten_connect_frontend_ngx_fasten_connect_frontend_ngx_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let payload = yield _this5.GetJWTPayload();
       let isAuthenticated = payload != null;
       _this5.publishAuthenticationState(isAuthenticated);
@@ -1275,9 +1280,9 @@ class AuthService {
   }
 }
 AuthService.ɵfac = function AuthService_Factory(t) {
-  return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_7__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_config_service__WEBPACK_IMPORTED_MODULE_4__.ConfigService));
+  return new (t || AuthService)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_8__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_config_service__WEBPACK_IMPORTED_MODULE_3__.ConfigService));
 };
-AuthService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
+AuthService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineInjectable"]({
   token: AuthService,
   factory: AuthService.ɵfac,
   providedIn: 'root'
@@ -1285,10 +1290,10 @@ AuthService.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵ
 
 /***/ }),
 
-/***/ 946:
-/*!********************************************!*\
-  !*** ./src/app/services/config.service.ts ***!
-  \********************************************/
+/***/ 3673:
+/*!**************************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/app/services/config.service.ts ***!
+  \**************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1338,10 +1343,10 @@ ConfigService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_2__[
 
 /***/ }),
 
-/***/ 2340:
-/*!*****************************************!*\
-  !*** ./src/environments/environment.ts ***!
-  \*****************************************/
+/***/ 6803:
+/*!***********************************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/environments/environment.ts ***!
+  \***********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1349,36 +1354,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "environment": () => (/* binding */ environment)
 /* harmony export */ });
+// This file can be replaced during build by using the `fileReplacements` array.
+// `ng build` replaces `environment.ts` with `environment.prod.ts`.
+// The list of file replacements can be found in `angular.json`.
+//local
 const environment = {
-    name: "development",
+    name: "local",
     //specify the lighthouse base that we're going to use to authenticate against all our source/providers. Must not have trailing slash
     lighthouse_api_endpoint_base: 'https://lighthouse.fastenhealth.com',
     //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash
-    // connect_api_endpoint_base: 'https://api.connect-dev.fastenhealth.com/v1',
     // if relative, must start with /
-    connect_api_endpoint_base: 'https://api.connect-dev.fastenhealth.com/v1',
-    connect_api_jwt_issuer_host: 'https://api.connect-dev.fastenhealth.com/v1',
+    connect_api_endpoint_base: 'http://localhost:4200/api',
+    //use to specify the host that issued the JWT. This is used to verify the JWT.
+    //This should always be the same as the connect_api_endpoint_base, however in local mode it will be different because of angular proxy
+    // connect_api_jwt_issuer_host: 'http://localhost:8000',
+    //JWKS for JWT verification
+    // jwks_uri: 'https://cdn.fastenhealth.com/jwks/fasten-connect/local.json',
+    //Stripe (Test mode locally)
+    stripe_customer_portal: 'https://billing.stripe.com/p/login/test_bIY7thbZL5g6gXC000',
+    //when using local proxy to api.connect-dev.fastenhealth.com, uncomment the following lines:
     jwks_uri: 'https://cdn.fastenhealth.com/jwks/fasten-connect/dev.json',
-    //Stripe pricing table (Test mode in Dev)
-    stripe_customer_portal: 'https://billing.stripe.com/p/login/test_bIY7thbZL5g6gXC000'
-    // stripe_customer_portal: 'https://billing.stripe.com/p/login/dR6aEYe5h4AYe2I144'
+    connect_api_jwt_issuer_host: 'https://api.connect-dev.fastenhealth.com/v1',
 };
+/*
+ * For easier debugging in development mode, you can import the following file
+ * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
+ *
+ * This import should be commented out in production mode because it will have a negative impact
+ * on performance if an error is thrown.
+ */
+// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.
 
 
 /***/ }),
 
-/***/ 4431:
-/*!*********************!*\
-  !*** ./src/main.ts ***!
-  \*********************/
+/***/ 3762:
+/*!***************************************************!*\
+  !*** ./projects/fasten-connect-vault/src/main.ts ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 2560);
-/* harmony import */ var _app_app_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app/app.module */ 6747);
-/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./environments/environment */ 2340);
+/* harmony import */ var _app_app_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app/app.module */ 2924);
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./environments/environment */ 6803);
 
 
 
@@ -1515,8 +1536,8 @@ var map = {
 	"./gu.js": 2809,
 	"./he": 5402,
 	"./he.js": 5402,
-	"./hi": 3435,
-	"./hi.js": 3435,
+	"./hi": 315,
+	"./hi.js": 315,
 	"./hr": 410,
 	"./hr.js": 410,
 	"./hu": 8288,
@@ -1591,8 +1612,8 @@ var map = {
 	"./nn.js": 3501,
 	"./oc-lnc": 563,
 	"./oc-lnc.js": 563,
-	"./pa-in": 869,
-	"./pa-in.js": 869,
+	"./pa-in": 643,
+	"./pa-in.js": 643,
 	"./pl": 5302,
 	"./pl.js": 5302,
 	"./pt": 9687,
@@ -1616,8 +1637,8 @@ var map = {
 	"./sq": 6361,
 	"./sq.js": 6361,
 	"./sr": 8965,
-	"./sr-cyrl": 7660,
-	"./sr-cyrl.js": 7660,
+	"./sr-cyrl": 1287,
+	"./sr-cyrl.js": 1287,
 	"./sr.js": 8965,
 	"./ss": 5456,
 	"./ss.js": 5456,
@@ -1700,7 +1721,7 @@ webpackContext.id = 6700;
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ __webpack_require__.O(0, ["vendor"], () => (__webpack_exec__(4431)));
+/******/ __webpack_require__.O(0, ["vendor"], () => (__webpack_exec__(3762)));
 /******/ var __webpack_exports__ = __webpack_require__.O();
 /******/ }
 ]);
