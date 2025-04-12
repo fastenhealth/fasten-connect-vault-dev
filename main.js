@@ -61262,7 +61262,7 @@ var AppComponent = class _AppComponent {
       }
       if (rf & 2) {
         \u0275\u0275advance(6);
-        \u0275\u0275property("ngClass", ctx.router.url == "/auth/signin" ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
+        \u0275\u0275property("ngClass", ctx.router.url.startsWith("/auth/signin") ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
       }
     }, dependencies: [NgClass, RouterOutlet], encapsulation: 2 });
   }
