@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.scss"],
+  "sourcesContent": [".clear-button {\n  border-radius: 32px;\n  background-color: #041A55;\n\n  font-family: \"Inter\", serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n\n  height: 56px;\n  width: 328px;\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,iBAAA;AACA,oBAAA;AAEA,eAAA,OAAA,EAAA;AACA,eAAA;AACA,aAAA;AACA,eAAA;AAEA,UAAA;AACA,SAAA;;",
+  "names": []
+}

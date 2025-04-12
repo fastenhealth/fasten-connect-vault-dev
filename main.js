@@ -9829,14 +9829,14 @@ var config = {
 
 // node_modules/rxjs/dist/esm/internal/scheduler/timeoutProvider.js
 var timeoutProvider = {
-  setTimeout(handler, timeout, ...args) {
+  setTimeout(handler, timeout2, ...args) {
     const {
       delegate
     } = timeoutProvider;
     if (delegate === null || delegate === void 0 ? void 0 : delegate.setTimeout) {
-      return delegate.setTimeout(handler, timeout, ...args);
+      return delegate.setTimeout(handler, timeout2, ...args);
     }
-    return setTimeout(handler, timeout, ...args);
+    return setTimeout(handler, timeout2, ...args);
   },
   clearTimeout(handle) {
     const {
@@ -10514,6 +10514,69 @@ var dateTimestampProvider = {
   delegate: void 0
 };
 
+// node_modules/rxjs/dist/esm/internal/ReplaySubject.js
+var ReplaySubject = class extends Subject {
+  constructor(_bufferSize = Infinity, _windowTime = Infinity, _timestampProvider = dateTimestampProvider) {
+    super();
+    this._bufferSize = _bufferSize;
+    this._windowTime = _windowTime;
+    this._timestampProvider = _timestampProvider;
+    this._buffer = [];
+    this._infiniteTimeWindow = true;
+    this._infiniteTimeWindow = _windowTime === Infinity;
+    this._bufferSize = Math.max(1, _bufferSize);
+    this._windowTime = Math.max(1, _windowTime);
+  }
+  next(value) {
+    const {
+      isStopped,
+      _buffer,
+      _infiniteTimeWindow,
+      _timestampProvider,
+      _windowTime
+    } = this;
+    if (!isStopped) {
+      _buffer.push(value);
+      !_infiniteTimeWindow && _buffer.push(_timestampProvider.now() + _windowTime);
+    }
+    this._trimBuffer();
+    super.next(value);
+  }
+  _subscribe(subscriber) {
+    this._throwIfClosed();
+    this._trimBuffer();
+    const subscription = this._innerSubscribe(subscriber);
+    const {
+      _infiniteTimeWindow,
+      _buffer
+    } = this;
+    const copy = _buffer.slice();
+    for (let i = 0; i < copy.length && !subscriber.closed; i += _infiniteTimeWindow ? 1 : 2) {
+      subscriber.next(copy[i]);
+    }
+    this._checkFinalizedStatuses(subscriber);
+    return subscription;
+  }
+  _trimBuffer() {
+    const {
+      _bufferSize,
+      _timestampProvider,
+      _buffer,
+      _infiniteTimeWindow
+    } = this;
+    const adjustedBufferSize = (_infiniteTimeWindow ? 1 : 2) * _bufferSize;
+    _bufferSize < Infinity && adjustedBufferSize < _buffer.length && _buffer.splice(0, _buffer.length - adjustedBufferSize);
+    if (!_infiniteTimeWindow) {
+      const now = _timestampProvider.now();
+      let last4 = 0;
+      for (let i = 1; i < _buffer.length && _buffer[i] <= now; i += 2) {
+        last4 = i;
+      }
+      last4 && _buffer.splice(0, last4 + 1);
+    }
+  }
+};
+
 // node_modules/rxjs/dist/esm/internal/scheduler/Action.js
 var Action = class extends Subscription {
   constructor(scheduler, work) {
@@ -10526,14 +10589,14 @@ var Action = class extends Subscription {
 
 // node_modules/rxjs/dist/esm/internal/scheduler/intervalProvider.js
 var intervalProvider = {
-  setInterval(handler, timeout, ...args) {
+  setInterval(handler, timeout2, ...args) {
     const {
       delegate
     } = intervalProvider;
     if (delegate === null || delegate === void 0 ? void 0 : delegate.setInterval) {
-      return delegate.setInterval(handler, timeout, ...args);
+      return delegate.setInterval(handler, timeout2, ...args);
     }
-    return setInterval(handler, timeout, ...args);
+    return setInterval(handler, timeout2, ...args);
   },
   clearInterval(handle) {
     const {
@@ -11136,6 +11199,65 @@ function isValidDate(value) {
   return value instanceof Date && !isNaN(value);
 }
 
+// node_modules/rxjs/dist/esm/internal/operators/timeout.js
+var TimeoutError = createErrorClass((_super) => function TimeoutErrorImpl(info = null) {
+  _super(this);
+  this.message = "Timeout has occurred";
+  this.name = "TimeoutError";
+  this.info = info;
+});
+function timeout(config3, schedulerArg) {
+  const {
+    first: first2,
+    each,
+    with: _with = timeoutErrorFactory,
+    scheduler = schedulerArg !== null && schedulerArg !== void 0 ? schedulerArg : asyncScheduler,
+    meta = null
+  } = isValidDate(config3) ? {
+    first: config3
+  } : typeof config3 === "number" ? {
+    each: config3
+  } : config3;
+  if (first2 == null && each == null) {
+    throw new TypeError("No timeout provided.");
+  }
+  return operate((source, subscriber) => {
+    let originalSourceSubscription;
+    let timerSubscription;
+    let lastValue = null;
+    let seen = 0;
+    const startTimer = (delay) => {
+      timerSubscription = executeSchedule(subscriber, scheduler, () => {
+        try {
+          originalSourceSubscription.unsubscribe();
+          innerFrom(_with({
+            meta,
+            lastValue,
+            seen
+          })).subscribe(subscriber);
+        } catch (err) {
+          subscriber.error(err);
+        }
+      }, delay);
+    };
+    originalSourceSubscription = source.subscribe(createOperatorSubscriber(subscriber, (value) => {
+      timerSubscription === null || timerSubscription === void 0 ? void 0 : timerSubscription.unsubscribe();
+      seen++;
+      subscriber.next(lastValue = value);
+      each > 0 && startTimer(each);
+    }, void 0, void 0, () => {
+      if (!(timerSubscription === null || timerSubscription === void 0 ? void 0 : timerSubscription.closed)) {
+        timerSubscription === null || timerSubscription === void 0 ? void 0 : timerSubscription.unsubscribe();
+      }
+      lastValue = null;
+    }));
+    !seen && startTimer(first2 != null ? typeof first2 === "number" ? first2 : +first2 - scheduler.now() : each);
+  });
+}
+function timeoutErrorFactory(info) {
+  throw new TimeoutError(info);
+}
+
 // node_modules/rxjs/dist/esm/internal/operators/map.js
 function map(project, thisArg) {
   return operate((source, subscriber) => {
@@ -11584,9 +11706,173 @@ function last2(predicate, defaultValue) {
   return (source) => source.pipe(predicate ? filter((v, i) => predicate(v, i, source)) : identity, takeLast(1), hasDefaultValue ? defaultIfEmpty(defaultValue) : throwIfEmpty(() => new EmptyError()));
 }
 
+// node_modules/rxjs/dist/esm/internal/operators/retry.js
+function retry(configOrCount = Infinity) {
+  let config3;
+  if (configOrCount && typeof configOrCount === "object") {
+    config3 = configOrCount;
+  } else {
+    config3 = {
+      count: configOrCount
+    };
+  }
+  const {
+    count = Infinity,
+    delay,
+    resetOnSuccess = false
+  } = config3;
+  return count <= 0 ? identity : operate((source, subscriber) => {
+    let soFar = 0;
+    let innerSub;
+    const subscribeForRetry = () => {
+      let syncUnsub = false;
+      innerSub = source.subscribe(createOperatorSubscriber(subscriber, (value) => {
+        if (resetOnSuccess) {
+          soFar = 0;
+        }
+        subscriber.next(value);
+      }, void 0, (err) => {
+        if (soFar++ < count) {
+          const resub = () => {
+            if (innerSub) {
+              innerSub.unsubscribe();
+              innerSub = null;
+              subscribeForRetry();
+            } else {
+              syncUnsub = true;
+            }
+          };
+          if (delay != null) {
+            const notifier = typeof delay === "number" ? timer(delay) : innerFrom(delay(err, soFar));
+            const notifierSubscriber = createOperatorSubscriber(subscriber, () => {
+              notifierSubscriber.unsubscribe();
+              resub();
+            }, () => {
+              subscriber.complete();
+            });
+            notifier.subscribe(notifierSubscriber);
+          } else {
+            resub();
+          }
+        } else {
+          subscriber.error(err);
+        }
+      }));
+      if (syncUnsub) {
+        innerSub.unsubscribe();
+        innerSub = null;
+        subscribeForRetry();
+      }
+    };
+    subscribeForRetry();
+  });
+}
+
 // node_modules/rxjs/dist/esm/internal/operators/scan.js
 function scan(accumulator, seed) {
   return operate(scanInternals(accumulator, seed, arguments.length >= 2, true));
+}
+
+// node_modules/rxjs/dist/esm/internal/operators/share.js
+function share(options = {}) {
+  const {
+    connector = () => new Subject(),
+    resetOnError = true,
+    resetOnComplete = true,
+    resetOnRefCountZero = true
+  } = options;
+  return (wrapperSource) => {
+    let connection;
+    let resetConnection;
+    let subject;
+    let refCount2 = 0;
+    let hasCompleted = false;
+    let hasErrored = false;
+    const cancelReset = () => {
+      resetConnection === null || resetConnection === void 0 ? void 0 : resetConnection.unsubscribe();
+      resetConnection = void 0;
+    };
+    const reset = () => {
+      cancelReset();
+      connection = subject = void 0;
+      hasCompleted = hasErrored = false;
+    };
+    const resetAndUnsubscribe = () => {
+      const conn = connection;
+      reset();
+      conn === null || conn === void 0 ? void 0 : conn.unsubscribe();
+    };
+    return operate((source, subscriber) => {
+      refCount2++;
+      if (!hasErrored && !hasCompleted) {
+        cancelReset();
+      }
+      const dest = subject = subject !== null && subject !== void 0 ? subject : connector();
+      subscriber.add(() => {
+        refCount2--;
+        if (refCount2 === 0 && !hasErrored && !hasCompleted) {
+          resetConnection = handleReset(resetAndUnsubscribe, resetOnRefCountZero);
+        }
+      });
+      dest.subscribe(subscriber);
+      if (!connection && refCount2 > 0) {
+        connection = new SafeSubscriber({
+          next: (value) => dest.next(value),
+          error: (err) => {
+            hasErrored = true;
+            cancelReset();
+            resetConnection = handleReset(reset, resetOnError, err);
+            dest.error(err);
+          },
+          complete: () => {
+            hasCompleted = true;
+            cancelReset();
+            resetConnection = handleReset(reset, resetOnComplete);
+            dest.complete();
+          }
+        });
+        innerFrom(source).subscribe(connection);
+      }
+    })(wrapperSource);
+  };
+}
+function handleReset(reset, on, ...args) {
+  if (on === true) {
+    reset();
+    return;
+  }
+  if (on === false) {
+    return;
+  }
+  const onSubscriber = new SafeSubscriber({
+    next: () => {
+      onSubscriber.unsubscribe();
+      reset();
+    }
+  });
+  return on(...args).subscribe(onSubscriber);
+}
+
+// node_modules/rxjs/dist/esm/internal/operators/shareReplay.js
+function shareReplay(configOrBufferSize, windowTime, scheduler) {
+  let bufferSize;
+  let refCount2 = false;
+  if (configOrBufferSize && typeof configOrBufferSize === "object") {
+    ({
+      bufferSize = Infinity,
+      windowTime = Infinity,
+      refCount: refCount2 = false,
+      scheduler
+    } = configOrBufferSize);
+  } else {
+    bufferSize = configOrBufferSize !== null && configOrBufferSize !== void 0 ? configOrBufferSize : Infinity;
+  }
+  return share({
+    connector: () => new ReplaySubject(bufferSize, windowTime, scheduler),
+    resetOnError: true,
+    resetOnComplete: false,
+    resetOnRefCountZero: refCount2
+  });
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/startWith.js
@@ -23536,9 +23822,9 @@ var TimerScheduler = class _TimerScheduler {
       // frame duration.
       this.invokeTimerAt && this.invokeTimerAt - invokeAt > FRAME_DURATION_MS) {
         this.clearTimeout();
-        const timeout = Math.max(invokeAt - now, FRAME_DURATION_MS);
+        const timeout2 = Math.max(invokeAt - now, FRAME_DURATION_MS);
         this.invokeTimerAt = invokeAt;
-        this.timeoutId = setTimeout(callback, timeout);
+        this.timeoutId = setTimeout(callback, timeout2);
       }
     }
   }
@@ -23725,7 +24011,7 @@ function applyDeferBlockStateWithScheduling(newState, lDetails, lContainer, tNod
     lDetails[NEXT_DEFER_BLOCK_STATE] = newState;
   }
 }
-function scheduleDeferBlockUpdate(timeout, lDetails, tNode, lContainer, hostLView) {
+function scheduleDeferBlockUpdate(timeout2, lDetails, tNode, lContainer, hostLView) {
   const callback = () => {
     const nextState = lDetails[NEXT_DEFER_BLOCK_STATE];
     lDetails[STATE_IS_FROZEN_UNTIL] = null;
@@ -23734,7 +24020,7 @@ function scheduleDeferBlockUpdate(timeout, lDetails, tNode, lContainer, hostLVie
       renderDeferBlockState(nextState, tNode, lContainer);
     }
   };
-  return scheduleTimerTrigger(timeout, callback, hostLView[INJECTOR]);
+  return scheduleTimerTrigger(timeout2, callback, hostLView[INJECTOR]);
 }
 function isValidStateChange(currentState, newState) {
   return currentState < newState;
@@ -24617,13 +24903,13 @@ var Testability = class _Testability {
       };
     });
   }
-  addCallback(cb, timeout, updateCb) {
+  addCallback(cb, timeout2, updateCb) {
     let timeoutId = -1;
-    if (timeout && timeout > 0) {
+    if (timeout2 && timeout2 > 0) {
       timeoutId = setTimeout(() => {
         this._callbacks = this._callbacks.filter((cb2) => cb2.timeoutId !== timeoutId);
         cb();
-      }, timeout);
+      }, timeout2);
     }
     this._callbacks.push({
       doneCb: cb,
@@ -24643,11 +24929,11 @@ var Testability = class _Testability {
    *    pending macrotasks changes. If this callback returns true doneCb will not be invoked
    *    and no further updates will be issued.
    */
-  whenStable(doneCb, timeout, updateCb) {
+  whenStable(doneCb, timeout2, updateCb) {
     if (updateCb && !this.taskTrackingZone) {
       throw new Error('Task tracking zone is required when passing an update callback to whenStable(). Is "zone.js/plugins/task-tracking" loaded?');
     }
-    this.addCallback(doneCb, timeout, updateCb);
+    this.addCallback(doneCb, timeout2, updateCb);
     this._runCallbacksIfReady();
   }
   /**
@@ -26135,33 +26421,33 @@ function interpolation4(lView, prefix, v0, i0, v1, i1, v2, i2, v3, suffix) {
   incrementBindingIndex(4);
   return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + suffix : NO_CHANGE;
 }
-function interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix) {
+function interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix) {
   const bindingIndex = getBindingIndex();
   let different = bindingUpdated4(lView, bindingIndex, v0, v1, v2, v3);
-  different = bindingUpdated(lView, bindingIndex + 4, v4) || different;
+  different = bindingUpdated(lView, bindingIndex + 4, v42) || different;
   incrementBindingIndex(5);
-  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v4) + suffix : NO_CHANGE;
+  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v42) + suffix : NO_CHANGE;
 }
-function interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix) {
+function interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix) {
   const bindingIndex = getBindingIndex();
   let different = bindingUpdated4(lView, bindingIndex, v0, v1, v2, v3);
-  different = bindingUpdated2(lView, bindingIndex + 4, v4, v5) || different;
+  different = bindingUpdated2(lView, bindingIndex + 4, v42, v5) || different;
   incrementBindingIndex(6);
-  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v4) + i4 + renderStringify(v5) + suffix : NO_CHANGE;
+  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v42) + i4 + renderStringify(v5) + suffix : NO_CHANGE;
 }
-function interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix) {
+function interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix) {
   const bindingIndex = getBindingIndex();
   let different = bindingUpdated4(lView, bindingIndex, v0, v1, v2, v3);
-  different = bindingUpdated3(lView, bindingIndex + 4, v4, v5, v6) || different;
+  different = bindingUpdated3(lView, bindingIndex + 4, v42, v5, v6) || different;
   incrementBindingIndex(7);
-  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v4) + i4 + renderStringify(v5) + i5 + renderStringify(v6) + suffix : NO_CHANGE;
+  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v42) + i4 + renderStringify(v5) + i5 + renderStringify(v6) + suffix : NO_CHANGE;
 }
-function interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix) {
+function interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix) {
   const bindingIndex = getBindingIndex();
   let different = bindingUpdated4(lView, bindingIndex, v0, v1, v2, v3);
-  different = bindingUpdated4(lView, bindingIndex + 4, v4, v5, v6, v7) || different;
+  different = bindingUpdated4(lView, bindingIndex + 4, v42, v5, v6, v7) || different;
   incrementBindingIndex(8);
-  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v4) + i4 + renderStringify(v5) + i5 + renderStringify(v6) + i6 + renderStringify(v7) + suffix : NO_CHANGE;
+  return different ? prefix + renderStringify(v0) + i0 + renderStringify(v1) + i1 + renderStringify(v2) + i2 + renderStringify(v3) + i3 + renderStringify(v42) + i4 + renderStringify(v5) + i5 + renderStringify(v6) + i6 + renderStringify(v7) + suffix : NO_CHANGE;
 }
 function \u0275\u0275attributeInterpolate1(attrName, prefix, v0, suffix, sanitizer, namespace2) {
   const lView = getLView();
@@ -26203,9 +26489,9 @@ function \u0275\u0275attributeInterpolate4(attrName, prefix, v0, i0, v1, i1, v2,
   }
   return \u0275\u0275attributeInterpolate4;
 }
-function \u0275\u0275attributeInterpolate5(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix, sanitizer, namespace2) {
+function \u0275\u0275attributeInterpolate5(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix, sanitizer, namespace2) {
   const lView = getLView();
-  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix);
+  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tNode = getSelectedTNode();
     elementAttributeInternal(tNode, lView, attrName, interpolatedValue, sanitizer, namespace2);
@@ -26213,9 +26499,9 @@ function \u0275\u0275attributeInterpolate5(attrName, prefix, v0, i0, v1, i1, v2,
   }
   return \u0275\u0275attributeInterpolate5;
 }
-function \u0275\u0275attributeInterpolate6(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix, sanitizer, namespace2) {
+function \u0275\u0275attributeInterpolate6(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix, sanitizer, namespace2) {
   const lView = getLView();
-  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix);
+  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tNode = getSelectedTNode();
     elementAttributeInternal(tNode, lView, attrName, interpolatedValue, sanitizer, namespace2);
@@ -26223,9 +26509,9 @@ function \u0275\u0275attributeInterpolate6(attrName, prefix, v0, i0, v1, i1, v2,
   }
   return \u0275\u0275attributeInterpolate6;
 }
-function \u0275\u0275attributeInterpolate7(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix, sanitizer, namespace2) {
+function \u0275\u0275attributeInterpolate7(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix, sanitizer, namespace2) {
   const lView = getLView();
-  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix);
+  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tNode = getSelectedTNode();
     elementAttributeInternal(tNode, lView, attrName, interpolatedValue, sanitizer, namespace2);
@@ -26233,9 +26519,9 @@ function \u0275\u0275attributeInterpolate7(attrName, prefix, v0, i0, v1, i1, v2,
   }
   return \u0275\u0275attributeInterpolate7;
 }
-function \u0275\u0275attributeInterpolate8(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix, sanitizer, namespace2) {
+function \u0275\u0275attributeInterpolate8(attrName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix, sanitizer, namespace2) {
   const lView = getLView();
-  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix);
+  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tNode = getSelectedTNode();
     elementAttributeInternal(tNode, lView, attrName, interpolatedValue, sanitizer, namespace2);
@@ -26886,24 +27172,24 @@ function \u0275\u0275classMapInterpolate4(prefix, v0, i0, v1, i1, v2, i2, v3, su
   const interpolatedValue = interpolation4(lView, prefix, v0, i0, v1, i1, v2, i2, v3, suffix);
   checkStylingMap(keyValueArraySet, classStringParser, interpolatedValue, true);
 }
-function \u0275\u0275classMapInterpolate5(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix) {
+function \u0275\u0275classMapInterpolate5(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix);
+  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix);
   checkStylingMap(keyValueArraySet, classStringParser, interpolatedValue, true);
 }
-function \u0275\u0275classMapInterpolate6(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix) {
+function \u0275\u0275classMapInterpolate6(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix);
+  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix);
   checkStylingMap(keyValueArraySet, classStringParser, interpolatedValue, true);
 }
-function \u0275\u0275classMapInterpolate7(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix) {
+function \u0275\u0275classMapInterpolate7(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix);
+  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix);
   checkStylingMap(keyValueArraySet, classStringParser, interpolatedValue, true);
 }
-function \u0275\u0275classMapInterpolate8(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix) {
+function \u0275\u0275classMapInterpolate8(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix);
+  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix);
   checkStylingMap(keyValueArraySet, classStringParser, interpolatedValue, true);
 }
 function \u0275\u0275classMapInterpolateV(values) {
@@ -28939,9 +29225,9 @@ function \u0275\u0275propertyInterpolate4(propName, prefix, v0, i0, v1, i1, v2, 
   }
   return \u0275\u0275propertyInterpolate4;
 }
-function \u0275\u0275propertyInterpolate5(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix, sanitizer) {
+function \u0275\u0275propertyInterpolate5(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix, sanitizer) {
   const lView = getLView();
-  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix);
+  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tView = getTView();
     const tNode = getSelectedTNode();
@@ -28950,9 +29236,9 @@ function \u0275\u0275propertyInterpolate5(propName, prefix, v0, i0, v1, i1, v2, 
   }
   return \u0275\u0275propertyInterpolate5;
 }
-function \u0275\u0275propertyInterpolate6(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix, sanitizer) {
+function \u0275\u0275propertyInterpolate6(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix, sanitizer) {
   const lView = getLView();
-  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix);
+  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tView = getTView();
     const tNode = getSelectedTNode();
@@ -28961,9 +29247,9 @@ function \u0275\u0275propertyInterpolate6(propName, prefix, v0, i0, v1, i1, v2, 
   }
   return \u0275\u0275propertyInterpolate6;
 }
-function \u0275\u0275propertyInterpolate7(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix, sanitizer) {
+function \u0275\u0275propertyInterpolate7(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix, sanitizer) {
   const lView = getLView();
-  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix);
+  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tView = getTView();
     const tNode = getSelectedTNode();
@@ -28972,9 +29258,9 @@ function \u0275\u0275propertyInterpolate7(propName, prefix, v0, i0, v1, i1, v2, 
   }
   return \u0275\u0275propertyInterpolate7;
 }
-function \u0275\u0275propertyInterpolate8(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix, sanitizer) {
+function \u0275\u0275propertyInterpolate8(propName, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix, sanitizer) {
   const lView = getLView();
-  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix);
+  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix);
   if (interpolatedValue !== NO_CHANGE) {
     const tView = getTView();
     const tNode = getSelectedTNode();
@@ -29067,24 +29353,24 @@ function \u0275\u0275styleMapInterpolate4(prefix, v0, i0, v1, i1, v2, i2, v3, su
   const interpolatedValue = interpolation4(lView, prefix, v0, i0, v1, i1, v2, i2, v3, suffix);
   \u0275\u0275styleMap(interpolatedValue);
 }
-function \u0275\u0275styleMapInterpolate5(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix) {
+function \u0275\u0275styleMapInterpolate5(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix);
+  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix);
   \u0275\u0275styleMap(interpolatedValue);
 }
-function \u0275\u0275styleMapInterpolate6(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix) {
+function \u0275\u0275styleMapInterpolate6(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix);
+  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix);
   \u0275\u0275styleMap(interpolatedValue);
 }
-function \u0275\u0275styleMapInterpolate7(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix) {
+function \u0275\u0275styleMapInterpolate7(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix);
+  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix);
   \u0275\u0275styleMap(interpolatedValue);
 }
-function \u0275\u0275styleMapInterpolate8(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix) {
+function \u0275\u0275styleMapInterpolate8(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix);
+  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix);
   \u0275\u0275styleMap(interpolatedValue);
 }
 function \u0275\u0275styleMapInterpolateV(values) {
@@ -29116,27 +29402,27 @@ function \u0275\u0275stylePropInterpolate4(prop, prefix, v0, i0, v1, i1, v2, i2,
   checkStylingProperty(prop, interpolatedValue, valueSuffix, false);
   return \u0275\u0275stylePropInterpolate4;
 }
-function \u0275\u0275stylePropInterpolate5(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix, valueSuffix) {
+function \u0275\u0275stylePropInterpolate5(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix, valueSuffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix);
+  const interpolatedValue = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix);
   checkStylingProperty(prop, interpolatedValue, valueSuffix, false);
   return \u0275\u0275stylePropInterpolate5;
 }
-function \u0275\u0275stylePropInterpolate6(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix, valueSuffix) {
+function \u0275\u0275stylePropInterpolate6(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix, valueSuffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix);
+  const interpolatedValue = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix);
   checkStylingProperty(prop, interpolatedValue, valueSuffix, false);
   return \u0275\u0275stylePropInterpolate6;
 }
-function \u0275\u0275stylePropInterpolate7(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix, valueSuffix) {
+function \u0275\u0275stylePropInterpolate7(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix, valueSuffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix);
+  const interpolatedValue = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix);
   checkStylingProperty(prop, interpolatedValue, valueSuffix, false);
   return \u0275\u0275stylePropInterpolate7;
 }
-function \u0275\u0275stylePropInterpolate8(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix, valueSuffix) {
+function \u0275\u0275stylePropInterpolate8(prop, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix, valueSuffix) {
   const lView = getLView();
-  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix);
+  const interpolatedValue = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix);
   checkStylingProperty(prop, interpolatedValue, valueSuffix, false);
   return \u0275\u0275stylePropInterpolate8;
 }
@@ -29200,33 +29486,33 @@ function \u0275\u0275textInterpolate4(prefix, v0, i0, v1, i1, v2, i2, v3, suffix
   }
   return \u0275\u0275textInterpolate4;
 }
-function \u0275\u0275textInterpolate5(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix) {
+function \u0275\u0275textInterpolate5(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix) {
   const lView = getLView();
-  const interpolated = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, suffix);
+  const interpolated = interpolation5(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, suffix);
   if (interpolated !== NO_CHANGE) {
     textBindingInternal(lView, getSelectedIndex(), interpolated);
   }
   return \u0275\u0275textInterpolate5;
 }
-function \u0275\u0275textInterpolate6(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix) {
+function \u0275\u0275textInterpolate6(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix) {
   const lView = getLView();
-  const interpolated = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, suffix);
+  const interpolated = interpolation6(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, suffix);
   if (interpolated !== NO_CHANGE) {
     textBindingInternal(lView, getSelectedIndex(), interpolated);
   }
   return \u0275\u0275textInterpolate6;
 }
-function \u0275\u0275textInterpolate7(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix) {
+function \u0275\u0275textInterpolate7(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix) {
   const lView = getLView();
-  const interpolated = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, suffix);
+  const interpolated = interpolation7(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, suffix);
   if (interpolated !== NO_CHANGE) {
     textBindingInternal(lView, getSelectedIndex(), interpolated);
   }
   return \u0275\u0275textInterpolate7;
 }
-function \u0275\u0275textInterpolate8(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix) {
+function \u0275\u0275textInterpolate8(prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix) {
   const lView = getLView();
-  const interpolated = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v4, i4, v5, i5, v6, i6, v7, suffix);
+  const interpolated = interpolation8(lView, prefix, v0, i0, v1, i1, v2, i2, v3, i3, v42, i4, v5, i5, v6, i6, v7, suffix);
   if (interpolated !== NO_CHANGE) {
     textBindingInternal(lView, getSelectedIndex(), interpolated);
   }
@@ -29693,11 +29979,11 @@ function \u0275\u0275pipeBind3(index, slotOffset, v1, v2, v3) {
   const pipeInstance = load(lView, adjustedIndex);
   return isPure(lView, adjustedIndex) ? pureFunction3Internal(lView, getBindingRoot(), slotOffset, pipeInstance.transform, v1, v2, v3, pipeInstance) : pipeInstance.transform(v1, v2, v3);
 }
-function \u0275\u0275pipeBind4(index, slotOffset, v1, v2, v3, v4) {
+function \u0275\u0275pipeBind4(index, slotOffset, v1, v2, v3, v42) {
   const adjustedIndex = index + HEADER_OFFSET;
   const lView = getLView();
   const pipeInstance = load(lView, adjustedIndex);
-  return isPure(lView, adjustedIndex) ? pureFunction4Internal(lView, getBindingRoot(), slotOffset, pipeInstance.transform, v1, v2, v3, v4, pipeInstance) : pipeInstance.transform(v1, v2, v3, v4);
+  return isPure(lView, adjustedIndex) ? pureFunction4Internal(lView, getBindingRoot(), slotOffset, pipeInstance.transform, v1, v2, v3, v42, pipeInstance) : pipeInstance.transform(v1, v2, v3, v42);
 }
 function \u0275\u0275pipeBindV(index, slotOffset, values) {
   const adjustedIndex = index + HEADER_OFFSET;
@@ -54074,6 +54360,24 @@ var RouterScroller = class _RouterScroller {
     type: void 0
   }], null);
 })();
+function provideRouter(routes2, ...features) {
+  return makeEnvironmentProviders([{
+    provide: ROUTES,
+    multi: true,
+    useValue: routes2
+  }, typeof ngDevMode === "undefined" || ngDevMode ? {
+    provide: ROUTER_IS_PROVIDED,
+    useValue: true
+  } : [], {
+    provide: ActivatedRoute,
+    useFactory: rootRoute,
+    deps: [Router]
+  }, {
+    provide: APP_BOOTSTRAP_LISTENER,
+    multi: true,
+    useFactory: getBootstrapListener
+  }, features.map((feature) => feature.\u0275providers)]);
+}
 function rootRoute(router) {
   return router.routerState.root;
 }
@@ -54389,22 +54693,1270 @@ function getLoadedRoutes(route) {
 }
 publishExternalGlobalUtil("\u0275getLoadedRoutes", getLoadedRoutes);
 
-// projects/fasten-connect-vault/src/app/models/fasten/vault-profile.ts
-var VaultProfile = class {
-  constructor() {
-    this.password_confirm = "";
-    this.agree_terms = false;
+// projects/shared-library/src/lib/shared-library.constants.ts
+var ApiMode;
+(function(ApiMode2) {
+  ApiMode2["Live"] = "live";
+  ApiMode2["Test"] = "test";
+})(ApiMode || (ApiMode = {}));
+var ConnectionStatus;
+(function(ConnectionStatus2) {
+  ConnectionStatus2["Authorized"] = "authorized";
+  ConnectionStatus2["Revoked"] = "revoked";
+})(ConnectionStatus || (ConnectionStatus = {}));
+var ConnectMode;
+(function(ConnectMode2) {
+  ConnectMode2["Redirect"] = "redirect";
+  ConnectMode2["Popup"] = "popup";
+})(ConnectMode || (ConnectMode = {}));
+var EventTypes;
+(function(EventTypes2) {
+  EventTypes2["EventTypeWidgetConfigError"] = "widget.config_error";
+  EventTypes2["EventTypeWidgetClose"] = "widget.close";
+  EventTypes2["EventTypeWidgetComplete"] = "widget.complete";
+  EventTypes2["EventTypeConnectionPending"] = "patient.connection_pending";
+  EventTypes2["EventTypeConnectionSuccess"] = "patient.connection_success";
+  EventTypes2["EventTypeConnectionFailed"] = "patient.connection_failed";
+})(EventTypes || (EventTypes = {}));
+var ConnectWindowTimeout = 2 * 60 * 1e3;
+
+// projects/shared-library/src/lib/pipes/safe-html.pipe.ts
+var SafeHtmlPipe = class _SafeHtmlPipe {
+  constructor(sanitizer) {
+    this.sanitizer = sanitizer;
+  }
+  transform(value, args) {
+    return this.sanitizer.bypassSecurityTrustHtml(value);
+  }
+  static {
+    this.\u0275fac = function SafeHtmlPipe_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SafeHtmlPipe)(\u0275\u0275directiveInject(DomSanitizer, 16));
+    };
+  }
+  static {
+    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "safeHtml", type: _SafeHtmlPipe, pure: true, standalone: false });
   }
 };
 
-// projects/fasten-connect-vault/src/app/services/config.service.ts
+// projects/shared-library/src/lib/pipes/state-name.pipe.ts
+var StateNamePipe = class _StateNamePipe {
+  constructor() {
+    this.stateCodes = {
+      //CUSTOM
+      "ALL": "Nationwide",
+      //2 letter state codes.
+      "AL": "Alabama",
+      "AK": "Alaska",
+      "AZ": "Arizona",
+      "AR": "Arkansas",
+      "CA": "California",
+      "CO": "Colorado",
+      "CT": "Connecticut",
+      "DE": "Delaware",
+      "FL": "Florida",
+      "GA": "Georgia",
+      "HI": "Hawaii",
+      "ID": "Idaho",
+      "IL": "Illinois",
+      "IN": "Indiana",
+      "IA": "Iowa",
+      "KS": "Kansas",
+      "KY": "Kentucky",
+      "LA": "Louisiana",
+      "ME": "Maine",
+      "MD": "Maryland",
+      "MA": "Massachusetts",
+      "MI": "Michigan",
+      "MN": "Minnesota",
+      "MS": "Mississippi",
+      "MO": "Missouri",
+      "MT": "Montana",
+      "NE": "Nebraska",
+      "NV": "Nevada",
+      "NH": "New Hampshire",
+      "NJ": "New Jersey",
+      "NM": "New Mexico",
+      "NY": "New York",
+      "NC": "North Carolina",
+      "ND": "North Dakota",
+      "OH": "Ohio",
+      "OK": "Oklahoma",
+      "OR": "Oregon",
+      "PA": "Pennsylvania",
+      "RI": "Rhode Island",
+      "SC": "South Carolina",
+      "SD": "South Dakota",
+      "TN": "Tennessee",
+      "TX": "Texas",
+      "UT": "Utah",
+      "VT": "Vermont",
+      "VA": "Virginia",
+      "WA": "Washington",
+      "WV": "West Virginia",
+      "WI": "Wisconsin",
+      "WY": "Wyoming",
+      // Territories
+      "AS": "American Samoa",
+      "DC": "District of Columbia",
+      "FM": "Federated States of Micronesia",
+      "GU": "Guam",
+      "MH": "Marshall Islands",
+      "MP": "Northern Mariana Islands",
+      "PW": "Palau",
+      "PR": "Puerto Rico",
+      "VI": "Virgin Islands",
+      // Armed Forces (AE includes Europe, Africa, Canada, and the Middle East)
+      "AA": "Armed Forces Americas",
+      "AE": "Armed Forces Europe",
+      "AP": "Armed Forces Pacific"
+    };
+  }
+  transform(value) {
+    return this.stateCodes[value] || value;
+  }
+  static {
+    this.\u0275fac = function StateNamePipe_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _StateNamePipe)();
+    };
+  }
+  static {
+    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "stateName", type: _StateNamePipe, pure: true, standalone: false });
+  }
+};
+
+// projects/shared-library/src/lib/directives/image-fallback.directive.ts
+var DEFAULT_IMAGE_FALLBACK_PATH = "https://cdn.fastenhealth.com/images/no-image.svg";
+var ImageFallbackDirective = class _ImageFallbackDirective {
+  constructor(elementRef) {
+    this.elementRef = elementRef;
+    this.hospitalInlineImage = "data:image/svg+xml,%3csvg id='connecting-system-logo-placeholder' xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='text-gray-400'%3e%3cpath d='M12 6v4'/%3e%3cpath d='M14 14h-4'/%3e%3cpath d='M14 18h-4'/%3e%3cpath d='M14 8h-4'/%3e%3cpath d='M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2'/%3e%3cpath d='M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18'/%3e%3c/svg%3e";
+    this.officeInlineImage = "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-building-2 w-10 h-10 text-gray-400'%3e%3cpath d='M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z'/%3e%3cpath d='M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2'/%3e%3cpath d='M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2'/%3e%3cpath d='M10 6h4'/%3e%3cpath d='M10 10h4'/%3e%3cpath d='M10 14h4'/%3e%3cpath d='M10 18h4'/%3e%3c/svg%3e";
+    this.fastenSquareInlineImage = "data:image/svg+xml,%3csvg version='1.2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1640 1640' width='1640' height='1640'%3e%3ctitle%3esquare%3c/title%3e%3cstyle%3etspan %7b white-space:pre %7d .s0 %7b fill: white %7d .t1 %7b font-size: 400px%3bfill: %235b47fb%3bfont-weight: 700%3bfont-family: 'Poppins-Bold'%2c 'Poppins' %7d%3c/style%3e%3cpath id='Layer 1' fill-rule='evenodd' class='s0' d='m-90-48h1752v1727h-1752z'/%3e%3ctext id='fasten' style='transform: matrix(1.356%2c0%2c0%2c1.356%2c8.863%2c630.478)'%3e%3ctspan x='0' y='296' class='t1' dx='0'%3ef%3c/tspan%3e%3ctspan y='296' class='t1' dx='0'%3ea%3c/tspan%3e%3ctspan y='296' class='t1' dx='0'%3es%3c/tspan%3e%3ctspan y='296' class='t1' dx='0'%3et%3c/tspan%3e%3ctspan y='296' class='t1' dx='0'%3ee%3c/tspan%3e%3ctspan y='296' class='t1' dx='0 -21'%3en%3c/tspan%3e%3c/text%3e%3c/svg%3e";
+    this.fastenLogoInlineImage = "data:image/svg+xml,%3csvg version='1.2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1640 1640' width='1640' height='1640'%3e%3ctitle%3esquare%3c/title%3e%3cstyle%3etspan %7b white-space:pre %7d .s0 %7b fill: white %7d .t1 %7b font-size: 282px%3bfill: %235b47fb%3bfont-weight: 700%3bfont-family: 'Poppins-Bold'%2c 'Poppins' %7d%3c/style%3e%3cpath id='Layer 1' fill-rule='evenodd' class='s0' d='m-90-48h1752v1727h-1752z'/%3e%3ctext id='fh' style='transform: matrix(4.298%2c0%2c0%2c4.298%2c252%2c393)'%3e%3ctspan x='0' y='208.4' class='t1' dx='0'%3ef%3c/tspan%3e%3ctspan y='208.4' class='t1' dx='0'%3eh%3c/tspan%3e%3ctspan y='208.4' class='t1' dx='0'%3e%3c/tspan%3e%3c/text%3e%3c/svg%3e";
+    this.unknownOrganizationInlineImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none'%3E%3Crect width='40' height='40' rx='8' fill='currentColor' /%3E%3Cpath d='M20 12V28M12 20H28' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' /%3E%3Cpath d='M12 12L28 28M28 12L12 28' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' opacity='0.2' /%3E%3C/svg%3E";
+  }
+  loadFallbackOnError() {
+    if (this.path(this.elementRef.nativeElement.src) == this.path(this.fallbackSrc())) {
+      return;
+    }
+    this.elementRef.nativeElement.src = this.fallbackSrc();
+  }
+  fallbackSrc() {
+    if (this.imageFallback === "hospital") {
+      return this.hospitalInlineImage;
+    } else if (this.imageFallback === "office") {
+      return this.officeInlineImage;
+    } else if (this.imageFallback === "fasten") {
+      return this.fastenSquareInlineImage;
+    } else if (this.imageFallback === "fasten-logo") {
+      return this.fastenLogoInlineImage;
+    } else if (this.imageFallback == "unknown-organization") {
+      return this.unknownOrganizationInlineImage;
+    } else {
+      return this.imageFallback || DEFAULT_IMAGE_FALLBACK_PATH;
+    }
+  }
+  path(urlString) {
+    return urlString.replace(/^https?:\/\/[^\/]*/, "");
+  }
+  static {
+    this.\u0275fac = function ImageFallbackDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _ImageFallbackDirective)(\u0275\u0275directiveInject(ElementRef));
+    };
+  }
+  static {
+    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _ImageFallbackDirective, selectors: [["img", "imageFallback", ""]], hostBindings: function ImageFallbackDirective_HostBindings(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275listener("error", function ImageFallbackDirective_error_HostBindingHandler() {
+          return ctx.loadFallbackOnError();
+        });
+      }
+    }, inputs: { imageFallback: "imageFallback" }, standalone: false });
+  }
+};
+
+// projects/shared-library/src/lib/services/config.service.ts
 var import_lodash = __toESM(require_lodash());
-var VaultSystemConfig = class {
+
+// node_modules/vlq/dist/vlq.es.js
+var charToInteger = {};
+var integerToChar = {};
+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".split("").forEach(function(char, i) {
+  charToInteger[char] = i;
+  integerToChar[i] = char;
+});
+function decode2(string) {
+  var result = [];
+  var shift = 0;
+  var value = 0;
+  for (var i = 0; i < string.length; i += 1) {
+    var integer = charToInteger[string[i]];
+    if (integer === void 0) {
+      throw new Error("Invalid character (" + string[i] + ")");
+    }
+    var hasContinuationBit = integer & 32;
+    integer &= 31;
+    value += integer << shift;
+    if (hasContinuationBit) {
+      shift += 5;
+    } else {
+      var shouldNegate = value & 1;
+      value >>>= 1;
+      if (shouldNegate) {
+        result.push(value === 0 ? -2147483648 : -value);
+      } else {
+        result.push(value);
+      }
+      value = shift = 0;
+    }
+  }
+  return result;
+}
+
+// node_modules/ngx-logger/fesm2020/ngx-logger.mjs
+var TOKEN_LOGGER_CONFIG = "TOKEN_LOGGER_CONFIG";
+var NGXLoggerConfigEngine = class {
+  constructor(config3) {
+    this.config = this._clone(config3);
+  }
+  /** Get a readonly access to the level configured for the NGXLogger */
+  get level() {
+    return this.config.level;
+  }
+  /** Get a readonly access to the serverLogLevel configured for the NGXLogger */
+  get serverLogLevel() {
+    return this.config.serverLogLevel;
+  }
+  updateConfig(config3) {
+    this.config = this._clone(config3);
+  }
+  /** Update the config partially
+   * This is useful if you want to update only one parameter of the config
+   */
+  partialUpdateConfig(partialConfig) {
+    if (!partialConfig) {
+      return;
+    }
+    Object.keys(partialConfig).forEach((configParamKey) => {
+      this.config[configParamKey] = partialConfig[configParamKey];
+    });
+  }
+  getConfig() {
+    return this._clone(this.config);
+  }
+  // TODO: This is a shallow clone, If the config ever becomes hierarchical we must make this a deep clone
+  _clone(object) {
+    const cloneConfig = {
+      level: null
+    };
+    Object.keys(object).forEach((key) => {
+      cloneConfig[key] = object[key];
+    });
+    return cloneConfig;
+  }
+};
+var TOKEN_LOGGER_CONFIG_ENGINE_FACTORY = "TOKEN_LOGGER_CONFIG_ENGINE_FACTORY";
+var NGXLoggerConfigEngineFactory = class {
+  provideConfigEngine(config3) {
+    return new NGXLoggerConfigEngine(config3);
+  }
+};
+var TOKEN_LOGGER_MAPPER_SERVICE = "TOKEN_LOGGER_MAPPER_SERVICE";
+var NGXLoggerMapperService = class {
+  constructor(httpBackend) {
+    this.httpBackend = httpBackend;
+    this.sourceMapCache = /* @__PURE__ */ new Map();
+    this.logPositionCache = /* @__PURE__ */ new Map();
+  }
+  /**
+   * Returns the log position of the caller
+   * If sourceMaps are enabled, it attemps to get the source map from the server, and use that to parse the position
+   * @param config
+   * @param metadata
+   * @returns
+   */
+  getLogPosition(config3, metadata) {
+    const stackLine = this.getStackLine(config3);
+    if (!stackLine) {
+      return of({
+        fileName: "",
+        lineNumber: 0,
+        columnNumber: 0
+      });
+    }
+    const logPosition = this.getLocalPosition(stackLine);
+    if (!config3.enableSourceMaps) {
+      return of(logPosition);
+    }
+    const sourceMapLocation = this.getSourceMapLocation(stackLine);
+    return this.getSourceMap(sourceMapLocation, logPosition);
+  }
+  /**
+   * Get the stackline of the original caller
+   * @param config
+   * @returns null if stackline was not found
+   */
+  getStackLine(config3) {
+    const error = new Error();
+    try {
+      throw error;
+    } catch (e) {
+      try {
+        let defaultProxy = 4;
+        const firstStackLine = error.stack.split("\n")[0];
+        if (!firstStackLine.includes(".js:")) {
+          defaultProxy = defaultProxy + 1;
+        }
+        return error.stack.split("\n")[defaultProxy + (config3.proxiedSteps || 0)];
+      } catch (e2) {
+        return null;
+      }
+    }
+  }
+  /**
+   * Get position of caller without using sourceMaps
+   * @param stackLine
+   * @returns
+   */
+  getLocalPosition(stackLine) {
+    const positionStartIndex = stackLine.lastIndexOf("/");
+    let positionEndIndex = stackLine.indexOf(")");
+    if (positionEndIndex < 0) {
+      positionEndIndex = void 0;
+    }
+    const position = stackLine.substring(positionStartIndex + 1, positionEndIndex);
+    const dataArray = position.split(":");
+    if (dataArray.length === 3) {
+      return {
+        fileName: dataArray[0],
+        lineNumber: +dataArray[1],
+        columnNumber: +dataArray[2]
+      };
+    }
+    return {
+      fileName: "unknown",
+      lineNumber: 0,
+      columnNumber: 0
+    };
+  }
+  getTranspileLocation(stackLine) {
+    let locationStartIndex = stackLine.indexOf("(");
+    if (locationStartIndex < 0) {
+      locationStartIndex = stackLine.lastIndexOf("@");
+      if (locationStartIndex < 0) {
+        locationStartIndex = stackLine.lastIndexOf(" ");
+      }
+    }
+    let locationEndIndex = stackLine.indexOf(")");
+    if (locationEndIndex < 0) {
+      locationEndIndex = void 0;
+    }
+    return stackLine.substring(locationStartIndex + 1, locationEndIndex);
+  }
+  /**
+   * Gets the URL of the sourcemap (the URL can be relative or absolute, it is browser dependant)
+   * @param stackLine
+   * @returns
+   */
+  getSourceMapLocation(stackLine) {
+    const file = this.getTranspileLocation(stackLine);
+    const mapFullPath = file.substring(0, file.lastIndexOf(":"));
+    return mapFullPath.substring(0, mapFullPath.lastIndexOf(":")) + ".map";
+  }
+  getMapping(sourceMap, position) {
+    let sourceFileIndex = 0, sourceCodeLine = 0, sourceCodeColumn = 0;
+    const lines = sourceMap.mappings.split(";");
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+      let generatedCodeColumn = 0;
+      const columns = lines[lineIndex].split(",");
+      for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+        const decodedSection = decode2(columns[columnIndex]);
+        if (decodedSection.length >= 4) {
+          generatedCodeColumn += decodedSection[0];
+          sourceFileIndex += decodedSection[1];
+          sourceCodeLine += decodedSection[2];
+          sourceCodeColumn += decodedSection[3];
+        }
+        if (lineIndex === position.lineNumber) {
+          if (generatedCodeColumn === position.columnNumber) {
+            return {
+              fileName: sourceMap.sources[sourceFileIndex],
+              lineNumber: sourceCodeLine,
+              columnNumber: sourceCodeColumn
+            };
+          } else if (columnIndex + 1 === columns.length) {
+            return {
+              fileName: sourceMap.sources[sourceFileIndex],
+              lineNumber: sourceCodeLine,
+              columnNumber: 0
+            };
+          }
+        }
+      }
+    }
+    return {
+      fileName: "unknown",
+      lineNumber: 0,
+      columnNumber: 0
+    };
+  }
+  /**
+   * does the http get request to get the source map
+   * @param sourceMapLocation
+   * @param distPosition
+   */
+  getSourceMap(sourceMapLocation, distPosition) {
+    const req = new HttpRequest("GET", sourceMapLocation);
+    const distPositionKey = `${distPosition.fileName}:${distPosition.lineNumber}:${distPosition.columnNumber}`;
+    if (this.logPositionCache.has(distPositionKey)) {
+      return this.logPositionCache.get(distPositionKey);
+    }
+    if (!this.sourceMapCache.has(sourceMapLocation)) {
+      if (!this.httpBackend) {
+        console.error("NGXLogger : Can't get sourcemap because HttpBackend is not provided. You need to import HttpClientModule");
+        this.sourceMapCache.set(sourceMapLocation, of(null));
+      } else {
+        this.sourceMapCache.set(sourceMapLocation, this.httpBackend.handle(req).pipe(filter((e) => e instanceof HttpResponse), map((httpResponse) => httpResponse.body), retry(3), shareReplay(1)));
+      }
+    }
+    const logPosition$ = this.sourceMapCache.get(sourceMapLocation).pipe(map((sourceMap) => {
+      if (!sourceMap) {
+        return distPosition;
+      }
+      return this.getMapping(sourceMap, distPosition);
+    }), catchError(() => of(distPosition)), shareReplay(1));
+    this.logPositionCache.set(distPositionKey, logPosition$);
+    return logPosition$;
+  }
+};
+NGXLoggerMapperService.\u0275fac = function NGXLoggerMapperService_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || NGXLoggerMapperService)(\u0275\u0275inject(HttpBackend, 8));
+};
+NGXLoggerMapperService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: NGXLoggerMapperService,
+  factory: NGXLoggerMapperService.\u0275fac
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NGXLoggerMapperService, [{
+    type: Injectable
+  }], function() {
+    return [{
+      type: HttpBackend,
+      decorators: [{
+        type: Optional
+      }]
+    }];
+  }, null);
+})();
+var TOKEN_LOGGER_METADATA_SERVICE = "TOKEN_LOGGER_METADATA_SERVICE";
+var NGXLoggerMetadataService = class {
+  constructor(datePipe) {
+    this.datePipe = datePipe;
+  }
+  computeTimestamp(config3) {
+    const defaultTimestamp = () => (/* @__PURE__ */ new Date()).toISOString();
+    if (config3.timestampFormat) {
+      if (!this.datePipe) {
+        console.error("NGXLogger : Can't use timeStampFormat because DatePipe is not provided. You need to provide DatePipe");
+        return defaultTimestamp();
+      } else {
+        return this.datePipe.transform(/* @__PURE__ */ new Date(), config3.timestampFormat);
+      }
+    }
+    return defaultTimestamp();
+  }
+  getMetadata(level, config3, message2, additional) {
+    const metadata = {
+      level,
+      additional
+    };
+    if (message2 && typeof message2 === "function") {
+      metadata.message = message2();
+    } else {
+      metadata.message = message2;
+    }
+    metadata.timestamp = this.computeTimestamp(config3);
+    return metadata;
+  }
+};
+NGXLoggerMetadataService.\u0275fac = function NGXLoggerMetadataService_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || NGXLoggerMetadataService)(\u0275\u0275inject(DatePipe, 8));
+};
+NGXLoggerMetadataService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: NGXLoggerMetadataService,
+  factory: NGXLoggerMetadataService.\u0275fac
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NGXLoggerMetadataService, [{
+    type: Injectable
+  }], function() {
+    return [{
+      type: DatePipe,
+      decorators: [{
+        type: Optional
+      }]
+    }];
+  }, null);
+})();
+var TOKEN_LOGGER_RULES_SERVICE = "TOKEN_LOGGER_RULES_SERVICE";
+var NGXLoggerRulesService = class {
+  shouldCallWriter(level, config3, message2, additional) {
+    return !config3.disableConsoleLogging && level >= config3.level;
+  }
+  shouldCallServer(level, config3, message2, additional) {
+    return !!config3.serverLoggingUrl && level >= config3.serverLogLevel;
+  }
+  shouldCallMonitor(level, config3, message2, additional) {
+    return this.shouldCallWriter(level, config3, message2, additional) || this.shouldCallServer(level, config3, message2, additional);
+  }
+};
+NGXLoggerRulesService.\u0275fac = function NGXLoggerRulesService_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || NGXLoggerRulesService)();
+};
+NGXLoggerRulesService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: NGXLoggerRulesService,
+  factory: NGXLoggerRulesService.\u0275fac
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NGXLoggerRulesService, [{
+    type: Injectable
+  }], null, null);
+})();
+var TOKEN_LOGGER_SERVER_SERVICE = "TOKEN_LOGGER_SERVER_SERVICE";
+var NGXLoggerServerService = class {
+  constructor(httpBackend, ngZone) {
+    this.httpBackend = httpBackend;
+    this.ngZone = ngZone;
+    this.serverCallsQueue = [];
+    this.flushingQueue = new BehaviorSubject(false);
+  }
+  ngOnDestroy() {
+    if (this.flushingQueue) {
+      this.flushingQueue.complete();
+      this.flushingQueue = null;
+    }
+    if (this.addToQueueTimer) {
+      this.addToQueueTimer.unsubscribe();
+      this.addToQueueTimer = null;
+    }
+  }
+  /**
+   * Transforms an error object into a readable string (taking only the stack)
+   * This is needed because JSON.stringify would return "{}"
+   * @param err the error object
+   * @returns The stack of the error
+   */
+  secureErrorObject(err) {
+    return err?.stack;
+  }
+  /**
+   * Transforms the additional parameters to avoid any json error when sending the data to the server
+   * Basically it just replaces unstringifiable object to a string mentioning an error
+   * @param additional The additional data to be sent
+   * @returns The additional data secured
+   */
+  secureAdditionalParameters(additional) {
+    if (additional === null || additional === void 0) {
+      return null;
+    }
+    return additional.map((next, idx) => {
+      try {
+        if (next instanceof Error) {
+          return this.secureErrorObject(next);
+        }
+        if (typeof next === "object") {
+          JSON.stringify(next);
+        }
+        return next;
+      } catch (e) {
+        return `The additional[${idx}] value could not be parsed using JSON.stringify().`;
+      }
+    });
+  }
+  /**
+   * Transforms the message so that it can be sent to the server
+   * @param message the message to be sent
+   * @returns the message secured
+   */
+  secureMessage(message2) {
+    try {
+      if (message2 instanceof Error) {
+        return this.secureErrorObject(message2);
+      }
+      if (typeof message2 !== "string") {
+        message2 = JSON.stringify(message2, null, 2);
+      }
+    } catch (e) {
+      message2 = 'The provided "message" value could not be parsed with JSON.stringify().';
+    }
+    return message2;
+  }
+  /**
+   * Edits HttpRequest object before sending request to server
+   * @param httpRequest default request object
+   * @returns altered httprequest
+   */
+  alterHttpRequest(httpRequest) {
+    return httpRequest;
+  }
+  /**
+   * Sends request to server
+   * @param url
+   * @param logContent
+   * @param options
+   * @returns
+   */
+  logOnServer(url, logContent, options) {
+    if (!this.httpBackend) {
+      console.error("NGXLogger : Can't log on server because HttpBackend is not provided. You need to import HttpClientModule");
+      return of(null);
+    }
+    let defaultRequest = new HttpRequest("POST", url, logContent, options || {});
+    let finalRequest = of(defaultRequest);
+    const alteredRequest = this.alterHttpRequest(defaultRequest);
+    if (isObservable(alteredRequest)) {
+      finalRequest = alteredRequest;
+    } else if (alteredRequest) {
+      finalRequest = of(alteredRequest);
+    } else {
+      console.warn("NGXLogger : alterHttpRequest returned an invalid request. Using default one instead");
+    }
+    return finalRequest.pipe(concatMap((req) => {
+      if (!req) {
+        console.warn("NGXLogger : alterHttpRequest returned an invalid request (observable). Using default one instead");
+        return this.httpBackend.handle(defaultRequest);
+      }
+      return this.httpBackend.handle(req);
+    }), filter((e) => e instanceof HttpResponse), map((httpResponse) => httpResponse.body));
+  }
+  /**
+   * Customise the data sent to the API
+   * @param metadata the data provided by NGXLogger
+   * @returns the data that will be sent to the API in the body
+   */
+  customiseRequestBody(metadata) {
+    return metadata;
+  }
+  /**
+   * Flush the queue of the logger
+   * @param config
+   */
+  flushQueue(config3) {
+    this.flushingQueue.next(true);
+    if (this.addToQueueTimer) {
+      this.addToQueueTimer.unsubscribe();
+      this.addToQueueTimer = null;
+    }
+    if (!!this.serverCallsQueue && this.serverCallsQueue.length > 0) {
+      this.sendToServerAction(this.serverCallsQueue, config3);
+    }
+    this.serverCallsQueue = [];
+    this.flushingQueue.next(false);
+  }
+  sendToServerAction(metadata, config3) {
+    let requestBody;
+    const secureMetadata = (pMetadata) => {
+      const securedMetadata = __spreadValues({}, pMetadata);
+      securedMetadata.additional = this.secureAdditionalParameters(securedMetadata.additional);
+      securedMetadata.message = this.secureMessage(securedMetadata.message);
+      return securedMetadata;
+    };
+    if (Array.isArray(metadata)) {
+      requestBody = [];
+      metadata.forEach((m) => {
+        requestBody.push(secureMetadata(m));
+      });
+    } else {
+      requestBody = secureMetadata(metadata);
+    }
+    requestBody = this.customiseRequestBody(requestBody);
+    const headers = config3.customHttpHeaders || new HttpHeaders();
+    if (!headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+    const logOnServerAction = () => {
+      this.logOnServer(config3.serverLoggingUrl, requestBody, {
+        headers,
+        params: config3.customHttpParams || new HttpParams(),
+        responseType: config3.httpResponseType || "json",
+        withCredentials: config3.withCredentials || false
+      }).pipe(catchError((err) => {
+        console.error("NGXLogger: Failed to log on server", err);
+        return throwError(err);
+      })).subscribe();
+    };
+    if (config3.serverCallsOutsideNgZone === true) {
+      if (!this.ngZone) {
+        console.error("NGXLogger: NgZone is not provided and serverCallsOutsideNgZone is set to true");
+        return;
+      }
+      this.ngZone.runOutsideAngular(logOnServerAction);
+    } else {
+      logOnServerAction();
+    }
+  }
+  /**
+   * Sends the content to be logged to the server according to the config
+   * @param metadata
+   * @param config
+   */
+  sendToServer(metadata, config3) {
+    if ((!config3.serverCallsBatchSize || config3.serverCallsBatchSize <= 0) && (!config3.serverCallsTimer || config3.serverCallsTimer <= 0)) {
+      this.sendToServerAction(metadata, config3);
+      return;
+    }
+    const addLogToQueueAction = () => {
+      this.serverCallsQueue.push(__spreadValues({}, metadata));
+      if (!!config3.serverCallsBatchSize && this.serverCallsQueue.length > config3.serverCallsBatchSize) {
+        this.flushQueue(config3);
+      }
+      if (config3.serverCallsTimer > 0 && !this.addToQueueTimer) {
+        this.addToQueueTimer = timer(config3.serverCallsTimer).subscribe((_) => {
+          this.flushQueue(config3);
+        });
+      }
+    };
+    if (this.flushingQueue.value === true) {
+      this.flushingQueue.pipe(filter((fq) => fq === false), take(1)).subscribe((_) => {
+        addLogToQueueAction();
+      });
+    } else {
+      addLogToQueueAction();
+    }
+  }
+};
+NGXLoggerServerService.\u0275fac = function NGXLoggerServerService_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || NGXLoggerServerService)(\u0275\u0275inject(HttpBackend, 8), \u0275\u0275inject(NgZone, 8));
+};
+NGXLoggerServerService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: NGXLoggerServerService,
+  factory: NGXLoggerServerService.\u0275fac
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NGXLoggerServerService, [{
+    type: Injectable
+  }], function() {
+    return [{
+      type: HttpBackend,
+      decorators: [{
+        type: Optional
+      }]
+    }, {
+      type: NgZone,
+      decorators: [{
+        type: Optional
+      }]
+    }];
+  }, null);
+})();
+var TOKEN_LOGGER_WRITER_SERVICE = "TOKEN_LOGGER_WRITER_SERVICE";
+var NgxLoggerLevel;
+(function(NgxLoggerLevel2) {
+  NgxLoggerLevel2[NgxLoggerLevel2["TRACE"] = 0] = "TRACE";
+  NgxLoggerLevel2[NgxLoggerLevel2["DEBUG"] = 1] = "DEBUG";
+  NgxLoggerLevel2[NgxLoggerLevel2["INFO"] = 2] = "INFO";
+  NgxLoggerLevel2[NgxLoggerLevel2["LOG"] = 3] = "LOG";
+  NgxLoggerLevel2[NgxLoggerLevel2["WARN"] = 4] = "WARN";
+  NgxLoggerLevel2[NgxLoggerLevel2["ERROR"] = 5] = "ERROR";
+  NgxLoggerLevel2[NgxLoggerLevel2["FATAL"] = 6] = "FATAL";
+  NgxLoggerLevel2[NgxLoggerLevel2["OFF"] = 7] = "OFF";
+})(NgxLoggerLevel || (NgxLoggerLevel = {}));
+var DEFAULT_COLOR_SCHEME = ["purple", "teal", "gray", "gray", "red", "red", "red"];
+var NGXLoggerWriterService = class {
+  constructor(platformId) {
+    this.platformId = platformId;
+    this.prepareMetaStringFuncs = [this.getTimestampToWrite, this.getLevelToWrite, this.getFileDetailsToWrite, this.getContextToWrite];
+    this.isIE = isPlatformBrowser(platformId) && navigator && navigator.userAgent && !!(navigator.userAgent.indexOf("MSIE") !== -1 || navigator.userAgent.match(/Trident\//) || navigator.userAgent.match(/Edge\//));
+    this.logFunc = this.isIE ? this.logIE.bind(this) : this.logModern.bind(this);
+  }
+  getTimestampToWrite(metadata, config3) {
+    return metadata.timestamp;
+  }
+  getLevelToWrite(metadata, config3) {
+    return NgxLoggerLevel[metadata.level];
+  }
+  getFileDetailsToWrite(metadata, config3) {
+    return config3.disableFileDetails === true ? "" : `[${metadata.fileName}:${metadata.lineNumber}:${metadata.columnNumber}]`;
+  }
+  getContextToWrite(metadata, config3) {
+    return config3.context ? `{${config3.context}}` : "";
+  }
+  /** Generate a "meta" string that is displayed before the content sent to the log function */
+  prepareMetaString(metadata, config3) {
+    let metaString = "";
+    this.prepareMetaStringFuncs.forEach((prepareMetaStringFunc) => {
+      const metaItem = prepareMetaStringFunc(metadata, config3);
+      if (metaItem) {
+        metaString = metaString + " " + metaItem;
+      }
+    });
+    return metaString.trim();
+  }
+  /** Get the color to use when writing to console */
+  getColor(metadata, config3) {
+    const configColorScheme = config3.colorScheme ?? DEFAULT_COLOR_SCHEME;
+    if (metadata.level === NgxLoggerLevel.OFF) {
+      return void 0;
+    }
+    return configColorScheme[metadata.level];
+  }
+  /** Log to the console specifically for IE */
+  logIE(metadata, config3, metaString) {
+    const additional = metadata.additional || [];
+    switch (metadata.level) {
+      case NgxLoggerLevel.WARN:
+        console.warn(`${metaString} `, metadata.message, ...additional);
+        break;
+      case NgxLoggerLevel.ERROR:
+      case NgxLoggerLevel.FATAL:
+        console.error(`${metaString} `, metadata.message, ...additional);
+        break;
+      case NgxLoggerLevel.INFO:
+        console.info(`${metaString} `, metadata.message, ...additional);
+        break;
+      default:
+        console.log(`${metaString} `, metadata.message, ...additional);
+    }
+  }
+  /** Log to the console */
+  logModern(metadata, config3, metaString) {
+    const color = this.getColor(metadata, config3);
+    const additional = metadata.additional || [];
+    switch (metadata.level) {
+      case NgxLoggerLevel.WARN:
+        console.warn(`%c${metaString}`, `color:${color}`, metadata.message, ...additional);
+        break;
+      case NgxLoggerLevel.ERROR:
+      case NgxLoggerLevel.FATAL:
+        console.error(`%c${metaString}`, `color:${color}`, metadata.message, ...additional);
+        break;
+      case NgxLoggerLevel.INFO:
+        console.info(`%c${metaString}`, `color:${color}`, metadata.message, ...additional);
+        break;
+      //  Disabling console.trace since the stack trace is not helpful. it is showing the stack trace of
+      // the console.trace statement
+      // case NgxLoggerLevel.TRACE:
+      //   console.trace(`%c${metaString}`, `color:${color}`, message, ...additional);
+      //   break;
+      case NgxLoggerLevel.DEBUG:
+        console.debug(`%c${metaString}`, `color:${color}`, metadata.message, ...additional);
+        break;
+      default:
+        console.log(`%c${metaString}`, `color:${color}`, metadata.message, ...additional);
+    }
+  }
+  /** Write the content sent to the log function to the console */
+  writeMessage(metadata, config3) {
+    const metaString = this.prepareMetaString(metadata, config3);
+    this.logFunc(metadata, config3, metaString);
+  }
+};
+NGXLoggerWriterService.\u0275fac = function NGXLoggerWriterService_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || NGXLoggerWriterService)(\u0275\u0275inject(PLATFORM_ID));
+};
+NGXLoggerWriterService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: NGXLoggerWriterService,
+  factory: NGXLoggerWriterService.\u0275fac
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NGXLoggerWriterService, [{
+    type: Injectable
+  }], function() {
+    return [{
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [PLATFORM_ID]
+      }]
+    }];
+  }, null);
+})();
+var NGXLogger = class {
+  constructor(config3, configEngineFactory, metadataService, ruleService, mapperService, writerService, serverService) {
+    this.metadataService = metadataService;
+    this.ruleService = ruleService;
+    this.mapperService = mapperService;
+    this.writerService = writerService;
+    this.serverService = serverService;
+    this.configEngine = configEngineFactory.provideConfigEngine(config3);
+  }
+  /** Get a readonly access to the level configured for the NGXLogger */
+  get level() {
+    return this.configEngine.level;
+  }
+  /** Get a readonly access to the serverLogLevel configured for the NGXLogger */
+  get serverLogLevel() {
+    return this.configEngine.serverLogLevel;
+  }
+  trace(message2, ...additional) {
+    this._log(NgxLoggerLevel.TRACE, message2, additional);
+  }
+  debug(message2, ...additional) {
+    this._log(NgxLoggerLevel.DEBUG, message2, additional);
+  }
+  info(message2, ...additional) {
+    this._log(NgxLoggerLevel.INFO, message2, additional);
+  }
+  log(message2, ...additional) {
+    this._log(NgxLoggerLevel.LOG, message2, additional);
+  }
+  warn(message2, ...additional) {
+    this._log(NgxLoggerLevel.WARN, message2, additional);
+  }
+  error(message2, ...additional) {
+    this._log(NgxLoggerLevel.ERROR, message2, additional);
+  }
+  fatal(message2, ...additional) {
+    this._log(NgxLoggerLevel.FATAL, message2, additional);
+  }
+  /** @deprecated customHttpHeaders is now part of the config, this should be updated via @see updateConfig */
+  setCustomHttpHeaders(headers) {
+    const config3 = this.getConfigSnapshot();
+    config3.customHttpHeaders = headers;
+    this.updateConfig(config3);
+  }
+  /** @deprecated customHttpParams is now part of the config, this should be updated via @see updateConfig */
+  setCustomParams(params) {
+    const config3 = this.getConfigSnapshot();
+    config3.customHttpParams = params;
+    this.updateConfig(config3);
+  }
+  /** @deprecated withCredentials is now part of the config, this should be updated via @see updateConfig */
+  setWithCredentialsOptionValue(withCredentials) {
+    const config3 = this.getConfigSnapshot();
+    config3.withCredentials = withCredentials;
+    this.updateConfig(config3);
+  }
+  /**
+   * Register a INGXLoggerMonitor that will be trigger when a log is either written or sent to server
+   *
+   * There is only one monitor, registering one will overwrite the last one if there was one
+   * @param monitor
+   */
+  registerMonitor(monitor) {
+    this._loggerMonitor = monitor;
+  }
+  /** Set config of logger
+   *
+   * Warning : This overwrites all the config, if you want to update only one property, you should use @see getConfigSnapshot before
+   */
+  updateConfig(config3) {
+    this.configEngine.updateConfig(config3);
+  }
+  partialUpdateConfig(partialConfig) {
+    this.configEngine.partialUpdateConfig(partialConfig);
+  }
+  /** Get config of logger */
+  getConfigSnapshot() {
+    return this.configEngine.getConfig();
+  }
+  /**
+   * Flush the serveur queue
+   */
+  flushServerQueue() {
+    this.serverService.flushQueue(this.getConfigSnapshot());
+  }
+  _log(level, message2, additional = []) {
+    const config3 = this.configEngine.getConfig();
+    const shouldCallWriter = this.ruleService.shouldCallWriter(level, config3, message2, additional);
+    const shouldCallServer = this.ruleService.shouldCallServer(level, config3, message2, additional);
+    const shouldCallMonitor = this.ruleService.shouldCallMonitor(level, config3, message2, additional);
+    if (!shouldCallWriter && !shouldCallServer && !shouldCallMonitor) {
+      return;
+    }
+    const metadata = this.metadataService.getMetadata(level, config3, message2, additional);
+    this.mapperService.getLogPosition(config3, metadata).pipe(take(1)).subscribe((logPosition) => {
+      if (logPosition) {
+        metadata.fileName = logPosition.fileName;
+        metadata.lineNumber = logPosition.lineNumber;
+        metadata.columnNumber = logPosition.columnNumber;
+      }
+      if (shouldCallMonitor && this._loggerMonitor) {
+        this._loggerMonitor.onLog(metadata, config3);
+      }
+      if (shouldCallWriter) {
+        this.writerService.writeMessage(metadata, config3);
+      }
+      if (shouldCallServer) {
+        this.serverService.sendToServer(metadata, config3);
+      }
+    });
+  }
+};
+NGXLogger.\u0275fac = function NGXLogger_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || NGXLogger)(\u0275\u0275inject(TOKEN_LOGGER_CONFIG), \u0275\u0275inject(TOKEN_LOGGER_CONFIG_ENGINE_FACTORY), \u0275\u0275inject(TOKEN_LOGGER_METADATA_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_RULES_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_MAPPER_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_WRITER_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_SERVER_SERVICE));
+};
+NGXLogger.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: NGXLogger,
+  factory: NGXLogger.\u0275fac,
+  providedIn: "root"
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(NGXLogger, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], function() {
+    return [{
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_CONFIG]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_CONFIG_ENGINE_FACTORY]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_METADATA_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_RULES_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_MAPPER_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_WRITER_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_SERVER_SERVICE]
+      }]
+    }];
+  }, null);
+})();
+var CustomNGXLoggerService = class {
+  constructor(logger, configEngineFactory, metadataService, ruleService, mapperService, writerService, serverService) {
+    this.logger = logger;
+    this.configEngineFactory = configEngineFactory;
+    this.metadataService = metadataService;
+    this.ruleService = ruleService;
+    this.mapperService = mapperService;
+    this.writerService = writerService;
+    this.serverService = serverService;
+  }
+  /**
+   * Create an instance of a logger
+   * @deprecated this function does not have all the features, @see getNewInstance for every params available
+   * @param config
+   * @param serverService
+   * @param logMonitor
+   * @param mapperService
+   * @returns
+   */
+  create(config3, serverService, logMonitor, mapperService) {
+    return this.getNewInstance({
+      config: config3,
+      serverService,
+      logMonitor,
+      mapperService
+    });
+  }
+  /**
+   * Get a new instance of NGXLogger
+   * @param params list of optional params to use when creating an instance of NGXLogger
+   * @returns the new instance of NGXLogger
+   */
+  getNewInstance(params) {
+    const logger = new NGXLogger(params?.config ?? this.logger.getConfigSnapshot(), params?.configEngineFactory ?? this.configEngineFactory, params?.metadataService ?? this.metadataService, params?.ruleService ?? this.ruleService, params?.mapperService ?? this.mapperService, params?.writerService ?? this.writerService, params?.serverService ?? this.serverService);
+    if (params?.partialConfig) {
+      logger.partialUpdateConfig(params.partialConfig);
+    }
+    if (params?.logMonitor) {
+      logger.registerMonitor(params.logMonitor);
+    }
+    return logger;
+  }
+};
+CustomNGXLoggerService.\u0275fac = function CustomNGXLoggerService_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || CustomNGXLoggerService)(\u0275\u0275inject(NGXLogger), \u0275\u0275inject(TOKEN_LOGGER_CONFIG_ENGINE_FACTORY), \u0275\u0275inject(TOKEN_LOGGER_METADATA_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_RULES_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_MAPPER_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_WRITER_SERVICE), \u0275\u0275inject(TOKEN_LOGGER_SERVER_SERVICE));
+};
+CustomNGXLoggerService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+  token: CustomNGXLoggerService,
+  factory: CustomNGXLoggerService.\u0275fac,
+  providedIn: "root"
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CustomNGXLoggerService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], function() {
+    return [{
+      type: NGXLogger
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_CONFIG_ENGINE_FACTORY]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_METADATA_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_RULES_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_MAPPER_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_WRITER_SERVICE]
+      }]
+    }, {
+      type: void 0,
+      decorators: [{
+        type: Inject,
+        args: [TOKEN_LOGGER_SERVER_SERVICE]
+      }]
+    }];
+  }, null);
+})();
+var LoggerModule = class _LoggerModule {
+  static forRoot(config3, customProvider) {
+    if (!customProvider) {
+      customProvider = {};
+    }
+    if (!customProvider.configProvider) {
+      customProvider.configProvider = {
+        provide: TOKEN_LOGGER_CONFIG,
+        useValue: config3 || {}
+      };
+    } else {
+      if (customProvider.configProvider.provide !== TOKEN_LOGGER_CONFIG) {
+        throw new Error(`Wrong injection token for configProvider, it should be ${TOKEN_LOGGER_CONFIG} and you used ${customProvider.configProvider.provide}`);
+      }
+    }
+    if (!customProvider.configEngineFactoryProvider) {
+      customProvider.configEngineFactoryProvider = {
+        provide: TOKEN_LOGGER_CONFIG_ENGINE_FACTORY,
+        useClass: NGXLoggerConfigEngineFactory
+      };
+    } else {
+      if (customProvider.configEngineFactoryProvider.provide !== TOKEN_LOGGER_CONFIG_ENGINE_FACTORY) {
+        throw new Error(`Wrong injection token for configEngineFactoryProvider, it should be '${TOKEN_LOGGER_CONFIG_ENGINE_FACTORY}' and you used '${customProvider.configEngineFactoryProvider.provide}'`);
+      }
+    }
+    if (!customProvider.metadataProvider) {
+      customProvider.metadataProvider = {
+        provide: TOKEN_LOGGER_METADATA_SERVICE,
+        useClass: NGXLoggerMetadataService
+      };
+    } else {
+      if (customProvider.metadataProvider.provide !== TOKEN_LOGGER_METADATA_SERVICE) {
+        throw new Error(`Wrong injection token for metadataProvider, it should be '${TOKEN_LOGGER_METADATA_SERVICE}' and you used '${customProvider.metadataProvider.provide}'`);
+      }
+    }
+    if (!customProvider.ruleProvider) {
+      customProvider.ruleProvider = {
+        provide: TOKEN_LOGGER_RULES_SERVICE,
+        useClass: NGXLoggerRulesService
+      };
+    } else {
+      if (customProvider.ruleProvider.provide !== TOKEN_LOGGER_RULES_SERVICE) {
+        throw new Error(`Wrong injection token for ruleProvider, it should be '${TOKEN_LOGGER_RULES_SERVICE}' and you used '${customProvider.ruleProvider.provide}'`);
+      }
+    }
+    if (!customProvider.mapperProvider) {
+      customProvider.mapperProvider = {
+        provide: TOKEN_LOGGER_MAPPER_SERVICE,
+        useClass: NGXLoggerMapperService
+      };
+    } else {
+      if (customProvider.mapperProvider.provide !== TOKEN_LOGGER_MAPPER_SERVICE) {
+        throw new Error(`Wrong injection token for mapperProvider, it should be '${TOKEN_LOGGER_MAPPER_SERVICE}' and you used '${customProvider.mapperProvider.provide}'`);
+      }
+    }
+    if (!customProvider.writerProvider) {
+      customProvider.writerProvider = {
+        provide: TOKEN_LOGGER_WRITER_SERVICE,
+        useClass: NGXLoggerWriterService
+      };
+    } else {
+      if (customProvider.writerProvider.provide !== TOKEN_LOGGER_WRITER_SERVICE) {
+        throw new Error(`Wrong injection token for writerProvider, it should be '${TOKEN_LOGGER_WRITER_SERVICE}' and you used '${customProvider.writerProvider.provide}'`);
+      }
+    }
+    if (!customProvider.serverProvider) {
+      customProvider.serverProvider = {
+        provide: TOKEN_LOGGER_SERVER_SERVICE,
+        useClass: NGXLoggerServerService
+      };
+    } else {
+      if (customProvider.serverProvider.provide !== TOKEN_LOGGER_SERVER_SERVICE) {
+        throw new Error(`Wrong injection token for serverProvider, it should be '${TOKEN_LOGGER_SERVER_SERVICE}' and you used '${customProvider.writerProvider.provide}'`);
+      }
+    }
+    return {
+      ngModule: _LoggerModule,
+      providers: [NGXLogger, customProvider.configProvider, customProvider.configEngineFactoryProvider, customProvider.metadataProvider, customProvider.ruleProvider, customProvider.mapperProvider, customProvider.writerProvider, customProvider.serverProvider, CustomNGXLoggerService]
+    };
+  }
+  static forChild() {
+    return {
+      ngModule: _LoggerModule
+    };
+  }
+};
+LoggerModule.\u0275fac = function LoggerModule_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || LoggerModule)();
+};
+LoggerModule.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+  type: LoggerModule
+});
+LoggerModule.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
+  imports: [[CommonModule]]
+});
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(LoggerModule, [{
+    type: NgModule,
+    args: [{
+      imports: [CommonModule]
+    }]
+  }], null, null);
+})();
+
+// projects/shared-library/src/lib/services/config.service.ts
+var defaultSystemConfig = {
+  publicId: "",
+  apiMode: ApiMode.Test
 };
 var ConfigService = class _ConfigService {
-  constructor() {
-    this._defaultSystemConfig = new VaultSystemConfig();
-    this.systemConfigSubject = new BehaviorSubject(this._defaultSystemConfig);
+  constructor(logger) {
+    this.logger = logger;
+    this.systemConfigSubject = new BehaviorSubject(defaultSystemConfig);
+    this.vaultProfileConfigSubject = new BehaviorSubject(Object.setPrototypeOf({}, VaultProfileConfig.prototype));
+    this.searchConfigSubject = new BehaviorSubject({});
   }
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -54416,22 +55968,207 @@ var ConfigService = class _ConfigService {
   set systemConfig(value) {
     const mergedSettings = (0, import_lodash.merge)({}, this.systemConfigSubject.getValue(), value);
     if (JSON.stringify(mergedSettings) !== JSON.stringify(this.systemConfigSubject.getValue())) {
-      console.log("updating system settings:", mergedSettings);
+      this.logger.info("updating system settings:", mergedSettings);
       this.systemConfigSubject.next(mergedSettings);
     }
   }
   //Getter
   get systemConfig$() {
-    console.log("getting cached system settings:", this.systemConfigSubject.getValue());
+    this.logger.info("getting cached system settings:", this.systemConfigSubject.getValue());
     return this.systemConfigSubject.getValue();
+  }
+  //Setter
+  set vaultProfileConfig(value) {
+    const mergedSettings = (0, import_lodash.merge)({}, this.vaultProfileConfigSubject.getValue(), value);
+    if (JSON.stringify(mergedSettings) !== JSON.stringify(this.vaultProfileConfigSubject.getValue())) {
+      this.logger.info("updating vault profile settings:", mergedSettings);
+      this.vaultProfileConfigSubject.next(Object.setPrototypeOf(mergedSettings, VaultProfileConfig.prototype));
+    }
+  }
+  //Getter
+  get vaultProfileConfig$() {
+    this.logger.info("getting vault profile settings:", this.vaultProfileConfigSubject.getValue());
+    return this.vaultProfileConfigSubject.getValue();
+  }
+  vaultProfileAddPendingAccount(brand, portal, endpoint) {
+    let updatedVaultProfile = this.vaultProfileConfig$;
+    updatedVaultProfile.addPendingAccount(brand, portal, endpoint);
+    this.vaultProfileConfig = updatedVaultProfile;
+  }
+  vaultProfileAddConnectedAccount(connectedAccount) {
+    if (connectedAccount.error) {
+      this.logger.error("Error connecting account", connectedAccount);
+      return;
+    }
+    let updatedVaultProfile = this.vaultProfileConfig$;
+    updatedVaultProfile.addConnectedAccount(connectedAccount.org_connection_id, connectedAccount.connection_status, connectedAccount.platform_type, connectedAccount.brand_id, connectedAccount.portal_id, connectedAccount.endpoint_id);
+    this.vaultProfileConfig = updatedVaultProfile;
+  }
+  vaultProfileAddAvailableRecordLocatorAccount(recordLocatorFacility) {
+    let updatedVaultProfile = this.vaultProfileConfig$;
+    updatedVaultProfile.addAvailableRecordLocatorAccount(recordLocatorFacility);
+    this.vaultProfileConfig = updatedVaultProfile;
+  }
+  //Setter
+  set searchConfig(value) {
+    const mergedSettings = (0, import_lodash.merge)({}, this.searchConfigSubject.getValue(), value);
+    if (JSON.stringify(mergedSettings) !== JSON.stringify(this.searchConfigSubject.getValue())) {
+      this.logger.info("updating search settings:", mergedSettings);
+      this.searchConfigSubject.next(mergedSettings);
+    }
+  }
+  //Getter
+  get searchConfig$() {
+    this.logger.info("getting search settings:", this.searchConfigSubject.getValue());
+    return this.searchConfigSubject.getValue();
   }
   static {
     this.\u0275fac = function ConfigService_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ConfigService)();
+      return new (__ngFactoryType__ || _ConfigService)(\u0275\u0275inject(NGXLogger));
     };
   }
   static {
     this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _ConfigService, factory: _ConfigService.\u0275fac, providedIn: "root" });
+  }
+};
+
+// projects/shared-library/src/lib/models/config/vault-profile-config.ts
+var VaultProfileConfig = class {
+  addPendingAccount(brand, portal, endpoint) {
+    if (!this.pendingPatientAccounts) {
+      this.pendingPatientAccounts = [];
+    }
+    this.pendingPatientAccounts?.push({ brand, portal, endpoint });
+  }
+  addConnectedAccount(org_connection_id, connection_status, platform_type, brand_id, portal_id, endpoint_id) {
+    if (!this.connectedPatientAccounts) {
+      this.connectedPatientAccounts = [];
+    }
+    let pendingIndex = this.pendingPatientAccounts?.findIndex((pendingAccount) => {
+      return pendingAccount.brand.id == brand_id && pendingAccount.portal.id == portal_id && pendingAccount.endpoint.id == endpoint_id;
+    });
+    if (pendingIndex != -1) {
+      let pendingAccount = this.pendingPatientAccounts?.splice(pendingIndex, 1)[0];
+      this.connectedPatientAccounts?.push({ org_connection_id, connection_status, platform_type, brand: pendingAccount.brand, portal: pendingAccount.portal, endpoint: pendingAccount.endpoint });
+    } else {
+      console.error("NOT SUPPORTED: could not find the brand, portal, endpoint information by ID");
+    }
+  }
+  addAvailableRecordLocatorAccount(recordLocatorFacility) {
+    if (!this.availableFacilities) {
+      this.availableFacilities = [];
+    }
+    this.availableFacilities?.push(recordLocatorFacility);
+  }
+};
+
+// projects/shared-library/src/lib/models/fasten/vault-profile.ts
+var VaultProfile = class {
+  constructor() {
+    this.password_confirm = "";
+    this.agree_terms = false;
+  }
+};
+
+// projects/shared-library/src/lib/models/search/search-filter.ts
+var SearchFilter = class {
+  constructor() {
+    this.query = "";
+    this.platformTypes = [];
+    this.categories = [];
+    this.showHidden = false;
+    this.locations = [];
+    this.searchAfter = "";
+    this.fields = [];
+  }
+};
+
+// projects/shared-library/src/lib/utils/post-message.ts
+function waitForOrgConnectionOrTimeout(logger, openedWindow) {
+  logger.info(`waiting for postMessage notification from popup window`);
+  return fromEvent(window, "message").pipe(
+    //throw an error if we wait more than 2 minutes (this will close the window)
+    timeout(ConnectWindowTimeout),
+    //make sure we're only listening to events from the "opened" window.
+    filter((event) => event.source == openedWindow),
+    //after filtering, we should only have one event to handle.
+    first(),
+    map((event) => {
+      logger.info(`received postMessage notification from popup window & sending acknowledgment`);
+      event.source.postMessage(JSON.stringify({ close: true }), event.origin);
+      logger.debug("postmessage data", event.data);
+      let parsedEventData = JSON.parse(event.data);
+      if (parsedEventData.error) {
+        throw new Error(event.data);
+      } else {
+        return parsedEventData;
+      }
+    }),
+    catchError((err) => {
+      openedWindow.self.close();
+      if (err instanceof TimeoutError) {
+        logger.warn(`timed out waiting for notification from popup (${ConnectWindowTimeout / 1e3}s), closing window`);
+        throw new Error(JSON.stringify({ error: "timeout", error_description: "timed out waiting for notification from popup" }));
+      } else {
+        logger.error(`an error occurred while verifying identity, closing window`, err);
+        throw err;
+      }
+      return throwError(err);
+    })
+  );
+}
+
+// projects/shared-library/src/lib/shared-library.service.ts
+var SharedLibraryService = class _SharedLibraryService {
+  constructor() {
+  }
+  static {
+    this.\u0275fac = function SharedLibraryService_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SharedLibraryService)();
+    };
+  }
+  static {
+    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _SharedLibraryService, factory: _SharedLibraryService.\u0275fac, providedIn: "root" });
+  }
+};
+
+// projects/shared-library/src/lib/shared-library.component.ts
+var SharedLibraryComponent = class _SharedLibraryComponent {
+  constructor() {
+  }
+  ngOnInit() {
+  }
+  static {
+    this.\u0275fac = function SharedLibraryComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SharedLibraryComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SharedLibraryComponent, selectors: [["lib-shared-library"]], standalone: false, decls: 2, vars: 0, template: function SharedLibraryComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "p");
+        \u0275\u0275text(1, " shared-library works! ");
+        \u0275\u0275elementEnd();
+      }
+    }, encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SharedLibraryComponent, { className: "SharedLibraryComponent", filePath: "projects/shared-library/src/lib/shared-library.component.ts", lineNumber: 13 });
+})();
+
+// projects/shared-library/src/lib/shared-library.module.ts
+var SharedLibraryModule = class _SharedLibraryModule {
+  static {
+    this.\u0275fac = function SharedLibraryModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SharedLibraryModule)();
+    };
+  }
+  static {
+    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({ type: _SharedLibraryModule });
+  }
+  static {
+    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
   }
 };
 
@@ -54446,9 +56183,8 @@ var environment = {
   connect_api_endpoint_base: "https://api.connect-dev.fastenhealth.com/v1",
   connect_api_jwt_issuer_host: "https://api.connect-dev.fastenhealth.com/v1",
   jwks_uri: "https://cdn.fastenhealth.com/jwks/fasten-connect/dev.json",
-  //Stripe pricing table (Test mode in Dev)
-  stripe_customer_portal: "https://billing.stripe.com/p/login/test_bIY7thbZL5g6gXC000"
-  // stripe_customer_portal: 'https://billing.stripe.com/p/login/dR6aEYe5h4AYe2I144'
+  org_credential_test_public_id: "public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l8vm9eq29ftu",
+  org_credential_live_public_id: "public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l8vm9eq29ftu"
 };
 
 // node_modules/jose/dist/browser/runtime/webcrypto.js
@@ -54481,7 +56217,7 @@ var decodeBase64 = (encoded) => {
   }
   return bytes;
 };
-var decode2 = (input2) => {
+var decode3 = (input2) => {
   let encoded = input2;
   if (encoded instanceof Uint8Array) {
     encoded = decoder.decode(encoded);
@@ -54948,7 +56684,7 @@ var parse = (jwk) => __async(void 0, null, function* () {
 var jwk_to_key_default = parse;
 
 // node_modules/jose/dist/browser/runtime/normalize_key.js
-var exportKeyValue = (k) => decode2(k);
+var exportKeyValue = (k) => decode3(k);
 var privCache;
 var pubCache;
 var isKeyObject = (key) => {
@@ -54990,7 +56726,7 @@ var normalizePublicKey = (key, alg) => {
     return importAndCache(pubCache, key, jwk, alg);
   }
   if (isJWK(key)) {
-    if (key.k) return decode2(key.k);
+    if (key.k) return decode3(key.k);
     pubCache || (pubCache = /* @__PURE__ */ new WeakMap());
     const cryptoKey = importAndCache(pubCache, key, key, alg, true);
     return cryptoKey;
@@ -55009,7 +56745,7 @@ var normalizePrivateKey = (key, alg) => {
     return importAndCache(privCache, key, jwk, alg);
   }
   if (isJWK(key)) {
-    if (key.k) return decode2(key.k);
+    if (key.k) return decode3(key.k);
     privCache || (privCache = /* @__PURE__ */ new WeakMap());
     const cryptoKey = importAndCache(privCache, key, key, alg, true);
     return cryptoKey;
@@ -55033,7 +56769,7 @@ function importJWK(jwk, alg) {
         if (typeof jwk.k !== "string" || !jwk.k) {
           throw new TypeError('missing "k" (Key Value) Parameter value');
         }
-        return decode2(jwk.k);
+        return decode3(jwk.k);
       case "RSA":
         if ("oth" in jwk && jwk.oth !== void 0) {
           throw new JOSENotSupported('RSA JWK "oth" (Other Primes Info) Parameter value is not supported');
@@ -55271,7 +57007,7 @@ function flattenedVerify(jws, key, options) {
     let parsedProt = {};
     if (jws.protected) {
       try {
-        const protectedHeader = decode2(jws.protected);
+        const protectedHeader = decode3(jws.protected);
         parsedProt = JSON.parse(decoder.decode(protectedHeader));
       } catch {
         throw new JWSInvalid("JWS Protected Header is invalid");
@@ -55320,7 +57056,7 @@ function flattenedVerify(jws, key, options) {
     const data = concat2(encoder.encode(jws.protected ?? ""), encoder.encode("."), typeof jws.payload === "string" ? encoder.encode(jws.payload) : jws.payload);
     let signature;
     try {
-      signature = decode2(jws.signature);
+      signature = decode3(jws.signature);
     } catch {
       throw new JWSInvalid("Failed to base64url decode the signature");
     }
@@ -55331,7 +57067,7 @@ function flattenedVerify(jws, key, options) {
     let payload;
     if (b64) {
       try {
-        payload = decode2(jws.payload);
+        payload = decode3(jws.payload);
       } catch {
         throw new JWSInvalid("Failed to base64url decode the payload");
       }
@@ -55716,7 +57452,7 @@ function createLocalJWKSet(jwks) {
 }
 
 // node_modules/jose/dist/browser/runtime/fetch_jwks.js
-var fetchJwks = (url, timeout, options) => __async(void 0, null, function* () {
+var fetchJwks = (url, timeout2, options) => __async(void 0, null, function* () {
   let controller;
   let id;
   let timedOut = false;
@@ -55725,7 +57461,7 @@ var fetchJwks = (url, timeout, options) => __async(void 0, null, function* () {
     id = setTimeout(() => {
       timedOut = true;
       controller.abort();
-    }, timeout);
+    }, timeout2);
   }
   const response = yield fetch(url.href, {
     signal: controller ? controller.signal : void 0,
@@ -55879,11 +57615,6 @@ function createRemoteJWKSet(url, options) {
 }
 
 // projects/fasten-connect-vault/src/app/app.constants.ts
-var ApiMode;
-(function(ApiMode2) {
-  ApiMode2["Live"] = "live";
-  ApiMode2["Test"] = "test";
-})(ApiMode || (ApiMode = {}));
 var ORG_CREDENTIAL_PUBLIC_ID = "public_test_rei2un7aagh5pquwikxh2dsyq23bsdyu4l8vm9eq29ftu";
 
 // projects/fasten-connect-vault/src/app/services/auth.service.ts
@@ -55985,32 +57716,6 @@ var AuthService = class _AuthService {
   }
 };
 
-// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
-var SpinnerComponent = class _SpinnerComponent {
-  constructor() {
-  }
-  ngOnInit() {
-  }
-  static {
-    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _SpinnerComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], standalone: false, decls: 3, vars: 0, consts: [["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", 1, "mr-2", "h-5", "w-5", "animate-spin", "text-white"], ["cx", "12", "cy", "12", "r", "10", "stroke", "currentColor", "stroke-width", "4", 1, "opacity-25"], ["fill", "currentColor", "d", "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z", 1, "opacity-75"]], template: function SpinnerComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(0, "svg", 0);
-        \u0275\u0275element(1, "circle", 1)(2, "path", 2);
-        \u0275\u0275elementEnd();
-      }
-    }, encapsulation: 2 });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
-})();
-
 // projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts
 function VaultSigninComponent_p_44_span_3_Template(rf, ctx) {
   if (rf & 1) {
@@ -56049,12 +57754,12 @@ function VaultSigninComponent_p_44_span_6_Template(rf, ctx) {
 }
 function VaultSigninComponent_p_44_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 63);
+    \u0275\u0275elementStart(0, "p", 62);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(1, "svg", 64);
-    \u0275\u0275element(2, "path", 65);
+    \u0275\u0275elementStart(1, "svg", 63);
+    \u0275\u0275element(2, "path", 64);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(3, VaultSigninComponent_p_44_span_3_Template, 2, 0, "span", 28)(4, VaultSigninComponent_p_44_span_4_Template, 2, 0, "span", 28)(5, VaultSigninComponent_p_44_span_5_Template, 2, 0, "span", 28)(6, VaultSigninComponent_p_44_span_6_Template, 4, 1, "span", 66);
+    \u0275\u0275template(3, VaultSigninComponent_p_44_span_3_Template, 2, 0, "span", 65)(4, VaultSigninComponent_p_44_span_4_Template, 2, 0, "span", 65)(5, VaultSigninComponent_p_44_span_5_Template, 2, 0, "span", 65)(6, VaultSigninComponent_p_44_span_6_Template, 4, 1, "span", 66);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -56068,11 +57773,6 @@ function VaultSigninComponent_p_44_Template(rf, ctx) {
     \u0275\u0275property("ngIf", email_r3.errors == null ? null : email_r3.errors["email"]);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r1.errorMsg);
-  }
-}
-function VaultSigninComponent_app_spinner_46_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "app-spinner");
   }
 }
 var VaultSigninComponent = class _VaultSigninComponent {
@@ -56096,8 +57796,8 @@ var VaultSigninComponent = class _VaultSigninComponent {
     console.log("Signin", this.existingVaultProfile.email);
     this.authService.VaultAuthBegin(this.existingVaultProfile.email).then(() => {
       this.loading = false;
-      this.routerService.navigateByUrl("auth/signin/code", {
-        state: {
+      this.routerService.navigate(["auth/signin/code"], {
+        queryParams: {
           currentEmail: this.existingVaultProfile.email
         }
       });
@@ -56116,7 +57816,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninComponent, selectors: [["app-vault-signin"]], standalone: false, decls: 87, vars: 4, consts: [["vaultProfileForm", "ngForm"], ["email", "ngModel"], [1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "space-y-6", 3, "ngSubmit"], [1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["type", "email", "name", "email", "required", "", "email", "", "minlength", "4", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200", 3, "ngModelChange", "ngModel"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", "class", "mt-2 text-sm text-red-500 flex items-center gap-2", 4, "ngIf"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", 3, "disabled"], [4, "ngIf"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["class", "alert alert-danger mt-3", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-3"]], template: function VaultSigninComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninComponent, selectors: [["app-vault-signin"]], standalone: false, decls: 86, vars: 3, consts: [["vaultProfileForm", "ngForm"], ["email", "ngModel"], [1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "space-y-6", 3, "ngSubmit"], [1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["type", "email", "name", "email", "required", "", "email", "", "minlength", "4", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200", 3, "ngModelChange", "ngModel"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", "class", "mt-2 text-sm text-red-500 flex items-center gap-2", 4, "ngIf"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", 3, "disabled"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], [4, "ngIf"], ["class", "alert alert-danger mt-3", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-3"]], template: function VaultSigninComponent_Template(rf, ctx) {
       if (rf & 1) {
         const _r1 = \u0275\u0275getCurrentView();
         \u0275\u0275elementStart(0, "div", 2)(1, "div", 3)(2, "div", 4)(3, "h1", 5);
@@ -56178,43 +57878,42 @@ var VaultSigninComponent = class _VaultSigninComponent {
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
         \u0275\u0275elementStart(45, "button", 27);
-        \u0275\u0275template(46, VaultSigninComponent_app_spinner_46_Template, 1, 0, "app-spinner", 28);
-        \u0275\u0275text(47, " Get Started ");
+        \u0275\u0275text(46, " Get Started ");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(48, "div", 29);
+        \u0275\u0275elementStart(47, "div", 28);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(49, "svg", 30);
-        \u0275\u0275element(50, "path", 31);
+        \u0275\u0275elementStart(48, "svg", 29);
+        \u0275\u0275element(49, "path", 30);
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(51, "span");
-        \u0275\u0275text(52, "Need help? ");
-        \u0275\u0275elementStart(53, "a", 32);
-        \u0275\u0275text(54, "Learn more");
+        \u0275\u0275elementStart(50, "span");
+        \u0275\u0275text(51, "Need help? ");
+        \u0275\u0275elementStart(52, "a", 31);
+        \u0275\u0275text(53, "Learn more");
         \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(55, "div", 33);
+        \u0275\u0275elementStart(54, "div", 32);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(56, "svg", 34);
-        \u0275\u0275element(57, "circle", 35);
-        \u0275\u0275elementStart(58, "g", 36);
-        \u0275\u0275element(59, "rect", 37)(60, "rect", 38);
-        \u0275\u0275elementStart(61, "g");
-        \u0275\u0275element(62, "rect", 39)(63, "rect", 40)(64, "circle", 41);
+        \u0275\u0275elementStart(55, "svg", 33);
+        \u0275\u0275element(56, "circle", 34);
+        \u0275\u0275elementStart(57, "g", 35);
+        \u0275\u0275element(58, "rect", 36)(59, "rect", 37);
+        \u0275\u0275elementStart(60, "g");
+        \u0275\u0275element(61, "rect", 38)(62, "rect", 39)(63, "circle", 40);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(65, "g")(66, "g", 42);
-        \u0275\u0275element(67, "rect", 43)(68, "path", 44)(69, "path", 45);
+        \u0275\u0275elementStart(64, "g")(65, "g", 41);
+        \u0275\u0275element(66, "rect", 42)(67, "path", 43)(68, "path", 44);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(70, "g", 46);
-        \u0275\u0275element(71, "rect", 47)(72, "path", 48)(73, "path", 49);
+        \u0275\u0275elementStart(69, "g", 45);
+        \u0275\u0275element(70, "rect", 46)(71, "path", 47)(72, "path", 48);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(74, "g", 50);
-        \u0275\u0275element(75, "rect", 51)(76, "path", 52)(77, "path", 53);
+        \u0275\u0275elementStart(73, "g", 49);
+        \u0275\u0275element(74, "rect", 50)(75, "path", 51)(76, "path", 52);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(78, "g", 54);
-        \u0275\u0275element(79, "rect", 55)(80, "path", 56)(81, "path", 57);
+        \u0275\u0275elementStart(77, "g", 53);
+        \u0275\u0275element(78, "rect", 54)(79, "path", 55)(80, "path", 56);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(82, "g", 58);
-        \u0275\u0275element(83, "circle", 59)(84, "circle", 60)(85, "circle", 61)(86, "circle", 62);
+        \u0275\u0275elementStart(81, "g", 57);
+        \u0275\u0275element(82, "circle", 58)(83, "circle", 59)(84, "circle", 60)(85, "circle", 61);
         \u0275\u0275elementEnd()()()();
       }
       if (rf & 2) {
@@ -56226,15 +57925,56 @@ var VaultSigninComponent = class _VaultSigninComponent {
         \u0275\u0275property("ngIf", email_r3.invalid && (email_r3.dirty || email_r3.touched));
         \u0275\u0275advance();
         \u0275\u0275property("disabled", !vaultProfileForm_r4.form.valid || ctx.loading);
-        \u0275\u0275advance();
-        \u0275\u0275property("ngIf", ctx.loading);
       }
-    }, dependencies: [\u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinLengthValidator, EmailValidator, NgModel, NgForm, NgIf, SpinnerComponent], encapsulation: 2 });
+    }, dependencies: [\u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinLengthValidator, EmailValidator, NgModel, NgForm, NgIf], encapsulation: 2 });
   }
 };
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 13 });
 })();
+
+// projects/fasten-connect-vault/src/app/auth-guards/is-authenticated-auth-guard.ts
+var IsAuthenticatedAuthGuard = class _IsAuthenticatedAuthGuard {
+  constructor(authService, router, logger) {
+    this.authService = authService;
+    this.router = router;
+    this.logger = logger;
+  }
+  canActivate(route, state) {
+    return __async(this, null, function* () {
+      return this.authService.GetJWTPayload().then((jwtPayload) => {
+        console.log("JWT Payload", jwtPayload);
+        if (!jwtPayload) {
+          if (route.url.toString() === "/auth/signin") {
+            return true;
+          } else {
+            this.logger.info("User is not authenticated, redirecting to login page");
+            return this.router.navigate(["/auth/signin"]);
+          }
+        } else if (!jwtPayload.has_verified_identity) {
+          if (route.url.toString() === "/auth/identity/verification") {
+            return true;
+          } else {
+            this.logger.info("Profile does not have a verified identity, redirecting to id verification step", jwtPayload);
+            return this.router.navigate(["/auth/identity/verification"]);
+          }
+        }
+        return true;
+      }).catch((err) => {
+        this.logger.error("error checking if user is authenticated, forcing user back to /auth/signin", err);
+        return this.router.navigate(["/auth/signin"]);
+      });
+    });
+  }
+  static {
+    this.\u0275fac = function IsAuthenticatedAuthGuard_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _IsAuthenticatedAuthGuard)(\u0275\u0275inject(AuthService), \u0275\u0275inject(Router), \u0275\u0275inject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _IsAuthenticatedAuthGuard, factory: _IsAuthenticatedAuthGuard.\u0275fac });
+  }
+};
 
 // node_modules/angular-code-input/fesm2022/angular-code-input.mjs
 var _c0 = ["input"];
@@ -56765,7 +58505,6 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
     this.currentEmail = "test@example.com";
     this.codeExpirySeconds = 300;
     this.timeRemaining$ = timer(0, 1e3).pipe(map((n) => (this.codeExpirySeconds - n) * 1e3), takeWhile((n) => n >= 0));
-    this.currentEmail = this.routerService.getCurrentNavigation()?.extras.state?.["currentEmail"];
   }
   ngOnInit() {
   }
@@ -56791,7 +58530,7 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninCodeComponent, selectors: [["app-vault-signin-code"]], inputs: { currentEmail: "currentEmail" }, standalone: false, decls: 28, vars: 10, consts: [["id", "step-verification", 1, "step-view", "p-8", "space-y-6"], [1, "text-center", "space-y-2"], [1, "text-2xl", "font-semibold", "text-gray-900"], ["id", "verification-hint", 1, "text-gray-600"], [1, "space-y-6"], ["id", "verification-inputs", 1, "flex", "justify-between", "gap-2"], [3, "codeCompleted", "isCodeHidden", "codeLength"], ["id", "verification-error", "class", "text-sm text-red-500 text-center", 4, "ngIf"], [1, "text-center", "space-y-4"], [1, "text-sm", "text-gray-600"], ["id", "verification-countdown", 1, "font-semibold", "text-gray-900"], [1, "space-x-2"], ["id", "resend-code", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium"], [1, "text-gray-300"], ["id", "use-other-method", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", 2, "display", "none"], ["id", "verification-error", 1, "text-sm", "text-red-500", "text-center"]], template: function VaultSigninCodeComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninCodeComponent, selectors: [["app-vault-signin-code"]], inputs: { currentEmail: "currentEmail" }, standalone: false, decls: 28, vars: 10, consts: [["id", "step-verification", 1, "step-view", "p-8", "space-y-6"], [1, "text-center", "space-y-2"], [1, "text-2xl", "font-semibold", "text-gray-900"], ["id", "verification-hint", 1, "text-gray-600"], [1, "space-y-6"], ["id", "verification-inputs", 1, "flex", "justify-between", "gap-2"], [3, "codeCompleted", "isCodeHidden", "codeLength"], ["id", "verification-error", "class", "text-sm text-red-500 text-center", 4, "ngIf"], [1, "text-center", "space-y-4"], [1, "text-sm", "text-gray-600"], ["id", "verification-countdown", 1, "font-semibold", "text-gray-900"], [1, "space-x-2"], ["id", "resend-code", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium"], [1, "text-gray-300", 2, "display", "none"], ["id", "use-other-method", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", 2, "display", "none"], ["id", "verification-error", 1, "text-sm", "text-red-500", "text-center"]], template: function VaultSigninCodeComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "h2", 2);
         \u0275\u0275text(3, " Enter authentication code");
@@ -56998,7 +58737,7 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 38, vars: 0, consts: [["id", "overview", 1, "tab-content", "p-6", "pb-12"], [1, "space-y-6"], [1, "space-y-4"], [1, "text-2xl", "font-semibold", "text-gray-900"], [1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300"], [1, "flex", "items-center", "gap-3"], ["src", "https://logo.clearbit.com/mayoclinic.org", "alt", "Mayo Clinic", 1, "w-10", "h-10", "rounded", "object-contain"], [1, "font-medium"], [1, "flex", "items-center", "gap-2"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-[#EEF2FF]", "text-[#5B47FB]", "rounded-full"], [1, "text-gray-400", "hover:text-gray-500"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M9 18l6-6-6-6"], ["src", "https://logo.clearbit.com/clevelandclinic.org", "alt", "Cleveland Clinic", 1, "w-10", "h-10", "rounded", "object-contain"], ["src", "https://logo.clearbit.com/questdiagnostics.com", "alt", "Quest Diagnostics", 1, "w-10", "h-10", "rounded", "object-contain"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-yellow-100", "text-yellow-800", "rounded-full"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 45, vars: 0, consts: [["id", "overview", 1, "tab-content", "p-6", "pb-12"], [1, "space-y-6"], [1, "space-y-4"], [1, "text-2xl", "font-semibold", "text-gray-900"], [1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300"], [1, "flex", "items-center", "gap-3"], ["src", "https://logo.clearbit.com/mayoclinic.org", "alt", "Mayo Clinic", 1, "w-10", "h-10", "rounded", "object-contain"], [1, "font-medium"], [1, "flex", "items-center", "gap-2"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-[#EEF2FF]", "text-[#5B47FB]", "rounded-full"], [1, "text-gray-400", "hover:text-gray-500"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M9 18l6-6-6-6"], ["src", "https://logo.clearbit.com/clevelandclinic.org", "alt", "Cleveland Clinic", 1, "w-10", "h-10", "rounded", "object-contain"], ["src", "https://logo.clearbit.com/questdiagnostics.com", "alt", "Quest Diagnostics", 1, "w-10", "h-10", "rounded", "object-contain"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-yellow-100", "text-yellow-800", "rounded-full"], ["routerLink", "/search", 1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300", "cursor-pointer"], [1, "w-10", "h-10", "rounded", "bg-gray-100", "flex", "items-center", "justify-center"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-6", "h-6", "text-gray-500"], ["d", "M12 5v14M5 12h14"], [1, "font-medium", "text-gray-700"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h3", 3);
         \u0275\u0275text(4, "Connected Health Systems");
@@ -57043,9 +58782,19 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
         \u0275\u0275namespaceSVG();
         \u0275\u0275elementStart(36, "svg", 11);
         \u0275\u0275element(37, "path", 12);
-        \u0275\u0275elementEnd()()()()()()();
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(38, "a", 16)(39, "div", 5)(40, "div", 17);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(41, "svg", 18);
+        \u0275\u0275element(42, "path", 19);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(43, "span", 20);
+        \u0275\u0275text(44, "Add an account");
+        \u0275\u0275elementEnd()()()()()();
       }
-    }, encapsulation: 2 });
+    }, dependencies: [RouterLink], encapsulation: 2 });
   }
 };
 (() => {
@@ -57139,7 +58888,8 @@ var dashboardRoutes = [
       { path: "apps", pathMatch: "full", component: ConnectedAppsTabComponent },
       { path: "accounts", pathMatch: "full", component: ConnectedAccountsTabComponent },
       { path: "settings", pathMatch: "full", component: SettingsTabComponent }
-    ]
+    ],
+    canActivate: [IsAuthenticatedAuthGuard]
   }
 ];
 var DashboardRoutingModule = class _DashboardRoutingModule {
@@ -57156,6 +58906,2279 @@ var DashboardRoutingModule = class _DashboardRoutingModule {
   }
 };
 
+// node_modules/ngx-device-detector/fesm2022/ngx-device-detector.mjs
+var GENERAL = {
+  UKNOWN: "Unknown"
+};
+var BROWSERS = {
+  CHROME: "Chrome",
+  FIREFOX: "Firefox",
+  SAFARI: "Safari",
+  OPERA: "Opera",
+  IE: "IE",
+  MS_EDGE: "MS-Edge",
+  MS_EDGE_CHROMIUM: "MS-Edge-Chromium",
+  FB_MESSANGER: "FB-Messanger",
+  SAMSUNG: "Samsung",
+  UCBROWSER: "UC-Browser",
+  UNKNOWN: GENERAL.UKNOWN
+};
+var MOBILES_RE = {
+  // tslint:disable-next-line:max-line-length
+  HTC: /HTC|HTC.*(Sensation|Evo|Vision|Explorer|6800|8100|8900|A7272|S510e|C110e|Legend|Desire|T8282)|APX515CKT|Qtek9090|APA9292KT|HD_mini|Sensation.*Z710e|PG86100|Z715e|Desire.*(A8181|HD)|ADR6200|ADR6400L|ADR6425|001HT|Inspire 4G|Android.*\bEVO\b|T-Mobile G1|Z520m|Android [0-9.]+; Pixel/,
+  NEXUS_PHONE: /Nexus One|Nexus S|Galaxy.*Nexus|Android.*Nexus.*Mobile|Nexus 4|Nexus 5|Nexus 6/,
+  DELL: /Dell[;]? (Streak|Aero|Venue|Venue Pro|Flash|Smoke|Mini 3iX)|XCD28|XCD35|\b001DL\b|\b101DL\b|\bGS01\b/,
+  MOTOROLA: new RegExp(`Motorola|DROIDX|DROID BIONIC|\\bDroid\\b.*Build|Android.*Xoom|HRI39|MOT-|A1260|A1680|A555|A853|
+      A855|A953|A955|A956|Motorola.*ELECTRIFY|Motorola.*i1|i867|i940|MB200|MB300|MB501|MB502|MB508|MB511|
+      MB520|MB525|MB526|MB611|MB612|MB632|MB810|MB855|MB860|MB861|MB865|MB870|ME501|ME502|ME511|ME525|ME600|
+      ME632|ME722|ME811|ME860|ME863|ME865|MT620|MT710|MT716|MT720|MT810|MT870|MT917|Motorola.*TITANIUM|WX435|
+      WX445|XT300|XT301|XT311|XT316|XT317|XT319|XT320|XT390|XT502|XT530|XT531|XT532|XT535|XT603|XT610|XT611|
+      XT615|XT681|XT701|XT702|XT711|XT720|XT800|XT806|XT860|XT862|XT875|XT882|XT883|XT894|XT901|XT907|XT909|
+      XT910|XT912|XT928|XT926|XT915|XT919|XT925|XT1021|\\bMoto E\\b|XT1068|XT1092|XT1052`),
+  SAMSUNG: new RegExp(`\\bSamsung\\b|SM-G950F|SM-G955F|SM-G9250|GT-19300|SGH-I337|BGT-S5230|GT-B2100|GT-B2700|GT-B2710|
+      GT-B3210|GT-B3310|GT-B3410|GT-B3730|GT-B3740|GT-B5510|GT-B5512|GT-B5722|GT-B6520|GT-B7300|GT-B7320|
+      GT-B7330|GT-B7350|GT-B7510|GT-B7722|GT-B7800|GT-C3010|GT-C3011|GT-C3060|GT-C3200|GT-C3212|GT-C3212I|
+      GT-C3262|GT-C3222|GT-C3300|GT-C3300K|GT-C3303|GT-C3303K|GT-C3310|GT-C3322|GT-C3330|GT-C3350|GT-C3500|
+      GT-C3510|GT-C3530|GT-C3630|GT-C3780|GT-C5010|GT-C5212|GT-C6620|GT-C6625|GT-C6712|GT-E1050|GT-E1070|
+      GT-E1075|GT-E1080|GT-E1081|GT-E1085|GT-E1087|GT-E1100|GT-E1107|GT-E1110|GT-E1120|GT-E1125|GT-E1130|
+      GT-E1160|GT-E1170|GT-E1175|GT-E1180|GT-E1182|GT-E1200|GT-E1210|GT-E1225|GT-E1230|GT-E1390|GT-E2100|
+      GT-E2120|GT-E2121|GT-E2152|GT-E2220|GT-E2222|GT-E2230|GT-E2232|GT-E2250|GT-E2370|GT-E2550|GT-E2652|
+      GT-E3210|GT-E3213|GT-I5500|GT-I5503|GT-I5700|GT-I5800|GT-I5801|GT-I6410|GT-I6420|GT-I7110|GT-I7410|
+      GT-I7500|GT-I8000|GT-I8150|GT-I8160|GT-I8190|GT-I8320|GT-I8330|GT-I8350|GT-I8530|GT-I8700|GT-I8703|
+      GT-I8910|GT-I9000|GT-I9001|GT-I9003|GT-I9010|GT-I9020|GT-I9023|GT-I9070|GT-I9082|GT-I9100|GT-I9103|
+      GT-I9220|GT-I9250|GT-I9300|GT-I9305|GT-I9500|GT-I9505|GT-M3510|GT-M5650|GT-M7500|GT-M7600|GT-M7603|
+      GT-M8800|GT-M8910|GT-N7000|GT-S3110|GT-S3310|GT-S3350|GT-S3353|GT-S3370|GT-S3650|GT-S3653|GT-S3770|
+      GT-S3850|GT-S5210|GT-S5220|GT-S5229|GT-S5230|GT-S5233|GT-S5250|GT-S5253|GT-S5260|GT-S5263|GT-S5270|
+      GT-S5300|GT-S5330|GT-S5350|GT-S5360|GT-S5363|GT-S5369|GT-S5380|GT-S5380D|GT-S5560|GT-S5570|GT-S5600|
+      GT-S5603|GT-S5610|GT-S5620|GT-S5660|GT-S5670|GT-S5690|GT-S5750|GT-S5780|GT-S5830|GT-S5839|GT-S6102|
+      GT-S6500|GT-S7070|GT-S7200|GT-S7220|GT-S7230|GT-S7233|GT-S7250|GT-S7500|GT-S7530|GT-S7550|GT-S7562|
+      GT-S7710|GT-S8000|GT-S8003|GT-S8500|GT-S8530|GT-S8600|SCH-A310|SCH-A530|SCH-A570|SCH-A610|SCH-A630|
+      SCH-A650|SCH-A790|SCH-A795|SCH-A850|SCH-A870|SCH-A890|SCH-A930|SCH-A950|SCH-A970|SCH-A990|SCH-I100|
+      SCH-I110|SCH-I400|SCH-I405|SCH-I500|SCH-I510|SCH-I515|SCH-I600|SCH-I730|SCH-I760|SCH-I770|SCH-I830|
+      SCH-I910|SCH-I920|SCH-I959|SCH-LC11|SCH-N150|SCH-N300|SCH-R100|SCH-R300|SCH-R351|SCH-R400|SCH-R410|
+      SCH-T300|SCH-U310|SCH-U320|SCH-U350|SCH-U360|SCH-U365|SCH-U370|SCH-U380|SCH-U410|SCH-U430|SCH-U450|
+      SCH-U460|SCH-U470|SCH-U490|SCH-U540|SCH-U550|SCH-U620|SCH-U640|SCH-U650|SCH-U660|SCH-U700|SCH-U740|
+      SCH-U750|SCH-U810|SCH-U820|SCH-U900|SCH-U940|SCH-U960|SCS-26UC|SGH-A107|SGH-A117|SGH-A127|SGH-A137|
+      SGH-A157|SGH-A167|SGH-A177|SGH-A187|SGH-A197|SGH-A227|SGH-A237|SGH-A257|SGH-A437|SGH-A517|SGH-A597|
+      SGH-A637|SGH-A657|SGH-A667|SGH-A687|SGH-A697|SGH-A707|SGH-A717|SGH-A727|SGH-A737|SGH-A747|SGH-A767|
+      SGH-A777|SGH-A797|SGH-A817|SGH-A827|SGH-A837|SGH-A847|SGH-A867|SGH-A877|SGH-A887|SGH-A897|SGH-A927|
+      SGH-B100|SGH-B130|SGH-B200|SGH-B220|SGH-C100|SGH-C110|SGH-C120|SGH-C130|SGH-C140|SGH-C160|SGH-C170|
+      SGH-C180|SGH-C200|SGH-C207|SGH-C210|SGH-C225|SGH-C230|SGH-C417|SGH-C450|SGH-D307|SGH-D347|SGH-D357|
+      SGH-D407|SGH-D415|SGH-D780|SGH-D807|SGH-D980|SGH-E105|SGH-E200|SGH-E315|SGH-E316|SGH-E317|SGH-E335|
+      SGH-E590|SGH-E635|SGH-E715|SGH-E890|SGH-F300|SGH-F480|SGH-I200|SGH-I300|SGH-I320|SGH-I550|SGH-I577|
+      SGH-I600|SGH-I607|SGH-I617|SGH-I627|SGH-I637|SGH-I677|SGH-I700|SGH-I717|SGH-I727|SGH-i747M|SGH-I777|
+      SGH-I780|SGH-I827|SGH-I847|SGH-I857|SGH-I896|SGH-I897|SGH-I900|SGH-I907|SGH-I917|SGH-I927|SGH-I937|
+      SGH-I997|SGH-J150|SGH-J200|SGH-L170|SGH-L700|SGH-M110|SGH-M150|SGH-M200|SGH-N105|SGH-N500|SGH-N600|
+      SGH-N620|SGH-N625|SGH-N700|SGH-N710|SGH-P107|SGH-P207|SGH-P300|SGH-P310|SGH-P520|SGH-P735|SGH-P777|
+      SGH-Q105|SGH-R210|SGH-R220|SGH-R225|SGH-S105|SGH-S307|SGH-T109|SGH-T119|SGH-T139|SGH-T209|SGH-T219|
+      SGH-T229|SGH-T239|SGH-T249|SGH-T259|SGH-T309|SGH-T319|SGH-T329|SGH-T339|SGH-T349|SGH-T359|SGH-T369|
+      SGH-T379|SGH-T409|SGH-T429|SGH-T439|SGH-T459|SGH-T469|SGH-T479|SGH-T499|SGH-T509|SGH-T519|SGH-T539|
+      SGH-T559|SGH-T589|SGH-T609|SGH-T619|SGH-T629|SGH-T639|SGH-T659|SGH-T669|SGH-T679|SGH-T709|SGH-T719|
+      SGH-T729|SGH-T739|SGH-T746|SGH-T749|SGH-T759|SGH-T769|SGH-T809|SGH-T819|SGH-T839|SGH-T919|SGH-T929|
+      SGH-T939|SGH-T959|SGH-T989|SGH-U100|SGH-U200|SGH-U800|SGH-V205|SGH-V206|SGH-X100|SGH-X105|SGH-X120|
+      SGH-X140|SGH-X426|SGH-X427|SGH-X475|SGH-X495|SGH-X497|SGH-X507|SGH-X600|SGH-X610|SGH-X620|SGH-X630|
+      SGH-X700|SGH-X820|SGH-X890|SGH-Z130|SGH-Z150|SGH-Z170|SGH-ZX10|SGH-ZX20|SHW-M110|SPH-A120|SPH-A400|
+      SPH-A420|SPH-A460|SPH-A500|SPH-A560|SPH-A600|SPH-A620|SPH-A660|SPH-A700|SPH-A740|SPH-A760|SPH-A790|
+      SPH-A800|SPH-A820|SPH-A840|SPH-A880|SPH-A900|SPH-A940|SPH-A960|SPH-D600|SPH-D700|SPH-D710|SPH-D720|
+      SPH-I300|SPH-I325|SPH-I330|SPH-I350|SPH-I500|SPH-I600|SPH-I700|SPH-L700|SPH-M100|SPH-M220|SPH-M240|
+      SPH-M300|SPH-M305|SPH-M320|SPH-M330|SPH-M350|SPH-M360|SPH-M370|SPH-M380|SPH-M510|SPH-M540|SPH-M550|
+      SPH-M560|SPH-M570|SPH-M580|SPH-M610|SPH-M620|SPH-M630|SPH-M800|SPH-M810|SPH-M850|SPH-M900|SPH-M910|
+      SPH-M920|SPH-M930|SPH-N100|SPH-N200|SPH-N240|SPH-N300|SPH-N400|SPH-Z400|SWC-E100|SCH-i909|GT-N7100|
+      GT-N7105|SCH-I535|SM-N900A|SM-N900T|SGH-I317|SGH-T999L|GT-S5360B|GT-I8262|GT-S6802|GT-S6312|GT-S6310|GT-S5312|
+      GT-S5310|GT-I9105|GT-I8510|GT-S6790N|SM-G7105|SM-N9005|GT-S5301|GT-I9295|GT-I9195|SM-C101|GT-S7392|GT-S7560|
+      GT-B7610|GT-I5510|GT-S7582|GT-S7530E|GT-I8750|SM-G9006V|SM-G9008V|SM-G9009D|SM-G900A|SM-G900D|SM-G900F|
+      SM-G900H|SM-G900I|SM-G900J|SM-G900K|SM-G900L|SM-G900M|SM-G900P|SM-G900R4|SM-G900S|SM-G900T|SM-G900V|
+      SM-G900W8|SHV-E160K|SCH-P709|SCH-P729|SM-T2558|GT-I9205|SM-G9350|SM-J120F|SM-G920F|SM-G920V|SM-G930F|
+      SM-N910C|SM-A310F|GT-I9190|SM-J500FN|SM-G903F|SM-J330F`),
+  LG: new RegExp(`\\bLG\\b;|LG[- ]?(C800|C900|E400|E610|E900|E-900|F160|F180K|F180L|F180S|730|855|L160|LS740|LS840|LS970|
+      LU6200|MS690|MS695|MS770|MS840|MS870|MS910|P500|P700|P705|VM696|AS680|AS695|AX840|C729|E970|GS505|272|
+      C395|E739BK|E960|L55C|L75C|LS696|LS860|P769BK|P350|P500|P509|P870|UN272|US730|VS840|VS950|LN272|LN510|
+      LS670|LS855|LW690|MN270|MN510|P509|P769|P930|UN200|UN270|UN510|UN610|US670|US740|US760|UX265|UX840|VN271|
+      VN530|VS660|VS700|VS740|VS750|VS910|VS920|VS930|VX9200|VX11000|AX840A|LW770|P506|P925|P999|E612|D955|D802|
+      MS323|M257)`),
+  SONY: /SonyST|SonyLT|SonyEricsson|SonyEricssonLT15iv|LT18i|E10i|LT28h|LT26w|SonyEricssonMT27i|C5303|C6902|C6903|C6906|C6943|D2533/,
+  ASUS: /Asus.*Galaxy|PadFone.*Mobile/,
+  NOKIA_LUMIA: /Lumia [0-9]{3,4}/,
+  MICROMAX: /Micromax.*\b(A210|A92|A88|A72|A111|A110Q|A115|A116|A110|A90S|A26|A51|A35|A54|A25|A27|A89|A68|A65|A57|A90)\b/,
+  PALM: /PalmSource|Palm/,
+  VERTU: /Vertu|Vertu.*Ltd|Vertu.*Ascent|Vertu.*Ayxta|Vertu.*Constellation(F|Quest)?|Vertu.*Monika|Vertu.*Signature/,
+  PANTECH: new RegExp(`PANTECH|IM-A850S|IM-A840S|IM-A830L|IM-A830K|IM-A830S|IM-A820L|IM-A810K|IM-A810S|IM-A800S|IM-T100K|
+        IM-A725L|IM-A780L|IM-A775C|IM-A770K|IM-A760S|IM-A750K|IM-A740S|IM-A730S|IM-A720L|IM-A710K|IM-A690L|
+        IM-A690S|IM-A650S|IM-A630K|IM-A600S|VEGA PTL21|PT003|P8010|ADR910L|P6030|P6020|P9070|P4100|P9060|P5000|
+        CDM8992|TXT8045|ADR8995|IS11PT|P2030|P6010|P8000|PT002|IS06|CDM8999|P9050|PT001|TXT8040|P2020|P9020|
+        P2000|P7040|P7000|C790`),
+  FLY: /IQ230|IQ444|IQ450|IQ440|IQ442|IQ441|IQ245|IQ256|IQ236|IQ255|IQ235|IQ245|IQ275|IQ240|IQ285|IQ280|IQ270|IQ260|IQ250/,
+  WIKO: new RegExp(`KITE 4G|HIGHWAY|GETAWAY|STAIRWAY|DARKSIDE|DARKFULL|DARKNIGHT|DARKMOON|SLIDE|WAX 4G|RAINBOW|BLOOM|
+        SUNSET|GOA(?!nna)|LENNY|BARRY|IGGY|OZZY|CINK FIVE|CINK PEAX|CINK PEAX 2|CINK SLIM|CINK SLIM 2|CINK +|
+        CINK KING|CINK PEAX|CINK SLIM|SUBLIM`),
+  I_MOBILE: /i-mobile (IQ|i-STYLE|idea|ZAA|Hitz)/,
+  SIMVALLEY: /\b(SP-80|XT-930|SX-340|XT-930|SX-310|SP-360|SP60|SPT-800|SP-120|SPT-800|SP-140|SPX-5|SPX-8|SP-100|SPX-8|SPX-12)\b/,
+  WOLFGANG: /AT-B24D|AT-AS50HD|AT-AS40W|AT-AS55HD|AT-AS45q2|AT-B26D|AT-AS50Q/,
+  ALCATEL: /Alcatel|Mobile; rv:49.0|Mobile; ALCATEL 4052R; rv:48.0/,
+  NINTENDO: /Nintendo (3DS|Switch)/,
+  AMOI: /Amoi/,
+  INQ: /INQ/,
+  VITA: /\bVita\b/,
+  BLACKBERRY: /\bBlackBerry\b|\bBB10\b|rim[0-9]+/,
+  FIREFOX_OS: /\bFirefox-OS\b/,
+  IPHONE: /\biPhone\b/,
+  iPod: /\biPod\b/,
+  ANDROID: /\bAndroid\b/,
+  WINDOWS_PHONE: /\bWindows-Phone\b/,
+  GENERIC_PHONE: new RegExp(`Tapatalk|PDA;|SAGEM|\\bmmp\\b|pocket|\\bpsp\\b|symbian|Smartphone|smartfon|treo|up.browser|
+        up.link|vodafone|\\bwap\\b|nokia|Nokia|Series40|Series60|S60|SonyEricsson|N900|MAUI.*WAP.*Browser`)
+};
+var TABLETS_RE = {
+  iPad: /iPad|iPad.*Mobile/,
+  NexusTablet: /Android.*Nexus[\s]+(7|9|10)/,
+  GoogleTablet: /Android.*Pixel C/,
+  SamsungTablet: new RegExp(`SAMSUNG.*Tablet|Galaxy.*Tab|SC-01C|GT-P1000|GT-P1003|GT-P1010|GT-P3105|GT-P6210|
+        GT-P6800|GT-P6810|GT-P7100|GT-P7300|GT-P7310|GT-P7500|GT-P7510|SCH-I800|SCH-I815|SCH-I905|
+        SGH-I957|SGH-I987|SGH-T849|SGH-T859|SGH-T869|SPH-P100|GT-P3100|GT-P3108|GT-P3110|GT-P5100|
+        GT-P5110|GT-P6200|GT-P7320|GT-P7511|GT-N8000|GT-P8510|SGH-I497|SPH-P500|SGH-T779|SCH-I705|
+        SCH-I915|GT-N8013|GT-P3113|GT-P5113|GT-P8110|GT-N8010|GT-N8005|GT-N8020|GT-P1013|GT-P6201|
+        GT-P7501|GT-N5100|GT-N5105|GT-N5110|SHV-E140K|SHV-E140L|SHV-E140S|SHV-E150S|SHV-E230K|SHV-E230L|
+        SHV-E230S|SHW-M180K|SHW-M180L|SM-T865|SM-T290|SHW-M180S|SHW-M180W|SHW-M300W|SHW-M305W|SHW-M380K|SHW-M380S|SHW-M380W|
+        SHW-M430W|SHW-M480K|SHW-M480S|SHW-M480W|SHW-M485W|SHW-M486W|SHW-M500W|GT-I9228|SCH-P739|SCH-I925|
+        GT-I9200|GT-P5200|GT-P5210|GT-P5210X|SM-T385M|SM-P585M|SM-T311|SM-T310|SM-T310X|SM-T210|SM-T210R|SM-T211|SM-P600|
+        SM-P601|SM-P605|SM-P615|SM-P900|SM-P901|SM-T217|SM-T217A|SM-T217S|SM-P6000|SM-T3100|SGH-I467|XE500|SM-T110|
+        GT-P5220|GT-I9200X|GT-N5110X|GT-N5120|SM-P905|SM-T111|SM-T2105|SM-T315|SM-T320|SM-T320X|SM-T321|
+        SM-T510|SM-T520|SM-T525|SM-T530NU|SM-T230NU|SM-T330NU|SM-T900|XE500T1C|SM-P605V|SM-P905V|SM-T337V|SM-T537V|
+        SM-T707V|SM-T807V|SM-P600X|SM-P900X|SM-T210X|SM-T230|SM-T230X|SM-T325|GT-P7503|SM-T531|SM-T500|SM-T330|
+        SM-T530|SM-T705|SM-T705C|SM-T535|SM-T331|SM-T800|SM-T700|SM-T537|SM-T807|SM-P907A|SM-T337A|SM-T537A|
+        SM-T707A|SM-T807A|SM-T237|SM-T807P|SM-P607T|SM-T217T|SM-T337T|SM-T807T|SM-T116NQ|SM-T116BU|SM-P550|
+        SM-T350|SM-T550|SM-T9000|SM-P9000|SM-T705Y|SM-T805|GT-P3113|SM-T710|SM-T810|SM-T815|SM-T360|SM-T533|
+        SM-T113|SM-T335|SM-T715|SM-T560|SM-T670|SM-T677|SM-T377|SM-T567|SM-T357T|SM-T555|SM-T561|SM-T713|
+        SM-T719|SM-T725|SM-T813|SM-T819|SM-T580|SM-T590|SM-T355Y?|SM-T280|SM-T817A|SM-T820|SM-W700|SM-P580|SM-T587|SM-P350|
+        SM-P555M|SM-P355M|SM-T113NU|SM-T815Y|SM-T585|SM-T285|SM-T825|SM-W708|SM-T835|SM-P585Y|SM-X200|SM-T970`),
+  Kindle: new RegExp(`Kindle|Silk.*Accelerated|Android.*\\b(KFOT|KFTT|KFJWI|KFJWA|KFOTE|KFSOWI|KFTHWI|KFTHWA|KFAPWI|
+        KFAPWA|WFJWAE|KFSAWA|KFSAWI|KFASWI|KFARWI|KFFOWI|KFGIWI|KFMEWI)\\b|Android.*Silk/[0-9.]+ like Chrome        /[0-9.]+ (?!Mobile)`),
+  SurfaceTablet: /Windows NT [0-9.]+; ARM;.*(Tablet|ARMBJS)/,
+  HPTablet: /HP Slate (7|8|10)|HP ElitePad 900|hp-tablet|EliteBook.*Touch|HP 8|Slate 21|HP SlateBook 10/,
+  AsusTablet: new RegExp(`^.*PadFone((?!Mobile).)*$|Transformer|TF101|TF101G|TF300T|TF300TG|TF300TL|TF700T|TF700KL|
+        TF701T|TF810C|ME171|ME301T|ME302C|ME371MG|ME370T|ME372MG|ME172V|ME173X|ME400C|
+        Slider SL101|\\bK00F\\b|\\bK00C\\b|\\bK00E\\b|\\bK00L\\b|TX201LA|ME176C|ME102A|\\bM80TA\\b|ME372CL|
+        ME560CG|ME372CG|ME302KL| K010 | K011 | K017 | K01E |ME572C|ME103K|ME170C|ME171C|\\bME70C\\b|ME581C|
+        ME581CL|ME8510C|ME181C|P01Y|PO1MA|P01Z|\\bP027\\b|\\bP024\\b|\\bP00C\\b`),
+  BlackBerryTablet: /PlayBook|RIM Tablet/,
+  HTCtablet: /HTC_Flyer_P512|HTC Flyer|HTC Jetstream|HTC-P715a|HTC EVO View 4G|PG41200|PG09410/,
+  MotorolaTablet: /xoom|sholest|MZ615|MZ605|MZ505|MZ601|MZ602|MZ603|MZ604|MZ606|MZ607|MZ608|MZ609|MZ615|MZ616|MZ617/,
+  NookTablet: /Android.*Nook|NookColor|nook browser|BNRV200|BNRV200A|BNTV250|BNTV250A|BNTV400|BNTV600|LogicPD Zoom2/,
+  AcerTablet: new RegExp(`Android.*; \\b(A100|A101|A110|A200|A210|A211|A500|A501|A510|A511|A700|A701|W500|W500P|W501|
+        W501P|W510|W511|W700|G100|G100W|B1-A71|B1-710|B1-711|A1-810|A1-811|A1-830)\\b|W3-810|\\bA3-A10\\b|\\bA3-A11\\b|
+        \\bA3-A20\\b|\\bA3-A30`),
+  ToshibaTablet: /Android.*(AT100|AT105|AT200|AT205|AT270|AT275|AT300|AT305|AT1S5|AT500|AT570|AT700|AT830)|TOSHIBA.*FOLIO/,
+  LGTablet: /\bL-06C|LG-V909|LG-V900|LG-V700|LG-V510|LG-V500|LG-V410|LG-V400|LG-VK810\b/,
+  FujitsuTablet: /Android.*\b(F-01D|F-02F|F-05E|F-10D|M532|Q572)\b/,
+  PrestigioTablet: new RegExp(`PMP3170B|PMP3270B|PMP3470B|PMP7170B|PMP3370B|PMP3570C|PMP5870C|PMP3670B|PMP5570C|
+        PMP5770D|PMP3970B|PMP3870C|PMP5580C|PMP5880D|PMP5780D|PMP5588C|PMP7280C|PMP7280C3G|PMP7280|PMP7880D|
+        PMP5597D|PMP5597|PMP7100D|PER3464|PER3274|PER3574|PER3884|PER5274|PER5474|PMP5097CPRO|PMP5097|PMP7380D|
+        PMP5297C|PMP5297C_QUAD|PMP812E|PMP812E3G|PMP812F|PMP810E|PMP880TD|PMT3017|PMT3037|PMT3047|PMT3057|PMT7008|
+        PMT5887|PMT5001|PMT5002`),
+  LenovoTablet: new RegExp(`Lenovo TAB|Idea(Tab|Pad)( A1|A10| K1|)|ThinkPad([ ]+)?Tablet|YT3-850M|YT3-X90L|YT3-X90F|
+        YT3-X90X|Lenovo.*(S2109|S2110|S5000|S6000|K3011|A3000|A3500|A1000|A2107|A2109|A1107|A5500|A7600|B6000|
+        B8000|B8080)(-|)(FL|F|HV|H|)|TB-X606F|TB-X103F|TB-X304F|TB-X304L|TB-X704F|TB-8703F|Tab2A7-10F|TB2-X30L|TB-8504F`),
+  DellTablet: /Venue 11|Venue 8|Venue 7|Dell Streak 10|Dell Streak 7/,
+  YarvikTablet: new RegExp(`Android.*\\b(TAB210|TAB211|TAB224|TAB250|TAB260|TAB264|TAB310|TAB360|TAB364|TAB410|TAB411|
+        TAB420|TAB424|TAB450|TAB460|TAB461|TAB464|TAB465|TAB467|TAB468|TAB07-100|TAB07-101|TAB07-150|TAB07-151|
+        TAB07-152|TAB07-200|TAB07-201-3G|TAB07-210|TAB07-211|TAB07-212|TAB07-214|TAB07-220|TAB07-400|TAB07-485|
+        TAB08-150|TAB08-200|TAB08-201-3G|TAB08-201-30|TAB09-100|TAB09-211|TAB09-410|TAB10-150|TAB10-201|TAB10-211|
+        TAB10-400|TAB10-410|TAB13-201|TAB274EUK|TAB275EUK|TAB374EUK|TAB462EUK|TAB474EUK|TAB9-200)\\b`),
+  MedionTablet: /Android.*\bOYO\b|LIFE.*(P9212|P9514|P9516|S9512)|LIFETAB/,
+  ArnovaTablet: /97G4|AN10G2|AN7bG3|AN7fG3|AN8G3|AN8cG3|AN7G3|AN9G3|AN7dG3|AN7dG3ST|AN7dG3ChildPad|AN10bG3|AN10bG3DT|AN9G2/,
+  IntensoTablet: /INM8002KP|INM1010FP|INM805ND|Intenso Tab|TAB1004/,
+  IRUTablet: /M702pro/,
+  MegafonTablet: /MegaFon V9|\bZTE V9\b|Android.*\bMT7A\b/,
+  EbodaTablet: /E-Boda (Supreme|Impresspeed|Izzycomm|Essential)/,
+  AllViewTablet: /Allview.*(Viva|Alldro|City|Speed|All TV|Frenzy|Quasar|Shine|TX1|AX1|AX2)/,
+  ArchosTablet: new RegExp(`\\b(101G9|80G9|A101IT)\\b|Qilive 97R|Archos5|\\bARCHOS (70|79|80|90|97|101|FAMILYPAD|)(b|c|)(G10|
+         Cobalt| TITANIUM(HD|)| Xenon| Neon|XSK| 2| XS 2| PLATINUM| CARBON|GAMEPAD)\\b`),
+  AinolTablet: /NOVO7|NOVO8|NOVO10|Novo7Aurora|Novo7Basic|NOVO7PALADIN|novo9-Spark/,
+  NokiaLumiaTablet: /Lumia 2520/,
+  SonyTablet: new RegExp(`Sony.*Tablet|Xperia Tablet|Sony Tablet S|SO-03E|SGPT12|SGPT13|SGPT114|SGPT121|SGPT122|SGPT123|
+        SGPT111|SGPT112|SGPT113|SGPT131|SGPT132|SGPT133|SGPT211|SGPT212|SGPT213|SGP311|SGP312|SGP321|EBRD1101|
+        EBRD1102|EBRD1201|SGP351|SGP341|SGP511|SGP512|SGP521|SGP541|SGP551|SGP621|SGP641|SGP612|SOT31|SGP771|SGP611|
+        SGP612|SGP712`),
+  PhilipsTablet: /\b(PI2010|PI3000|PI3100|PI3105|PI3110|PI3205|PI3210|PI3900|PI4010|PI7000|PI7100)\b/,
+  CubeTablet: /Android.*(K8GT|U9GT|U10GT|U16GT|U17GT|U18GT|U19GT|U20GT|U23GT|U30GT)|CUBE U8GT/,
+  CobyTablet: new RegExp(`MID1042|MID1045|MID1125|MID1126|MID7012|MID7014|MID7015|MID7034|MID7035|MID7036|MID7042|MID7048|
+        MID7127|MID8042|MID8048|MID8127|MID9042|MID9740|MID9742|MID7022|MID7010`),
+  MIDTablet: new RegExp(`M9701|M9000|M9100|M806|M1052|M806|T703|MID701|MID713|MID710|MID727|MID760|MID830|MID728|MID933|
+        MID125|MID810|MID732|MID120|MID930|MID800|MID731|MID900|MID100|MID820|MID735|MID980|MID130|MID833|MID737|
+        MID960|MID135|MID860|MID736|MID140|MID930|MID835|MID733|MID4X10`),
+  MSITablet: new RegExp(`MSI \\b(Primo 73K|Primo 73L|Primo 81L|Primo 77|Primo 93|Primo 75|Primo 76|Primo 73|Primo 81|
+        Primo 91|Primo 90|Enjoy 71|Enjoy 7|Enjoy 10)\\b`),
+  SMiTTablet: /Android.*(\bMID\b|MID-560|MTV-T1200|MTV-PND531|MTV-P1101|MTV-PND530)/,
+  RockChipTablet: /Android.*(RK2818|RK2808A|RK2918|RK3066)|RK2738|RK2808A/,
+  FlyTablet: /IQ310|Fly Vision/,
+  bqTablet: new RegExp(`Android.*(bq)?.*(Elcano|Curie|Edison|Maxwell|Kepler|Pascal|Tesla|Hypatia|Platon|Newton|
+        Livingstone|Cervantes|Avant|Aquaris ([E|M]10|M8))|Maxwell.*Lite|Maxwell.*Plus`),
+  HuaweiTablet: new RegExp(`MediaPad|MediaPad 7 Youth|MediaPad T3 10|IDEOS S7|S7-201c|S7-202u|S7-101|S7-103|S7-104|S7-105|S7-106|
+        S7-201|S7-Slim|M2-A01L|BAH-L09|BAH-W09|AGS-W09|AGS-L09`),
+  NecTablet: /\bN-06D|\bN-08D/,
+  PantechTablet: /Pantech.*P4100/,
+  BronchoTablet: /Broncho.*(N701|N708|N802|a710)/,
+  VersusTablet: /TOUCHPAD.*[78910]|\bTOUCHTAB\b/,
+  ZyncTablet: /z1000|Z99 2G|z99|z930|z999|z990|z909|Z919|z900/,
+  PositivoTablet: /TB07STA|TB10STA|TB07FTA|TB10FTA/,
+  NabiTablet: /Android.*\bNabi/,
+  KoboTablet: /Kobo Touch|\bK080\b|\bVox\b Build|\bArc\b Build/,
+  DanewTablet: /DSlide.*\b(700|701R|702|703R|704|802|970|971|972|973|974|1010|1012)\b/,
+  TexetTablet: new RegExp(`NaviPad|TB-772A|TM-7045|TM-7055|TM-9750|TM-7016|TM-7024|TM-7026|TM-7041|TM-7043|TM-7047|
+        TM-8041|TM-9741|TM-9747|TM-9748|TM-9751|TM-7022|TM-7021|TM-7020|TM-7011|TM-7010|TM-7023|TM-7025|
+        TM-7037W|TM-7038W|TM-7027W|TM-9720|TM-9725|TM-9737W|TM-1020|TM-9738W|TM-9740|TM-9743W|TB-807A|TB-771A|
+        TB-727A|TB-725A|TB-719A|TB-823A|TB-805A|TB-723A|TB-715A|TB-707A|TB-705A|TB-709A|TB-711A|TB-890HD|
+        TB-880HD|TB-790HD|TB-780HD|TB-770HD|TB-721HD|TB-710HD|TB-434HD|TB-860HD|TB-840HD|TB-760HD|TB-750HD|
+        TB-740HD|TB-730HD|TB-722HD|TB-720HD|TB-700HD|TB-500HD|TB-470HD|TB-431HD|TB-430HD|TB-506|TB-504|TB-446|
+        TB-436|TB-416|TB-146SE|TB-126SE`),
+  PlaystationTablet: /Playstation.*(Portable|Vita)/,
+  TrekstorTablet: /ST10416-1|VT10416-1|ST70408-1|ST702xx-1|ST702xx-2|ST80208|ST97216|ST70104-2|VT10416-2|ST10216-2A|SurfTab/,
+  PyleAudioTablet: /\b(PTBL10CEU|PTBL10C|PTBL72BC|PTBL72BCEU|PTBL7CEU|PTBL7C|PTBL92BC|PTBL92BCEU|PTBL9CEU|PTBL9CUK|PTBL9C)\b/,
+  AdvanTablet: new RegExp(`Android.* \\b(E3A|T3X|T5C|T5B|T3E|T3C|T3B|T1J|T1F|T2A|T1H|T1i|E1C|T1-E|T5-A|T4|E1-B|T2Ci|
+        T1-B|T1-D|O1-A|E1-A|T1-A|T3A|T4i)\\b`),
+  DanyTechTablet: `Genius Tab G3|Genius Tab S2|Genius Tab Q3|Genius Tab G4|Genius Tab Q4|Genius Tab G-II|
+        Genius TAB GII|Genius TAB GIII|Genius Tab S1`,
+  GalapadTablet: /Android.*\bG1\b(?!\))/,
+  MicromaxTablet: /Funbook|Micromax.*\b(P250|P560|P360|P362|P600|P300|P350|P500|P275)\b/,
+  KarbonnTablet: /Android.*\b(A39|A37|A34|ST8|ST10|ST7|Smart Tab3|Smart Tab2)\b/,
+  AllFineTablet: /Fine7 Genius|Fine7 Shine|Fine7 Air|Fine8 Style|Fine9 More|Fine10 Joy|Fine11 Wide/,
+  PROSCANTablet: new RegExp(`\\b(PEM63|PLT1023G|PLT1041|PLT1044|PLT1044G|PLT1091|PLT4311|PLT4311PL|PLT4315|PLT7030|
+        PLT7033|PLT7033D|PLT7035|PLT7035D|PLT7044K|PLT7045K|PLT7045KB|PLT7071KG|PLT7072|PLT7223G|PLT7225G|
+        PLT7777G|PLT7810K|PLT7849G|PLT7851G|PLT7852G|PLT8015|PLT8031|PLT8034|PLT8036|PLT8080K|PLT8082|PLT8088|
+        PLT8223G|PLT8234G|PLT8235G|PLT8816K|PLT9011|PLT9045K|PLT9233G|PLT9735|PLT9760G|PLT9770G)\\b`),
+  YONESTablet: /BQ1078|BC1003|BC1077|RK9702|BC9730|BC9001|IT9001|BC7008|BC7010|BC708|BC728|BC7012|BC7030|BC7027|BC7026/,
+  ChangJiaTablet: new RegExp(`TPC7102|TPC7103|TPC7105|TPC7106|TPC7107|TPC7201|TPC7203|TPC7205|TPC7210|TPC7708|TPC7709|
+        TPC7712|TPC7110|TPC8101|TPC8103|TPC8105|TPC8106|TPC8203|TPC8205|TPC8503|TPC9106|TPC9701|TPC97101|TPC97103|
+        TPC97105|TPC97106|TPC97111|TPC97113|TPC97203|TPC97603|TPC97809|TPC97205|TPC10101|TPC10103|TPC10106|
+        TPC10111|TPC10203|TPC10205|TPC10503`),
+  GUTablet: /TX-A1301|TX-M9002|Q702|kf026/,
+  PointOfViewTablet: new RegExp(`TAB-P506|TAB-navi-7-3G-M|TAB-P517|TAB-P-527|TAB-P701|TAB-P703|TAB-P721|TAB-P731N|
+        TAB-P741|TAB-P825|TAB-P905|TAB-P925|TAB-PR945|TAB-PL1015|TAB-P1025|TAB-PI1045|TAB-P1325|TAB-PROTAB[0-9]+|
+        TAB-PROTAB25|TAB-PROTAB26|TAB-PROTAB27|TAB-PROTAB26XL|TAB-PROTAB2-IPS9|TAB-PROTAB30-IPS9|TAB-PROTAB25XXL|
+        TAB-PROTAB26-IPS10|TAB-PROTAB30-IPS10`),
+  OvermaxTablet: new RegExp(`OV-(SteelCore|NewBase|Basecore|Baseone|Exellen|Quattor|EduTab|Solution|ACTION|BasicTab|TeddyTab|
+        MagicTab|Stream|TB-08|TB-09)|Qualcore 1027`),
+  HCLTablet: /HCL.*Tablet|Connect-3G-2.0|Connect-2G-2.0|ME Tablet U1|ME Tablet U2|ME Tablet G1|ME Tablet X1|ME Tablet Y2|ME Tablet Sync/,
+  DPSTablet: /DPS Dream 9|DPS Dual 7/,
+  VistureTablet: /V97 HD|i75 3G|Visture V4( HD)?|Visture V5( HD)?|Visture V10/,
+  CrestaTablet: /CTP(-)?810|CTP(-)?818|CTP(-)?828|CTP(-)?838|CTP(-)?888|CTP(-)?978|CTP(-)?980|CTP(-)?987|CTP(-)?988|CTP(-)?989/,
+  MediatekTablet: /\bMT8125|MT8389|MT8135|MT8377\b/,
+  ConcordeTablet: /Concorde([ ]+)?Tab|ConCorde ReadMan/,
+  GoCleverTablet: new RegExp(`GOCLEVER TAB|A7GOCLEVER|M1042|M7841|M742|R1042BK|R1041|TAB A975|TAB A7842|TAB A741|TAB A741L|TAB M723G|
+        TAB M721|TAB A1021|TAB I921|TAB R721|TAB I720|TAB T76|TAB R70|TAB R76.2|TAB R106|TAB R83.2|TAB M813G|TAB I721|
+        GCTA722|TAB I70|TAB I71|TAB S73|TAB R73|TAB R74|TAB R93|TAB R75|TAB R76.1|TAB A73|TAB A93|TAB A93.2|TAB T72|
+        TAB R83|TAB R974|TAB R973|TAB A101|TAB A103|TAB A104|TAB A104.2|R105BK|M713G|A972BK|TAB A971|TAB R974.2|
+        TAB R104|TAB R83.3|TAB A1042`),
+  ModecomTablet: new RegExp(`FreeTAB 9000|FreeTAB 7.4|FreeTAB 7004|FreeTAB 7800|FreeTAB 2096|FreeTAB 7.5|FreeTAB 1014|
+        FreeTAB 1001 |FreeTAB 8001|FreeTAB 9706|FreeTAB 9702|FreeTAB 7003|FreeTAB 7002|FreeTAB 1002|FreeTAB 7801|
+        FreeTAB 1331|FreeTAB 1004|FreeTAB 8002|FreeTAB 8014|FreeTAB 9704|FreeTAB 1003`),
+  VoninoTablet: new RegExp(`\\b(Argus[ _]?S|Diamond[ _]?79HD|Emerald[ _]?78E|Luna[ _]?70C|Onyx[ _]?S|Onyx[ _]?Z|
+        Orin[ _]?HD|Orin[ _]?S|Otis[ _]?S|SpeedStar[ _]?S|Magnet[ _]?M9|Primus[ _]?94[ _]?3G|Primus[ _]?94HD|
+        Primus[ _]?QS|Android.*\\bQ8\\b|Sirius[ _]?EVO[ _]?QS|Sirius[ _]?QS|Spirit[ _]?S)\\b`),
+  ECSTablet: /V07OT2|TM105A|S10OT1|TR10CS1/,
+  StorexTablet: /eZee[_']?(Tab|Go)[0-9]+|TabLC7|Looney Tunes Tab/,
+  VodafoneTablet: /SmartTab([ ]+)?[0-9]+|SmartTabII10|SmartTabII7|VF-1497/,
+  EssentielBTablet: /Smart[ ']?TAB[ ]+?[0-9]+|Family[ ']?TAB2/,
+  RossMoorTablet: /RM-790|RM-997|RMD-878G|RMD-974R|RMT-705A|RMT-701|RME-601|RMT-501|RMT-711/,
+  iMobileTablet: /i-mobile i-note/,
+  TolinoTablet: /tolino tab [0-9.]+|tolino shine/,
+  AudioSonicTablet: /\bC-22Q|T7-QC|T-17B|T-17P\b/,
+  AMPETablet: /Android.* A78 /,
+  SkkTablet: /Android.* (SKYPAD|PHOENIX|CYCLOPS)/,
+  TecnoTablet: /TECNO P9|TECNO DP8D/,
+  JXDTablet: new RegExp(`Android.* \\b(F3000|A3300|JXD5000|JXD3000|JXD2000|JXD300B|JXD300|S5800|S7800|S602b|S5110b|S7300|
+        S5300|S602|S603|S5100|S5110|S601|S7100a|P3000F|P3000s|P101|P200s|P1000m|P200m|P9100|P1000s|S6600b|S908|
+        P1000|P300|S18|S6600|S9100)\\b`),
+  iJoyTablet: new RegExp(`Tablet (Spirit 7|Essentia|Galatea|Fusion|Onix 7|Landa|Titan|Scooby|Deox|Stella|Themis|Argon|
+        Unique 7|Sygnus|Hexen|Finity 7|Cream|Cream X2|Jade|Neon 7|Neron 7|Kandy|Scape|Saphyr 7|Rebel|Biox|Rebel|
+        Rebel 8GB|Myst|Draco 7|Myst|Tab7-004|Myst|Tadeo Jones|Tablet Boing|Arrow|Draco Dual Cam|Aurix|Mint|Amity|
+        Revolution|Finity 9|Neon 9|T9w|Amity 4GB Dual Cam|Stone 4GB|Stone 8GB|Andromeda|Silken|X2|Andromeda II|
+        Halley|Flame|Saphyr 9,7|Touch 8|Planet|Triton|Unique 10|Hexen 10|Memphis 4GB|Memphis 8GB|Onix 10)`),
+  FX2Tablet: /FX2 PAD7|FX2 PAD10/,
+  XoroTablet: new RegExp(`KidsPAD 701|PAD[ ]?712|PAD[ ]?714|PAD[ ]?716|PAD[ ]?717|PAD[ ]?718|PAD[ ]?720|PAD[ ]?721|
+        PAD[ ]?722|PAD[ ]?790|PAD[ ]?792|PAD[ ]?900|PAD[ ]?9715D|PAD[ ]?9716DR|PAD[ ]?9718DR|PAD[ ]?9719QR|
+        PAD[ ]?9720QR|TelePAD1030|Telepad1032|TelePAD730|TelePAD731|TelePAD732|TelePAD735Q|TelePAD830|TelePAD9730|
+        TelePAD795|MegaPAD 1331|MegaPAD 1851|MegaPAD 2151`),
+  ViewsonicTablet: /ViewPad 10pi|ViewPad 10e|ViewPad 10s|ViewPad E72|ViewPad7|ViewPad E100|ViewPad 7e|ViewSonic VB733|VB100a/,
+  VerizonTablet: /QTAQZ3|QTAIR7|QTAQTZ3|QTASUN1|QTASUN2|QTAXIA1/,
+  OdysTablet: /LOOX|XENO10|ODYS[ -](Space|EVO|Xpress|NOON)|\bXELIO\b|Xelio10Pro|XELIO7PHONETAB|XELIO10EXTREME|XELIOPT2|NEO_QUAD10/,
+  CaptivaTablet: /CAPTIVA PAD/,
+  IconbitTablet: new RegExp(`NetTAB|NT-3702|NT-3702S|NT-3702S|NT-3603P|NT-3603P|NT-0704S|NT-0704S|NT-3805C|NT-3805C|
+        NT-0806C|NT-0806C|NT-0909T|NT-0909T|NT-0907S|NT-0907S|NT-0902S|NT-0902S`),
+  TeclastTablet: new RegExp(`T98 4G|\\bP80\\b|\\bX90HD\\b|X98 Air|X98 Air 3G|\\bX89\\b|P80 3G|\\bX80h\\b|P98 Air|
+        \\bX89HD\\b|P98 3G|\\bP90HD\\b|P89 3G|X98 3G|\\bP70h\\b|P79HD 3G|G18d 3G|\\bP79HD\\b|\\bP89s\\b|\\bA88\\b|
+        \\bP10HD\\b|\\bP19HD\\b|G18 3G|\\bP78HD\\b|\\bA78\\b|\\bP75\\b|G17s 3G|G17h 3G|\\bP85t\\b|\\bP90\\b|
+        \\bP11\\b|\\bP98t\\b|\\bP98HD\\b|\\bG18d\\b|\\bP85s\\b|\\bP11HD\\b|\\bP88s\\b|\\bA80HD\\b|\\bA80se\\b|
+        \\bA10h\\b|\\bP89\\b|\\bP78s\\b|\\bG18\\b|\\bP85\\b|\\bA70h\\b|\\bA70\\b|\\bG17\\b|\\bP18\\b|\\bA80s\\b|
+        \\bA11s\\b|\\bP88HD\\b|\\bA80h\\b|\\bP76s\\b|\\bP76h\\b|\\bP98\\b|\\bA10HD\\b|\\bP78\\b|\\bP88\\b|\\bA11\\b|
+        \\bA10t\\b|\\bP76a\\b|\\bP76t\\b|\\bP76e\\b|\\bP85HD\\b|\\bP85a\\b|\\bP86\\b|\\bP75HD\\b|\\bP76v\\b|\\bA12\\b|
+        \\bP75a\\b|\\bA15\\b|\\bP76Ti\\b|\\bP81HD\\b|\\bA10\\b|\\bT760VE\\b|\\bT720HD\\b|\\bP76\\b|\\bP73\\b|\\bP71\\b|
+        \\bP72\\b|\\bT720SE\\b|\\bC520Ti\\b|\\bT760\\b|\\bT720VE\\b|T720-3GE|T720-WiFi`),
+  OndaTablet: new RegExp(`\\b(V975i|Vi30|VX530|V701|Vi60|V701s|Vi50|V801s|V719|Vx610w|VX610W|V819i|Vi10|VX580W|Vi10|
+        V711s|V813|V811|V820w|V820|Vi20|V711|VI30W|V712|V891w|V972|V819w|V820w|Vi60|V820w|V711|V813s|V801|V819|
+        V975s|V801|V819|V819|V818|V811|V712|V975m|V101w|V961w|V812|V818|V971|V971s|V919|V989|V116w|V102w|V973|
+        Vi40)\\b[s]+|V10 \\b4G\\b`),
+  JaytechTablet: /TPC-PA762/,
+  BlaupunktTablet: /Endeavour 800NG|Endeavour 1010/,
+  DigmaTablet: /\b(iDx10|iDx9|iDx8|iDx7|iDxD7|iDxD8|iDsQ8|iDsQ7|iDsQ8|iDsD10|iDnD7|3TS804H|iDsQ11|iDj7|iDs10)\b/,
+  EvolioTablet: /ARIA_Mini_wifi|Aria[ _]Mini|Evolio X10|Evolio X7|Evolio X8|\bEvotab\b|\bNeura\b/,
+  LavaTablet: /QPAD E704|\bIvoryS\b|E-TAB IVORY|\bE-TAB\b/,
+  AocTablet: /MW0811|MW0812|MW0922|MTK8382|MW1031|MW0831|MW0821|MW0931|MW0712/,
+  MpmanTablet: new RegExp(`MP11 OCTA|MP10 OCTA|MPQC1114|MPQC1004|MPQC994|MPQC974|MPQC973|MPQC804|MPQC784|MPQC780|
+        \\bMPG7\\b|MPDCG75|MPDCG71|MPDC1006|MP101DC|MPDC9000|MPDC905|MPDC706HD|MPDC706|MPDC705|MPDC110|
+        MPDC100|MPDC99|MPDC97|MPDC88|MPDC8|MPDC77|MP709|MID701|MID711|MID170|MPDC703|MPQC1010`),
+  CelkonTablet: /CT695|CT888|CT[\s]?910|CT7 Tab|CT9 Tab|CT3 Tab|CT2 Tab|CT1 Tab|C820|C720|\bCT-1\b/,
+  WolderTablet: new RegExp(`miTab \\b(DIAMOND|SPACE|BROOKLYN|NEO|FLY|MANHATTAN|FUNK|EVOLUTION|SKY|GOCAR|IRON|GENIUS|
+        POP|MINT|EPSILON|BROADWAY|JUMP|HOP|LEGEND|NEW AGE|LINE|ADVANCE|FEEL|FOLLOW|LIKE|LINK|LIVE|THINK|
+        FREEDOM|CHICAGO|CLEVELAND|BALTIMORE-GH|IOWA|BOSTON|SEATTLE|PHOENIX|DALLAS|IN 101|MasterChef)\\b`),
+  MediacomTablet: "M-MPI10C3G|M-SP10EG|M-SP10EGP|M-SP10HXAH|M-SP7HXAH|M-SP10HXBH|M-SP8HXAH|M-SP8MXA",
+  MiTablet: /\bMI PAD\b|\bHM NOTE 1W\b/,
+  NibiruTablet: /Nibiru M1|Nibiru Jupiter One/,
+  NexoTablet: /NEXO NOVA|NEXO 10|NEXO AVIO|NEXO FREE|NEXO GO|NEXO EVO|NEXO 3G|NEXO SMART|NEXO KIDDO|NEXO MOBI/,
+  LeaderTablet: new RegExp(`TBLT10Q|TBLT10I|TBL-10WDKB|TBL-10WDKBO2013|TBL-W230V2|TBL-W450|TBL-W500|SV572|TBLT7I|
+        TBA-AC7-8G|TBLT79|TBL-8W16|TBL-10W32|TBL-10WKB|TBL-W100`),
+  UbislateTablet: /UbiSlate[\s]?7C/,
+  PocketBookTablet: /Pocketbook/,
+  KocasoTablet: /\b(TB-1207)\b/,
+  HisenseTablet: /\b(F5281|E2371)\b/,
+  Hudl: /Hudl HT7S3|Hudl 2/,
+  TelstraTablet: /T-Hub2/,
+  Honeywell: /RT10A/,
+  GenericTablet: new RegExp(`Android.*\\b97D\\b|Tablet(?!.*PC)|BNTV250A|MID-WCDMA|LogicPD Zoom2|\\bA7EB\\b|CatNova8|
+        A1_07|CT704|CT1002|\\bM721\\b|rk30sdk|\\bEVOTAB\\b|M758A|ET904|ALUMIUM10|Smartfren Tab|Endeavour 1010|
+        Tablet-PC-4|Tagi Tab|\\bM6pro\\b|CT1020W|arc 10HD|\\bTP750\\b|\\bQTAQZ3\\b|WVT101|TM1088|KT107`)
+};
+var DEVICES = {
+  BLACKBERRY: "Blackberry",
+  FIREFOX_OS: "Firefox-OS",
+  CHROME_BOOK: "Chrome-Book",
+  WINDOWS_PHONE: "Windows-Phone",
+  VITA: "Vita",
+  PS4: "PS4",
+  MAC: "Macintosh",
+  CHROMECAST: "Chromecast",
+  APPLE_TV: "Apple-TV",
+  GOOGLE_TV: "Google-TV",
+  ANDROID: "Android",
+  Tesla: "Tesla",
+  iPad: "iPad",
+  IPHONE: "iPhone",
+  iPod: "iPod",
+  UNKNOWN: GENERAL.UKNOWN,
+  HTC: "HTC",
+  NEXUS_PHONE: "Nexus Phone",
+  NexusTablet: "Nexus Tablet",
+  DELL: "Dell",
+  MOTOROLA: "Motorola",
+  SAMSUNG: "Samsung",
+  LG: "LG",
+  SONY: "Sony",
+  ASUS: "Asus",
+  NOKIA_LUMIA: "Nokia Lumia",
+  MICROMAX: "Micromax",
+  PALM: "Palm",
+  VERTU: "Vertu",
+  PANTECH: "PANTECH",
+  FLY: "Fly",
+  WIKO: `WIKO`,
+  I_MOBILE: "i-mobile",
+  SIMVALLEY: "Simvalley",
+  WOLFGANG: "Wolfgang",
+  ALCATEL: "Alcatel",
+  HONEYWELL: "Honeywell",
+  NINTENDO: "Nintendo",
+  AMOI: "Amoi",
+  INQ: "INQ",
+  GENERIC_PHONE: "Generic Phone",
+  MI_SE_9: "Mi SE 9"
+};
+var DESKTOP_DEVICES = [DEVICES.PS4, DEVICES.CHROME_BOOK, DEVICES.MAC, DEVICES.DELL, DEVICES.ASUS, DEVICES.UNKNOWN];
+var OS = {
+  WINDOWS: "Windows",
+  MAC: "Mac",
+  IOS: "iOS",
+  ANDROID: "Android",
+  LINUX: "Linux",
+  UNIX: "Unix",
+  FIREFOX_OS: "Firefox-OS",
+  CHROME_OS: "Chrome-OS",
+  WINDOWS_PHONE: "Windows-Phone",
+  UNKNOWN: GENERAL.UKNOWN
+};
+var OS_VERSIONS = {
+  WINDOWS_3_11: "windows-3-11",
+  WINDOWS_95: "windows-95",
+  WINDOWS_ME: "windows-me",
+  WINDOWS_98: "windows-98",
+  WINDOWS_CE: "windows-ce",
+  WINDOWS_2000: "windows-2000",
+  WINDOWS_XP: "windows-xp",
+  WINDOWS_SERVER_2003: "windows-server-2003",
+  WINDOWS_VISTA: "windows-vista",
+  WINDOWS_7: "windows-7",
+  WINDOWS_8_1: "windows-8-1",
+  WINDOWS_8: "windows-8",
+  WINDOWS_10: "windows-10",
+  WINDOWS_PHONE_7_5: "windows-phone-7-5",
+  WINDOWS_PHONE_8_1: "windows-phone-8-1",
+  WINDOWS_PHONE_10: "windows-phone-10",
+  WINDOWS_NT_4_0: "windows-nt-4-0",
+  MACOSX_11_0: "mac-os-x-11-0",
+  MACOSX_16: "mac-os-x-16",
+  MACOSX_15: "mac-os-x-15",
+  MACOSX_14: "mac-os-x-14",
+  MACOSX_13: "mac-os-x-13",
+  MACOSX_12: "mac-os-x-12",
+  MACOSX_11: "mac-os-x-11",
+  MACOSX_10: "mac-os-x-10",
+  MACOSX_9: "mac-os-x-9",
+  MACOSX_8: "mac-os-x-8",
+  MACOSX_7: "mac-os-x-7",
+  MACOSX_6: "mac-os-x-6",
+  MACOSX_5: "mac-os-x-5",
+  MACOSX_4: "mac-os-x-4",
+  MACOSX_3: "mac-os-x-3",
+  MACOSX_2: "mac-os-x-2",
+  MACOSX: "mac-os-x",
+  iOS: "iOS",
+  ANDROID_9: "android-9",
+  UNKNOWN: GENERAL.UKNOWN.toLowerCase()
+};
+var OS_RE = {
+  WINDOWS: {
+    and: [{
+      or: [/\bWindows|(Win\d\d)\b/, /\bWin 9x\b/]
+    }, {
+      not: /\bWindows Phone\b/
+    }]
+  },
+  MAC: {
+    and: [/\bMac OS\b/, {
+      not: {
+        or: [/\biPhone\b/, /\biPad\b/, /\biPod\b/, /\bWindows Phone\b/]
+      }
+    }]
+  },
+  IOS: {
+    and: [{
+      or: [/\biPad\b/, /\biPhone\b/, /\biPod\b/]
+    }, {
+      not: /\bWindows Phone\b/
+    }]
+  },
+  ANDROID: {
+    and: [/\bAndroid\b/, {
+      not: /\bWindows Phone\b/
+    }]
+  },
+  LINUX: /\bLinux\b/,
+  UNIX: /\bUNIX\b/,
+  FIREFOX_OS: {
+    and: [/\bFirefox\b/, /Mobile\b/]
+  },
+  CHROME_OS: /\bCrOS\b/,
+  WINDOWS_PHONE: {
+    or: [/\bIEMobile\b/, /\bWindows Phone\b/]
+  },
+  PS4: /\bMozilla\/5.0 \(PlayStation 4\b/,
+  VITA: /\bMozilla\/5.0 \(Play(S|s)tation Vita\b/
+};
+var BROWSERS_RE = {
+  CHROME: {
+    and: [{
+      or: [/\bChrome\b/, /\bCriOS\b/, /\bHeadlessChrome\b/]
+    }, {
+      not: {
+        or: [/\bOPR\b/, /\bEdg(e|A|iOS)\b/, /\bEdg\/\b/, /\bSamsungBrowser\b/, /\bUCBrowser\b/]
+      }
+    }]
+  },
+  FIREFOX: {
+    or: [/\bFirefox\b/, /\bFxiOS\b/]
+  },
+  SAFARI: {
+    and: [/^((?!CriOS).)*\Safari\b.*$/, {
+      not: {
+        or: [/\bOPR\b/, /\bEdg(e|A|iOS)\b/, /\bEdg\/\b/, /\bWindows Phone\b/, /\bSamsungBrowser\b/, /\bUCBrowser\b/]
+      }
+    }]
+  },
+  OPERA: {
+    or: [/Opera\b/, /\bOPR\b/]
+  },
+  IE: {
+    or: [/\bMSIE\b/, /\bTrident\b/, /^Mozilla\/5\.0 \(Windows NT 10\.0; Win64; x64\)$/]
+  },
+  MS_EDGE: {
+    or: [/\bEdg(e|A|iOS)\b/]
+  },
+  MS_EDGE_CHROMIUM: /\bEdg\/\b/,
+  PS4: /\bMozilla\/5.0 \(PlayStation 4\b/,
+  VITA: /\bMozilla\/5.0 \(Play(S|s)tation Vita\b/,
+  FB_MESSANGER: /\bFBAN\/MessengerForiOS\b/,
+  SAMSUNG: /\bSamsungBrowser\b/,
+  UCBROWSER: /\bUCBrowser\b/
+};
+var DEVICES_RE = __spreadProps(__spreadValues(__spreadValues(__spreadValues({}, MOBILES_RE), TABLETS_RE), OS_RE), {
+  FIREFOX_OS: {
+    and: [/\bFirefox\b/, /\bMobile\b/]
+  },
+  CHROME_BOOK: /\bCrOS\b/,
+  PS4: /\bMozilla\/5.0 \(PlayStation 4\b/,
+  CHROMECAST: /\bCrKey\b/,
+  APPLE_TV: /^iTunes-AppleTV\/4.1$/,
+  GOOGLE_TV: /\bGoogleTV\b/,
+  Tesla: /Tesla\/([0-9]{4}.[0-9]{1,2}.?[0-9]{0,2}.?[0-9]{0,2})-(.{7})/,
+  MI_SE_9: /\bXiaomi\b/,
+  MAC: {
+    and: [/\bMac OS\b/, {
+      not: {
+        or: [/\biPhone\b/, /\biPad\b/, /\biPod\b/, /\bWindows Phone\b/]
+      }
+    }]
+  }
+});
+var OS_VERSIONS_RE_MAP = {
+  WINDOWS_3_11: /Win16/,
+  WINDOWS_95: /(Windows 95|Win95|Windows_95)/,
+  WINDOWS_ME: /(Win 9x 4.90|Windows ME)/,
+  WINDOWS_98: /(Windows 98|Win98)/,
+  WINDOWS_CE: /Windows CE/,
+  WINDOWS_2000: /(Windows NT 5.0|Windows 2000)/,
+  WINDOWS_XP: /(Windows NT 5.1|Windows XP)/,
+  WINDOWS_SERVER_2003: /Windows NT 5.2/,
+  WINDOWS_VISTA: /Windows NT 6.0/,
+  WINDOWS_7: /(Windows 7|Windows NT 6.1)/,
+  WINDOWS_8_1: /(Windows 8.1|Windows NT 6.3)/,
+  WINDOWS_8: /(Windows 8|Windows NT 6.2)/,
+  WINDOWS_10: /(Windows NT 10.0)/,
+  WINDOWS_PHONE_7_5: /(Windows Phone OS 7.5)/,
+  WINDOWS_PHONE_8_1: /(Windows Phone 8.1)/,
+  WINDOWS_PHONE_10: /(Windows Phone 10)/,
+  WINDOWS_NT_4_0: {
+    and: [/(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/, {
+      not: /Windows NT 10.0/
+    }]
+  },
+  MACOSX: /(MAC OS X\s*[^ 0-9])/,
+  MACOSX_3: /(Darwin 10.3|Mac OS X 10.3)/,
+  MACOSX_4: /(Darwin 10.4|Mac OS X 10.4)/,
+  MACOSX_5: /(Mac OS X 10.5)/,
+  MACOSX_6: /(Mac OS X 10.6)/,
+  MACOSX_7: /(Mac OS X 10.7)/,
+  MACOSX_8: /(Mac OS X 10.8)/,
+  MACOSX_9: /(Mac OS X 10.9)/,
+  MACOSX_10: /(Mac OS X 10.10)/,
+  MACOSX_11: /(Mac OS X 10.11)/,
+  MACOSX_12: /(Mac OS X 10.12)/,
+  MACOSX_13: /(Mac OS X 10.13)/,
+  MACOSX_14: /(Mac OS X 10.14)/,
+  MACOSX_15: /(Mac OS X 10.15)/,
+  MACOSX_16: /(Mac OS X 10.16)/,
+  MACOSX_11_0: {
+    or: [/11_0 like Mac OS X/, /Mac OS X 11/]
+  },
+  iOS: /(iPhone OS\s*[0-9_]+)/,
+  ANDROID_9: /(Android 9)/
+};
+var BROWSER_VERSIONS_RE_MAP = {
+  CHROME: [/\bChrome\/([\d\.]+)\b/, /\bCriOS\/([\d\.]+)\b/, /\bHeadlessChrome\/([\d\.]+)\b/],
+  FIREFOX: [/\bFirefox\/([\d\.]+)\b/, /\bFxiOS\/([\d\.]+)\b/],
+  SAFARI: [/\bVersion\/([\d\.]+)\b/, /\bSafari\/([\d\.]+)\b/],
+  OPERA: [/\bVersion\/([\d\.]+)\b/, /\bOPR\/([\d\.]+)\b/],
+  IE: [/\bMSIE ([\d\.]+\w?)\b/, /\brv:([\d\.]+\w?)\b/],
+  MS_EDGE: /\bEdg(?:e|A|iOS)\/([\d\.]+)\b/,
+  MS_EDGE_CHROMIUM: /\bEdg\/([\d\.]+)\b/,
+  SAMSUNG: /\bSamsungBrowser\/([\d\.]+)\b/,
+  UCBROWSER: /\bUCBrowser\/([\d\.]+)\b/
+};
+var OS_VERSIONS_RE = Object.keys(OS_VERSIONS_RE_MAP).reduce((obj, key) => {
+  obj[key] = OS_VERSIONS_RE_MAP[key];
+  return obj;
+}, {});
+var BROWSER_VERSIONS_RE = Object.keys(BROWSER_VERSIONS_RE_MAP).reduce((obj, key) => {
+  obj[BROWSERS[key]] = BROWSER_VERSIONS_RE_MAP[key];
+  return obj;
+}, {});
+var Constants = /* @__PURE__ */ Object.freeze({
+  __proto__: null,
+  BROWSERS,
+  BROWSERS_RE,
+  BROWSER_VERSIONS_RE,
+  BROWSER_VERSIONS_RE_MAP,
+  DESKTOP_DEVICES,
+  DEVICES,
+  DEVICES_RE,
+  GENERAL,
+  MOBILES_RE,
+  OS,
+  OS_RE,
+  OS_VERSIONS,
+  OS_VERSIONS_RE,
+  OS_VERSIONS_RE_MAP,
+  TABLETS_RE
+});
+var ReTree = class {
+  constructor() {
+  }
+  test(str, regex) {
+    if (typeof regex === "string") {
+      regex = new RegExp(regex);
+    }
+    if (regex instanceof RegExp) {
+      return regex.test(str);
+    } else if (regex && Array.isArray(regex.and)) {
+      return regex.and.every((item) => {
+        return this.test(str, item);
+      });
+    } else if (regex && Array.isArray(regex.or)) {
+      return regex.or.some((item) => {
+        return this.test(str, item);
+      });
+    } else if (regex && regex.not) {
+      return !this.test(str, regex.not);
+    } else {
+      return false;
+    }
+  }
+  exec(str, regex) {
+    if (typeof regex === "string") {
+      regex = new RegExp(regex);
+    }
+    if (regex instanceof RegExp) {
+      return regex.exec(str);
+    } else if (regex && Array.isArray(regex)) {
+      return regex.reduce((res, item) => {
+        return !!res ? res : this.exec(str, item);
+      }, null);
+    } else {
+      return null;
+    }
+  }
+};
+var DeviceType;
+(function(DeviceType2) {
+  DeviceType2["Mobile"] = "mobile";
+  DeviceType2["Tablet"] = "tablet";
+  DeviceType2["Desktop"] = "desktop";
+  DeviceType2["Unknown"] = "unknown";
+})(DeviceType || (DeviceType = {}));
+var OrientationType;
+(function(OrientationType2) {
+  OrientationType2["Portrait"] = "portrait";
+  OrientationType2["Landscape"] = "landscape";
+})(OrientationType || (OrientationType = {}));
+var iPad = "iPad";
+var DeviceDetectorService = class _DeviceDetectorService {
+  constructor(platformId) {
+    this.platformId = platformId;
+    this.ua = "";
+    this.userAgent = "";
+    this.os = "";
+    this.browser = "";
+    this.device = "";
+    this.os_version = "";
+    this.browser_version = "";
+    this.reTree = new ReTree();
+    this.deviceType = "";
+    this.orientation = "";
+    if (isPlatformBrowser(this.platformId) && typeof window !== "undefined") {
+      this.userAgent = window.navigator.userAgent;
+    }
+    this.setDeviceInfo(this.userAgent);
+  }
+  /**
+   * @author Ahsan Ayaz
+   * @desc Sets the initial value of the device when the service is initiated.
+   * This value is later accessible for usage
+   */
+  setDeviceInfo(ua2 = this.userAgent) {
+    if (ua2 !== this.userAgent) {
+      this.userAgent = ua2;
+    }
+    const mappings = [{
+      const: "OS",
+      prop: "os"
+    }, {
+      const: "BROWSERS",
+      prop: "browser"
+    }, {
+      const: "DEVICES",
+      prop: "device"
+    }, {
+      const: "OS_VERSIONS",
+      prop: "os_version"
+    }];
+    mappings.forEach((mapping) => {
+      this[mapping.prop] = Object.keys(Constants[mapping.const]).reduce((obj, item) => {
+        if (Constants[mapping.const][item] === "device") {
+          if (isPlatformBrowser(this.platformId) && (!!this.reTree.test(this.userAgent, TABLETS_RE[iPad]) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+            obj[Constants[mapping.const][item]] = iPad;
+            return Object;
+          }
+        }
+        obj[Constants[mapping.const][item]] = this.reTree.test(ua2, Constants[`${mapping.const}_RE`][item]);
+        return obj;
+      }, {});
+    });
+    mappings.forEach((mapping) => {
+      this[mapping.prop] = Object.keys(Constants[mapping.const]).map((key) => {
+        return Constants[mapping.const][key];
+      }).reduce((previousValue, currentValue) => {
+        if (mapping.prop === "device" && previousValue === Constants[mapping.const].ANDROID) {
+          return this[mapping.prop][currentValue] ? currentValue : previousValue;
+        } else {
+          return previousValue === Constants[mapping.const].UNKNOWN && this[mapping.prop][currentValue] ? currentValue : previousValue;
+        }
+      }, Constants[mapping.const].UNKNOWN);
+    });
+    this.browser_version = "0";
+    if (this.browser !== BROWSERS.UNKNOWN) {
+      const re = BROWSER_VERSIONS_RE[this.browser];
+      const res = this.reTree.exec(ua2, re);
+      if (!!res) {
+        this.browser_version = res[1];
+      }
+    }
+    if (typeof window !== "undefined" && window.matchMedia) {
+      this.orientation = window.matchMedia("(orientation: landscape)").matches ? OrientationType.Landscape : OrientationType.Portrait;
+    } else {
+      this.orientation = GENERAL.UKNOWN;
+    }
+    this.deviceType = this.isTablet() ? DeviceType.Tablet : this.isMobile(this.userAgent) ? DeviceType.Mobile : this.isDesktop(this.userAgent) ? DeviceType.Desktop : DeviceType.Unknown;
+  }
+  /**
+   * @author Ahsan Ayaz
+   * @desc Returns the device information
+   * @returns the device information object.
+   */
+  getDeviceInfo() {
+    const deviceInfo = {
+      userAgent: this.userAgent,
+      os: this.os,
+      browser: this.browser,
+      device: this.device,
+      os_version: this.os_version,
+      browser_version: this.browser_version,
+      deviceType: this.deviceType,
+      orientation: this.orientation
+    };
+    return deviceInfo;
+  }
+  /**
+   * @author Ahsan Ayaz
+   * @desc Compares the current device info with the mobile devices to check
+   * if the current device is a mobile and also check current device is tablet so it will return false.
+   * @returns whether the current device is a mobile
+   */
+  isMobile(userAgent2 = this.userAgent) {
+    if (this.isTablet(userAgent2)) {
+      return false;
+    }
+    const match2 = Object.keys(MOBILES_RE).find((mobile) => {
+      return this.reTree.test(userAgent2, MOBILES_RE[mobile]);
+    });
+    return !!match2;
+  }
+  /**
+   * @author Ahsan Ayaz
+   * @desc Compares the current device info with the tablet devices to check
+   * if the current device is a tablet.
+   * @returns whether the current device is a tablet
+   */
+  isTablet(userAgent2 = this.userAgent) {
+    if (isPlatformBrowser(this.platformId) && (!!this.reTree.test(this.userAgent, TABLETS_RE[iPad]) || typeof navigator !== "undefined" && navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) {
+      return true;
+    }
+    const match2 = Object.keys(TABLETS_RE).find((mobile) => {
+      return !!this.reTree.test(userAgent2, TABLETS_RE[mobile]);
+    });
+    return !!match2;
+  }
+  /**
+   * @author Ahsan Ayaz
+   * @desc Compares the current device info with the desktop devices to check
+   * if the current device is a desktop device.
+   * @returns whether the current device is a desktop device
+   */
+  isDesktop(userAgent2 = this.userAgent) {
+    if (this.device === DEVICES.UNKNOWN) {
+      if (this.isMobile(userAgent2) || this.isTablet(userAgent2)) {
+        return false;
+      }
+    }
+    return DESKTOP_DEVICES.indexOf(this.device) > -1;
+  }
+  static {
+    this.\u0275fac = function DeviceDetectorService_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _DeviceDetectorService)(\u0275\u0275inject(PLATFORM_ID));
+    };
+  }
+  static {
+    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+      token: _DeviceDetectorService,
+      factory: _DeviceDetectorService.\u0275fac,
+      providedIn: "root"
+    });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DeviceDetectorService, [{
+    type: Injectable,
+    args: [{
+      providedIn: "root"
+    }]
+  }], () => [{
+    type: void 0,
+    decorators: [{
+      type: Inject,
+      args: [PLATFORM_ID]
+    }]
+  }], null);
+})();
+
+// projects/fasten-connect-vault/src/app/services/fasten.service.ts
+var FastenService = class _FastenService {
+  constructor(_httpClient, deviceService, configService, logger) {
+    this._httpClient = _httpClient;
+    this.deviceService = deviceService;
+    this.configService = configService;
+    this.logger = logger;
+  }
+  // public verificationWithPopup(publicId: string, brandId: string, portalId: string, endpointId: string, reconnectOrgConnectionId?: string, connectMode?: ConnectMode, externalId?: string, externalState?: string): Observable<CallbackPayload> {
+  verificationWithPopup() {
+    const redirectUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
+    redirectUrl.searchParams.set("public_id", environment.org_credential_test_public_id);
+    const isDesktop = this.deviceService.isDesktop();
+    let features = "";
+    if (isDesktop) {
+      features = "popup=true,width=700,height=600";
+    }
+    let openedWindow = window.open(redirectUrl.toString(), "_blank", features);
+    return waitForOrgConnectionOrTimeout(this.logger, openedWindow);
+  }
+  searchCatalogBrands(apiMode, filter2) {
+    if ((typeof filter2.searchAfter === "string" || filter2.searchAfter instanceof String) && filter2.searchAfter.length > 0) {
+      filter2.searchAfter = filter2.searchAfter.split(",");
+    } else {
+      filter2.searchAfter = [];
+    }
+    const endpointUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/catalog/search`);
+    return this._httpClient.post(endpointUrl.toString(), filter2, { params: {
+      "public_id": environment.org_credential_test_public_id,
+      "api_mode": apiMode
+    } }).pipe(map((response) => {
+      this.logger.info("Metadata RESPONSE", response);
+      return response.data;
+    }));
+  }
+  accountConnectWithPopup(brandId, portalId, endpointId, reconnectOrgConnectionId, externalId, externalState) {
+    const redirectUrlParts = new URL(`${environment.connect_api_endpoint_base}/bridge/connect`);
+    const redirectParams = new URLSearchParams();
+    redirectParams.set("public_id", this.configService.systemConfig$.publicId);
+    redirectParams.set("brand_id", brandId);
+    redirectParams.set("portal_id", portalId);
+    redirectParams.set("endpoint_id", endpointId);
+    redirectParams.set("connect_mode", "popup");
+    if (reconnectOrgConnectionId) {
+      redirectParams.set("reconnect_org_connection_id", reconnectOrgConnectionId);
+    }
+    if (externalId) {
+      redirectParams.set("external_id", externalId);
+    }
+    if (externalState) {
+      redirectParams.set("external_state", externalState);
+    }
+    redirectUrlParts.search = redirectParams.toString();
+    this.logger.debug(redirectUrlParts.toString());
+    const isDesktop = this.deviceService.isDesktop();
+    let features = "";
+    if (isDesktop) {
+      features = "popup=true,width=700,height=600";
+    }
+    let openedWindow = window.open(redirectUrlParts.toString(), "_blank", features);
+    return waitForOrgConnectionOrTimeout(this.logger, openedWindow);
+  }
+  static {
+    this.\u0275fac = function FastenService_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _FastenService)(\u0275\u0275inject(HttpClient), \u0275\u0275inject(DeviceDetectorService), \u0275\u0275inject(ConfigService), \u0275\u0275inject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _FastenService, factory: _FastenService.\u0275fac, providedIn: "root" });
+  }
+};
+
+// projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts
+function IdentityVerificationComponent_div_20_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 13);
+    \u0275\u0275text(1, " Please complete the identity verification process in the new window. ");
+    \u0275\u0275elementEnd();
+  }
+}
+var IdentityVerificationComponent = class _IdentityVerificationComponent {
+  constructor(vaultService, router, logger) {
+    this.vaultService = vaultService;
+    this.router = router;
+    this.logger = logger;
+    this.loading = false;
+    this.errorMessage = "";
+  }
+  ngOnInit() {
+  }
+  verifyIdentity() {
+    this.loading = true;
+    this.vaultService.verificationWithPopup().subscribe((result) => {
+      this.loading = false;
+      this.logger.info("verification result", result);
+      this.router.navigateByUrl("dashboard");
+    }, (err) => {
+      this.loading = false;
+      this.logger.error("verification error", err);
+      try {
+        var errData = JSON.parse(err.message);
+        this.logger.debug("error_name", errData.error, "error_description", errData.error_description);
+        if (errData.error == "timeout") {
+          this.router.navigate(["/auth/identity/verification/error"], { queryParams: { "error": "timeout", "error_description": "timed out waiting for notification from popup" } });
+        } else {
+          this.router.navigate(["/auth/identity/verification/error"], { queryParams: { "error": errData.error, "error_description": errData.error_description } });
+        }
+      } catch (e) {
+        this.logger.error("Error parsing error response", e);
+        this.router.navigate(["/auth/identity/verification/error"], { queryParams: { "error": "unknown", "error_description": "An unknown error occurred" } });
+      }
+      return;
+    });
+  }
+  static {
+    this.\u0275fac = function IdentityVerificationComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _IdentityVerificationComponent)(\u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IdentityVerificationComponent, selectors: [["app-identity-verification"]], standalone: false, decls: 21, vars: 2, consts: [["id", "widget-container", 1, "w-full", "p-6", "min-h-96"], [1, "space-y-6", "h-[600px]", "text-center"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "p-2"], [1, "text-xl", "font-semibold"], ["id", "verification-hint", 1, "text-sm", "text-gray-600"], ["src", "data:image/svg+xml,%3Csvg fill='none' height='129' viewBox='0 0 477 129' width='477' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23041a55'%3E%3Cpath d='m43.6629 11.002c.8485.6349 1.9184.971 2.9513.971.2952 0 .5903-.0373.8485-.0747 2.8038-.4855 4.6483-3.17438 4.2056-5.97532-.2213-1.34445-.9591-2.57686-2.0659-3.36113-2.2503-1.755252-5.4599-1.3071-7.1938.97099-1.7338 2.2781-1.2911 5.52719.9592 7.28246.1107.0747.1845.112.2951.1867z'/%3E%3Cpath d='m81.3643 11.4122c.7009.3735 1.5126.5602 2.2873.5602.5533 0 1.1067-.112 1.6232-.2987 2.7299-.9337 4.1687-3.92135 3.2464-6.6476-.4427-1.3071-1.365-2.39013-2.5824-2.98766-2.5455-1.307108-5.6812-.22408-6.9355 2.35279-1.2543 2.57686-.1845 5.71387 2.361 7.02097z'/%3E%3Cpath d='m115.228 23.811c-2.73-.859-5.644.6722-6.493 3.4358-.848 2.7636.664 5.7139 3.394 6.5729.517.1494 1.033.2241 1.55.2241.848 0 1.66-.2241 2.398-.5976 2.545-1.3444 3.504-4.4815 2.213-7.0584-.664-1.2324-1.734-2.166-3.062-2.5768z'/%3E%3Cpath d='m129.284 61.271c-1.697-2.3155-4.943-2.801-7.267-1.0457-2.325 1.7552-2.767 5.0043-1.033 7.3571 1.697 2.3155 4.943 2.801 7.267 1.0457 1.107-.8216 1.808-2.054 2.029-3.4358.185-1.3818-.184-2.8009-.996-3.9213z'/%3E%3Cpath d='m113.642 94.7637h-.073c-2.952.1494-5.239 2.6515-5.091 5.6393.11 2.801 2.361 5.079 5.164 5.154h.111c2.951-.15 5.239-2.652 5.091-5.6396-.111-2.8009-2.361-5.079-5.165-5.1537z'/%3E%3Cpath d='m86.6756 117.959c-2.3242-1.681-5.5706-1.121-7.2307 1.232s-1.1067 5.639 1.2174 7.32c2.3242 1.68 5.5706 1.12 7.2307-1.233.8116-1.12 1.1067-2.539.8854-3.921-.2214-1.382-.9961-2.577-2.1028-3.398z'/%3E%3Cpath d='m44.9511 117.36c-2.6562.934-4.095 3.847-3.1727 6.536.7009 2.091 2.6193 3.473 4.7959 3.473.5533 0 1.0698-.112 1.6232-.262 2.693-.784 4.2794-3.622 3.5046-6.348-.7747-2.727-3.5784-4.333-6.2715-3.548-.1475.037-.332.112-.4795.149z'/%3E%3Cpath d='m18.1691 95.1782c-2.73-.859-5.6444.6722-6.4929 3.4358-.8485 2.764.6641 5.714 3.394 6.573.5165.149 1.033.224 1.5495.224 2.8775 0 5.2016-2.39 5.1647-5.266 0-2.2779-1.4756-4.2946-3.6153-4.9668z'/%3E%3Cpath d='m2.08517 60.1841c-2.287253 1.7179-2.766839 5.0043-1.06984 7.3198 1.69699 2.3154 4.94342 2.8009 7.23068 1.083 2.28729-1.7179 2.76679-5.0043 1.06984-7.3198-1.69699-2.3154-4.94342-2.8009-7.23068-1.083z'/%3E%3Cpath d='m16.6203 34.0467h.0738c2.8406-.1121 5.0541-2.5769 4.9434-5.4525-.1106-2.7263-2.2872-4.9297-5.0172-5.0044h-.0369c-2.8775.1121-5.0909 2.5769-4.9434 5.4899.1107 2.6889 2.2873 4.8923 4.9803 4.967z'/%3E%3Cpath d='m33.2966 28.8178c.8854.6349 1.9183.971 2.9882.971.2951 0 .5902-.0373.8854-.0747 2.8037-.4854 4.722-3.2117 4.2425-6.05-.4796-2.8383-3.1727-4.7802-5.9764-4.2947-1.365.224-2.5455 1.0083-3.3571 2.1287-1.6601 2.3528-1.1068 5.6392 1.2174 7.3197z'/%3E%3Cpath d='m62.7334 19.4403c.7009.3735 1.4756.5602 2.2873.5602.5533 0 1.1067-.112 1.6232-.2988 2.7299-.8963 4.1687-3.8839 3.2833-6.6102-.8854-2.7636-3.8367-4.22008-6.5298-3.32378-2.7299.89628-4.1687 3.88398-3.2833 6.61018v.0374c.4427 1.3071 1.4019 2.3901 2.6193 3.025z'/%3E%3Cpath d='m91.9153 29.3014c.5165.1493 1.033.224 1.5495.224 2.8775 0 5.1648-2.3528 5.2017-5.2284 0-2.913-2.3242-5.2284-5.1648-5.2658-2.8776 0-5.1648 2.3528-5.2017 5.2285-.0369 2.3154 1.4388 4.3694 3.6153 5.0417z'/%3E%3Cpath d='m110.584 54.1341c.258.0373.516.0747.775.0747 2.877 0 5.164-2.3528 5.164-5.2284 0-2.913-2.324-5.2284-5.164-5.2284-2.878 0-5.165 2.3527-5.165 5.2284 0 2.5395 1.881 4.7429 4.39 5.1537z'/%3E%3Cpath d='m111.431 85.0958c2.878-.1121 5.091-2.5769 4.943-5.4899-.11-2.7262-2.287-4.9296-5.017-5.0043h-.074c-2.877.112-5.091 2.5768-4.943 5.4898.111 2.7263 2.287 4.9297 5.017 5.0044z'/%3E%3Cpath d='m96.4542 100.41c-2.3242-1.6807-5.5706-1.1205-7.2307 1.232-1.6601 2.353-1.1068 5.639 1.2174 7.32 2.3241 1.681 5.5706 1.12 7.2307-1.232 1.6601-2.39 1.1067-5.677-1.2174-7.32z'/%3E%3Cpath d='m63.5095 109.035c-2.7299.934-4.2056 3.959-3.2464 6.723.7009 2.128 2.6931 3.547 4.9065 3.585.5534 0 1.1068-.112 1.6601-.262 2.6931-1.083 4.0212-4.145 2.9513-6.871-.996-2.54-3.6891-3.884-6.3084-3.137z'/%3E%3Cpath d='m41.3006 102.46c-.6271-1.232-1.7339-2.166-3.0251-2.5768-2.7299-.8589-5.6443.6718-6.4928 3.4358s.664 5.714 3.394 6.573c.4796.149 1.0329.224 1.5494.224 2.2504 0 4.2794-1.494 4.9434-3.697.4058-1.27.2583-2.726-.3689-3.959z'/%3E%3Cpath d='m19.7189 74.7486c-2.7668-.4854-5.423 1.3818-5.9394 4.1828-.4796 2.8009 1.3649 5.4898 4.1318 6.0127.1106 0 .1844.0373.2951.0373.2582.0374.5165.0374.7378.0747 1.1068 0 2.1766-.3735 3.0251-1.0457 2.2504-1.7179 2.7299-4.967 1.033-7.2451-.7379-1.083-1.9553-1.8299-3.2834-2.0167z'/%3E%3Cpath d='m18.9065 43.6758h-.0738c-2.8775.112-5.091 2.5768-4.9434 5.4898.1107 2.7263 2.2872 4.9297 5.0172 5.0044h.0738c2.8775-.1121 5.091-2.5769 4.9434-5.4899-.1476-2.7262-2.3241-4.8923-5.0172-5.0043z'/%3E%3Cpath d='m49.601 25.4901c-1.6601 2.3528-1.0698 5.6392 1.2543 7.3197 2.3241 1.6806 5.5706 1.0831 7.2307-1.2697s1.0698-5.6392-1.2543-7.3198c-1.1068-.7843-2.5086-1.1204-3.8367-.8963-1.4019.2614-2.6193 1.0083-3.394 2.1661z'/%3E%3Cpath d='m71.2566 30.0466c.7379 2.2034 2.7669 3.6972 5.091 3.6972.5903 0 1.1437-.112 1.697-.2988 2.8038-.9336 4.3163-3.996 3.394-6.8343-1.1436-2.7636-4.2794-4.108-7.0093-2.9503-2.5086 1.0457-3.8367 3.772-3.1727 6.3862z'/%3E%3Cpath d='m99.5521 44.0186c.8489-2.7636-.6641-5.7139-3.394-6.5729-2.73-.8589-5.6444.6723-6.4929 3.4359-.8484 2.7635.6641 5.7139 3.394 6.5728.5165.1494 1.033.2614 1.5495.2614 2.2503-.0373 4.2424-1.5311 4.9434-3.6972z'/%3E%3Cpath d='m98.8491 60.2993c-2.2873 1.7179-2.7669 4.967-1.0699 7.2451.8117 1.1204 2.0291 1.83 3.3938 2.0541.258.0373.517.0747.775.0747 1.107 0 2.177-.3735 3.025-1.0084 2.324-1.6432 2.914-4.8549 1.291-7.2077s-4.796-2.9504-7.1198-1.3071c-.1107 0-.1844.0746-.2951.1493z'/%3E%3Cpath d='m90.9561 82.8168c-2.0659 2.1287-2.029 5.5646.0738 7.6559.996 1.0084 2.361 1.5312 3.726 1.5312h.0738c2.9513-.2241 5.1647-2.8009 4.9434-5.7886-.1845-2.6889-2.3242-4.8176-4.9803-5.0044h-.0738c-1.4019 0-2.7668.5976-3.7629 1.6059z'/%3E%3Cpath d='m80.59 103.394c1.6601-2.353 1.1068-5.6395-1.2174-7.3201-2.3241-1.6806-5.5706-1.1204-7.2307 1.2324s-1.1067 5.6397 1.2543 7.3197c.8854.635 1.9184.971 2.9882.971.2952 0 .5903-.037.8854-.075 1.3281-.224 2.5455-.971 3.3202-2.128z'/%3E%3Cpath d='m58.7517 98.5022c-.9223-2.7636-3.8367-4.2201-6.5666-3.2864-2.73.9336-4.1687 3.884-3.2464 6.6472.7009 2.129 2.693 3.586 4.9065 3.586.5534 0 1.1067-.075 1.6232-.262 2.6931-.971 4.1687-3.921 3.2833-6.6848z'/%3E%3Cpath d='m37.1682 81.5446c-1.2912-.4109-2.7299-.2988-3.9473.3734-2.5455 1.3445-3.5047 4.5189-2.1766 7.0957.6271 1.2324 1.7339 2.1287 3.0251 2.5769.5164.1494 1.0329.2241 1.5494.2241 2.8406 0 5.1648-2.3155 5.2017-5.1911 0-2.3528-1.4757-4.3695-3.6523-5.079z'/%3E%3Cpath d='m33.5524 65.154c.4058-2.8756-1.5494-5.5271-4.39-5.9379-2.8406-.4109-5.4599 1.5685-5.8657 4.4441-.1845 1.3818.1476 2.7636.9592 3.884 1.697 2.3154 4.9434 2.8009 7.2306 1.083 1.1437-.8216 1.8815-2.0914 2.0659-3.4732z'/%3E%3Cpath d='m35.7285 36.8438h-.0737c-2.8776 0-5.1648 2.3901-5.1648 5.2657s2.361 5.2284 5.2016 5.2284h.0738c2.8407-.112 5.0541-2.5768 4.9434-5.4525-.0737-2.7636-2.2503-4.9296-4.9803-5.0416z'/%3E%3C/g%3E%3Cpath d='m181.378 64.1812c0-14.9383 11.251-26.3288 25.971-26.3288 9.186-.0747 17.745 4.7429 22.504 12.735l-8.596 5.4898c-2.582-5.3405-7.968-8.6642-13.834-8.5149-9.297 0-16.122 7.3572-16.122 16.6189 0 9.0377 6.752 16.5443 15.974 16.5443 6.235.112 11.953-3.6226 14.388-9.4859l8.964 4.855c-4.353 8.9256-13.391 14.5275-23.241 14.4155-15.31-.0374-26.008-11.8013-26.008-26.3289z' fill='%23000'/%3E%3Cpath d='m248.742 38.5605v51.2012h33.239v-9.5979h-23.389v-41.6033z' fill='%23000'/%3E%3Cpath d='m301.241 38.5605v51.2012h34.087v-9.3738h-24.274v-11.6519h19.773v-9.3365h-19.773v-11.5025h24.274v-9.3365z' fill='%23000'/%3E%3Cpath d='m372.478 38.5605-19.147 51.2386h10.072l3.32-9.3365h21.175l3.321 9.3365h10.071l-19.147-51.2386zm4.87 12.5482 7.304 20.3909h-14.646z' fill='%23000'/%3E%3Cpath d='m429.398 47.6729v16.9177h9.997c6.456 0 9.444-4.0707 9.444-8.6269 0-5.0043-3.209-8.2908-9.444-8.2908zm-9.813-9.1124h20.548c11.658 0 18.593 7.5813 18.593 17.3285.148 6.3488-3.32 12.2121-8.89 15.1624l9.997 18.7477h-10.957l-8.116-16.1335h-11.362v16.1335h-9.776v-51.2386z' fill='%23000'/%3E%3Cpath d='m465.516 43.305c0-2.5769 2.029-4.6683 4.575-4.6683 2.545 0 4.611 2.054 4.611 4.6309s-2.029 4.6682-4.537 4.6682c-2.472.0747-4.538-1.9046-4.649-4.4068 0-.0747 0-.1494 0-.224zm8.264 0c-.074-2.0167-1.734-3.6226-3.726-3.5479s-3.578 1.7552-3.505 3.7719c.074 1.9794 1.66 3.5479 3.616 3.5479 1.992 0 3.578-1.6432 3.578-3.6599 0-.0374 0-.0747 0-.112zm-2.619.4108 1.143 1.9793h-1.07l-1.069-1.8673h-.738v1.8673h-.922v-4.855h1.807c.812 0 1.734.2988 1.734 1.4565.037.6349-.332 1.2324-.922 1.4565zm-.923-2.0541h-.774v1.3818h.811c.591 0 .812-.2987.812-.7095s-.332-.6723-.922-.6723z' fill='%23000'/%3E%3C/svg%3E", 2, "height", "1.25rem", "display", "inline", "vertical-align", "bottom"], ["routerLink", "/auth/identity/verification/error"], [1, "space-y-2", "flex", "flex-col", "items-center"], ["type", "button", 1, "text-white", "py-2.5", "px-4", "flex", "justify-center", "items-center", "clear-button", 3, "click", "disabled"], ["src", "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 353.2 337.6' style='enable-background:new 0 0 353.2 337.6;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bdisplay:none;%7D .st1%7Bdisplay:inline;fill:%23192958;%7D .st2%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cg id='BKGD' class='st0'%3E%3Crect class='st1' width='353.2' height='337.6'/%3E%3C/g%3E%3Cg id='Layer_2'%3E%3Cg%3E%3Cg%3E%3Ccircle class='st2' cx='14' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='77.1' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='227.8' r='14'/%3E%3Ccircle class='st2' cx='99.4' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='45.5' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='108.7' r='14'/%3E%3Ccircle class='st2' cx='98.4' cy='61.7' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='61.1' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='109.7' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='227.9' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='45.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='301.5' r='14'/%3E%3Ccircle class='st2' cx='226.7' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='126.6' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='276.5' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='339.2' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='35.5' r='14'/%3E%3Ccircle class='st2' cx='126.2' cy='14' r='14'/%3E%3Ccircle class='st2' cx='226.8' cy='14' r='14'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E", 1, "px-[8px]", 2, "height", "24px", "display", "inline", "vertical-align", "bottom"], ["class", "p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "p-4", "mb-4", "text-sm", "text-yellow-800", "rounded-lg", "bg-yellow-50"]], template: function IdentityVerificationComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h1", 3);
+        \u0275\u0275text(4, "fasten");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(5, "div", 4)(6, "h2", 5);
+        \u0275\u0275text(7, " Verify your identity");
+        \u0275\u0275element(8, "br");
+        \u0275\u0275text(9, "just once ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(10, "p", 6);
+        \u0275\u0275text(11, " Your leaving Acme Labs to verify your identity with our partner, ");
+        \u0275\u0275element(12, "img", 7);
+        \u0275\u0275text(13, ". This one-time step will bring you right back after your ID has been verified");
+        \u0275\u0275elementStart(14, "a", 8);
+        \u0275\u0275text(15, ".");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(16, "div", 9)(17, "button", 10);
+        \u0275\u0275listener("click", function IdentityVerificationComponent_Template_button_click_17_listener() {
+          return ctx.verifyIdentity();
+        });
+        \u0275\u0275element(18, "img", 11);
+        \u0275\u0275text(19, " Verify with CLEAR ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275template(20, IdentityVerificationComponent_div_20_Template, 2, 0, "div", 12);
+        \u0275\u0275elementEnd()();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(17);
+        \u0275\u0275property("disabled", ctx.loading);
+        \u0275\u0275advance(3);
+        \u0275\u0275property("ngIf", ctx.loading);
+      }
+    }, dependencies: [NgIf, RouterLink], styles: ['\n\n.clear-button[_ngcontent-%COMP%] {\n  border-radius: 32px;\n  background-color: #041A55;\n  font-family: "Inter", serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n  height: 56px;\n  width: 328px;\n}\n/*# sourceMappingURL=identity-verification.component.css.map */'] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationComponent, { className: "IdentityVerificationComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts", lineNumber: 12 });
+})();
+
+// projects/fasten-connect-vault/src/app/pages/identity-verification-error/identity-verification-error.component.ts
+var IdentityVerificationErrorComponent = class _IdentityVerificationErrorComponent {
+  constructor(configService, route, router) {
+    this.configService = configService;
+    this.route = route;
+    this.router = router;
+    this.error = "";
+    this.error_description = "An internal server error occurred. Please retry after a few moments.";
+  }
+  ngOnInit() {
+    this.routeSubscription = this.route.params.subscribe((val) => {
+    });
+  }
+  ngOnDestroy() {
+    this.routeSubscription.unsubscribe();
+  }
+  static {
+    this.\u0275fac = function IdentityVerificationErrorComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _IdentityVerificationErrorComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(Router));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IdentityVerificationErrorComponent, selectors: [["app-identity-verification-error"]], inputs: { error: "error", error_description: "error_description" }, standalone: false, decls: 24, vars: 3, consts: [["id", "widget-container", 1, "w-full", "p-6", "min-h-96"], [1, "space-y-6", "text-center"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-2"], [1, "text-xl", "font-semibold", "text-red-600"], ["id", "error-message", 1, "text-sm", "text-gray-600"], ["id", "error-details", 1, "bg-gray-100", "p-4", "rounded-md", "text-left"], [1, "text-md", "font-medium"], [1, "text-sm", "text-gray-800"], [1, "font-semibold"], ["type", "button", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-2.5", "px-4", "rounded-md", "flex", "justify-center", "items-center", 3, "routerLink"]], template: function IdentityVerificationErrorComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h1", 3);
+        \u0275\u0275text(4, "fasten");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(5, "div", 4)(6, "h2", 5);
+        \u0275\u0275text(7, " Oops! Something went wrong. ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "p", 6);
+        \u0275\u0275text(9, " We encountered an error while verifying your identity. Please check the details below. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(10, "div", 7)(11, "h3", 8);
+        \u0275\u0275text(12, "Error Details:");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(13, "p", 9);
+        \u0275\u0275text(14, "Error Type: ");
+        \u0275\u0275elementStart(15, "span", 10);
+        \u0275\u0275text(16);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(17, "p", 9);
+        \u0275\u0275text(18, "Description: ");
+        \u0275\u0275elementStart(19, "span");
+        \u0275\u0275text(20);
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(21, "div", 4)(22, "button", 11);
+        \u0275\u0275text(23, " Try Again ");
+        \u0275\u0275elementEnd()()()();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(16);
+        \u0275\u0275textInterpolate(ctx.error);
+        \u0275\u0275advance(4);
+        \u0275\u0275textInterpolate(ctx.error_description);
+        \u0275\u0275advance(2);
+        \u0275\u0275property("routerLink", "/auth/identity/verification");
+      }
+    }, dependencies: [RouterLink], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationErrorComponent, { className: "IdentityVerificationErrorComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification-error/identity-verification-error.component.ts", lineNumber: 12 });
+})();
+
+// node_modules/ngx-infinite-scroll/fesm2022/ngx-infinite-scroll.mjs
+function resolveContainerElement(selector, scrollWindow, defaultElement, fromRoot) {
+  const hasWindow = window && !!window.document && window.document.documentElement;
+  let container = hasWindow && scrollWindow ? window : defaultElement;
+  if (selector) {
+    const containerIsString = selector && hasWindow && typeof selector === "string";
+    container = containerIsString ? findElement(selector, defaultElement.nativeElement, fromRoot) : selector;
+    if (!container) {
+      throw new Error("ngx-infinite-scroll {resolveContainerElement()}: selector for");
+    }
+  }
+  return container;
+}
+function findElement(selector, customRoot, fromRoot) {
+  const rootEl = fromRoot ? window.document : customRoot;
+  return rootEl.querySelector(selector);
+}
+function inputPropChanged(prop) {
+  return prop && !prop.firstChange;
+}
+function hasWindowDefined() {
+  return typeof window !== "undefined";
+}
+var VerticalProps = {
+  clientHeight: "clientHeight",
+  offsetHeight: "offsetHeight",
+  scrollHeight: "scrollHeight",
+  pageYOffset: "pageYOffset",
+  offsetTop: "offsetTop",
+  scrollTop: "scrollTop",
+  top: "top"
+};
+var HorizontalProps = {
+  clientHeight: "clientWidth",
+  offsetHeight: "offsetWidth",
+  scrollHeight: "scrollWidth",
+  pageYOffset: "pageXOffset",
+  offsetTop: "offsetLeft",
+  scrollTop: "scrollLeft",
+  top: "left"
+};
+var AxisResolver = class {
+  constructor(vertical = true) {
+    this.vertical = vertical;
+    this.propsMap = vertical ? VerticalProps : HorizontalProps;
+  }
+  clientHeightKey() {
+    return this.propsMap.clientHeight;
+  }
+  offsetHeightKey() {
+    return this.propsMap.offsetHeight;
+  }
+  scrollHeightKey() {
+    return this.propsMap.scrollHeight;
+  }
+  pageYOffsetKey() {
+    return this.propsMap.pageYOffset;
+  }
+  offsetTopKey() {
+    return this.propsMap.offsetTop;
+  }
+  scrollTopKey() {
+    return this.propsMap.scrollTop;
+  }
+  topKey() {
+    return this.propsMap.top;
+  }
+};
+function shouldTriggerEvents(alwaysCallback, shouldFireScrollEvent2, isTriggeredCurrentTotal) {
+  if (alwaysCallback && shouldFireScrollEvent2) {
+    return true;
+  }
+  if (!isTriggeredCurrentTotal && shouldFireScrollEvent2) {
+    return true;
+  }
+  return false;
+}
+function createResolver({
+  windowElement,
+  axis
+}) {
+  return createResolverWithContainer({
+    axis,
+    isWindow: isElementWindow(windowElement)
+  }, windowElement);
+}
+function createResolverWithContainer(resolver, windowElement) {
+  const container = resolver.isWindow || windowElement && !windowElement.nativeElement ? windowElement : windowElement.nativeElement;
+  return __spreadProps(__spreadValues({}, resolver), {
+    container
+  });
+}
+function isElementWindow(windowElement) {
+  const isWindow = ["Window", "global"].some((obj) => Object.prototype.toString.call(windowElement).includes(obj));
+  return isWindow;
+}
+function getDocumentElement(isContainerWindow, windowElement) {
+  return isContainerWindow ? windowElement.document.documentElement : null;
+}
+function calculatePoints(element, resolver) {
+  const height = extractHeightForElement(resolver);
+  return resolver.isWindow ? calculatePointsForWindow(height, element, resolver) : calculatePointsForElement(height, element, resolver);
+}
+function calculatePointsForWindow(height, element, resolver) {
+  const {
+    axis,
+    container,
+    isWindow
+  } = resolver;
+  const {
+    offsetHeightKey,
+    clientHeightKey
+  } = extractHeightPropKeys(axis);
+  const scrolled = height + getElementPageYOffset(getDocumentElement(isWindow, container), axis, isWindow);
+  const nativeElementHeight = getElementHeight(element.nativeElement, isWindow, offsetHeightKey, clientHeightKey);
+  const totalToScroll = getElementOffsetTop(element.nativeElement, axis, isWindow) + nativeElementHeight;
+  return {
+    height,
+    scrolled,
+    totalToScroll,
+    isWindow
+  };
+}
+function calculatePointsForElement(height, element, resolver) {
+  const {
+    axis,
+    container
+  } = resolver;
+  const scrolled = container[axis.scrollTopKey()];
+  const totalToScroll = container[axis.scrollHeightKey()];
+  return {
+    height,
+    scrolled,
+    totalToScroll,
+    isWindow: false
+  };
+}
+function extractHeightPropKeys(axis) {
+  return {
+    offsetHeightKey: axis.offsetHeightKey(),
+    clientHeightKey: axis.clientHeightKey()
+  };
+}
+function extractHeightForElement({
+  container,
+  isWindow,
+  axis
+}) {
+  const {
+    offsetHeightKey,
+    clientHeightKey
+  } = extractHeightPropKeys(axis);
+  return getElementHeight(container, isWindow, offsetHeightKey, clientHeightKey);
+}
+function getElementHeight(elem, isWindow, offsetHeightKey, clientHeightKey) {
+  if (isNaN(elem[offsetHeightKey])) {
+    const docElem = getDocumentElement(isWindow, elem);
+    return docElem ? docElem[clientHeightKey] : 0;
+  } else {
+    return elem[offsetHeightKey];
+  }
+}
+function getElementOffsetTop(elem, axis, isWindow) {
+  const topKey = axis.topKey();
+  if (!elem.getBoundingClientRect) {
+    return;
+  }
+  return elem.getBoundingClientRect()[topKey] + getElementPageYOffset(elem, axis, isWindow);
+}
+function getElementPageYOffset(elem, axis, isWindow) {
+  const pageYOffset = axis.pageYOffsetKey();
+  const scrollTop = axis.scrollTopKey();
+  const offsetTop = axis.offsetTopKey();
+  if (isNaN(window.pageYOffset)) {
+    return getDocumentElement(isWindow, elem)[scrollTop];
+  } else if (elem.ownerDocument) {
+    return elem.ownerDocument.defaultView[pageYOffset];
+  } else {
+    return elem[offsetTop];
+  }
+}
+function shouldFireScrollEvent(container, distance = {
+  down: 0,
+  up: 0
+}, scrollingDown) {
+  let remaining;
+  let containerBreakpoint;
+  if (container.totalToScroll <= 0) {
+    return false;
+  }
+  const scrolledUntilNow = container.isWindow ? container.scrolled : container.height + container.scrolled;
+  if (scrollingDown) {
+    remaining = (container.totalToScroll - scrolledUntilNow) / container.totalToScroll;
+    const distanceDown = distance?.down ? distance.down : 0;
+    containerBreakpoint = distanceDown / 10;
+  } else {
+    const totalHiddenContentHeight = container.scrolled + (container.totalToScroll - scrolledUntilNow);
+    remaining = container.scrolled / totalHiddenContentHeight;
+    const distanceUp = distance?.up ? distance.up : 0;
+    containerBreakpoint = distanceUp / 10;
+  }
+  const shouldFireEvent = remaining <= containerBreakpoint;
+  return shouldFireEvent;
+}
+function isScrollingDownwards(lastScrollPosition, container) {
+  return lastScrollPosition < container.scrolled;
+}
+function getScrollStats(lastScrollPosition, container, distance) {
+  const scrollDown = isScrollingDownwards(lastScrollPosition, container);
+  return {
+    fire: shouldFireScrollEvent(container, distance, scrollDown),
+    scrollDown
+  };
+}
+var ScrollState = class {
+  constructor(attrs) {
+    this.lastScrollPosition = 0;
+    this.lastTotalToScroll = 0;
+    this.totalToScroll = 0;
+    this.triggered = {
+      down: 0,
+      up: 0
+    };
+    Object.assign(this, attrs);
+  }
+  updateScrollPosition(position) {
+    return this.lastScrollPosition = position;
+  }
+  updateTotalToScroll(totalToScroll) {
+    if (this.lastTotalToScroll !== totalToScroll) {
+      this.lastTotalToScroll = this.totalToScroll;
+      this.totalToScroll = totalToScroll;
+    }
+  }
+  updateScroll(scrolledUntilNow, totalToScroll) {
+    this.updateScrollPosition(scrolledUntilNow);
+    this.updateTotalToScroll(totalToScroll);
+  }
+  updateTriggeredFlag(scroll, isScrollingDown) {
+    if (isScrollingDown) {
+      this.triggered.down = scroll;
+    } else {
+      this.triggered.up = scroll;
+    }
+  }
+  isTriggeredScroll(totalToScroll, isScrollingDown) {
+    return isScrollingDown ? this.triggered.down === totalToScroll : this.triggered.up === totalToScroll;
+  }
+};
+function createScroller(config3) {
+  const {
+    scrollContainer,
+    scrollWindow,
+    element,
+    fromRoot
+  } = config3;
+  const resolver = createResolver({
+    axis: new AxisResolver(!config3.horizontal),
+    windowElement: resolveContainerElement(scrollContainer, scrollWindow, element, fromRoot)
+  });
+  const scrollState = new ScrollState({
+    totalToScroll: calculatePoints(element, resolver).totalToScroll
+  });
+  const options = {
+    container: resolver.container,
+    throttle: config3.throttle
+  };
+  const distance = {
+    up: config3.upDistance,
+    down: config3.downDistance
+  };
+  return attachScrollEvent(options).pipe(mergeMap(() => of(calculatePoints(element, resolver))), map((positionStats) => toInfiniteScrollParams(scrollState.lastScrollPosition, positionStats, distance)), tap(({
+    stats
+  }) => scrollState.updateScroll(stats.scrolled, stats.totalToScroll)), filter(({
+    fire,
+    scrollDown,
+    stats: {
+      totalToScroll
+    }
+  }) => shouldTriggerEvents(config3.alwaysCallback, fire, scrollState.isTriggeredScroll(totalToScroll, scrollDown))), tap(({
+    scrollDown,
+    stats: {
+      totalToScroll
+    }
+  }) => {
+    scrollState.updateTriggeredFlag(totalToScroll, scrollDown);
+  }), map(toInfiniteScrollAction));
+}
+function attachScrollEvent(options) {
+  let obs = fromEvent(options.container, "scroll");
+  if (options.throttle) {
+    obs = obs.pipe(throttleTime(options.throttle, void 0, {
+      leading: true,
+      trailing: true
+    }));
+  }
+  return obs;
+}
+function toInfiniteScrollParams(lastScrollPosition, stats, distance) {
+  const {
+    scrollDown,
+    fire
+  } = getScrollStats(lastScrollPosition, stats, distance);
+  return {
+    scrollDown,
+    fire,
+    stats
+  };
+}
+var InfiniteScrollActions = {
+  DOWN: "[NGX_ISE] DOWN",
+  UP: "[NGX_ISE] UP"
+};
+function toInfiniteScrollAction(response) {
+  const {
+    scrollDown,
+    stats: {
+      scrolled: currentScrollPosition
+    }
+  } = response;
+  return {
+    type: scrollDown ? InfiniteScrollActions.DOWN : InfiniteScrollActions.UP,
+    payload: {
+      currentScrollPosition
+    }
+  };
+}
+var InfiniteScrollDirective = class _InfiniteScrollDirective {
+  constructor(element, zone) {
+    this.element = element;
+    this.zone = zone;
+    this.scrolled = new EventEmitter();
+    this.scrolledUp = new EventEmitter();
+    this.infiniteScrollDistance = 2;
+    this.infiniteScrollUpDistance = 1.5;
+    this.infiniteScrollThrottle = 150;
+    this.infiniteScrollDisabled = false;
+    this.infiniteScrollContainer = null;
+    this.scrollWindow = true;
+    this.immediateCheck = false;
+    this.horizontal = false;
+    this.alwaysCallback = false;
+    this.fromRoot = false;
+  }
+  ngAfterViewInit() {
+    if (!this.infiniteScrollDisabled) {
+      this.setup();
+    }
+  }
+  ngOnChanges({
+    infiniteScrollContainer,
+    infiniteScrollDisabled,
+    infiniteScrollDistance
+  }) {
+    const containerChanged = inputPropChanged(infiniteScrollContainer);
+    const disabledChanged = inputPropChanged(infiniteScrollDisabled);
+    const distanceChanged = inputPropChanged(infiniteScrollDistance);
+    const shouldSetup = !disabledChanged && !this.infiniteScrollDisabled || disabledChanged && !infiniteScrollDisabled.currentValue || distanceChanged;
+    if (containerChanged || disabledChanged || distanceChanged) {
+      this.destroyScroller();
+      if (shouldSetup) {
+        this.setup();
+      }
+    }
+  }
+  ngOnDestroy() {
+    this.destroyScroller();
+  }
+  setup() {
+    if (!hasWindowDefined()) {
+      return;
+    }
+    this.zone.runOutsideAngular(() => {
+      this.disposeScroller = createScroller({
+        fromRoot: this.fromRoot,
+        alwaysCallback: this.alwaysCallback,
+        disable: this.infiniteScrollDisabled,
+        downDistance: this.infiniteScrollDistance,
+        element: this.element,
+        horizontal: this.horizontal,
+        scrollContainer: this.infiniteScrollContainer,
+        scrollWindow: this.scrollWindow,
+        throttle: this.infiniteScrollThrottle,
+        upDistance: this.infiniteScrollUpDistance
+      }).subscribe((payload) => this.handleOnScroll(payload));
+    });
+  }
+  handleOnScroll({
+    type,
+    payload
+  }) {
+    const emitter = type === InfiniteScrollActions.DOWN ? this.scrolled : this.scrolledUp;
+    if (hasObservers(emitter)) {
+      this.zone.run(() => emitter.emit(payload));
+    }
+  }
+  destroyScroller() {
+    if (this.disposeScroller) {
+      this.disposeScroller.unsubscribe();
+    }
+  }
+  static {
+    this.\u0275fac = function InfiniteScrollDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _InfiniteScrollDirective)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    };
+  }
+  static {
+    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({
+      type: _InfiniteScrollDirective,
+      selectors: [["", "infiniteScroll", ""], ["", "infinite-scroll", ""], ["", "data-infinite-scroll", ""]],
+      inputs: {
+        infiniteScrollDistance: "infiniteScrollDistance",
+        infiniteScrollUpDistance: "infiniteScrollUpDistance",
+        infiniteScrollThrottle: "infiniteScrollThrottle",
+        infiniteScrollDisabled: "infiniteScrollDisabled",
+        infiniteScrollContainer: "infiniteScrollContainer",
+        scrollWindow: "scrollWindow",
+        immediateCheck: "immediateCheck",
+        horizontal: "horizontal",
+        alwaysCallback: "alwaysCallback",
+        fromRoot: "fromRoot"
+      },
+      outputs: {
+        scrolled: "scrolled",
+        scrolledUp: "scrolledUp"
+      },
+      features: [\u0275\u0275NgOnChangesFeature]
+    });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollDirective, [{
+    type: Directive,
+    args: [{
+      selector: "[infiniteScroll], [infinite-scroll], [data-infinite-scroll]"
+    }]
+  }], () => [{
+    type: ElementRef
+  }, {
+    type: NgZone
+  }], {
+    scrolled: [{
+      type: Output
+    }],
+    scrolledUp: [{
+      type: Output
+    }],
+    infiniteScrollDistance: [{
+      type: Input
+    }],
+    infiniteScrollUpDistance: [{
+      type: Input
+    }],
+    infiniteScrollThrottle: [{
+      type: Input
+    }],
+    infiniteScrollDisabled: [{
+      type: Input
+    }],
+    infiniteScrollContainer: [{
+      type: Input
+    }],
+    scrollWindow: [{
+      type: Input
+    }],
+    immediateCheck: [{
+      type: Input
+    }],
+    horizontal: [{
+      type: Input
+    }],
+    alwaysCallback: [{
+      type: Input
+    }],
+    fromRoot: [{
+      type: Input
+    }]
+  });
+})();
+function hasObservers(emitter) {
+  return emitter.observed ?? emitter.observers.length > 0;
+}
+var InfiniteScrollModule = class _InfiniteScrollModule {
+  static {
+    this.\u0275fac = function InfiniteScrollModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _InfiniteScrollModule)();
+    };
+  }
+  static {
+    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+      type: _InfiniteScrollModule
+    });
+  }
+  static {
+    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollModule, [{
+    type: NgModule,
+    args: [{
+      exports: [InfiniteScrollDirective],
+      imports: [InfiniteScrollDirective]
+    }]
+  }], null, null);
+})();
+
+// projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts
+var _c02 = () => [];
+function HealthSystemSearchComponent_div_14_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 17)(1, "h3", 18);
+    \u0275\u0275text(2, "Filters");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "div", 19)(4, "label", 20);
+    \u0275\u0275text(5, "State");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "button", 21)(7, "span", 22);
+    \u0275\u0275text(8, "All States");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(9, "svg", 23);
+    \u0275\u0275element(10, "polyline", 24);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(11, "div", 25)(12, "div", 26)(13, "button", 27)(14, "span");
+    \u0275\u0275text(15, "All States");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(16, "svg", 28);
+    \u0275\u0275element(17, "polyline", 29);
+    \u0275\u0275elementEnd()()()()()();
+  }
+}
+function HealthSystemSearchComponent_button_16_p_5_span_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "span", 42);
+    \u0275\u0275pipe(1, "safeHtml");
+  }
+  if (rf & 2) {
+    const highlight_r4 = ctx.$implicit;
+    \u0275\u0275property("innerHTML", \u0275\u0275pipeBind1(1, 1, highlight_r4), \u0275\u0275sanitizeHtml);
+  }
+}
+function HealthSystemSearchComponent_button_16_p_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 35);
+    \u0275\u0275text(1, "Found match(es): ");
+    \u0275\u0275template(2, HealthSystemSearchComponent_button_16_p_5_span_2_Template, 2, 3, "span", 41);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const brand_r2 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", brand_r2 == null ? null : brand_r2.searchHighlights);
+  }
+}
+function HealthSystemSearchComponent_button_16_span_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "stateName");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const stateCode_r5 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, stateCode_r5));
+  }
+}
+function HealthSystemSearchComponent_button_16_span_9_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const brand_r2 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("+ ", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(1, _c02)).length, "");
+  }
+}
+function HealthSystemSearchComponent_button_16_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 30);
+    \u0275\u0275listener("click", function HealthSystemSearchComponent_button_16_Template_button_click_0_listener() {
+      const brand_r2 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.selectBrand(brand_r2.brand));
+    });
+    \u0275\u0275element(1, "img", 31);
+    \u0275\u0275elementStart(2, "div", 32)(3, "p", 33);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(5, HealthSystemSearchComponent_button_16_p_5_Template, 3, 1, "p", 34);
+    \u0275\u0275elementStart(6, "p", 35);
+    \u0275\u0275template(7, HealthSystemSearchComponent_button_16_span_7_Template, 3, 3, "span", 36);
+    \u0275\u0275pipe(8, "slice");
+    \u0275\u0275template(9, HealthSystemSearchComponent_button_16_span_9_Template, 2, 2, "span", 37);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(10, "div", 38);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(11, "svg", 39);
+    \u0275\u0275element(12, "polyline", 40);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const brand_r2 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275propertyInterpolate1("src", "https://cdn.fastenhealth.com/logos/sources/", brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.id, ".png", \u0275\u0275sanitizeUrl);
+    \u0275\u0275propertyInterpolate("alt", brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.name);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.name);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.searchHighlights) || \u0275\u0275pureFunction0(11, _c02)).length > 0);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(8, 7, (brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(12, _c02), 0, 3));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(13, _c02)).length > 4);
+  }
+}
+function HealthSystemSearchComponent_div_17_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 43)(1, "div", 44)(2, "div", 45);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(3, "svg", 46);
+    \u0275\u0275element(4, "circle", 47)(5, "path", 48);
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(6, "span", 49);
+    \u0275\u0275text(7, "No results found");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(8, "p", 35);
+    \u0275\u0275text(9, " We couldn't find any health systems matching your search ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "button", 50);
+    \u0275\u0275text(11, " Request this health system ");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(10);
+    \u0275\u0275property("routerLink", "/form/healthsystem");
+  }
+}
+var HealthSystemSearchComponent = class _HealthSystemSearchComponent {
+  constructor(fastenService, configService, router, logger) {
+    this.fastenService = fastenService;
+    this.configService = configService;
+    this.router = router;
+    this.logger = logger;
+    this.loading = false;
+    this.lighthouseBrandList = [];
+    this.showFilters = false;
+    this.filter = new SearchFilter();
+    this.resultLimits = {
+      totalItems: 0,
+      scrollComplete: false,
+      platformTypesBuckets: void 0,
+      categoryBuckets: void 0
+    };
+  }
+  ngOnInit() {
+    this.querySources(true);
+  }
+  querySources(reset) {
+    if (reset) {
+      this.resetSearch();
+    }
+    this.logger.debug("querySources()", this.filter);
+    if (this.loading) {
+      this.logger.info("already loading, ignoring querySources()");
+      return of(null);
+    }
+    if (!this.filter) {
+      this.filter = new SearchFilter();
+      this.logger.info("querySources() - no filter provided, using current form value", this.filter);
+    }
+    this.filter.fields = ["*"];
+    this.loading = true;
+    var searchObservable = this.fastenService.searchCatalogBrands(ApiMode.Live, this.filter);
+    searchObservable.subscribe((wrapper) => {
+      this.logger.info("search sources", wrapper);
+      this.resultLimits.totalItems = wrapper?.hits?.total.value || 0;
+      this.lighthouseBrandList = this.lighthouseBrandList.concat((wrapper?.hits?.hits || []).map((result) => {
+        return {
+          brand: result._source,
+          searchHighlights: result?.highlight?.aliases || []
+        };
+      }));
+      if (!wrapper?.hits || !wrapper?.hits?.hits || wrapper?.hits?.hits?.length == 0 || wrapper?.hits?.total?.value == wrapper?.hits?.hits?.length) {
+        this.logger.debug("SCROLL_COMPLETE!@@@@@@@@");
+        this.resultLimits.scrollComplete = true;
+      } else {
+        this.logger.debug("SETTING NEXT SORT KEY:", wrapper.hits.hits[wrapper.hits.hits.length - 1].sort.join(","));
+        this.filter.searchAfter = wrapper.hits.hits[wrapper.hits.hits.length - 1].sort.join(",");
+      }
+      this.loading = false;
+    }, (error) => {
+      this.loading = false;
+      this.logger.error("sources FAILED", error);
+    }, () => {
+      this.loading = false;
+      this.logger.info("sources finished");
+    });
+    return searchObservable;
+  }
+  onScroll() {
+    if (!this.resultLimits.scrollComplete) {
+      this.querySources(false);
+    }
+  }
+  resetSearch() {
+    this.logger.info("reset search...");
+    this.lighthouseBrandList = [];
+    this.filter.searchAfter = [];
+    this.resultLimits = {
+      totalItems: 0,
+      scrollComplete: false,
+      platformTypesBuckets: void 0,
+      categoryBuckets: void 0
+    };
+  }
+  selectBrand(brandItem) {
+    this.configService.searchConfig$.selectedBrand = brandItem;
+    this.router.navigateByUrl("brand/details");
+  }
+  static {
+    this.\u0275fac = function HealthSystemSearchComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _HealthSystemSearchComponent)(\u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemSearchComponent, selectors: [["app-health-system-search"]], standalone: false, decls: 18, vars: 8, consts: [["id", "widget-container", 1, "w-full", "p-6", "min-h-96"], ["id", "step-search", 1, "space-y-6"], [1, "relative", "flex", "justify-center", "items-center"], ["type", "button", "id", "search-back", 1, "absolute", "left-0", "top-1/2", "-translate-y-1/2", "text-gray-700", "p-2", "hover:bg-gray-100", "rounded-md", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "w-5", "h-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "az-logo"], [1, "flex", "gap-2"], [1, "flex-1"], ["id", "search-input", "type", "text", "placeholder", "Search for your health system...", 1, "w-full", "block", "px-3", "py-2", "text-base", "rounded-md", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:ring-opacity-20", 3, "ngModelChange", "keyup", "ngModel"], ["id", "search-filters", 1, "border", "border-gray-200", "rounded-lg", "w-10", "h-10", "flex", "items-center", "justify-center", "hover:border-[#5B47FB]", "hover:bg-[#5B47FB]/5", "transition-all", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-filter", "w-5", "h-5"], ["points", "22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"], ["id", "filters-container", "class", "space-y-4 p-4 border rounded-lg", 4, "ngIf"], ["id", "search-results", "infiniteScroll", "", 1, "space-y-2", "overflow-scroll", 2, "max-height", "500px", 3, "scrolled", "infiniteScrollDistance", "infiniteScrollThrottle", "scrollWindow"], ["type", "button", "class", "w-full flex items-center gap-3 p-3 border rounded-lg hover:border-[#5B47FB]/30 hover:shadow-sm transition-all text-left focus:outline-none focus:ring-2 focus:ring-[#5B47FB] focus:ring-opacity-20", 3, "click", 4, "ngFor", "ngForOf"], ["class", "space-y-4", 4, "ngIf"], ["id", "filters-container", 1, "space-y-4", "p-4", "border", "rounded-lg"], [1, "font-semibold", "text-lg"], [1, "relative"], [1, "block", "text-sm", "font-medium", "mb-1"], ["type", "button", "id", "state-filter-btn", 1, "w-full", "flex", "items-center", "justify-between", "px-3", "py-2", "text-sm", "border", "rounded-md", "bg-white", "hover:bg-gray-50"], ["id", "state-filter-value"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "h-4", "w-4", "opacity-50"], ["points", "6 9 12 15 18 9"], ["id", "state-filter-menu", 1, "absolute", "z-10", "w-full", "mt-1", "rounded-md", "border", "bg-white", "shadow-lg", "hidden"], [1, "py-1"], [1, "w-full", "text-left", "px-3", "py-2", "text-sm", "hover:bg-gray-100", "flex", "items-center", "justify-between"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-4", "h-4", "text-[#5B47FB]"], ["points", "20 6 9 17 4 12"], ["type", "button", 1, "w-full", "flex", "items-center", "gap-3", "p-3", "border", "rounded-lg", "hover:border-[#5B47FB]/30", "hover:shadow-sm", "transition-all", "text-left", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:ring-opacity-20", 3, "click"], ["imageFallback", "", 1, "w-8", "max-h-8", "rounded", 3, "src", "alt"], [1, "flex-1", "min-w-0"], [1, "font-semibold"], ["class", "text-sm text-gray-600", 4, "ngIf"], [1, "text-sm", "text-gray-600"], [4, "ngFor", "ngForOf"], [4, "ngIf"], [1, "flex", "items-center"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5", "text-gray-400"], ["points", "9 6 15 12 9 18"], [3, "innerHTML", 4, "ngFor", "ngForOf"], [3, "innerHTML"], [1, "space-y-4"], [1, "mt-8", "p-4", "bg-gray-50", "rounded-lg", "space-y-4"], [1, "flex", "items-center", "gap-2", "text-gray-700"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["cx", "11", "cy", "11", "r", "8"], ["d", "m21 21-4.3-4.3"], [1, "font-medium"], [1, "w-full", "bg-white", "border", "border-gray-200", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "hover:border-[#5B47FB]", "font-medium", "py-2", "px-4", "rounded-md", "transition-colors", 3, "routerLink"]], template: function HealthSystemSearchComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "button", 3);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(4, "svg", 4);
+        \u0275\u0275element(5, "path", 5);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(6, "h1", 6);
+        \u0275\u0275text(7, "fasten");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(8, "div", 7)(9, "div", 8)(10, "input", 9);
+        \u0275\u0275twoWayListener("ngModelChange", function HealthSystemSearchComponent_Template_input_ngModelChange_10_listener($event) {
+          \u0275\u0275twoWayBindingSet(ctx.filter.query, $event) || (ctx.filter.query = $event);
+          return $event;
+        });
+        \u0275\u0275listener("keyup", function HealthSystemSearchComponent_Template_input_keyup_10_listener() {
+          return ctx.querySources(true);
+        });
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(11, "button", 10);
+        \u0275\u0275listener("click", function HealthSystemSearchComponent_Template_button_click_11_listener() {
+          return ctx.showFilters = !ctx.showFilters;
+        });
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(12, "svg", 11);
+        \u0275\u0275element(13, "polygon", 12);
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275template(14, HealthSystemSearchComponent_div_14_Template, 18, 0, "div", 13);
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(15, "div", 14);
+        \u0275\u0275listener("scrolled", function HealthSystemSearchComponent_Template_div_scrolled_15_listener() {
+          return ctx.onScroll();
+        });
+        \u0275\u0275template(16, HealthSystemSearchComponent_button_16_Template, 13, 14, "button", 15);
+        \u0275\u0275elementEnd();
+        \u0275\u0275template(17, HealthSystemSearchComponent_div_17_Template, 12, 1, "div", 16);
+        \u0275\u0275elementEnd()();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(3);
+        \u0275\u0275property("routerLink", "/dashboard");
+        \u0275\u0275advance(7);
+        \u0275\u0275twoWayProperty("ngModel", ctx.filter.query);
+        \u0275\u0275advance(4);
+        \u0275\u0275property("ngIf", ctx.showFilters);
+        \u0275\u0275advance();
+        \u0275\u0275property("infiniteScrollDistance", 2)("infiniteScrollThrottle", 50)("scrollWindow", false);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngForOf", ctx.lighthouseBrandList);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", !ctx.loading && ctx.lighthouseBrandList.length == 0);
+      }
+    }, dependencies: [DefaultValueAccessor, NgControlStatus, NgModel, NgForOf, NgIf, RouterLink, InfiniteScrollDirective, ImageFallbackDirective, SlicePipe, SafeHtmlPipe, StateNamePipe], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemSearchComponent, { className: "HealthSystemSearchComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts", lineNumber: 22 });
+})();
+
+// projects/fasten-connect-vault/src/app/pages/health-system-brand-details/health-system-brand-details.component.ts
+var _c03 = () => [];
+function HealthSystemBrandDetailsComponent_div_20_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 20);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 21);
+    \u0275\u0275element(2, "circle", 22)(3, "path", 23)(4, "path", 24);
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(5, "a", 25);
+    \u0275\u0275pipe(6, "async");
+    \u0275\u0275text(7);
+    \u0275\u0275pipe(8, "async");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    let tmp_1_0;
+    let tmp_2_0;
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance(5);
+    \u0275\u0275property("href", (tmp_1_0 = \u0275\u0275pipeBind1(6, 2, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_1_0.selectedBrand == null ? null : tmp_1_0.selectedBrand.brand_website, \u0275\u0275sanitizeUrl);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate((tmp_2_0 = \u0275\u0275pipeBind1(8, 4, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.brand_website);
+  }
+}
+function HealthSystemBrandDetailsComponent_div_22_span_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "stateName");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const stateCode_r2 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, stateCode_r2));
+  }
+}
+function HealthSystemBrandDetailsComponent_div_22_span_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1);
+    \u0275\u0275pipe(2, "async");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    let tmp_2_0;
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("+ ", (((tmp_2_0 = \u0275\u0275pipeBind1(2, 1, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.locations) || \u0275\u0275pureFunction0(3, _c03)).length, "");
+  }
+}
+function HealthSystemBrandDetailsComponent_div_22_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 26);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 27);
+    \u0275\u0275element(2, "path", 28)(3, "circle", 29);
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(4, "span", 30);
+    \u0275\u0275template(5, HealthSystemBrandDetailsComponent_div_22_span_5_Template, 3, 3, "span", 19);
+    \u0275\u0275pipe(6, "async");
+    \u0275\u0275pipe(7, "slice");
+    \u0275\u0275template(8, HealthSystemBrandDetailsComponent_div_22_span_8_Template, 3, 4, "span", 31);
+    \u0275\u0275pipe(9, "async");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    let tmp_1_0;
+    let tmp_2_0;
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance(5);
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(7, 4, ((tmp_1_0 = \u0275\u0275pipeBind1(6, 2, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_1_0.selectedBrand == null ? null : tmp_1_0.selectedBrand.locations) || \u0275\u0275pureFunction0(10, _c03), 0, 3));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", (((tmp_2_0 = \u0275\u0275pipeBind1(9, 8, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.locations) || \u0275\u0275pureFunction0(11, _c03)).length > 4);
+  }
+}
+function HealthSystemBrandDetailsComponent_ng_container_25_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 33)(1, "div", 34)(2, "h4", 35);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "button", 36);
+    \u0275\u0275listener("click", function HealthSystemBrandDetailsComponent_ng_container_25_div_1_Template_button_click_4_listener() {
+      const endpoint_r4 = \u0275\u0275restoreView(_r3).$implicit;
+      const portal_r5 = \u0275\u0275nextContext().$implicit;
+      const ctx_r0 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r0.addPendingAccount(ctx_r0.configService.searchConfig$ == null ? null : ctx_r0.configService.searchConfig$.selectedBrand, portal_r5, endpoint_r4));
+    });
+    \u0275\u0275text(5, "+");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const portal_r5 = \u0275\u0275nextContext().$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(portal_r5.name);
+  }
+}
+function HealthSystemBrandDetailsComponent_ng_container_25_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, HealthSystemBrandDetailsComponent_ng_container_25_div_1_Template, 6, 1, "div", 32);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const portal_r5 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", portal_r5.endpoints);
+  }
+}
+var HealthSystemBrandDetailsComponent = class _HealthSystemBrandDetailsComponent {
+  constructor(configService, router, logger) {
+    this.configService = configService;
+    this.router = router;
+    this.logger = logger;
+  }
+  ngOnInit() {
+  }
+  addPendingAccount(brand, portal, endpoint) {
+    this.logger.debug("connecting", brand, portal, endpoint);
+    this.router.navigate(["brand/connecting"], {
+      queryParams: {
+        "brandId": brand?.id,
+        "portalId": portal?.id,
+        "endpointId": endpoint?.id,
+        "externalId": this.configService.systemConfig$.externalId
+      }
+    });
+  }
+  static {
+    this.\u0275fac = function HealthSystemBrandDetailsComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _HealthSystemBrandDetailsComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemBrandDetailsComponent, selectors: [["app-health-system-brand-details"]], standalone: false, decls: 27, vars: 17, consts: [["id", "widget-container", 1, "w-full", "p-6", "min-h-96"], ["id", "step-health-system-details", 1, "space-y-6"], [1, "relative", "flex", "justify-center", "items-center"], ["type", "button", "id", "hsd-back", 1, "absolute", "left-0", "top-1/2", "-translate-y-1/2", "text-gray-700", "p-2", "hover:bg-gray-100", "rounded-md", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "w-5", "h-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "az-logo"], [1, "space-y-6"], [1, "border", "rounded-2xl", "p-6"], [1, "flex", "items-start", "space-x-4", "mb-4"], [1, "flex-shrink-0"], ["imageFallback", "", 1, "w-12", "max-h-12", "rounded-lg", "object-contain", 3, "src"], [1, "flex-1", "min-w-0"], ["id", "hsd-name", 1, "text-xl", "font-semibold"], ["id", "hsd-description", 1, "text-gray-600", "text-base", "mb-4"], [1, "space-y-2"], ["class", "flex items-center gap-2 text-gray-600", "id", "hsd-website-container", 4, "ngIf"], ["class", "flex items-center gap-2 text-gray-600", 4, "ngIf"], ["id", "hsd-institutions-list", 1, "space-y-2"], [4, "ngFor", "ngForOf"], ["id", "hsd-website-container", 1, "flex", "items-center", "gap-2", "text-gray-600"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-globe", "w-5", "h-5"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"], ["d", "M2 12h20"], ["id", "hsd-website", "target", "_blank", "rel", "noopener noreferrer", 1, "text-base", "hover:underline", 3, "href"], [1, "flex", "items-center", "gap-2", "text-gray-600"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "lucide", "lucide-map-pin", "w-5", "h-5"], ["d", "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"], ["cx", "12", "cy", "10", "r", "3"], ["id", "hsd-location", 1, "text-base"], [4, "ngIf"], ["class", "p-4 border rounded-lg hover:border-gray-400 transition-colors", 4, "ngFor", "ngForOf"], [1, "p-4", "border", "rounded-lg", "hover:border-gray-400", "transition-colors"], [1, "flex", "items-center", "justify-between"], [1, "font-medium", "text-base", "tracking-tight"], ["type", "button", 1, "border", "border-[#5B47FB]", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "w-8", "h-8", "rounded-lg", "text-lg", "font-medium", "transition-colors", "flex", "items-center", "justify-center", 3, "click"]], template: function HealthSystemBrandDetailsComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "button", 3);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(4, "svg", 4);
+        \u0275\u0275element(5, "path", 5);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(6, "h1", 6);
+        \u0275\u0275text(7, "fasten");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(8, "div", 7)(9, "div", 8)(10, "div", 9)(11, "div", 10);
+        \u0275\u0275element(12, "img", 11);
+        \u0275\u0275pipe(13, "async");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(14, "div", 12)(15, "h2", 13);
+        \u0275\u0275text(16);
+        \u0275\u0275pipe(17, "async");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275element(18, "p", 14);
+        \u0275\u0275elementStart(19, "div", 15);
+        \u0275\u0275template(20, HealthSystemBrandDetailsComponent_div_20_Template, 9, 6, "div", 16);
+        \u0275\u0275pipe(21, "async");
+        \u0275\u0275template(22, HealthSystemBrandDetailsComponent_div_22_Template, 10, 12, "div", 17);
+        \u0275\u0275pipe(23, "async");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(24, "div", 18);
+        \u0275\u0275template(25, HealthSystemBrandDetailsComponent_ng_container_25_Template, 2, 1, "ng-container", 19);
+        \u0275\u0275pipe(26, "async");
+        \u0275\u0275elementEnd()()()();
+      }
+      if (rf & 2) {
+        let tmp_1_0;
+        let tmp_2_0;
+        let tmp_3_0;
+        let tmp_4_0;
+        let tmp_5_0;
+        \u0275\u0275advance(3);
+        \u0275\u0275property("routerLink", "/search");
+        \u0275\u0275advance(9);
+        \u0275\u0275propertyInterpolate1("src", "https://cdn.fastenhealth.com/logos/sources/", (tmp_1_0 = \u0275\u0275pipeBind1(13, 7, ctx.configService.searchConfigSubject)) == null ? null : tmp_1_0.selectedBrand == null ? null : tmp_1_0.selectedBrand.id, ".png", \u0275\u0275sanitizeUrl);
+        \u0275\u0275advance(4);
+        \u0275\u0275textInterpolate((tmp_2_0 = \u0275\u0275pipeBind1(17, 9, ctx.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.name);
+        \u0275\u0275advance(4);
+        \u0275\u0275property("ngIf", (tmp_3_0 = \u0275\u0275pipeBind1(21, 11, ctx.configService.searchConfigSubject)) == null ? null : tmp_3_0.selectedBrand == null ? null : tmp_3_0.selectedBrand.brand_website);
+        \u0275\u0275advance(2);
+        \u0275\u0275property("ngIf", (tmp_4_0 = \u0275\u0275pipeBind1(23, 13, ctx.configService.searchConfigSubject)) == null ? null : tmp_4_0.selectedBrand == null ? null : tmp_4_0.selectedBrand.locations);
+        \u0275\u0275advance(3);
+        \u0275\u0275property("ngForOf", (tmp_5_0 = \u0275\u0275pipeBind1(26, 15, ctx.configService.searchConfigSubject)) == null ? null : tmp_5_0.selectedBrand == null ? null : tmp_5_0.selectedBrand.portals);
+      }
+    }, dependencies: [NgForOf, NgIf, RouterLink, ImageFallbackDirective, AsyncPipe, SlicePipe, StateNamePipe], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemBrandDetailsComponent, { className: "HealthSystemBrandDetailsComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-brand-details/health-system-brand-details.component.ts", lineNumber: 16 });
+})();
+
+// node_modules/uuid/dist/esm-browser/rng.js
+var getRandomValues;
+var rnds8 = new Uint8Array(16);
+function rng() {
+  if (!getRandomValues) {
+    getRandomValues = typeof crypto !== "undefined" && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto !== "undefined" && typeof msCrypto.getRandomValues === "function" && msCrypto.getRandomValues.bind(msCrypto);
+    if (!getRandomValues) {
+      throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
+    }
+  }
+  return getRandomValues(rnds8);
+}
+
+// node_modules/uuid/dist/esm-browser/regex.js
+var regex_default = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
+
+// node_modules/uuid/dist/esm-browser/validate.js
+function validate(uuid) {
+  return typeof uuid === "string" && regex_default.test(uuid);
+}
+var validate_default = validate;
+
+// node_modules/uuid/dist/esm-browser/stringify.js
+var byteToHex = [];
+for (i = 0; i < 256; ++i) {
+  byteToHex.push((i + 256).toString(16).substr(1));
+}
+var i;
+function stringify3(arr) {
+  var offset = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
+  var uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
+  if (!validate_default(uuid)) {
+    throw TypeError("Stringified UUID is invalid");
+  }
+  return uuid;
+}
+var stringify_default = stringify3;
+
+// node_modules/uuid/dist/esm-browser/v4.js
+function v4(options, buf, offset) {
+  options = options || {};
+  var rnds = options.random || (options.rng || rng)();
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    for (var i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return stringify_default(rnds);
+}
+var v4_default = v4;
+
+// projects/fasten-connect-vault/src/app/utils/connect-helper.ts
+function ConnectHelper(connectData) {
+  const vaultApi = inject(FastenService);
+  const configService = inject(ConfigService);
+  const router = inject(Router);
+  if (!connectData.external_state) {
+    connectData.external_state = v4_default();
+  }
+  vaultApi.accountConnectWithPopup(connectData.brand_id, connectData.portal_id, connectData.endpoint_id, connectData.org_connection_id, connectData.external_id, connectData.external_state).subscribe((orgConnectionCallbackData) => {
+    console.log(orgConnectionCallbackData);
+    if (!orgConnectionCallbackData) {
+      return;
+    }
+    configService.vaultProfileAddConnectedAccount(orgConnectionCallbackData);
+    router.navigateByUrl("dashboard");
+  }, (err) => {
+    console.error("Error parsing error data", err);
+    try {
+      var errData = JSON.parse(err.toString());
+      if (errData.error == "timeout") {
+        return router.navigateByUrl("dashboard");
+      } else {
+        console.error("an error occurred while attempting to connect health system", err);
+        router.navigate(["form/support"], {
+          queryParams: {
+            "error": err["error"] || "unknown_error_during_connect",
+            "error_description": err["error_description"] || "an unknown error occurred during the connection process",
+            "brand_id": connectData.brand_id,
+            "portal_id": connectData.portal_id,
+            "endpoint_id": connectData.endpoint_id,
+            "org_connection_id": connectData.org_connection_id,
+            "external_id": connectData.external_id,
+            "external_state": connectData.external_state || err["external_state"],
+            "request_id": err["request_id"]
+          }
+        });
+      }
+    } catch (e) {
+      router.navigate(["form/support"], {
+        queryParams: {
+          "error": "unknown_error_during_connect",
+          "error_description": "an unknown error occurred during the connection process",
+          "brand_id": connectData.brand_id,
+          "portal_id": connectData.portal_id,
+          "endpoint_id": connectData.endpoint_id,
+          "org_connection_id": connectData.org_connection_id,
+          "external_id": connectData.external_id,
+          "external_state": connectData.external_state || err["external_state"]
+        }
+      });
+    }
+    return null;
+  });
+}
+
+// projects/fasten-connect-vault/src/app/pages/health-system-connecting/health-system-connecting.component.ts
+var _c04 = (a0, a1, a2, a3, a4, a5) => ({ brand_id: a0, portal_id: a1, endpoint_id: a2, org_connection_id: a3, external_id: a4, external_state: a5 });
+function HealthSystemConnectingComponent_button_3_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 28);
+    \u0275\u0275listener("click", function HealthSystemConnectingComponent_button_3_Template_button_click_0_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.cancelAccountConnect());
+    });
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 29);
+    \u0275\u0275element(2, "path", 30);
+    \u0275\u0275elementEnd()();
+  }
+}
+function HealthSystemConnectingComponent_button_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "button", 31);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 29);
+    \u0275\u0275element(2, "path", 32);
+    \u0275\u0275elementEnd()();
+  }
+}
+var HealthSystemConnectingComponent = class _HealthSystemConnectingComponent {
+  constructor(configService, router, injector) {
+    this.configService = configService;
+    this.router = router;
+    this.injector = injector;
+    this.brandId = "";
+    this.portalId = "";
+    this.endpointId = "";
+    this.orgConnectionId = "";
+    this.externalId = "";
+    this.externalState = "";
+  }
+  ngOnInit() {
+    this.injector.runInContext(() => {
+      ConnectHelper({
+        public_id: environment.org_credential_test_public_id,
+        brand_id: this.brandId,
+        portal_id: this.portalId,
+        endpoint_id: this.endpointId,
+        org_connection_id: this.orgConnectionId,
+        external_id: this.externalId,
+        external_state: this.externalState
+        // connect_mode: this.connectMode,
+      });
+    });
+  }
+  cancelAccountConnect() {
+    this.router.navigateByUrl("dashboard");
+  }
+  static {
+    this.\u0275fac = function HealthSystemConnectingComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _HealthSystemConnectingComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(EnvironmentInjector));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemConnectingComponent, selectors: [["app-health-system-connecting"]], inputs: { brandId: "brandId", portalId: "portalId", endpointId: "endpointId", orgConnectionId: "orgConnectionId", externalId: "externalId", externalState: "externalState" }, standalone: false, decls: 34, vars: 16, consts: [["id", "widget-container", 1, "w-full", "p-6", "min-h-96"], [1, "space-y-6"], [1, "relative", "flex", "justify-center", "items-center"], ["type", "button", "id", "connecting-back", "class", "absolute left-0 top-1/2 -translate-y-1/2 text-gray-700 p-2 hover:bg-gray-100 rounded-md", 3, "click", 4, "ngIf"], ["type", "button", "id", "connecting-close", "class", "absolute right-0 top-1/2 -translate-y-1/2 text-gray-700 p-2 hover:bg-gray-100 rounded-md", 4, "ngIf"], [1, "az-logo"], [1, "flex", "items-center", "justify-center", "gap-4"], [1, "relative", "w-16", "h-16", "bg-white", "rounded-2xl", "shadow-md", "p-3", "animate-pulse-flow", "animate-delay-100"], ["imageFallback", "unknown-organization", "alt", "Organization Logo", 1, "w-full", "h-full", "object-contain", 3, "src"], [1, "flex", "space-x-1"], [1, "w-2", "h-2", "bg-[#5B47FB]", "rounded-full", "animate-pulse-flow", "animate-delay-100"], [1, "w-2", "h-2", "bg-[#5B47FB]", "rounded-full", "animate-pulse-flow", "animate-delay-200"], [1, "w-2", "h-2", "bg-[#5B47FB]", "rounded-full", "animate-pulse-flow", "animate-delay-300"], [1, "relative", "w-16", "h-16", "bg-white", "rounded-2xl", "shadow-md", "p-3", "animate-pulse-flow", "animate-delay-300"], ["id", "connecting-system-logo-container", 1, "w-full", "h-full", "flex", "items-center", "justify-center"], ["id", "connecting-system-logo", "imageFallback", "hospital", 1, "w-full", "h-full", "object-contain", 3, "src"], [1, "text-center", "space-y-2"], ["id", "connecting-title", 1, "text-xl", "font-semibold", "text-gray-900"], ["id", "connecting-subtitle", 1, "text-sm", "text-gray-600"], [1, "mt-8", "p-4", "bg-gray-50", "rounded-lg", "space-y-4"], [1, "flex", "items-center", "gap-2", "text-gray-700"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"], ["d", "M12 17h.01"], [1, "font-medium"], [1, "text-sm", "text-gray-600"], [1, "w-full", "bg-white", "border", "border-gray-200", "text-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", "hover:border-[#5B47FB]", "font-medium", "py-2", "px-4", "rounded-md", "transition-colors", 3, "routerLink", "queryParams"], ["type", "button", "id", "connecting-back", 1, "absolute", "left-0", "top-1/2", "-translate-y-1/2", "text-gray-700", "p-2", "hover:bg-gray-100", "rounded-md", 3, "click"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "w-5", "h-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], ["type", "button", "id", "connecting-close", 1, "absolute", "right-0", "top-1/2", "-translate-y-1/2", "text-gray-700", "p-2", "hover:bg-gray-100", "rounded-md"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M6 18L18 6M6 6l12 12"]], template: function HealthSystemConnectingComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2);
+        \u0275\u0275template(3, HealthSystemConnectingComponent_button_3_Template, 3, 0, "button", 3)(4, HealthSystemConnectingComponent_button_4_Template, 3, 0, "button", 4);
+        \u0275\u0275elementStart(5, "h1", 5);
+        \u0275\u0275text(6, "fasten");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(7, "div", 6)(8, "div", 7);
+        \u0275\u0275element(9, "img", 8);
+        \u0275\u0275pipe(10, "async");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(11, "div", 9);
+        \u0275\u0275element(12, "div", 10)(13, "div", 11)(14, "div", 12);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(15, "div", 13)(16, "div", 14);
+        \u0275\u0275element(17, "img", 15);
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(18, "div", 16);
+        \u0275\u0275element(19, "h2", 17);
+        \u0275\u0275elementStart(20, "p", 18);
+        \u0275\u0275text(21, "Redirecting to sign in...");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(22, "div", 19)(23, "div", 20);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(24, "svg", 21);
+        \u0275\u0275element(25, "circle", 22)(26, "path", 23)(27, "path", 24);
+        \u0275\u0275elementEnd();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(28, "span", 25);
+        \u0275\u0275text(29, "Having trouble?");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(30, "p", 26);
+        \u0275\u0275text(31, " If you're experiencing issues connecting to your health system, our support team is here to help. ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(32, "button", 27);
+        \u0275\u0275text(33, " Contact Support ");
+        \u0275\u0275elementEnd()()()();
+      }
+      if (rf & 2) {
+        let tmp_2_0;
+        \u0275\u0275advance(3);
+        \u0275\u0275property("ngIf", !ctx.orgConnectionId);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", !ctx.orgConnectionId);
+        \u0275\u0275advance(5);
+        \u0275\u0275property("src", (tmp_2_0 = \u0275\u0275pipeBind1(10, 7, ctx.configService.systemConfigSubject)) == null ? null : tmp_2_0.org == null ? null : tmp_2_0.org.logo_uri, \u0275\u0275sanitizeUrl);
+        \u0275\u0275advance(8);
+        \u0275\u0275propertyInterpolate1("src", "https://cdn.fastenhealth.com/logos/sources/", ctx.brandId, ".png", \u0275\u0275sanitizeUrl);
+        \u0275\u0275advance(15);
+        \u0275\u0275property("routerLink", "/form/support")("queryParams", \u0275\u0275pureFunction6(9, _c04, ctx.brandId, ctx.portalId, ctx.endpointId, ctx.orgConnectionId, ctx.externalId, ctx.externalState));
+      }
+    }, dependencies: [NgIf, RouterLink, ImageFallbackDirective, AsyncPipe], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemConnectingComponent, { className: "HealthSystemConnectingComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-connecting/health-system-connecting.component.ts", lineNumber: 13 });
+})();
+
 // projects/fasten-connect-vault/src/app/app-routing.module.ts
 var routes = [
   // @Input routing
@@ -57163,6 +61186,15 @@ var routes = [
   // https://angular.love/router-data-as-components-inputs-in-angular-v16
   { path: "auth/signin", component: VaultSigninComponent },
   { path: "auth/signin/code", component: VaultSigninCodeComponent },
+  { path: "auth/identity/verification", component: IdentityVerificationComponent },
+  //canActivate: [IsAuthenticatedAuthGuard] },
+  { path: "auth/identity/verification/error", component: IdentityVerificationErrorComponent },
+  //canActivate: [IsAuthenticatedAuthGuard] },
+  { path: "search", component: HealthSystemSearchComponent, canActivate: [IsAuthenticatedAuthGuard] },
+  { path: "brand/details", component: HealthSystemBrandDetailsComponent, canActivate: [IsAuthenticatedAuthGuard] },
+  { path: "brand/connecting", component: HealthSystemConnectingComponent, canActivate: [IsAuthenticatedAuthGuard] },
+  // { path: 'form/healthsystem', component: FormHealthSystemRequestComponent, canActivate: [IsAuthenticatedAuthGuard] },
+  // { path: 'form/support', component: FormSupportRequestComponent, canActivate: [IsAuthenticatedAuthGuard] },
   { path: "", redirectTo: "/auth/signin", pathMatch: "full" },
   //must be at bottom of list
   { path: "**", redirectTo: "auth/signin" }
@@ -57214,26 +61246,22 @@ var AppComponent = class _AppComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 11, vars: 1, consts: [["id", "test-mode-banner", 1, "mx-auto", "w-full", "max-w-[440px]", "bg-[#DC3545]", "text-white", "text-center", "py-2", "px-4", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 8, vars: 1, consts: [["id", "test-mode-banner", 1, "mx-auto", "w-full", "max-w-[440px]", "bg-[#DC3545]", "text-white", "text-center", "py-2", "px-4", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275namespaceSVG();
         \u0275\u0275elementStart(1, "svg", 1);
         \u0275\u0275element(2, "path", 2)(3, "path", 3)(4, "path", 4);
         \u0275\u0275elementEnd();
-        \u0275\u0275text(5, " You are using Fasten in");
+        \u0275\u0275text(5, " You are using Fasten in test mode\n");
+        \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(6, "strong");
-        \u0275\u0275text(7, "Test");
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(8, "mode\n");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(9, "div", 5);
-        \u0275\u0275element(10, "router-outlet");
+        \u0275\u0275elementStart(6, "div", 5);
+        \u0275\u0275element(7, "router-outlet");
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
-        \u0275\u0275advance(9);
+        \u0275\u0275advance(6);
         \u0275\u0275property("ngClass", ctx.router.url == "/auth/signin" ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
       }
     }, dependencies: [NgClass, RouterOutlet], encapsulation: 2 });
@@ -67957,513 +71985,6 @@ var icons2 = {
   faHandPointLeft: faHandPointLeft2
 };
 
-// node_modules/ngx-infinite-scroll/fesm2022/ngx-infinite-scroll.mjs
-function resolveContainerElement(selector, scrollWindow, defaultElement, fromRoot) {
-  const hasWindow = window && !!window.document && window.document.documentElement;
-  let container = hasWindow && scrollWindow ? window : defaultElement;
-  if (selector) {
-    const containerIsString = selector && hasWindow && typeof selector === "string";
-    container = containerIsString ? findElement(selector, defaultElement.nativeElement, fromRoot) : selector;
-    if (!container) {
-      throw new Error("ngx-infinite-scroll {resolveContainerElement()}: selector for");
-    }
-  }
-  return container;
-}
-function findElement(selector, customRoot, fromRoot) {
-  const rootEl = fromRoot ? window.document : customRoot;
-  return rootEl.querySelector(selector);
-}
-function inputPropChanged(prop) {
-  return prop && !prop.firstChange;
-}
-function hasWindowDefined() {
-  return typeof window !== "undefined";
-}
-var VerticalProps = {
-  clientHeight: "clientHeight",
-  offsetHeight: "offsetHeight",
-  scrollHeight: "scrollHeight",
-  pageYOffset: "pageYOffset",
-  offsetTop: "offsetTop",
-  scrollTop: "scrollTop",
-  top: "top"
-};
-var HorizontalProps = {
-  clientHeight: "clientWidth",
-  offsetHeight: "offsetWidth",
-  scrollHeight: "scrollWidth",
-  pageYOffset: "pageXOffset",
-  offsetTop: "offsetLeft",
-  scrollTop: "scrollLeft",
-  top: "left"
-};
-var AxisResolver = class {
-  constructor(vertical = true) {
-    this.vertical = vertical;
-    this.propsMap = vertical ? VerticalProps : HorizontalProps;
-  }
-  clientHeightKey() {
-    return this.propsMap.clientHeight;
-  }
-  offsetHeightKey() {
-    return this.propsMap.offsetHeight;
-  }
-  scrollHeightKey() {
-    return this.propsMap.scrollHeight;
-  }
-  pageYOffsetKey() {
-    return this.propsMap.pageYOffset;
-  }
-  offsetTopKey() {
-    return this.propsMap.offsetTop;
-  }
-  scrollTopKey() {
-    return this.propsMap.scrollTop;
-  }
-  topKey() {
-    return this.propsMap.top;
-  }
-};
-function shouldTriggerEvents(alwaysCallback, shouldFireScrollEvent2, isTriggeredCurrentTotal) {
-  if (alwaysCallback && shouldFireScrollEvent2) {
-    return true;
-  }
-  if (!isTriggeredCurrentTotal && shouldFireScrollEvent2) {
-    return true;
-  }
-  return false;
-}
-function createResolver({
-  windowElement,
-  axis
-}) {
-  return createResolverWithContainer({
-    axis,
-    isWindow: isElementWindow(windowElement)
-  }, windowElement);
-}
-function createResolverWithContainer(resolver, windowElement) {
-  const container = resolver.isWindow || windowElement && !windowElement.nativeElement ? windowElement : windowElement.nativeElement;
-  return __spreadProps(__spreadValues({}, resolver), {
-    container
-  });
-}
-function isElementWindow(windowElement) {
-  const isWindow = ["Window", "global"].some((obj) => Object.prototype.toString.call(windowElement).includes(obj));
-  return isWindow;
-}
-function getDocumentElement(isContainerWindow, windowElement) {
-  return isContainerWindow ? windowElement.document.documentElement : null;
-}
-function calculatePoints(element, resolver) {
-  const height = extractHeightForElement(resolver);
-  return resolver.isWindow ? calculatePointsForWindow(height, element, resolver) : calculatePointsForElement(height, element, resolver);
-}
-function calculatePointsForWindow(height, element, resolver) {
-  const {
-    axis,
-    container,
-    isWindow
-  } = resolver;
-  const {
-    offsetHeightKey,
-    clientHeightKey
-  } = extractHeightPropKeys(axis);
-  const scrolled = height + getElementPageYOffset(getDocumentElement(isWindow, container), axis, isWindow);
-  const nativeElementHeight = getElementHeight(element.nativeElement, isWindow, offsetHeightKey, clientHeightKey);
-  const totalToScroll = getElementOffsetTop(element.nativeElement, axis, isWindow) + nativeElementHeight;
-  return {
-    height,
-    scrolled,
-    totalToScroll,
-    isWindow
-  };
-}
-function calculatePointsForElement(height, element, resolver) {
-  const {
-    axis,
-    container
-  } = resolver;
-  const scrolled = container[axis.scrollTopKey()];
-  const totalToScroll = container[axis.scrollHeightKey()];
-  return {
-    height,
-    scrolled,
-    totalToScroll,
-    isWindow: false
-  };
-}
-function extractHeightPropKeys(axis) {
-  return {
-    offsetHeightKey: axis.offsetHeightKey(),
-    clientHeightKey: axis.clientHeightKey()
-  };
-}
-function extractHeightForElement({
-  container,
-  isWindow,
-  axis
-}) {
-  const {
-    offsetHeightKey,
-    clientHeightKey
-  } = extractHeightPropKeys(axis);
-  return getElementHeight(container, isWindow, offsetHeightKey, clientHeightKey);
-}
-function getElementHeight(elem, isWindow, offsetHeightKey, clientHeightKey) {
-  if (isNaN(elem[offsetHeightKey])) {
-    const docElem = getDocumentElement(isWindow, elem);
-    return docElem ? docElem[clientHeightKey] : 0;
-  } else {
-    return elem[offsetHeightKey];
-  }
-}
-function getElementOffsetTop(elem, axis, isWindow) {
-  const topKey = axis.topKey();
-  if (!elem.getBoundingClientRect) {
-    return;
-  }
-  return elem.getBoundingClientRect()[topKey] + getElementPageYOffset(elem, axis, isWindow);
-}
-function getElementPageYOffset(elem, axis, isWindow) {
-  const pageYOffset = axis.pageYOffsetKey();
-  const scrollTop = axis.scrollTopKey();
-  const offsetTop = axis.offsetTopKey();
-  if (isNaN(window.pageYOffset)) {
-    return getDocumentElement(isWindow, elem)[scrollTop];
-  } else if (elem.ownerDocument) {
-    return elem.ownerDocument.defaultView[pageYOffset];
-  } else {
-    return elem[offsetTop];
-  }
-}
-function shouldFireScrollEvent(container, distance = {
-  down: 0,
-  up: 0
-}, scrollingDown) {
-  let remaining;
-  let containerBreakpoint;
-  if (container.totalToScroll <= 0) {
-    return false;
-  }
-  const scrolledUntilNow = container.isWindow ? container.scrolled : container.height + container.scrolled;
-  if (scrollingDown) {
-    remaining = (container.totalToScroll - scrolledUntilNow) / container.totalToScroll;
-    const distanceDown = distance?.down ? distance.down : 0;
-    containerBreakpoint = distanceDown / 10;
-  } else {
-    const totalHiddenContentHeight = container.scrolled + (container.totalToScroll - scrolledUntilNow);
-    remaining = container.scrolled / totalHiddenContentHeight;
-    const distanceUp = distance?.up ? distance.up : 0;
-    containerBreakpoint = distanceUp / 10;
-  }
-  const shouldFireEvent = remaining <= containerBreakpoint;
-  return shouldFireEvent;
-}
-function isScrollingDownwards(lastScrollPosition, container) {
-  return lastScrollPosition < container.scrolled;
-}
-function getScrollStats(lastScrollPosition, container, distance) {
-  const scrollDown = isScrollingDownwards(lastScrollPosition, container);
-  return {
-    fire: shouldFireScrollEvent(container, distance, scrollDown),
-    scrollDown
-  };
-}
-var ScrollState = class {
-  constructor(attrs) {
-    this.lastScrollPosition = 0;
-    this.lastTotalToScroll = 0;
-    this.totalToScroll = 0;
-    this.triggered = {
-      down: 0,
-      up: 0
-    };
-    Object.assign(this, attrs);
-  }
-  updateScrollPosition(position) {
-    return this.lastScrollPosition = position;
-  }
-  updateTotalToScroll(totalToScroll) {
-    if (this.lastTotalToScroll !== totalToScroll) {
-      this.lastTotalToScroll = this.totalToScroll;
-      this.totalToScroll = totalToScroll;
-    }
-  }
-  updateScroll(scrolledUntilNow, totalToScroll) {
-    this.updateScrollPosition(scrolledUntilNow);
-    this.updateTotalToScroll(totalToScroll);
-  }
-  updateTriggeredFlag(scroll, isScrollingDown) {
-    if (isScrollingDown) {
-      this.triggered.down = scroll;
-    } else {
-      this.triggered.up = scroll;
-    }
-  }
-  isTriggeredScroll(totalToScroll, isScrollingDown) {
-    return isScrollingDown ? this.triggered.down === totalToScroll : this.triggered.up === totalToScroll;
-  }
-};
-function createScroller(config3) {
-  const {
-    scrollContainer,
-    scrollWindow,
-    element,
-    fromRoot
-  } = config3;
-  const resolver = createResolver({
-    axis: new AxisResolver(!config3.horizontal),
-    windowElement: resolveContainerElement(scrollContainer, scrollWindow, element, fromRoot)
-  });
-  const scrollState = new ScrollState({
-    totalToScroll: calculatePoints(element, resolver).totalToScroll
-  });
-  const options = {
-    container: resolver.container,
-    throttle: config3.throttle
-  };
-  const distance = {
-    up: config3.upDistance,
-    down: config3.downDistance
-  };
-  return attachScrollEvent(options).pipe(mergeMap(() => of(calculatePoints(element, resolver))), map((positionStats) => toInfiniteScrollParams(scrollState.lastScrollPosition, positionStats, distance)), tap(({
-    stats
-  }) => scrollState.updateScroll(stats.scrolled, stats.totalToScroll)), filter(({
-    fire,
-    scrollDown,
-    stats: {
-      totalToScroll
-    }
-  }) => shouldTriggerEvents(config3.alwaysCallback, fire, scrollState.isTriggeredScroll(totalToScroll, scrollDown))), tap(({
-    scrollDown,
-    stats: {
-      totalToScroll
-    }
-  }) => {
-    scrollState.updateTriggeredFlag(totalToScroll, scrollDown);
-  }), map(toInfiniteScrollAction));
-}
-function attachScrollEvent(options) {
-  let obs = fromEvent(options.container, "scroll");
-  if (options.throttle) {
-    obs = obs.pipe(throttleTime(options.throttle, void 0, {
-      leading: true,
-      trailing: true
-    }));
-  }
-  return obs;
-}
-function toInfiniteScrollParams(lastScrollPosition, stats, distance) {
-  const {
-    scrollDown,
-    fire
-  } = getScrollStats(lastScrollPosition, stats, distance);
-  return {
-    scrollDown,
-    fire,
-    stats
-  };
-}
-var InfiniteScrollActions = {
-  DOWN: "[NGX_ISE] DOWN",
-  UP: "[NGX_ISE] UP"
-};
-function toInfiniteScrollAction(response) {
-  const {
-    scrollDown,
-    stats: {
-      scrolled: currentScrollPosition
-    }
-  } = response;
-  return {
-    type: scrollDown ? InfiniteScrollActions.DOWN : InfiniteScrollActions.UP,
-    payload: {
-      currentScrollPosition
-    }
-  };
-}
-var InfiniteScrollDirective = class _InfiniteScrollDirective {
-  constructor(element, zone) {
-    this.element = element;
-    this.zone = zone;
-    this.scrolled = new EventEmitter();
-    this.scrolledUp = new EventEmitter();
-    this.infiniteScrollDistance = 2;
-    this.infiniteScrollUpDistance = 1.5;
-    this.infiniteScrollThrottle = 150;
-    this.infiniteScrollDisabled = false;
-    this.infiniteScrollContainer = null;
-    this.scrollWindow = true;
-    this.immediateCheck = false;
-    this.horizontal = false;
-    this.alwaysCallback = false;
-    this.fromRoot = false;
-  }
-  ngAfterViewInit() {
-    if (!this.infiniteScrollDisabled) {
-      this.setup();
-    }
-  }
-  ngOnChanges({
-    infiniteScrollContainer,
-    infiniteScrollDisabled,
-    infiniteScrollDistance
-  }) {
-    const containerChanged = inputPropChanged(infiniteScrollContainer);
-    const disabledChanged = inputPropChanged(infiniteScrollDisabled);
-    const distanceChanged = inputPropChanged(infiniteScrollDistance);
-    const shouldSetup = !disabledChanged && !this.infiniteScrollDisabled || disabledChanged && !infiniteScrollDisabled.currentValue || distanceChanged;
-    if (containerChanged || disabledChanged || distanceChanged) {
-      this.destroyScroller();
-      if (shouldSetup) {
-        this.setup();
-      }
-    }
-  }
-  ngOnDestroy() {
-    this.destroyScroller();
-  }
-  setup() {
-    if (!hasWindowDefined()) {
-      return;
-    }
-    this.zone.runOutsideAngular(() => {
-      this.disposeScroller = createScroller({
-        fromRoot: this.fromRoot,
-        alwaysCallback: this.alwaysCallback,
-        disable: this.infiniteScrollDisabled,
-        downDistance: this.infiniteScrollDistance,
-        element: this.element,
-        horizontal: this.horizontal,
-        scrollContainer: this.infiniteScrollContainer,
-        scrollWindow: this.scrollWindow,
-        throttle: this.infiniteScrollThrottle,
-        upDistance: this.infiniteScrollUpDistance
-      }).subscribe((payload) => this.handleOnScroll(payload));
-    });
-  }
-  handleOnScroll({
-    type,
-    payload
-  }) {
-    const emitter = type === InfiniteScrollActions.DOWN ? this.scrolled : this.scrolledUp;
-    if (hasObservers(emitter)) {
-      this.zone.run(() => emitter.emit(payload));
-    }
-  }
-  destroyScroller() {
-    if (this.disposeScroller) {
-      this.disposeScroller.unsubscribe();
-    }
-  }
-  static {
-    this.\u0275fac = function InfiniteScrollDirective_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _InfiniteScrollDirective)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({
-      type: _InfiniteScrollDirective,
-      selectors: [["", "infiniteScroll", ""], ["", "infinite-scroll", ""], ["", "data-infinite-scroll", ""]],
-      inputs: {
-        infiniteScrollDistance: "infiniteScrollDistance",
-        infiniteScrollUpDistance: "infiniteScrollUpDistance",
-        infiniteScrollThrottle: "infiniteScrollThrottle",
-        infiniteScrollDisabled: "infiniteScrollDisabled",
-        infiniteScrollContainer: "infiniteScrollContainer",
-        scrollWindow: "scrollWindow",
-        immediateCheck: "immediateCheck",
-        horizontal: "horizontal",
-        alwaysCallback: "alwaysCallback",
-        fromRoot: "fromRoot"
-      },
-      outputs: {
-        scrolled: "scrolled",
-        scrolledUp: "scrolledUp"
-      },
-      features: [\u0275\u0275NgOnChangesFeature]
-    });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollDirective, [{
-    type: Directive,
-    args: [{
-      selector: "[infiniteScroll], [infinite-scroll], [data-infinite-scroll]"
-    }]
-  }], () => [{
-    type: ElementRef
-  }, {
-    type: NgZone
-  }], {
-    scrolled: [{
-      type: Output
-    }],
-    scrolledUp: [{
-      type: Output
-    }],
-    infiniteScrollDistance: [{
-      type: Input
-    }],
-    infiniteScrollUpDistance: [{
-      type: Input
-    }],
-    infiniteScrollThrottle: [{
-      type: Input
-    }],
-    infiniteScrollDisabled: [{
-      type: Input
-    }],
-    infiniteScrollContainer: [{
-      type: Input
-    }],
-    scrollWindow: [{
-      type: Input
-    }],
-    immediateCheck: [{
-      type: Input
-    }],
-    horizontal: [{
-      type: Input
-    }],
-    alwaysCallback: [{
-      type: Input
-    }],
-    fromRoot: [{
-      type: Input
-    }]
-  });
-})();
-function hasObservers(emitter) {
-  return emitter.observed ?? emitter.observers.length > 0;
-}
-var InfiniteScrollModule = class _InfiniteScrollModule {
-  static {
-    this.\u0275fac = function InfiniteScrollModule_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _InfiniteScrollModule)();
-    };
-  }
-  static {
-    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
-      type: _InfiniteScrollModule
-    });
-  }
-  static {
-    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollModule, [{
-    type: NgModule,
-    args: [{
-      exports: [InfiniteScrollDirective],
-      imports: [InfiniteScrollDirective]
-    }]
-  }], null, null);
-})();
-
 // node_modules/@fortawesome/fontawesome-svg-core/index.mjs
 function _defineProperty(e, r2, t2) {
   return (r2 = _toPropertyKey(r2)) in e ? Object.defineProperty(e, r2, {
@@ -71267,7 +74788,7 @@ var text = api.text;
 var counter = api.counter;
 
 // node_modules/@fortawesome/angular-fontawesome/fesm2022/angular-fontawesome.mjs
-var _c02 = ["*"];
+var _c05 = ["*"];
 var faWarnIfIconDefinitionMissing = (iconSpec) => {
   throw new Error(`Could not find icon with iconName=${iconSpec.iconName} and prefix=${iconSpec.prefix} in the icon library.`);
 };
@@ -71514,7 +75035,7 @@ var FaStackComponent = class _FaStackComponent {
         size: "size"
       },
       features: [\u0275\u0275NgOnChangesFeature],
-      ngContentSelectors: _c02,
+      ngContentSelectors: _c05,
       decls: 1,
       vars: 0,
       template: function FaStackComponent_Template(rf, ctx) {
@@ -71875,7 +75396,7 @@ var FaLayersComponent = class _FaLayersComponent {
         fixedWidth: "fixedWidth"
       },
       features: [\u0275\u0275NgOnChangesFeature],
-      ngContentSelectors: _c02,
+      ngContentSelectors: _c05,
       decls: 1,
       vars: 0,
       template: function FaLayersComponent_Template(rf, ctx) {
@@ -72158,34 +75679,6 @@ var FontAwesomeModule = class _FontAwesomeModule {
     }]
   }], null, null);
 })();
-
-// projects/fasten-connect-vault/src/app/auth-guards/is-authenticated-auth-guard.ts
-var IsAuthenticatedAuthGuard = class _IsAuthenticatedAuthGuard {
-  constructor(authService, router) {
-    this.authService = authService;
-    this.router = router;
-  }
-  canActivate(route, state) {
-    return __async(this, null, function* () {
-      let jwtPayload = yield this.authService.GetJWTPayload();
-      if (!jwtPayload) {
-        return yield this.router.navigate(["/auth/signin"]);
-      } else if (!jwtPayload.has_verified_identity) {
-        console.log("Profile does not have a verified identity, redirecting to id verification step", jwtPayload);
-        return yield this.router.navigate(["/auth/identity-verification"]);
-      }
-      return true;
-    });
-  }
-  static {
-    this.\u0275fac = function IsAuthenticatedAuthGuard_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _IsAuthenticatedAuthGuard)(\u0275\u0275inject(AuthService), \u0275\u0275inject(Router));
-    };
-  }
-  static {
-    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _IsAuthenticatedAuthGuard, factory: _IsAuthenticatedAuthGuard.\u0275fac });
-  }
-};
 
 // projects/fasten-connect-vault/src/app/services/auth-interceptor.service.ts
 var AuthInterceptorService = class _AuthInterceptorService {
@@ -72793,6 +76286,32 @@ MomentModule.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
   }], null, null);
 })();
 
+// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
+var SpinnerComponent = class _SpinnerComponent {
+  constructor() {
+  }
+  ngOnInit() {
+  }
+  static {
+    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SpinnerComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], standalone: false, decls: 3, vars: 0, consts: [["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", 1, "mr-2", "h-5", "w-5", "animate-spin", "text-white"], ["cx", "12", "cy", "12", "r", "10", "stroke", "currentColor", "stroke-width", "4", 1, "opacity-25"], ["fill", "currentColor", "d", "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z", 1, "opacity-75"]], template: function SpinnerComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(0, "svg", 0);
+        \u0275\u0275element(1, "circle", 1)(2, "path", 2);
+        \u0275\u0275elementEnd();
+      }
+    }, encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
+})();
+
 // projects/fasten-connect-vault/src/app/app.module.ts
 var AppModule = class _AppModule {
   constructor(library2) {
@@ -72815,7 +76334,8 @@ var AppModule = class _AppModule {
         // deps: [AuthService, Router]
       },
       IsAuthenticatedAuthGuard,
-      provideHttpClient(withInterceptorsFromDi())
+      provideHttpClient(withInterceptorsFromDi()),
+      provideRouter(routes, withComponentInputBinding())
     ], imports: [
       FormsModule,
       ReactiveFormsModule,
@@ -72824,7 +76344,11 @@ var AppModule = class _AppModule {
       FontAwesomeModule,
       MomentModule,
       CodeInputModule,
-      InfiniteScrollModule
+      InfiniteScrollModule,
+      LoggerModule.forRoot({
+        level: NgxLoggerLevel.DEBUG,
+        context: "vault"
+      })
     ] });
   }
 };
