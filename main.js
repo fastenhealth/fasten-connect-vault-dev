@@ -56032,6 +56032,72 @@ var ConfigService = class _ConfigService {
   }
 };
 
+// projects/shared-library/src/lib/services/message-bus.service.ts
+var MessageBusService = class _MessageBusService {
+  constructor(configService) {
+    this.configService = configService;
+    this.messageBusSubject = new BehaviorSubject(null);
+  }
+  //notify the parent element that we could not register Fasten Connect installation: missing or invalid id
+  publishWidgetConfigError() {
+    let eventPayload = new MessageBusEventPayload();
+    eventPayload.api_mode = this.configService.systemConfig$.apiMode;
+    eventPayload.event_type = EventTypes.EventTypeWidgetConfigError;
+    this.messageBusSubject.next(eventPayload);
+  }
+  //this event is published when the popup window is opened.
+  publishOrgConnectionPending(pendingConnectData) {
+    let eventPayload = new MessageBusEventPayload();
+    eventPayload.api_mode = this.configService.systemConfig$.apiMode;
+    eventPayload.data = pendingConnectData;
+    eventPayload.event_type = EventTypes.EventTypeConnectionPending;
+    this.messageBusSubject.next(eventPayload);
+  }
+  //this event is published when the popup window is closed, and the connection is successful or failed.
+  publishOrgConnectionComplete(orgConnectionCallbackData) {
+    let eventPayload = new MessageBusEventPayload();
+    eventPayload.api_mode = this.configService.systemConfig$.apiMode;
+    eventPayload.data = orgConnectionCallbackData;
+    if (orgConnectionCallbackData.error) {
+      eventPayload.event_type = EventTypes.EventTypeConnectionFailed;
+    } else {
+      eventPayload.event_type = EventTypes.EventTypeConnectionSuccess;
+    }
+    this.messageBusSubject.next(eventPayload);
+  }
+  //this event is published when the widget is closed. It will publish a list of all
+  publishComplete() {
+    let eventPayload = new MessageBusEventPayload();
+    eventPayload.api_mode = this.configService.systemConfig$.apiMode;
+    eventPayload.data = this.configService.vaultProfileConfig$.connectedPatientAccounts?.map((account) => {
+      return {
+        org_connection_id: account.org_connection_id,
+        platform_type: account.platform_type,
+        brand_id: account.brand?.id,
+        portal_id: account.portal?.id,
+        endpoint_id: account.endpoint?.id
+      };
+    }) || {};
+    eventPayload.event_type = EventTypes.EventTypeWidgetComplete;
+    this.messageBusSubject.next(eventPayload);
+  }
+  //this event is published when the widget requests to close the modal.
+  publishRequestClose() {
+    let eventPayload = new MessageBusEventPayload();
+    eventPayload.api_mode = this.configService.systemConfig$.apiMode;
+    eventPayload.event_type = EventTypes.EventTypeWidgetClose;
+    this.messageBusSubject.next(eventPayload);
+  }
+  static {
+    this.\u0275fac = function MessageBusService_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _MessageBusService)(\u0275\u0275inject(ConfigService));
+    };
+  }
+  static {
+    this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _MessageBusService, factory: _MessageBusService.\u0275fac, providedIn: "root" });
+  }
+};
+
 // projects/shared-library/src/lib/models/config/vault-profile-config.ts
 var VaultProfileConfig = class {
   addPendingAccount(brand, portal, endpoint) {
@@ -56068,6 +56134,10 @@ var VaultProfile = class {
     this.password_confirm = "";
     this.agree_terms = false;
   }
+};
+
+// projects/shared-library/src/lib/models/message-bus/message-bus-event-payload.ts
+var MessageBusEventPayload = class {
 };
 
 // projects/shared-library/src/lib/models/search/search-filter.ts
@@ -61240,6 +61310,10 @@ var AppComponent = class _AppComponent {
       }
     }
   }
+  isHomepage() {
+    let parsedUrl = new URL(this.router.url);
+    return parsedUrl.pathname == "/auth/signin";
+  }
   static {
     this.\u0275fac = function AppComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(Router));
@@ -61262,13 +61336,13 @@ var AppComponent = class _AppComponent {
       }
       if (rf & 2) {
         \u0275\u0275advance(6);
-        \u0275\u0275property("ngClass", ctx.router.url.startsWith("/auth/signin") ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
+        \u0275\u0275property("ngClass", ctx.isHomepage() ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
       }
     }, dependencies: [NgClass, RouterOutlet], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "projects/fasten-connect-vault/src/app/app.component.ts", lineNumber: 10 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "projects/fasten-connect-vault/src/app/app.component.ts", lineNumber: 9 });
 })();
 
 // node_modules/@fortawesome/free-solid-svg-icons/index.mjs
