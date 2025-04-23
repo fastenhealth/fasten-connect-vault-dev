@@ -56147,7 +56147,7 @@ var SearchFilter = class {
     this.platformTypes = [];
     this.categories = [];
     this.showHidden = false;
-    this.locations = [];
+    this.locations = ["ALL"];
     this.searchAfter = "";
     this.fields = [];
   }
