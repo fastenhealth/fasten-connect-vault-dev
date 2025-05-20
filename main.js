@@ -58655,7 +58655,7 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(20, 7, \u0275\u0275pipeBind1(19, 5, ctx.timeRemaining$), "mm:ss"));
       }
-    }, dependencies: [NgIf, CodeInputComponent, AsyncPipe, DatePipe], styles: ["\n\ncode-input[_ngcontent-%COMP%] {\n  --item-width: 2.5rem;\n  --item-height: 2.5rem;\n  --item-border: 1px solid #d1d5db;\n  --item-border-radius: 0.5rem;\n  --item-font-size: 1.25rem;\n  --item-font-weight: 600;\n  --item-color: #111827;\n}\n/*# sourceMappingURL=vault-signin-code.component.css.map */"] });
+    }, dependencies: [NgIf, CodeInputComponent, AsyncPipe, DatePipe], styles: ["\n\ncode-input[_ngcontent-%COMP%] {\n  --item-width: 2.5rem;\n  --item-height: 2.5rem;\n  --item-border: 1px solid #d1d5db;\n  --item-border-radius: 0.5rem;\n  --item-font-size: 1.25rem;\n  --item-font-weight: 600;\n  --item-color: #111827;\n  //--item-border-bottom: none;\n  //--item-border-has-value: none;\n  //--item-border-bottom-has-value: 2px solid #888888;\n  //--item-border-focused: none;\n  //--item-border-bottom-focused: 2px solid #809070;\n  //--item-shadow-focused: none;\n}\n/*# sourceMappingURL=vault-signin-code.component.css.map */"] });
   }
 };
 (() => {
