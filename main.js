@@ -56189,7 +56189,7 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow) {
         logger.warn(`timed out waiting for notification from popup (${ConnectWindowTimeout / 1e3}s), closing window`);
         throw new Error(JSON.stringify({ error: "timeout", error_description: "timed out waiting for notification from popup" }));
       } else {
-        logger.error(`an error occurred while verifying identity, closing window`, err);
+        logger.error(`an error was sent from the popup, closing window`, err);
         throw err;
       }
       return throwError(err);
