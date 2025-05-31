@@ -56129,12 +56129,6 @@ var VaultProfileConfig = class {
       });
     }
   }
-  addAvailableRecordLocatorAccount(recordLocatorFacility) {
-    if (!this.availableFacilities) {
-      this.availableFacilities = [];
-    }
-    this.availableFacilities?.push(recordLocatorFacility);
-  }
 };
 
 // projects/shared-library/src/lib/models/fasten/vault-profile.ts
