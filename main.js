@@ -61097,22 +61097,27 @@ function ConnectHelper(connectData) {
   }, (err) => {
     console.error("Error parsing error data", err);
     try {
-      var errData = JSON.parse(err.toString());
+      let errData;
+      if (typeof err === "string") {
+        errData = JSON.parse(err);
+      } else {
+        errData = err;
+      }
       if (errData.error == "timeout") {
         return router.navigateByUrl("dashboard");
       } else {
         console.error("an error occurred while attempting to connect health system", err);
         router.navigate(["form/support"], {
           queryParams: {
-            "error": err["error"] || "unknown_error_during_connect",
-            "error_description": err["error_description"] || "an unknown error occurred during the connection process",
+            "error": errData.error || "unknown_error_during_connect",
+            "error_description": errData.error_description || "an unknown error occurred during the connection process",
             "brand_id": connectData.brand_id,
             "portal_id": connectData.portal_id,
             "endpoint_id": connectData.endpoint_id,
             "org_connection_id": connectData.org_connection_id,
             "external_id": connectData.external_id,
-            "external_state": connectData.external_state || err["external_state"],
-            "request_id": err["request_id"]
+            "external_state": connectData.external_state || errData.external_state,
+            "request_id": errData.request_id
           }
         });
       }
