@@ -61100,6 +61100,8 @@ function ConnectHelper(connectData) {
       let errData;
       if (typeof err === "string") {
         errData = JSON.parse(err);
+      } else if (typeof err.message === "string") {
+        errData = JSON.parse(err.message);
       } else {
         errData = err;
       }
