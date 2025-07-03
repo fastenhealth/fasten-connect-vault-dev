@@ -56242,6 +56242,8 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow) {
     timeout(ConnectWindowTimeout),
     //make sure we're only listening to events from the "opened" window.
     filter((event) => event.source == openedWindow),
+    //only allow messages from the fasten connect API (kaiser will send messages from a different origin, so we need to filter those out).
+    filter((event) => event.origin == "https://api.connect-dev.fastenhealth.com" || event.origin == "https://api.connect.fastenhealth.com"),
     //after filtering, we should only have one event to handle.
     first(),
     map((event) => {
