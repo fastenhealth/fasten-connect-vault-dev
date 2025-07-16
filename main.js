@@ -56164,6 +56164,9 @@ var MessageBusService = class _MessageBusService {
     if (!this.configService.systemConfig$.eventTypes?.includes(EventTypes.EventTypeSearchQuery)) {
       return;
     }
+    if (!query) {
+      return;
+    }
     let eventPayload = new MessageBusEventPayload();
     eventPayload.api_mode = this.configService.systemConfig$.apiMode;
     eventPayload.event_type = EventTypes.EventTypeSearchQuery;
