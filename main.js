@@ -54725,6 +54725,11 @@ var EventTypes;
   EventTypes2["EventTypeConnectionFailed"] = "patient.connection_failed";
   EventTypes2["EventTypeSearchQuery"] = "search.query";
 })(EventTypes || (EventTypes = {}));
+var SDKMode;
+(function(SDKMode2) {
+  SDKMode2["None"] = "none";
+  SDKMode2["ReactNative"] = "react-native";
+})(SDKMode || (SDKMode = {}));
 var CommunicationEntity;
 (function(CommunicationEntity2) {
   CommunicationEntity2["PrimaryWebView"] = "FASTEN_CONNECT_PRIMARY_WEBVIEW";
@@ -56018,7 +56023,8 @@ LoggerModule.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
 // projects/shared-library/src/lib/services/config.service.ts
 var defaultSystemConfig = {
   publicId: "",
-  apiMode: ApiMode.Test
+  apiMode: ApiMode.Test,
+  sdkMode: SDKMode.None
 };
 var ConfigService = class _ConfigService {
   constructor(logger) {
@@ -56264,14 +56270,14 @@ var SearchFilter = class {
 };
 
 // projects/shared-library/src/lib/utils/post-message.ts
-function waitForOrgConnectionOrTimeout(logger, openedWindow) {
+function waitForOrgConnectionOrTimeout(logger, openedWindow, sdkMode) {
   logger.info(`waiting for postMessage notification from popup window`);
   return fromEvent(window, "message").pipe(
     //throw an error if we wait more than 2 minutes (this will close the window)
     timeout(ConnectWindowTimeout),
     filter((event) => {
       logger.debug(`received postMessage event, must determine if this message is safe to process`, event);
-      if (window.ReactNativeWebView) {
+      if (sdkMode == SDKMode.ReactNative && window.ReactNativeWebView) {
         if (event.source || event.origin) {
           logger.debug(`ignoring postMessage event from unknown source or origin. React-native webview should be null for both`, event.source, event.origin);
           return false;
@@ -59952,7 +59958,7 @@ var FastenService = class _FastenService {
       features = "popup=true,width=700,height=600";
     }
     let openedWindow = window.open(redirectUrl.toString(), "_blank", features);
-    return waitForOrgConnectionOrTimeout(this.logger, openedWindow);
+    return waitForOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
   }
   searchCatalogBrands(apiMode, filter2) {
     if ((typeof filter2.searchAfter === "string" || filter2.searchAfter instanceof String) && filter2.searchAfter.length > 0) {
@@ -59994,7 +60000,7 @@ var FastenService = class _FastenService {
       features = "popup=true,width=700,height=600";
     }
     let openedWindow = window.open(redirectUrlParts.toString(), "_blank", features);
-    return waitForOrgConnectionOrTimeout(this.logger, openedWindow);
+    return waitForOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
   }
   static {
     this.\u0275fac = function FastenService_Factory(__ngFactoryType__) {
