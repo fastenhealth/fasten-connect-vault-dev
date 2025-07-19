@@ -56262,10 +56262,22 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow) {
   return fromEvent(window, "message").pipe(
     //throw an error if we wait more than 2 minutes (this will close the window)
     timeout(ConnectWindowTimeout),
-    //make sure we're only listening to events from the "opened" window.
-    filter((event) => event.source == openedWindow),
-    //only allow messages from the fasten connect API (kaiser will send messages from a different origin, so we need to filter those out).
-    filter((event) => event.origin == "https://api.connect-dev.fastenhealth.com" || event.origin == "https://api.connect.fastenhealth.com"),
+    filter((event) => {
+      logger.debug(`received postMessage event, must determine if this message is safe to process`, event);
+      if (window.ReactNativeWebView) {
+        return true;
+      } else {
+        if (event.source != openedWindow) {
+          logger.debug(`ignoring postMessage event from unknown source window`, event.source);
+          return false;
+        }
+        if (event.origin != "https://api.connect-dev.fastenhealth.com" && event.origin != "https://api.connect.fastenhealth.com") {
+          logger.debug(`ignoring postMessage event from unknown origin`, event.origin);
+          return false;
+        }
+      }
+      return true;
+    }),
     //after filtering, we should only have one event to handle.
     first(),
     map((event) => {
