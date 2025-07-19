@@ -56265,6 +56265,10 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow) {
     filter((event) => {
       logger.debug(`received postMessage event, must determine if this message is safe to process`, event);
       if (window.ReactNativeWebView) {
+        if (event.source || event.origin) {
+          logger.debug(`ignoring postMessage event from unknown source or origin. React-native webview should be null`, event.source, event.origin);
+          return false;
+        }
         return true;
       } else {
         if (event.source != openedWindow) {
