@@ -56266,7 +56266,7 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow) {
       logger.debug(`received postMessage event, must determine if this message is safe to process`, event);
       if (window.ReactNativeWebView) {
         if (event.source || event.origin) {
-          logger.debug(`ignoring postMessage event from unknown source or origin. React-native webview should be null`, event.source, event.origin);
+          logger.debug(`ignoring postMessage event from unknown source or origin. React-native webview should be null for both`, event.source, event.origin);
           return false;
         }
         return true;
@@ -56285,9 +56285,8 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow) {
     //after filtering, we should only have one event to handle.
     first(),
     map((event) => {
-      logger.info(`received postMessage notification from popup window & sending acknowledgment`);
-      event.source.postMessage(JSON.stringify({ close: true }), event.origin);
-      logger.debug("postmessage data", event.data);
+      logger.info(`received postMessage notification from popup window & sending acknowledgment`, event.data);
+      event?.source?.postMessage(JSON.stringify({ close: true }), event.origin);
       let parsedEventData = JSON.parse(event.data);
       if (parsedEventData.error) {
         throw new Error(event.data);
