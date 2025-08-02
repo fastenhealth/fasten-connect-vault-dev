@@ -56288,7 +56288,7 @@ function waitForOrgConnectionOrTimeout(logger, openedWindow, sdkMode) {
           logger.debug(`ignoring postMessage event from unknown source window`, event.source);
           return false;
         }
-        if (event.origin != "https://api.connect-dev.fastenhealth.com" && event.origin != "https://api.connect.fastenhealth.com") {
+        if (event.origin != "https://api.connect-dev.fastenhealth.com" && event.origin != "https://api.connect.fastenhealth.com" && event.origin != "https://embed.connect-dev.fastenhealth.com" && event.origin != "https://embed.connect.fastenhealth.com") {
           logger.debug(`ignoring postMessage event from unknown origin`, event.origin);
           return false;
         }
