@@ -11850,7 +11850,7 @@ function handleReset(reset, on, ...args) {
       reset();
     }
   });
-  return on(...args).subscribe(onSubscriber);
+  return innerFrom(on(...args)).subscribe(onSubscriber);
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/shareReplay.js
@@ -11961,16 +11961,12 @@ function tap(observerOrNext, error, complete) {
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/throttle.js
-var defaultThrottleConfig = {
-  leading: true,
-  trailing: false
-};
-function throttle(durationSelector, config3 = defaultThrottleConfig) {
+function throttle(durationSelector, config3) {
   return operate((source, subscriber) => {
     const {
-      leading,
-      trailing
-    } = config3;
+      leading = true,
+      trailing = false
+    } = config3 !== null && config3 !== void 0 ? config3 : {};
     let hasValue = false;
     let sendValue = null;
     let throttled = null;
@@ -12009,7 +12005,7 @@ function throttle(durationSelector, config3 = defaultThrottleConfig) {
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/throttleTime.js
-function throttleTime(duration, scheduler = asyncScheduler, config3 = defaultThrottleConfig) {
+function throttleTime(duration, scheduler = asyncScheduler, config3) {
   const duration$ = timer(duration, scheduler);
   return throttle(() => duration$, config3);
 }
@@ -54715,6 +54711,12 @@ var ConnectMode;
   ConnectMode2["Redirect"] = "redirect";
   ConnectMode2["Popup"] = "popup";
 })(ConnectMode || (ConnectMode = {}));
+var SourceCredentialType;
+(function(SourceCredentialType2) {
+  SourceCredentialType2["SourceCredentialTypeSmartOnFhir"] = "smart_on_fhir";
+  SourceCredentialType2["SourceCredentialTypeTefcaDirect"] = "tefca_direct";
+  SourceCredentialType2["SourceCredentialTypeTefcaFacilitated"] = "tefca_facilitated";
+})(SourceCredentialType || (SourceCredentialType = {}));
 var EventTypes;
 (function(EventTypes2) {
   EventTypes2["EventTypeWidgetConfigError"] = "widget.config_error";
@@ -54753,7 +54755,7 @@ var SafeHtmlPipe = class _SafeHtmlPipe {
     };
   }
   static {
-    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "safeHtml", type: _SafeHtmlPipe, pure: true, standalone: false });
+    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "safeHtml", type: _SafeHtmlPipe, pure: true });
   }
 };
 
@@ -54839,7 +54841,7 @@ var StateNamePipe = class _StateNamePipe {
     };
   }
   static {
-    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "stateName", type: _StateNamePipe, pure: true, standalone: false });
+    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "stateName", type: _StateNamePipe, pure: true });
   }
 };
 
@@ -54890,7 +54892,7 @@ var ImageFallbackDirective = class _ImageFallbackDirective {
           return ctx.loadFallbackOnError();
         });
       }
-    }, inputs: { imageFallback: "imageFallback" }, standalone: false });
+    }, inputs: { imageFallback: "imageFallback" } });
   }
 };
 
@@ -56077,7 +56079,7 @@ var ConfigService = class _ConfigService {
       return;
     }
     let updatedVaultProfile = this.vaultProfileConfig$;
-    updatedVaultProfile.addConnectedAccount(connectedAccount.external_state || "", connectedAccount.org_connection_id, connectedAccount.connection_status, connectedAccount.platform_type, connectedAccount.brand_id, connectedAccount.portal_id, connectedAccount.endpoint_id);
+    updatedVaultProfile.addConnectedAccount(connectedAccount.external_state || "", connectedAccount.org_connection_id, connectedAccount.connection_status, connectedAccount.platform_type, connectedAccount.brand_id, connectedAccount.portal_id, connectedAccount.endpoint_id, connectedAccount.vault_profile_connection_id, connectedAccount.patient_auth_type);
     this.vaultProfileConfig = updatedVaultProfile;
   }
   vaultProfileAddPendingRecordLocatorAccount(recordLocatorFacility, vaultProfileConnectionId) {
@@ -56220,7 +56222,7 @@ var VaultProfileConfig = class {
     }
     this.discoveredPatientAccounts[externalState] = { brand, portal, endpoint, vault_profile_connection_id: vaultProfileConnectionId };
   }
-  addConnectedAccount(external_state, org_connection_id, connection_status, platform_type, brand_id, portal_id, endpoint_id) {
+  addConnectedAccount(external_state, org_connection_id, connection_status, platform_type, brand_id, portal_id, endpoint_id, vault_profile_connection_id, patient_auth_type) {
     if (!this.connectedPatientAccounts) {
       this.connectedPatientAccounts = [];
     }
@@ -56228,10 +56230,10 @@ var VaultProfileConfig = class {
     let foundDiscoveredPatientAccount = this.discoveredPatientAccounts?.[external_state];
     if (foundPendingPatientAccount) {
       delete this.pendingPatientAccounts[external_state];
-      this.connectedPatientAccounts?.push({ org_connection_id, connection_status, platform_type, brand: foundPendingPatientAccount.brand, portal: foundPendingPatientAccount.portal, endpoint: foundPendingPatientAccount.endpoint });
+      this.connectedPatientAccounts?.push({ org_connection_id, connection_status, platform_type, brand: foundPendingPatientAccount.brand, portal: foundPendingPatientAccount.portal, endpoint: foundPendingPatientAccount.endpoint, vault_profile_connection_id, patient_auth_type });
     } else if (foundDiscoveredPatientAccount) {
       delete this.discoveredPatientAccounts[external_state];
-      this.connectedPatientAccounts?.push({ org_connection_id, connection_status, platform_type, brand: foundDiscoveredPatientAccount.brand, portal: foundDiscoveredPatientAccount.portal, endpoint: foundDiscoveredPatientAccount.endpoint });
+      this.connectedPatientAccounts?.push({ org_connection_id, connection_status, platform_type, brand: foundDiscoveredPatientAccount.brand, portal: foundDiscoveredPatientAccount.portal, endpoint: foundDiscoveredPatientAccount.endpoint, vault_profile_connection_id, patient_auth_type });
     } else {
       console.warn("we may not know the brand, portal, endpoint information, so generating it with placeholders. Most likely this is a reconnect operation.");
       console.warn("pendingAccounts", this.pendingPatientAccounts, "connectionParams", org_connection_id, connection_status, platform_type, brand_id, portal_id, endpoint_id);
@@ -56239,6 +56241,8 @@ var VaultProfileConfig = class {
         org_connection_id,
         connection_status,
         platform_type,
+        vault_profile_connection_id,
+        patient_auth_type,
         brand: { id: brand_id, name: "unknown", portals: [], hidden: false, last_updated: "", portal_ids: [portal_id] },
         portal: { id: portal_id, last_updated: "", endpoint_ids: [endpoint_id], name: "unknown" },
         endpoint: { id: endpoint_id, platform_type }
