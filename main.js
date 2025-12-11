@@ -56319,7 +56319,11 @@ var SearchFilter = class {
     this.locations = ["ALL"];
     this.searchAfter = "";
     this.fields = [];
+    this.sortBy = "";
+    this.sortByOpts = new SearchFilterSortByOpts();
   }
+};
+var SearchFilterSortByOpts = class {
 };
 
 // projects/shared-library/src/lib/utils/post-message.ts
