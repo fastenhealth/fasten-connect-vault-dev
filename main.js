@@ -54710,6 +54710,7 @@ var ConnectMode;
 (function(ConnectMode2) {
   ConnectMode2["Redirect"] = "redirect";
   ConnectMode2["Popup"] = "popup";
+  ConnectMode2["Websocket"] = "websocket";
 })(ConnectMode || (ConnectMode = {}));
 var CspType;
 (function(CspType2) {
@@ -56382,7 +56383,7 @@ var SearchFilterSortByOpts = class {
 };
 
 // projects/shared-library/src/lib/utils/post-message.ts
-function waitForOrgConnectionOrTimeout(logger, openedWindow, sdkMode) {
+function waitForPostMessageOrgConnectionOrTimeout(logger, openedWindow, sdkMode) {
   logger.info(`waiting for postMessage notification from popup window`);
   return fromEvent(window, "message").pipe(
     //throw an error if we wait more than 2 minutes (this will close the window)
@@ -56492,6 +56493,7 @@ var environment = {
   name: "development",
   //specify the lighthouse base that we're going to use to authenticate against all our source/providers. Must not have trailing slash
   lighthouse_api_endpoint_base: "https://lighthouse.fastenhealth.com",
+  connect_base_domain: "connect-dev.fastenhealth.com",
   //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash
   // connect_api_endpoint_base: 'https://api.connect-dev.fastenhealth.com/v1',
   // if relative, must start with /
@@ -60070,7 +60072,7 @@ var FastenService = class _FastenService {
       features = "popup=true,width=700,height=600";
     }
     let openedWindow = window.open(redirectUrl.toString(), "_blank", features);
-    return waitForOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
   }
   searchCatalogBrands(apiMode, filter2) {
     if ((typeof filter2.searchAfter === "string" || filter2.searchAfter instanceof String) && filter2.searchAfter.length > 0) {
@@ -60112,7 +60114,7 @@ var FastenService = class _FastenService {
       features = "popup=true,width=700,height=600";
     }
     let openedWindow = window.open(redirectUrlParts.toString(), "_blank", features);
-    return waitForOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
   }
   static {
     this.\u0275fac = function FastenService_Factory(__ngFactoryType__) {
@@ -60226,7 +60228,9 @@ var IdentityVerificationErrorComponent = class _IdentityVerificationErrorCompone
     });
   }
   ngOnDestroy() {
-    this.routeSubscription.unsubscribe();
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
   }
   static {
     this.\u0275fac = function IdentityVerificationErrorComponent_Factory(__ngFactoryType__) {
