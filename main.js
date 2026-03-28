@@ -56317,7 +56317,7 @@ var VaultProfileConfig = class {
     let foundDiscoveredPatientAccount = this.discoveredPatientAccounts?.[external_state];
     if (foundPendingPatientAccount) {
       delete this.pendingPatientAccounts[external_state];
-      this.connectedPatientAccounts?.push({
+      this.upsertConnectedAccount({
         org_connection_id,
         connection_status,
         platform_type,
@@ -56332,7 +56332,7 @@ var VaultProfileConfig = class {
       });
     } else if (foundDiscoveredPatientAccount) {
       delete this.discoveredPatientAccounts[external_state];
-      this.connectedPatientAccounts?.push({
+      this.upsertConnectedAccount({
         org_connection_id,
         connection_status,
         platform_type,
@@ -56346,7 +56346,7 @@ var VaultProfileConfig = class {
     } else {
       console.warn("we may not know the brand, portal, endpoint information, so generating it with placeholders. Most likely this is a reconnect operation.");
       console.warn("pendingAccounts", this.pendingPatientAccounts, "connectionParams", org_connection_id, connection_status, platform_type, brand_id, portal_id, endpoint_id);
-      this.connectedPatientAccounts?.push({
+      this.upsertConnectedAccount({
         org_connection_id,
         connection_status,
         platform_type,
@@ -56365,7 +56365,7 @@ var VaultProfileConfig = class {
     if (!this.connectedPatientAccounts) {
       this.connectedPatientAccounts = [];
     }
-    this.connectedPatientAccounts?.push({
+    this.upsertConnectedAccount({
       org_connection_id: recordLocatorFacilityConnected.org_connection_id,
       connection_status: "connected",
       platform_type: "tefca",
@@ -56402,6 +56402,22 @@ var VaultProfileConfig = class {
     }
     this.connectedPatientAccounts.splice(ndx, 1);
     return true;
+  }
+  upsertConnectedAccount(account) {
+    if (!this.connectedPatientAccounts) {
+      this.connectedPatientAccounts = [];
+    }
+    const existingIndex = this.connectedPatientAccounts.findIndex((existingAccount) => {
+      if (account.vault_profile_connection_id && existingAccount.vault_profile_connection_id === account.vault_profile_connection_id) {
+        return true;
+      }
+      return !!account.org_connection_id && existingAccount.org_connection_id === account.org_connection_id;
+    });
+    if (existingIndex >= 0) {
+      this.connectedPatientAccounts[existingIndex] = __spreadValues(__spreadValues({}, this.connectedPatientAccounts[existingIndex]), account);
+      return;
+    }
+    this.connectedPatientAccounts.push(account);
   }
 };
 
@@ -56500,6 +56516,20 @@ function StoreRecordLocatorResultsInVaultProfile(configService, rlsResponse) {
     numPending,
     numConnected
   };
+}
+function FetchAndStoreRecordLocatorResultsInVaultProfile(configService, recordLocatorRegisterAndPollForStatus, recordLocatorResults) {
+  return recordLocatorRegisterAndPollForStatus().pipe(switchMap((rlsStatusResponse) => {
+    if (rlsStatusResponse.data.status === "success") {
+      return recordLocatorResults(rlsStatusResponse.data.task_id);
+    }
+    return of(new RecordLocatorResponse());
+  }), map((rlsResponse) => {
+    const totals = StoreRecordLocatorResultsInVaultProfile(configService, rlsResponse);
+    configService.vaultProfileConfig = {
+      rlsQueryComplete: true
+    };
+    return totals;
+  }));
 }
 function ProcessTefcaDirectAuthorizationResults(vaultConnectionIds, resp) {
   const configService = inject(ConfigService);
@@ -59195,244 +59225,6 @@ var ConnectedAppsTabComponent = class _ConnectedAppsTabComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAppsTabComponent, { className: "ConnectedAppsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts", lineNumber: 9 });
 })();
 
-// projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
-var _c02 = () => [];
-function ConnectedAccountsTabComponent_section_15_div_1_div_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 17)(1, "div", 18);
-    \u0275\u0275element(2, "img", 19);
-    \u0275\u0275elementStart(3, "div", 20)(4, "p", 21);
-    \u0275\u0275text(5);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "p", 22);
-    \u0275\u0275text(7);
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(8, "div", 23)(9, "span", 24);
-    \u0275\u0275text(10, "Active");
-    \u0275\u0275elementEnd()()();
-  }
-  if (rf & 2) {
-    const account_r1 = ctx.$implicit;
-    \u0275\u0275advance(2);
-    \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (account_r1.brand == null ? null : account_r1.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (account_r1.portal == null ? null : account_r1.portal.name) || (account_r1.brand == null ? null : account_r1.brand.name));
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate((account_r1.portal == null ? null : account_r1.portal.name) || (account_r1.brand == null ? null : account_r1.brand.name));
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", account_r1.patient_auth_type === "tefca_direct" ? "Connected through TEFCA discovery." : "Connected and ready to sync records.", " ");
-  }
-}
-function ConnectedAccountsTabComponent_section_15_div_1_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 15);
-    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_1_div_1_Template, 11, 4, "div", 16);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const vaultProfile_r2 = \u0275\u0275nextContext().ngIf;
-    \u0275\u0275advance();
-    \u0275\u0275property("ngForOf", vaultProfile_r2.connectedPatientAccounts || \u0275\u0275pureFunction0(1, _c02));
-  }
-}
-function ConnectedAccountsTabComponent_section_15_ng_template_2_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 25)(1, "h2", 26);
-    \u0275\u0275text(2, "No connected providers yet");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "p", 27);
-    \u0275\u0275text(4, " Add an account to review the healthcare providers we discovered for you through TEFCA. ");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "a", 28);
-    \u0275\u0275text(6, " Add account ");
-    \u0275\u0275elementEnd()();
-  }
-}
-function ConnectedAccountsTabComponent_section_15_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "section", 13);
-    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_1_Template, 2, 2, "div", 14)(2, ConnectedAccountsTabComponent_section_15_ng_template_2_Template, 7, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const vaultProfile_r2 = ctx.ngIf;
-    const emptyState_r3 = \u0275\u0275reference(3);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", (vaultProfile_r2.connectedPatientAccounts || \u0275\u0275pureFunction0(2, _c02)).length)("ngIfElse", emptyState_r3);
-  }
-}
-var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
-  constructor(configService) {
-    this.configService = configService;
-  }
-  ngOnInit() {
-  }
-  static {
-    this.\u0275fac = function ConnectedAccountsTabComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ConnectedAccountsTabComponent)(\u0275\u0275directiveInject(ConfigService));
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 4, "ngFor", "ngForOf"], [1, "vault-list-row"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "div", 3)(3, "p", 4);
-        \u0275\u0275text(4, "Health systems");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "div", 5)(6, "h1", 6);
-        \u0275\u0275text(7, "Connected accounts");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(8, "p", 7);
-        \u0275\u0275text(9, "Keep track of the health systems currently linked to your vault and add another account whenever you need more records in one place.");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(10, "a", 8);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(11, "svg", 9);
-        \u0275\u0275element(12, "path", 10);
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(13, " Add account ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275element(14, "div", 11);
-        \u0275\u0275template(15, ConnectedAccountsTabComponent_section_15_Template, 4, 3, "section", 12);
-        \u0275\u0275pipe(16, "async");
-        \u0275\u0275elementEnd();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance(15);
-        \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(16, 1, ctx.configService.vaultProfileConfigSubject));
-      }
-    }, dependencies: [NgForOf, NgIf, RouterLink, ImageFallbackDirective, AsyncPipe], encapsulation: 2 });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 10 });
-})();
-
-// projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
-var SettingsTabComponent = class _SettingsTabComponent {
-  constructor() {
-  }
-  ngOnInit() {
-  }
-  static {
-    this.\u0275fac = function SettingsTabComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _SettingsTabComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 80, vars: 0, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8"], [1, "space-y-5"], [1, "vault-card-title"], [1, "vault-card-copy", "mt-2"], [1, "grid", "gap-5", "md:grid-cols-2"], [1, "vault-field-label"], ["type", "text", "value", "Jason Kulatunga", 1, "vault-input"], ["type", "email", "value", "j***@fastenhealth.com", 1, "vault-input"], ["type", "button", 1, "vault-primary-button"], [1, "space-y-4"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-secondary-button"], [1, "space-y-6"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "mt-2", "text-sm", "leading-6", "text-red-500"], [1, "rounded-lg", "border", "border-red-100", "bg-red-50", "p-5"], [1, "font-semibold", "text-red-700"], [1, "text-sm", "text-red-600"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-3", "text-sm", "font-semibold", "text-red-600", "transition-colors", "hover:border-red-300", "hover:bg-red-50", "hover:text-red-700"]], template: function SettingsTabComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "p", 3);
-        \u0275\u0275text(4, "Profile");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "div", 4)(6, "h2", 5);
-        \u0275\u0275text(7, "Account Settings");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(8, "p", 6);
-        \u0275\u0275text(9, "Manage your account preferences, security details, and data management controls without leaving the vault workspace.");
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275element(10, "div", 7);
-        \u0275\u0275elementStart(11, "div", 8)(12, "section", 9)(13, "div", 10)(14, "div", 11)(15, "div")(16, "h2", 12);
-        \u0275\u0275text(17, "Profile information");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(18, "p", 13);
-        \u0275\u0275text(19, "Keep your core account details current so connected services can recognize your vault.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(20, "div", 14)(21, "div")(22, "label", 15);
-        \u0275\u0275text(23, "Full name");
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(24, "input", 16);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(25, "div")(26, "label", 15);
-        \u0275\u0275text(27, "Email address");
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(28, "input", 17);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(29, "button", 18);
-        \u0275\u0275text(30, "Save changes");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(31, "div", 19)(32, "div")(33, "h2", 12);
-        \u0275\u0275text(34, "Security");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(35, "p", 13);
-        \u0275\u0275text(36, "Manage the ways you sign in and protect access to your records.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(37, "div", 2)(38, "div", 20)(39, "div", 21)(40, "div", 22)(41, "h3", 23);
-        \u0275\u0275text(42, "Password");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(43, "p", 24);
-        \u0275\u0275text(44, "Update your password to maintain account security.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(45, "button", 25);
-        \u0275\u0275text(46, "Change");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(47, "div", 20)(48, "div", 21)(49, "div", 22)(50, "h3", 23);
-        \u0275\u0275text(51, "Passkey");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(52, "p", 24);
-        \u0275\u0275text(53, "Set up a passkey for a faster and more secure sign-in flow.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(54, "button", 25);
-        \u0275\u0275text(55, "Set up");
-        \u0275\u0275elementEnd()()()()()()();
-        \u0275\u0275elementStart(56, "aside", 9)(57, "div", 26)(58, "div", 27)(59, "p", 28);
-        \u0275\u0275text(60, "Privacy");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(61, "h2", 29);
-        \u0275\u0275text(62, "You stay in control");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(63, "p", 13);
-        \u0275\u0275text(64, "App and account access can be reviewed from the dashboard at any time before you make permanent changes.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(65, "div", 19)(66, "div")(67, "h2", 30);
-        \u0275\u0275text(68, "Danger Zone");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(69, "p", 31);
-        \u0275\u0275text(70, "These actions affect your vault permanently and should only be used if you intend to remove your account.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(71, "div", 32)(72, "div", 19)(73, "div", 22)(74, "h3", 33);
-        \u0275\u0275text(75, "Delete Account");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(76, "p", 34);
-        \u0275\u0275text(77, "Permanently delete your account and all associated data.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(78, "button", 35);
-        \u0275\u0275text(79, " Delete ");
-        \u0275\u0275elementEnd()()()()()()()();
-      }
-    }, encapsulation: 2 });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 9 });
-})();
-
-// projects/fasten-connect-vault/src/app/dashboard-routing.module.ts
-var dashboardRoutes = [
-  {
-    path: "dashboard",
-    component: DashboardComponent,
-    children: [
-      { path: "", redirectTo: "apps", pathMatch: "full" },
-      { path: "apps", pathMatch: "full", component: ConnectedAppsTabComponent },
-      { path: "accounts", pathMatch: "full", component: ConnectedAccountsTabComponent },
-      { path: "settings", pathMatch: "full", component: SettingsTabComponent }
-    ],
-    canActivate: [IsAuthenticatedAuthGuard]
-  }
-];
-var DashboardRoutingModule = class _DashboardRoutingModule {
-  static {
-    this.\u0275fac = function DashboardRoutingModule_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _DashboardRoutingModule)();
-    };
-  }
-  static {
-    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({ type: _DashboardRoutingModule });
-  }
-  static {
-    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({ imports: [RouterModule.forChild(dashboardRoutes), RouterModule] });
-  }
-};
-
 // node_modules/ngx-device-detector/fesm2022/ngx-device-detector.mjs
 var GENERAL = {
   UKNOWN: "Unknown"
@@ -60409,6 +60201,344 @@ var FastenService = class _FastenService {
   }
 };
 
+// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
+var SpinnerComponent = class _SpinnerComponent {
+  constructor() {
+  }
+  ngOnInit() {
+  }
+  static {
+    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SpinnerComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], standalone: false, decls: 3, vars: 0, consts: [["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", 1, "mr-2", "h-5", "w-5", "animate-spin", "text-white"], ["cx", "12", "cy", "12", "r", "10", "stroke", "currentColor", "stroke-width", "4", 1, "opacity-25"], ["fill", "currentColor", "d", "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z", 1, "opacity-75"]], template: function SpinnerComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(0, "svg", 0);
+        \u0275\u0275element(1, "circle", 1)(2, "path", 2);
+        \u0275\u0275elementEnd();
+      }
+    }, encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
+})();
+
+// projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
+var _c02 = () => [];
+function ConnectedAccountsTabComponent_section_15_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 17)(1, "div", 18)(2, "span", 19);
+    \u0275\u0275element(3, "app-spinner");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(4, " Loading connected accounts... ");
+    \u0275\u0275elementEnd()();
+  }
+}
+function ConnectedAccountsTabComponent_section_15_div_2_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 20)(1, "p");
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "button", 21);
+    \u0275\u0275listener("click", function ConnectedAccountsTabComponent_section_15_div_2_Template_button_click_3_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext(2);
+      return \u0275\u0275resetView(ctx_r1.loadConnectedAccounts(true));
+    });
+    \u0275\u0275text(4, "Try again");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(ctx_r1.errorMessage);
+  }
+}
+function ConnectedAccountsTabComponent_section_15_div_3_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 24)(1, "div", 25);
+    \u0275\u0275element(2, "img", 26);
+    \u0275\u0275elementStart(3, "div", 27)(4, "p", 28);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "p", 29);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(8, "div", 30)(9, "span", 31);
+    \u0275\u0275text(10, "Active");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const account_r3 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (account_r3.brand == null ? null : account_r3.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (account_r3.portal == null ? null : account_r3.portal.name) || (account_r3.brand == null ? null : account_r3.brand.name));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate((account_r3.portal == null ? null : account_r3.portal.name) || (account_r3.brand == null ? null : account_r3.brand.name));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", account_r3.patient_auth_type === "tefca_direct" ? "Connected through TEFCA discovery." : "Connected and ready to sync records.", " ");
+  }
+}
+function ConnectedAccountsTabComponent_section_15_div_3_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 22);
+    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_3_div_1_Template, 11, 4, "div", 23);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const vaultProfile_r4 = \u0275\u0275nextContext().ngIf;
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", vaultProfile_r4.connectedPatientAccounts || \u0275\u0275pureFunction0(1, _c02));
+  }
+}
+function ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 33)(1, "h2", 34);
+    \u0275\u0275text(2, "No connected providers yet");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "p", 35);
+    \u0275\u0275text(4, " Add an account to review the healthcare providers we discovered for you through TEFCA. ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "a", 36);
+    \u0275\u0275text(6, " Add account ");
+    \u0275\u0275elementEnd()();
+  }
+}
+function ConnectedAccountsTabComponent_section_15_ng_template_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275template(0, ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template, 7, 0, "div", 32);
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275property("ngIf", !ctx_r1.loading);
+  }
+}
+function ConnectedAccountsTabComponent_section_15_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 13);
+    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_1_Template, 5, 0, "div", 14)(2, ConnectedAccountsTabComponent_section_15_div_2_Template, 5, 1, "div", 15)(3, ConnectedAccountsTabComponent_section_15_div_3_Template, 2, 2, "div", 16)(4, ConnectedAccountsTabComponent_section_15_ng_template_4_Template, 1, 1, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const vaultProfile_r4 = ctx.ngIf;
+    const emptyState_r5 = \u0275\u0275reference(5);
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.loading);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.errorMessage && !ctx_r1.loading);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", !ctx_r1.loading && (vaultProfile_r4.connectedPatientAccounts || \u0275\u0275pureFunction0(4, _c02)).length)("ngIfElse", emptyState_r5);
+  }
+}
+var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
+  constructor(configService, fastenService, logger) {
+    this.configService = configService;
+    this.fastenService = fastenService;
+    this.logger = logger;
+    this.loading = false;
+    this.errorMessage = "";
+  }
+  ngOnInit() {
+    if (this.configService.systemConfig$.tefcaMode && !this.configService.vaultProfileConfig$.rlsQueryComplete) {
+      this.loadConnectedAccounts();
+    }
+  }
+  loadConnectedAccounts(forceReload = false) {
+    if (this.loading) {
+      return;
+    }
+    if (!forceReload && this.configService.vaultProfileConfig$.rlsQueryComplete) {
+      return;
+    }
+    this.loading = true;
+    this.errorMessage = "";
+    FetchAndStoreRecordLocatorResultsInVaultProfile(this.configService, () => this.fastenService.recordLocatorRegisterAndPollForStatus(), (taskId) => this.fastenService.recordLocatorResults(taskId)).subscribe({
+      next: () => {
+        this.loading = false;
+      },
+      error: (error) => {
+        this.logger.error("Error fetching connected TEFCA accounts", error);
+        this.configService.vaultProfileConfig = {
+          rlsQueryComplete: true
+        };
+        this.errorMessage = "We could not load your connected accounts right now. Please try again.";
+        this.loading = false;
+      }
+    });
+  }
+  static {
+    this.\u0275fac = function ConnectedAccountsTabComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _ConnectedAccountsTabComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "rounded-2xl border border-slate-200 bg-slate-50 px-6 py-10 text-center", 4, "ngIf"], ["class", "mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700", 4, "ngIf"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-10", "text-center"], [1, "inline-flex", "items-center", "gap-3", "text-sm", "font-medium", "text-slate-600"], [1, "inline-flex", "h-6", "w-6", "items-center", "justify-center", "rounded-full", "bg-slate-900"], [1, "mb-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-5", "py-4", "text-sm", "text-rose-700"], ["type", "button", 1, "vault-text-button", "mt-3", 3, "click"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 4, "ngFor", "ngForOf"], [1, "vault-list-row"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "div", 3)(3, "p", 4);
+        \u0275\u0275text(4, "Health systems");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(5, "div", 5)(6, "h1", 6);
+        \u0275\u0275text(7, "Connected accounts");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "p", 7);
+        \u0275\u0275text(9, "Keep track of the health systems currently linked to your vault and add another account whenever you need more records in one place.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(10, "a", 8);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(11, "svg", 9);
+        \u0275\u0275element(12, "path", 10);
+        \u0275\u0275elementEnd();
+        \u0275\u0275text(13, " Add account ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275element(14, "div", 11);
+        \u0275\u0275template(15, ConnectedAccountsTabComponent_section_15_Template, 6, 5, "section", 12);
+        \u0275\u0275pipe(16, "async");
+        \u0275\u0275elementEnd();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(15);
+        \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(16, 1, ctx.configService.vaultProfileConfigSubject));
+      }
+    }, dependencies: [NgForOf, NgIf, RouterLink, ImageFallbackDirective, SpinnerComponent, AsyncPipe], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 15 });
+})();
+
+// projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
+var SettingsTabComponent = class _SettingsTabComponent {
+  constructor() {
+  }
+  ngOnInit() {
+  }
+  static {
+    this.\u0275fac = function SettingsTabComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SettingsTabComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 80, vars: 0, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8"], [1, "space-y-5"], [1, "vault-card-title"], [1, "vault-card-copy", "mt-2"], [1, "grid", "gap-5", "md:grid-cols-2"], [1, "vault-field-label"], ["type", "text", "value", "Jason Kulatunga", 1, "vault-input"], ["type", "email", "value", "j***@fastenhealth.com", 1, "vault-input"], ["type", "button", 1, "vault-primary-button"], [1, "space-y-4"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-secondary-button"], [1, "space-y-6"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "mt-2", "text-sm", "leading-6", "text-red-500"], [1, "rounded-lg", "border", "border-red-100", "bg-red-50", "p-5"], [1, "font-semibold", "text-red-700"], [1, "text-sm", "text-red-600"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-3", "text-sm", "font-semibold", "text-red-600", "transition-colors", "hover:border-red-300", "hover:bg-red-50", "hover:text-red-700"]], template: function SettingsTabComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "p", 3);
+        \u0275\u0275text(4, "Profile");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(5, "div", 4)(6, "h2", 5);
+        \u0275\u0275text(7, "Account Settings");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "p", 6);
+        \u0275\u0275text(9, "Manage your account preferences, security details, and data management controls without leaving the vault workspace.");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275element(10, "div", 7);
+        \u0275\u0275elementStart(11, "div", 8)(12, "section", 9)(13, "div", 10)(14, "div", 11)(15, "div")(16, "h2", 12);
+        \u0275\u0275text(17, "Profile information");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(18, "p", 13);
+        \u0275\u0275text(19, "Keep your core account details current so connected services can recognize your vault.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(20, "div", 14)(21, "div")(22, "label", 15);
+        \u0275\u0275text(23, "Full name");
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(24, "input", 16);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(25, "div")(26, "label", 15);
+        \u0275\u0275text(27, "Email address");
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(28, "input", 17);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(29, "button", 18);
+        \u0275\u0275text(30, "Save changes");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(31, "div", 19)(32, "div")(33, "h2", 12);
+        \u0275\u0275text(34, "Security");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(35, "p", 13);
+        \u0275\u0275text(36, "Manage the ways you sign in and protect access to your records.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(37, "div", 2)(38, "div", 20)(39, "div", 21)(40, "div", 22)(41, "h3", 23);
+        \u0275\u0275text(42, "Password");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(43, "p", 24);
+        \u0275\u0275text(44, "Update your password to maintain account security.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(45, "button", 25);
+        \u0275\u0275text(46, "Change");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(47, "div", 20)(48, "div", 21)(49, "div", 22)(50, "h3", 23);
+        \u0275\u0275text(51, "Passkey");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(52, "p", 24);
+        \u0275\u0275text(53, "Set up a passkey for a faster and more secure sign-in flow.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(54, "button", 25);
+        \u0275\u0275text(55, "Set up");
+        \u0275\u0275elementEnd()()()()()()();
+        \u0275\u0275elementStart(56, "aside", 9)(57, "div", 26)(58, "div", 27)(59, "p", 28);
+        \u0275\u0275text(60, "Privacy");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(61, "h2", 29);
+        \u0275\u0275text(62, "You stay in control");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(63, "p", 13);
+        \u0275\u0275text(64, "App and account access can be reviewed from the dashboard at any time before you make permanent changes.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(65, "div", 19)(66, "div")(67, "h2", 30);
+        \u0275\u0275text(68, "Danger Zone");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(69, "p", 31);
+        \u0275\u0275text(70, "These actions affect your vault permanently and should only be used if you intend to remove your account.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(71, "div", 32)(72, "div", 19)(73, "div", 22)(74, "h3", 33);
+        \u0275\u0275text(75, "Delete Account");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(76, "p", 34);
+        \u0275\u0275text(77, "Permanently delete your account and all associated data.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(78, "button", 35);
+        \u0275\u0275text(79, " Delete ");
+        \u0275\u0275elementEnd()()()()()()()();
+      }
+    }, encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 9 });
+})();
+
+// projects/fasten-connect-vault/src/app/dashboard-routing.module.ts
+var dashboardRoutes = [
+  {
+    path: "dashboard",
+    component: DashboardComponent,
+    children: [
+      { path: "", redirectTo: "apps", pathMatch: "full" },
+      { path: "apps", pathMatch: "full", component: ConnectedAppsTabComponent },
+      { path: "accounts", pathMatch: "full", component: ConnectedAccountsTabComponent },
+      { path: "settings", pathMatch: "full", component: SettingsTabComponent }
+    ],
+    canActivate: [IsAuthenticatedAuthGuard]
+  }
+];
+var DashboardRoutingModule = class _DashboardRoutingModule {
+  static {
+    this.\u0275fac = function DashboardRoutingModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _DashboardRoutingModule)();
+    };
+  }
+  static {
+    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({ type: _DashboardRoutingModule });
+  }
+  static {
+    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({ imports: [RouterModule.forChild(dashboardRoutes), RouterModule] });
+  }
+};
+
 // projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts
 function IdentityVerificationComponent_div_23_Template(rf, ctx) {
   if (rf & 1) {
@@ -60789,17 +60919,8 @@ var HealthSystemSearchComponent = class _HealthSystemSearchComponent {
     this.loading = true;
     this.errorMessage = "";
     this.emptyTefcaResults = false;
-    this.fastenService.recordLocatorRegisterAndPollForStatus().pipe(switchMap((rlsStatusResponse) => {
-      if (rlsStatusResponse.data.status === "success") {
-        return this.fastenService.recordLocatorResults(rlsStatusResponse.data.task_id);
-      }
-      return of(new RecordLocatorResponse());
-    })).subscribe({
-      next: (rlsResponse) => {
-        const totals = StoreRecordLocatorResultsInVaultProfile(this.configService, rlsResponse);
-        this.configService.vaultProfileConfig = {
-          rlsQueryComplete: true
-        };
+    FetchAndStoreRecordLocatorResultsInVaultProfile(this.configService, () => this.fastenService.recordLocatorRegisterAndPollForStatus(), (taskId) => this.fastenService.recordLocatorResults(taskId)).subscribe({
+      next: (totals) => {
         this.emptyTefcaResults = totals.numDiscovered + totals.numPending + totals.numConnected === 0;
         this.loading = false;
       },
@@ -60883,7 +61004,7 @@ var HealthSystemSearchComponent = class _HealthSystemSearchComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemSearchComponent, { className: "HealthSystemSearchComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts", lineNumber: 24 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemSearchComponent, { className: "HealthSystemSearchComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts", lineNumber: 21 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/health-system-brand-details/health-system-brand-details.component.ts
@@ -77024,32 +77145,6 @@ MomentModule.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
       exports: ANGULAR_MOMENT_PIPES
     }]
   }], null, null);
-})();
-
-// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
-var SpinnerComponent = class _SpinnerComponent {
-  constructor() {
-  }
-  ngOnInit() {
-  }
-  static {
-    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _SpinnerComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], standalone: false, decls: 3, vars: 0, consts: [["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", 1, "mr-2", "h-5", "w-5", "animate-spin", "text-white"], ["cx", "12", "cy", "12", "r", "10", "stroke", "currentColor", "stroke-width", "4", 1, "opacity-25"], ["fill", "currentColor", "d", "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z", 1, "opacity-75"]], template: function SpinnerComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(0, "svg", 0);
-        \u0275\u0275element(1, "circle", 1)(2, "path", 2);
-        \u0275\u0275elementEnd();
-      }
-    }, encapsulation: 2 });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
 })();
 
 // projects/fasten-connect-vault/src/app/app.module.ts
