@@ -4592,7 +4592,7 @@ var require_lodash = __commonJS({
           }
           return nativeParseInt(toString(string).replace(reTrimStart, ""), radix || 0);
         }
-        function repeat(string, n, guard) {
+        function repeat2(string, n, guard) {
           if (guard ? isIterateeCall(string, n, guard) : n === undefined2) {
             n = 1;
           } else {
@@ -5249,7 +5249,7 @@ var require_lodash = __commonJS({
         lodash.random = random;
         lodash.reduce = reduce2;
         lodash.reduceRight = reduceRight;
-        lodash.repeat = repeat;
+        lodash.repeat = repeat2;
         lodash.replace = replace2;
         lodash.result = result;
         lodash.round = round2;
@@ -11028,17 +11028,17 @@ function process2(asyncIterable, subscriber) {
 }
 
 // node_modules/rxjs/dist/esm/internal/util/executeSchedule.js
-function executeSchedule(parentSubscription, scheduler, work, delay = 0, repeat = false) {
+function executeSchedule(parentSubscription, scheduler, work, delay = 0, repeat2 = false) {
   const scheduleSubscription = scheduler.schedule(function() {
     work();
-    if (repeat) {
+    if (repeat2) {
       parentSubscription.add(this.schedule(null, delay));
     } else {
       this.unsubscribe();
     }
   }, delay);
   parentSubscription.add(scheduleSubscription);
-  if (!repeat) {
+  if (!repeat2) {
     return scheduleSubscription;
   }
 }
@@ -11704,6 +11704,58 @@ function takeLast(count) {
 function last2(predicate, defaultValue) {
   const hasDefaultValue = arguments.length >= 2;
   return (source) => source.pipe(predicate ? filter((v, i) => predicate(v, i, source)) : identity, takeLast(1), hasDefaultValue ? defaultIfEmpty(defaultValue) : throwIfEmpty(() => new EmptyError()));
+}
+
+// node_modules/rxjs/dist/esm/internal/operators/repeat.js
+function repeat(countOrConfig) {
+  let count = Infinity;
+  let delay;
+  if (countOrConfig != null) {
+    if (typeof countOrConfig === "object") {
+      ({
+        count = Infinity,
+        delay
+      } = countOrConfig);
+    } else {
+      count = countOrConfig;
+    }
+  }
+  return count <= 0 ? () => EMPTY : operate((source, subscriber) => {
+    let soFar = 0;
+    let sourceSub;
+    const resubscribe = () => {
+      sourceSub === null || sourceSub === void 0 ? void 0 : sourceSub.unsubscribe();
+      sourceSub = null;
+      if (delay != null) {
+        const notifier = typeof delay === "number" ? timer(delay) : innerFrom(delay(soFar));
+        const notifierSubscriber = createOperatorSubscriber(subscriber, () => {
+          notifierSubscriber.unsubscribe();
+          subscribeToSource();
+        });
+        notifier.subscribe(notifierSubscriber);
+      } else {
+        subscribeToSource();
+      }
+    };
+    const subscribeToSource = () => {
+      let syncUnsub = false;
+      sourceSub = source.subscribe(createOperatorSubscriber(subscriber, void 0, () => {
+        if (++soFar < count) {
+          if (sourceSub) {
+            resubscribe();
+          } else {
+            syncUnsub = true;
+          }
+        } else {
+          subscriber.complete();
+        }
+      }));
+      if (syncUnsub) {
+        resubscribe();
+      }
+    };
+    subscribeToSource();
+  });
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/retry.js
@@ -56353,6 +56405,15 @@ var VaultProfileConfig = class {
   }
 };
 
+// projects/shared-library/src/lib/models/fasten/record-locator-response.ts
+var RecordLocatorResponse = class {
+  constructor() {
+    this.pending_patient_accounts = {};
+    this.discovered_patient_accounts = {};
+    this.connected_patient_accounts = {};
+  }
+};
+
 // projects/shared-library/src/lib/models/fasten/vault-profile.ts
 var VaultProfile = class {
   constructor() {
@@ -56363,23 +56424,6 @@ var VaultProfile = class {
 
 // projects/shared-library/src/lib/models/message-bus/message-bus-event-payload.ts
 var MessageBusEventPayload = class {
-};
-
-// projects/shared-library/src/lib/models/search/search-filter.ts
-var SearchFilter = class {
-  constructor() {
-    this.query = "";
-    this.platformTypes = [];
-    this.categories = [];
-    this.showHidden = false;
-    this.locations = ["ALL"];
-    this.searchAfter = "";
-    this.fields = [];
-    this.sortBy = "";
-    this.sortByOpts = new SearchFilterSortByOpts();
-  }
-};
-var SearchFilterSortByOpts = class {
 };
 
 // projects/shared-library/src/lib/utils/post-message.ts
@@ -56432,6 +56476,84 @@ function waitForPostMessageOrgConnectionOrTimeout(logger, openedWindow, sdkMode)
       return throwError(err);
     })
   );
+}
+
+// projects/shared-library/src/lib/utils/tefca.ts
+function StoreRecordLocatorResultsInVaultProfile(configService, rlsResponse) {
+  const numDiscovered = Object.keys(rlsResponse.discovered_patient_accounts || {}).length;
+  const numPending = Object.keys(rlsResponse.pending_patient_accounts || {}).length;
+  const numConnected = Object.keys(rlsResponse.connected_patient_accounts || {}).length;
+  for (const vaultProfileConnectionId of Object.keys(rlsResponse.discovered_patient_accounts || {})) {
+    const discoveredFacility = rlsResponse.discovered_patient_accounts[vaultProfileConnectionId];
+    configService.vaultProfileAddDiscoveredRecordLocatorAccount(discoveredFacility, vaultProfileConnectionId);
+  }
+  for (const vaultProfileConnectionId of Object.keys(rlsResponse.pending_patient_accounts || {})) {
+    const pendingFacility = rlsResponse.pending_patient_accounts[vaultProfileConnectionId];
+    configService.vaultProfileAddPendingRecordLocatorAccount(pendingFacility, vaultProfileConnectionId);
+  }
+  for (const vaultProfileConnectionId of Object.keys(rlsResponse.connected_patient_accounts || {})) {
+    const connectedFacility = rlsResponse.connected_patient_accounts[vaultProfileConnectionId];
+    configService.vaultProfileAddConnectedRecordLocatorAccount(connectedFacility, vaultProfileConnectionId);
+  }
+  return {
+    numDiscovered,
+    numPending,
+    numConnected
+  };
+}
+function ProcessTefcaDirectAuthorizationResults(vaultConnectionIds, resp) {
+  const configService = inject(ConfigService);
+  const messageBusService = inject(MessageBusService);
+  const successes = resp?.successes || {};
+  const failures = resp?.failures || {};
+  vaultConnectionIds.forEach((id) => {
+    const successData = successes[id];
+    const failureData = failures[id];
+    if (successData) {
+      const orgConnectionId = successData.org_connection_id ?? "";
+      const connectionStatus = successData.connection_status ?? "authorized";
+      const platformType = successData.platform_type ?? "tefca";
+      const payload = {
+        external_state: id,
+        external_id: configService.systemConfig$.externalId,
+        request_id: resp?.request_id,
+        org_connection_id: orgConnectionId,
+        connection_status: connectionStatus,
+        platform_type: platformType,
+        vault_profile_connection_id: id,
+        patient_auth_type: SourceCredentialType.SourceCredentialTypeTefcaDirect,
+        tefca_directory_id: successData.tefca_directory_id
+      };
+      messageBusService.publishOrgConnectionComplete(payload);
+      configService.vaultProfileAuthorizeTefcaDirectConnectedAccount(id, orgConnectionId, connectionStatus, successData.tefca_directory_id);
+    } else if (failureData) {
+      const error = failureData.error || "fasten_server_error";
+      const errorDescription = failureData.error_description || "An unknown server error occurred: missing error type";
+      const payload = {
+        external_state: id,
+        vault_profile_connection_id: id,
+        external_id: configService.systemConfig$.externalId,
+        request_id: resp?.request_id,
+        error,
+        error_description: errorDescription,
+        patient_auth_type: SourceCredentialType.SourceCredentialTypeTefcaDirect
+      };
+      messageBusService.publishOrgConnectionComplete(payload);
+      configService.vaultProfileRevokeTefcaDirectConnectedAccount(id);
+    } else {
+      const payload = {
+        external_state: id,
+        vault_profile_connection_id: id,
+        external_id: configService.systemConfig$.externalId,
+        request_id: resp?.request_id,
+        error: "fasten_server_error",
+        error_description: "An unknown server error occurred: missing error type",
+        patient_auth_type: SourceCredentialType.SourceCredentialTypeTefcaDirect
+      };
+      messageBusService.publishOrgConnectionComplete(payload);
+      configService.vaultProfileRevokeTefcaDirectConnectedAccount(id);
+    }
+  });
 }
 
 // projects/shared-library/src/lib/shared-library.service.ts
@@ -57932,7 +58054,7 @@ function createRemoteJWKSet(url, options) {
 }
 
 // projects/fasten-connect-vault/src/app/app.constants.ts
-var ORG_CREDENTIAL_PUBLIC_ID = "public_test_c0p7aft8apvyp1d23xe87mt1lshuc5yiroz61drsir571";
+var ORG_CREDENTIAL_PUBLIC_ID = environment.org_credential_live_public_id || environment.org_credential_test_public_id;
 
 // projects/fasten-connect-vault/src/app/services/auth.service.ts
 var FASTEN_AUTH_VAULT_COOKIE_NAME = "fasten_connect_auth_vault";
@@ -58830,9 +58952,10 @@ function VaultSigninCodeComponent_p_13_Template(rf, ctx) {
   }
 }
 var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
-  constructor(routerService, authService) {
+  constructor(routerService, authService, configService) {
     this.routerService = routerService;
     this.authService = authService;
+    this.configService = configService;
     this.loading = false;
     this.errorMsg = "";
     this.currentEmail = "test@example.com";
@@ -58844,8 +58967,14 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
   onCodeCompleted(code) {
     this.loading = true;
     console.log("submit finish", this.currentEmail, code);
-    this.authService.VaultAuthFinish(this.currentEmail, code).then(() => {
+    this.authService.VaultAuthFinish(this.currentEmail, code).then((resp) => {
       this.loading = false;
+      if (resp?.has_verified_identity && resp?.verified_identity_csp_type) {
+        this.configService.vaultProfileConfig = {
+          verifiedIdentityCspType: resp.verified_identity_csp_type,
+          verifiedIdentityPatientDemographics: resp.verified_identity_patient_demographics
+        };
+      }
       this.routerService.navigateByUrl("dashboard");
     }).catch((err) => {
       console.error(err);
@@ -58859,7 +58988,7 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
   }
   static {
     this.\u0275fac = function VaultSigninCodeComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _VaultSigninCodeComponent)(\u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(AuthService));
+      return new (__ngFactoryType__ || _VaultSigninCodeComponent)(\u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(ConfigService));
     };
   }
   static {
@@ -58913,7 +59042,7 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninCodeComponent, { className: "VaultSigninCodeComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin-code/vault-signin-code.component.ts", lineNumber: 12 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninCodeComponent, { className: "VaultSigninCodeComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin-code/vault-signin-code.component.ts", lineNumber: 13 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts
@@ -59067,109 +59196,114 @@ var ConnectedAppsTabComponent = class _ConnectedAppsTabComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
+var _c02 = () => [];
+function ConnectedAccountsTabComponent_section_15_div_1_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 17)(1, "div", 18);
+    \u0275\u0275element(2, "img", 19);
+    \u0275\u0275elementStart(3, "div", 20)(4, "p", 21);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "p", 22);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(8, "div", 23)(9, "span", 24);
+    \u0275\u0275text(10, "Active");
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const account_r1 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (account_r1.brand == null ? null : account_r1.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (account_r1.portal == null ? null : account_r1.portal.name) || (account_r1.brand == null ? null : account_r1.brand.name));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate((account_r1.portal == null ? null : account_r1.portal.name) || (account_r1.brand == null ? null : account_r1.brand.name));
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", account_r1.patient_auth_type === "tefca_direct" ? "Connected through TEFCA discovery." : "Connected and ready to sync records.", " ");
+  }
+}
+function ConnectedAccountsTabComponent_section_15_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 15);
+    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_1_div_1_Template, 11, 4, "div", 16);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const vaultProfile_r2 = \u0275\u0275nextContext().ngIf;
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", vaultProfile_r2.connectedPatientAccounts || \u0275\u0275pureFunction0(1, _c02));
+  }
+}
+function ConnectedAccountsTabComponent_section_15_ng_template_2_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 25)(1, "h2", 26);
+    \u0275\u0275text(2, "No connected providers yet");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "p", 27);
+    \u0275\u0275text(4, " Add an account to review the healthcare providers we discovered for you through TEFCA. ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "a", 28);
+    \u0275\u0275text(6, " Add account ");
+    \u0275\u0275elementEnd()();
+  }
+}
+function ConnectedAccountsTabComponent_section_15_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 13);
+    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_1_Template, 2, 2, "div", 14)(2, ConnectedAccountsTabComponent_section_15_ng_template_2_Template, 7, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const vaultProfile_r2 = ctx.ngIf;
+    const emptyState_r3 = \u0275\u0275reference(3);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", (vaultProfile_r2.connectedPatientAccounts || \u0275\u0275pureFunction0(2, _c02)).length)("ngIfElse", emptyState_r3);
+  }
+}
 var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
-  constructor() {
+  constructor(configService) {
+    this.configService = configService;
   }
   ngOnInit() {
   }
   static {
     this.\u0275fac = function ConnectedAccountsTabComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ConnectedAccountsTabComponent)();
+      return new (__ngFactoryType__ || _ConnectedAccountsTabComponent)(\u0275\u0275directiveInject(ConfigService));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 71, vars: 0, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], [1, "vault-panel", "p-3", "sm:p-4"], [1, "divide-y", "divide-slate-100"], [1, "vault-list-row"], [1, "flex", "items-center", "gap-4"], ["src", "https://logo.clearbit.com/mayoclinic.org", "alt", "Mayo Clinic", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], ["type", "button", "aria-label", "View Mayo Clinic details", 1, "text-slate-400", "transition-colors", "hover:text-slate-700"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5"], ["d", "M9 18l6-6-6-6"], ["src", "https://logo.clearbit.com/clevelandclinic.org", "alt", "Cleveland Clinic", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2"], ["type", "button", "aria-label", "View Cleveland Clinic details", 1, "text-slate-400", "transition-colors", "hover:text-slate-700"], ["src", "https://logo.clearbit.com/questdiagnostics.com", "alt", "Quest Diagnostics", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2"], [1, "vault-status-pill", "is-warning"], ["type", "button", "aria-label", "View Quest Diagnostics details", 1, "text-slate-400", "transition-colors", "hover:text-slate-700"], ["routerLink", "/search", 1, "vault-list-row"], [1, "vault-icon-tile", "bg-slate-100", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], [1, "text-sm", "font-semibold", "text-[#5B47FB]"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 4, "ngFor", "ngForOf"], [1, "vault-list-row"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "p", 3);
+        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "div", 3)(3, "p", 4);
         \u0275\u0275text(4, "Health systems");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "div", 4)(6, "h1", 5);
+        \u0275\u0275elementStart(5, "div", 5)(6, "h1", 6);
         \u0275\u0275text(7, "Connected accounts");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(8, "p", 6);
+        \u0275\u0275elementStart(8, "p", 7);
         \u0275\u0275text(9, "Keep track of the health systems currently linked to your vault and add another account whenever you need more records in one place.");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(10, "a", 7);
+        \u0275\u0275elementStart(10, "a", 8);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(11, "svg", 8);
-        \u0275\u0275element(12, "path", 9);
+        \u0275\u0275elementStart(11, "svg", 9);
+        \u0275\u0275element(12, "path", 10);
         \u0275\u0275elementEnd();
         \u0275\u0275text(13, " Add account ");
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275element(14, "div", 10);
-        \u0275\u0275elementStart(15, "section", 11)(16, "div", 12)(17, "div", 13)(18, "div", 14);
-        \u0275\u0275element(19, "img", 15);
-        \u0275\u0275elementStart(20, "div", 16)(21, "p", 17);
-        \u0275\u0275text(22, "Mayo Clinic");
+        \u0275\u0275element(14, "div", 11);
+        \u0275\u0275template(15, ConnectedAccountsTabComponent_section_15_Template, 4, 3, "section", 12);
+        \u0275\u0275pipe(16, "async");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(23, "p", 18);
-        \u0275\u0275text(24, "Primary care, specialist visits, and visit summaries.");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(25, "div", 19)(26, "span", 20);
-        \u0275\u0275text(27, "Active");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(28, "button", 21);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(29, "svg", 22);
-        \u0275\u0275element(30, "path", 23);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(31, "div", 13)(32, "div", 14);
-        \u0275\u0275element(33, "img", 24);
-        \u0275\u0275elementStart(34, "div", 16)(35, "p", 17);
-        \u0275\u0275text(36, "Cleveland Clinic");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(37, "p", 18);
-        \u0275\u0275text(38, "Imaging, lab work, and follow-up care records.");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(39, "div", 19)(40, "span", 20);
-        \u0275\u0275text(41, "Active");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(42, "button", 25);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(43, "svg", 22);
-        \u0275\u0275element(44, "path", 23);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(45, "div", 13)(46, "div", 14);
-        \u0275\u0275element(47, "img", 26);
-        \u0275\u0275elementStart(48, "div", 16)(49, "p", 17);
-        \u0275\u0275text(50, "Quest Diagnostics");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(51, "p", 18);
-        \u0275\u0275text(52, "Lab results history needs to be reconnected before the next sync.");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(53, "div", 19)(54, "span", 27);
-        \u0275\u0275text(55, "Expired");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(56, "button", 28);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(57, "svg", 22);
-        \u0275\u0275element(58, "path", 23);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(59, "a", 29)(60, "div", 14)(61, "div", 30);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(62, "svg", 31);
-        \u0275\u0275element(63, "path", 9);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(64, "div", 16)(65, "p", 17);
-        \u0275\u0275text(66, "Add another health system");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(67, "p", 18);
-        \u0275\u0275text(68, "Search the directory and start a new connection.");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(69, "span", 32);
-        \u0275\u0275text(70, "Search");
-        \u0275\u0275elementEnd()()()()();
       }
-    }, dependencies: [RouterLink], encapsulation: 2 });
+      if (rf & 2) {
+        \u0275\u0275advance(15);
+        \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(16, 1, ctx.configService.vaultProfileConfigSubject));
+      }
+    }, dependencies: [NgForOf, NgIf, RouterLink, ImageFallbackDirective, AsyncPipe], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 10 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
@@ -60137,18 +60271,48 @@ var FastenService = class _FastenService {
     this.deviceService = deviceService;
     this.configService = configService;
     this.logger = logger;
+    this.configService.systemConfigSubject.subscribe((systemConfig) => {
+      if (systemConfig.publicId && !systemConfig.org) {
+        this.getOrgByPublicId(systemConfig.publicId).subscribe((org) => {
+          this.configService.systemConfig = { org };
+        });
+      }
+    });
   }
-  // public verificationWithPopup(publicId: string, brandId: string, portalId: string, endpointId: string, reconnectOrgConnectionId?: string, connectMode?: ConnectMode, externalId?: string, externalState?: string): Observable<CallbackPayload> {
   verificationWithPopup() {
     const redirectUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
-    redirectUrl.searchParams.set("public_id", environment.org_credential_test_public_id);
-    const isDesktop = this.deviceService.isDesktop();
-    let features = "";
-    if (isDesktop) {
-      features = "popup=true,width=700,height=600";
-    }
-    let openedWindow = window.open(redirectUrl.toString(), "_blank", features);
+    redirectUrl.searchParams.set("public_id", this.configService.systemConfig$.publicId);
+    redirectUrl.searchParams.set("connect_mode", ConnectMode.Popup);
+    const openedWindow = this.openWindowInPopup(redirectUrl);
     return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+  }
+  recordLocatorRegisterAndPollForStatus() {
+    return this._httpClient.get(`${environment.connect_api_endpoint_base}/bridge/record_locator`, {
+      params: { "public_id": this.configService.systemConfig$.publicId }
+    }).pipe(switchMap((registerResponse) => {
+      if (registerResponse.data.status === "failed") {
+        return throwError(() => new Error("Record locator registration failed"));
+      }
+      if (registerResponse.data.status === "success") {
+        return of(registerResponse);
+      }
+      return this._httpClient.get(`${environment.connect_api_endpoint_base}/bridge/record_locator/${registerResponse.data.task_id}`, { params: { "public_id": this.configService.systemConfig$.publicId } }).pipe(repeat({ delay: 3e3 }), filter((statusResponse) => statusResponse.data.status === "success" || statusResponse.data.status === "failed"), take(1), timeout(3e5));
+    }));
+  }
+  recordLocatorResults(taskId) {
+    return this._httpClient.get(`${environment.connect_api_endpoint_base}/bridge/record_locator/${taskId}/result`, { params: { "public_id": this.configService.systemConfig$.publicId } }).pipe(map((response) => {
+      const rlsResponse = response.data;
+      if (!rlsResponse.discovered_patient_accounts) {
+        rlsResponse.discovered_patient_accounts = {};
+      }
+      if (!rlsResponse.pending_patient_accounts) {
+        rlsResponse.pending_patient_accounts = {};
+      }
+      if (!rlsResponse.connected_patient_accounts) {
+        rlsResponse.connected_patient_accounts = {};
+      }
+      return rlsResponse;
+    }));
   }
   searchCatalogBrands(apiMode, filter2) {
     if ((typeof filter2.searchAfter === "string" || filter2.searchAfter instanceof String) && filter2.searchAfter.length > 0) {
@@ -60158,39 +60322,82 @@ var FastenService = class _FastenService {
     }
     const endpointUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/catalog/search`);
     return this._httpClient.post(endpointUrl.toString(), filter2, { params: {
-      "public_id": environment.org_credential_test_public_id,
+      "public_id": this.configService.systemConfig$.publicId,
       "api_mode": apiMode
     } }).pipe(map((response) => {
       this.logger.info("Metadata RESPONSE", response);
       return response.data;
     }));
   }
-  accountConnectWithPopup(brandId, portalId, endpointId, reconnectOrgConnectionId, externalId, externalState) {
-    const redirectUrlParts = new URL(`${environment.connect_api_endpoint_base}/bridge/connect`);
-    const redirectParams = new URLSearchParams();
-    redirectParams.set("public_id", this.configService.systemConfig$.publicId);
-    redirectParams.set("brand_id", brandId);
-    redirectParams.set("portal_id", portalId);
-    redirectParams.set("endpoint_id", endpointId);
-    redirectParams.set("connect_mode", "popup");
-    if (reconnectOrgConnectionId) {
-      redirectParams.set("reconnect_org_connection_id", reconnectOrgConnectionId);
-    }
-    if (externalId) {
-      redirectParams.set("external_id", externalId);
-    }
-    if (externalState) {
-      redirectParams.set("external_state", externalState);
-    }
-    redirectUrlParts.search = redirectParams.toString();
+  searchCatalogBrand(apiMode, brandId) {
+    const endpointUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/catalog/search/${brandId}`);
+    return this._httpClient.post(endpointUrl.toString(), {}, { params: {
+      "public_id": this.configService.systemConfig$.publicId,
+      "api_mode": apiMode
+    } }).pipe(map((response) => {
+      this.logger.info("Metadata RESPONSE", response);
+      return response.data;
+    }));
+  }
+  getOrgByPublicId(publicId) {
+    return this._httpClient.get(`${environment.connect_api_endpoint_base}/bridge/org`, {
+      params: { "public_id": publicId }
+    }).pipe(map((response) => {
+      this.logger.info("Organization", response);
+      return response.data;
+    }));
+  }
+  getOrgConnectionById(publicId, orgConnectionId) {
+    return this._httpClient.get(`${environment.connect_api_endpoint_base}/bridge/org_connection/${orgConnectionId}`, { params: { "public_id": publicId } }).pipe(map((response) => {
+      this.logger.info("Organization Connection Data", response);
+      return response.data;
+    }));
+  }
+  accountConnectWithPopup(connectData) {
+    const redirectUrlParts = this.generateConnectURL(connectData);
+    redirectUrlParts.searchParams.set("connect_mode", ConnectMode.Popup);
     this.logger.debug(redirectUrlParts.toString());
+    const openedWindow = this.openWindowInPopup(redirectUrlParts);
+    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+  }
+  authorizeTefcaDirect(vaultConnectionIds, externalId) {
+    const url = `${environment.connect_api_endpoint_base}/bridge/vault_connection/authorize`;
+    return this._httpClient.post(url, {
+      vault_connection_ids: vaultConnectionIds,
+      external_id: externalId
+    }, {
+      params: { public_id: this.configService.systemConfig$.publicId }
+    }).pipe(map((resp) => resp.data));
+  }
+  openWindowInPopup(redirectUrlParts) {
     const isDesktop = this.deviceService.isDesktop();
     let features = "";
     if (isDesktop) {
       features = "popup=true,width=700,height=600";
     }
-    let openedWindow = window.open(redirectUrlParts.toString(), "_blank", features);
-    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+    return window.open(redirectUrlParts.toString(), "_blank", features);
+  }
+  generateConnectURL(connectData) {
+    const redirectUrlParts = new URL(`${environment.connect_api_endpoint_base}/bridge/connect`);
+    const redirectParams = new URLSearchParams();
+    redirectParams.set("public_id", this.configService.systemConfig$.publicId);
+    redirectParams.set("brand_id", connectData.brand_id);
+    redirectParams.set("portal_id", connectData.portal_id);
+    redirectParams.set("endpoint_id", connectData.endpoint_id);
+    if (connectData.org_connection_id) {
+      redirectParams.set("reconnect_org_connection_id", connectData.org_connection_id);
+    }
+    if (connectData.external_id) {
+      redirectParams.set("external_id", connectData.external_id);
+    }
+    if (connectData.external_state) {
+      redirectParams.set("external_state", connectData.external_state);
+    }
+    if (connectData.vault_profile_connection_id) {
+      redirectParams.set("reconnect_vault_profile_connection_id", connectData.vault_profile_connection_id);
+    }
+    redirectUrlParts.search = redirectParams.toString();
+    return redirectUrlParts;
   }
   static {
     this.\u0275fac = function FastenService_Factory(__ngFactoryType__) {
@@ -60211,8 +60418,9 @@ function IdentityVerificationComponent_div_23_Template(rf, ctx) {
   }
 }
 var IdentityVerificationComponent = class _IdentityVerificationComponent {
-  constructor(vaultService, router, logger) {
+  constructor(vaultService, configService, router, logger) {
     this.vaultService = vaultService;
+    this.configService = configService;
     this.router = router;
     this.logger = logger;
     this.loading = false;
@@ -60224,6 +60432,12 @@ var IdentityVerificationComponent = class _IdentityVerificationComponent {
     this.loading = true;
     this.vaultService.verificationWithPopup().subscribe((result) => {
       this.loading = false;
+      if (result?.vault_auth_finish_response?.has_verified_identity && result?.vault_auth_finish_response?.verified_identity_csp_type) {
+        this.configService.vaultProfileConfig = {
+          verifiedIdentityCspType: result.vault_auth_finish_response.verified_identity_csp_type,
+          verifiedIdentityPatientDemographics: result.vault_auth_finish_response.verified_identity_patient_demographics
+        };
+      }
       this.logger.info("verification result", result);
       this.router.navigateByUrl("dashboard");
     }, (err) => {
@@ -60246,7 +60460,7 @@ var IdentityVerificationComponent = class _IdentityVerificationComponent {
   }
   static {
     this.\u0275fac = function IdentityVerificationComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _IdentityVerificationComponent)(\u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
+      return new (__ngFactoryType__ || _IdentityVerificationComponent)(\u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
     };
   }
   static {
@@ -60290,7 +60504,7 @@ var IdentityVerificationComponent = class _IdentityVerificationComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationComponent, { className: "IdentityVerificationComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts", lineNumber: 12 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationComponent, { className: "IdentityVerificationComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts", lineNumber: 13 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/identity-verification-error/identity-verification-error.component.ts
@@ -60365,823 +60579,315 @@ var IdentityVerificationErrorComponent = class _IdentityVerificationErrorCompone
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationErrorComponent, { className: "IdentityVerificationErrorComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification-error/identity-verification-error.component.ts", lineNumber: 12 });
 })();
 
-// node_modules/ngx-infinite-scroll/fesm2022/ngx-infinite-scroll.mjs
-function resolveContainerElement(selector, scrollWindow, defaultElement, fromRoot) {
-  const hasWindow = window && !!window.document && window.document.documentElement;
-  let container = hasWindow && scrollWindow ? window : defaultElement;
-  if (selector) {
-    const containerIsString = selector && hasWindow && typeof selector === "string";
-    container = containerIsString ? findElement(selector, defaultElement.nativeElement, fromRoot) : selector;
-    if (!container) {
-      throw new Error("ngx-infinite-scroll {resolveContainerElement()}: selector for");
-    }
-  }
-  return container;
-}
-function findElement(selector, customRoot, fromRoot) {
-  const rootEl = fromRoot ? window.document : customRoot;
-  return rootEl.querySelector(selector);
-}
-function inputPropChanged(prop) {
-  return prop && !prop.firstChange;
-}
-function hasWindowDefined() {
-  return typeof window !== "undefined";
-}
-var VerticalProps = {
-  clientHeight: "clientHeight",
-  offsetHeight: "offsetHeight",
-  scrollHeight: "scrollHeight",
-  pageYOffset: "pageYOffset",
-  offsetTop: "offsetTop",
-  scrollTop: "scrollTop",
-  top: "top"
-};
-var HorizontalProps = {
-  clientHeight: "clientWidth",
-  offsetHeight: "offsetWidth",
-  scrollHeight: "scrollWidth",
-  pageYOffset: "pageXOffset",
-  offsetTop: "offsetLeft",
-  scrollTop: "scrollLeft",
-  top: "left"
-};
-var AxisResolver = class {
-  constructor(vertical = true) {
-    this.vertical = vertical;
-    this.propsMap = vertical ? VerticalProps : HorizontalProps;
-  }
-  clientHeightKey() {
-    return this.propsMap.clientHeight;
-  }
-  offsetHeightKey() {
-    return this.propsMap.offsetHeight;
-  }
-  scrollHeightKey() {
-    return this.propsMap.scrollHeight;
-  }
-  pageYOffsetKey() {
-    return this.propsMap.pageYOffset;
-  }
-  offsetTopKey() {
-    return this.propsMap.offsetTop;
-  }
-  scrollTopKey() {
-    return this.propsMap.scrollTop;
-  }
-  topKey() {
-    return this.propsMap.top;
-  }
-};
-function shouldTriggerEvents(alwaysCallback, shouldFireScrollEvent2, isTriggeredCurrentTotal) {
-  if (alwaysCallback && shouldFireScrollEvent2) {
-    return true;
-  }
-  if (!isTriggeredCurrentTotal && shouldFireScrollEvent2) {
-    return true;
-  }
-  return false;
-}
-function createResolver({
-  windowElement,
-  axis
-}) {
-  return createResolverWithContainer({
-    axis,
-    isWindow: isElementWindow(windowElement)
-  }, windowElement);
-}
-function createResolverWithContainer(resolver, windowElement) {
-  const container = resolver.isWindow || windowElement && !windowElement.nativeElement ? windowElement : windowElement.nativeElement;
-  return __spreadProps(__spreadValues({}, resolver), {
-    container
-  });
-}
-function isElementWindow(windowElement) {
-  const isWindow = ["Window", "global"].some((obj) => Object.prototype.toString.call(windowElement).includes(obj));
-  return isWindow;
-}
-function getDocumentElement(isContainerWindow, windowElement) {
-  return isContainerWindow ? windowElement.document.documentElement : null;
-}
-function calculatePoints(element, resolver) {
-  const height = extractHeightForElement(resolver);
-  return resolver.isWindow ? calculatePointsForWindow(height, element, resolver) : calculatePointsForElement(height, element, resolver);
-}
-function calculatePointsForWindow(height, element, resolver) {
-  const {
-    axis,
-    container,
-    isWindow
-  } = resolver;
-  const {
-    offsetHeightKey,
-    clientHeightKey
-  } = extractHeightPropKeys(axis);
-  const scrolled = height + getElementPageYOffset(getDocumentElement(isWindow, container), axis, isWindow);
-  const nativeElementHeight = getElementHeight(element.nativeElement, isWindow, offsetHeightKey, clientHeightKey);
-  const totalToScroll = getElementOffsetTop(element.nativeElement, axis, isWindow) + nativeElementHeight;
-  return {
-    height,
-    scrolled,
-    totalToScroll,
-    isWindow
-  };
-}
-function calculatePointsForElement(height, element, resolver) {
-  const {
-    axis,
-    container
-  } = resolver;
-  const scrolled = container[axis.scrollTopKey()];
-  const totalToScroll = container[axis.scrollHeightKey()];
-  return {
-    height,
-    scrolled,
-    totalToScroll,
-    isWindow: false
-  };
-}
-function extractHeightPropKeys(axis) {
-  return {
-    offsetHeightKey: axis.offsetHeightKey(),
-    clientHeightKey: axis.clientHeightKey()
-  };
-}
-function extractHeightForElement({
-  container,
-  isWindow,
-  axis
-}) {
-  const {
-    offsetHeightKey,
-    clientHeightKey
-  } = extractHeightPropKeys(axis);
-  return getElementHeight(container, isWindow, offsetHeightKey, clientHeightKey);
-}
-function getElementHeight(elem, isWindow, offsetHeightKey, clientHeightKey) {
-  if (isNaN(elem[offsetHeightKey])) {
-    const docElem = getDocumentElement(isWindow, elem);
-    return docElem ? docElem[clientHeightKey] : 0;
-  } else {
-    return elem[offsetHeightKey];
-  }
-}
-function getElementOffsetTop(elem, axis, isWindow) {
-  const topKey = axis.topKey();
-  if (!elem.getBoundingClientRect) {
-    return;
-  }
-  return elem.getBoundingClientRect()[topKey] + getElementPageYOffset(elem, axis, isWindow);
-}
-function getElementPageYOffset(elem, axis, isWindow) {
-  const pageYOffset = axis.pageYOffsetKey();
-  const scrollTop = axis.scrollTopKey();
-  const offsetTop = axis.offsetTopKey();
-  if (isNaN(window.pageYOffset)) {
-    return getDocumentElement(isWindow, elem)[scrollTop];
-  } else if (elem.ownerDocument) {
-    return elem.ownerDocument.defaultView[pageYOffset];
-  } else {
-    return elem[offsetTop];
-  }
-}
-function shouldFireScrollEvent(container, distance = {
-  down: 0,
-  up: 0
-}, scrollingDown) {
-  let remaining;
-  let containerBreakpoint;
-  if (container.totalToScroll <= 0) {
-    return false;
-  }
-  const scrolledUntilNow = container.isWindow ? container.scrolled : container.height + container.scrolled;
-  if (scrollingDown) {
-    remaining = (container.totalToScroll - scrolledUntilNow) / container.totalToScroll;
-    const distanceDown = distance?.down ? distance.down : 0;
-    containerBreakpoint = distanceDown / 10;
-  } else {
-    const totalHiddenContentHeight = container.scrolled + (container.totalToScroll - scrolledUntilNow);
-    remaining = container.scrolled / totalHiddenContentHeight;
-    const distanceUp = distance?.up ? distance.up : 0;
-    containerBreakpoint = distanceUp / 10;
-  }
-  const shouldFireEvent = remaining <= containerBreakpoint;
-  return shouldFireEvent;
-}
-function isScrollingDownwards(lastScrollPosition, container) {
-  return lastScrollPosition < container.scrolled;
-}
-function getScrollStats(lastScrollPosition, container, distance) {
-  const scrollDown = isScrollingDownwards(lastScrollPosition, container);
-  return {
-    fire: shouldFireScrollEvent(container, distance, scrollDown),
-    scrollDown
-  };
-}
-var ScrollState = class {
-  constructor(attrs) {
-    this.lastScrollPosition = 0;
-    this.lastTotalToScroll = 0;
-    this.totalToScroll = 0;
-    this.triggered = {
-      down: 0,
-      up: 0
-    };
-    Object.assign(this, attrs);
-  }
-  updateScrollPosition(position) {
-    return this.lastScrollPosition = position;
-  }
-  updateTotalToScroll(totalToScroll) {
-    if (this.lastTotalToScroll !== totalToScroll) {
-      this.lastTotalToScroll = this.totalToScroll;
-      this.totalToScroll = totalToScroll;
-    }
-  }
-  updateScroll(scrolledUntilNow, totalToScroll) {
-    this.updateScrollPosition(scrolledUntilNow);
-    this.updateTotalToScroll(totalToScroll);
-  }
-  updateTriggeredFlag(scroll, isScrollingDown) {
-    if (isScrollingDown) {
-      this.triggered.down = scroll;
-    } else {
-      this.triggered.up = scroll;
-    }
-  }
-  isTriggeredScroll(totalToScroll, isScrollingDown) {
-    return isScrollingDown ? this.triggered.down === totalToScroll : this.triggered.up === totalToScroll;
-  }
-};
-function createScroller(config3) {
-  const {
-    scrollContainer,
-    scrollWindow,
-    element,
-    fromRoot
-  } = config3;
-  const resolver = createResolver({
-    axis: new AxisResolver(!config3.horizontal),
-    windowElement: resolveContainerElement(scrollContainer, scrollWindow, element, fromRoot)
-  });
-  const scrollState = new ScrollState({
-    totalToScroll: calculatePoints(element, resolver).totalToScroll
-  });
-  const options = {
-    container: resolver.container,
-    throttle: config3.throttle
-  };
-  const distance = {
-    up: config3.upDistance,
-    down: config3.downDistance
-  };
-  return attachScrollEvent(options).pipe(mergeMap(() => of(calculatePoints(element, resolver))), map((positionStats) => toInfiniteScrollParams(scrollState.lastScrollPosition, positionStats, distance)), tap(({
-    stats
-  }) => scrollState.updateScroll(stats.scrolled, stats.totalToScroll)), filter(({
-    fire,
-    scrollDown,
-    stats: {
-      totalToScroll
-    }
-  }) => shouldTriggerEvents(config3.alwaysCallback, fire, scrollState.isTriggeredScroll(totalToScroll, scrollDown))), tap(({
-    scrollDown,
-    stats: {
-      totalToScroll
-    }
-  }) => {
-    scrollState.updateTriggeredFlag(totalToScroll, scrollDown);
-  }), map(toInfiniteScrollAction));
-}
-function attachScrollEvent(options) {
-  let obs = fromEvent(options.container, "scroll");
-  if (options.throttle) {
-    obs = obs.pipe(throttleTime(options.throttle, void 0, {
-      leading: true,
-      trailing: true
-    }));
-  }
-  return obs;
-}
-function toInfiniteScrollParams(lastScrollPosition, stats, distance) {
-  const {
-    scrollDown,
-    fire
-  } = getScrollStats(lastScrollPosition, stats, distance);
-  return {
-    scrollDown,
-    fire,
-    stats
-  };
-}
-var InfiniteScrollActions = {
-  DOWN: "[NGX_ISE] DOWN",
-  UP: "[NGX_ISE] UP"
-};
-function toInfiniteScrollAction(response) {
-  const {
-    scrollDown,
-    stats: {
-      scrolled: currentScrollPosition
-    }
-  } = response;
-  return {
-    type: scrollDown ? InfiniteScrollActions.DOWN : InfiniteScrollActions.UP,
-    payload: {
-      currentScrollPosition
-    }
-  };
-}
-var InfiniteScrollDirective = class _InfiniteScrollDirective {
-  constructor(element, zone) {
-    this.element = element;
-    this.zone = zone;
-    this.scrolled = new EventEmitter();
-    this.scrolledUp = new EventEmitter();
-    this.infiniteScrollDistance = 2;
-    this.infiniteScrollUpDistance = 1.5;
-    this.infiniteScrollThrottle = 150;
-    this.infiniteScrollDisabled = false;
-    this.infiniteScrollContainer = null;
-    this.scrollWindow = true;
-    this.immediateCheck = false;
-    this.horizontal = false;
-    this.alwaysCallback = false;
-    this.fromRoot = false;
-  }
-  ngAfterViewInit() {
-    if (!this.infiniteScrollDisabled) {
-      this.setup();
-    }
-  }
-  ngOnChanges({
-    infiniteScrollContainer,
-    infiniteScrollDisabled,
-    infiniteScrollDistance
-  }) {
-    const containerChanged = inputPropChanged(infiniteScrollContainer);
-    const disabledChanged = inputPropChanged(infiniteScrollDisabled);
-    const distanceChanged = inputPropChanged(infiniteScrollDistance);
-    const shouldSetup = !disabledChanged && !this.infiniteScrollDisabled || disabledChanged && !infiniteScrollDisabled.currentValue || distanceChanged;
-    if (containerChanged || disabledChanged || distanceChanged) {
-      this.destroyScroller();
-      if (shouldSetup) {
-        this.setup();
-      }
-    }
-  }
-  ngOnDestroy() {
-    this.destroyScroller();
-  }
-  setup() {
-    if (!hasWindowDefined()) {
-      return;
-    }
-    this.zone.runOutsideAngular(() => {
-      this.disposeScroller = createScroller({
-        fromRoot: this.fromRoot,
-        alwaysCallback: this.alwaysCallback,
-        disable: this.infiniteScrollDisabled,
-        downDistance: this.infiniteScrollDistance,
-        element: this.element,
-        horizontal: this.horizontal,
-        scrollContainer: this.infiniteScrollContainer,
-        scrollWindow: this.scrollWindow,
-        throttle: this.infiniteScrollThrottle,
-        upDistance: this.infiniteScrollUpDistance
-      }).subscribe((payload) => this.handleOnScroll(payload));
-    });
-  }
-  handleOnScroll({
-    type,
-    payload
-  }) {
-    const emitter = type === InfiniteScrollActions.DOWN ? this.scrolled : this.scrolledUp;
-    if (hasObservers(emitter)) {
-      this.zone.run(() => emitter.emit(payload));
-    }
-  }
-  destroyScroller() {
-    if (this.disposeScroller) {
-      this.disposeScroller.unsubscribe();
-    }
-  }
-  static {
-    this.\u0275fac = function InfiniteScrollDirective_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _InfiniteScrollDirective)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({
-      type: _InfiniteScrollDirective,
-      selectors: [["", "infiniteScroll", ""], ["", "infinite-scroll", ""], ["", "data-infinite-scroll", ""]],
-      inputs: {
-        infiniteScrollDistance: "infiniteScrollDistance",
-        infiniteScrollUpDistance: "infiniteScrollUpDistance",
-        infiniteScrollThrottle: "infiniteScrollThrottle",
-        infiniteScrollDisabled: "infiniteScrollDisabled",
-        infiniteScrollContainer: "infiniteScrollContainer",
-        scrollWindow: "scrollWindow",
-        immediateCheck: "immediateCheck",
-        horizontal: "horizontal",
-        alwaysCallback: "alwaysCallback",
-        fromRoot: "fromRoot"
-      },
-      outputs: {
-        scrolled: "scrolled",
-        scrolledUp: "scrolledUp"
-      },
-      features: [\u0275\u0275NgOnChangesFeature]
-    });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollDirective, [{
-    type: Directive,
-    args: [{
-      selector: "[infiniteScroll], [infinite-scroll], [data-infinite-scroll]"
-    }]
-  }], () => [{
-    type: ElementRef
-  }, {
-    type: NgZone
-  }], {
-    scrolled: [{
-      type: Output
-    }],
-    scrolledUp: [{
-      type: Output
-    }],
-    infiniteScrollDistance: [{
-      type: Input
-    }],
-    infiniteScrollUpDistance: [{
-      type: Input
-    }],
-    infiniteScrollThrottle: [{
-      type: Input
-    }],
-    infiniteScrollDisabled: [{
-      type: Input
-    }],
-    infiniteScrollContainer: [{
-      type: Input
-    }],
-    scrollWindow: [{
-      type: Input
-    }],
-    immediateCheck: [{
-      type: Input
-    }],
-    horizontal: [{
-      type: Input
-    }],
-    alwaysCallback: [{
-      type: Input
-    }],
-    fromRoot: [{
-      type: Input
-    }]
-  });
-})();
-function hasObservers(emitter) {
-  return emitter.observed ?? emitter.observers.length > 0;
-}
-var InfiniteScrollModule = class _InfiniteScrollModule {
-  static {
-    this.\u0275fac = function InfiniteScrollModule_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _InfiniteScrollModule)();
-    };
-  }
-  static {
-    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
-      type: _InfiniteScrollModule
-    });
-  }
-  static {
-    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollModule, [{
-    type: NgModule,
-    args: [{
-      exports: [InfiniteScrollDirective],
-      imports: [InfiniteScrollDirective]
-    }]
-  }], null, null);
-})();
-
 // projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts
-var _c02 = () => [];
-function HealthSystemSearchComponent_div_23_Template(rf, ctx) {
+var _c03 = () => [];
+var _c1 = () => ({});
+function HealthSystemSearchComponent_div_0_div_22_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 29)(1, "div", 6)(2, "h3", 30);
-    \u0275\u0275text(3, "Filters");
+    \u0275\u0275elementStart(0, "div", 27);
+    \u0275\u0275text(1);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div", 31)(5, "label", 32);
-    \u0275\u0275text(6, "State");
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r0.errorMessage, " ");
+  }
+}
+function HealthSystemSearchComponent_div_0_div_33_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 28);
+    \u0275\u0275text(1, "Loading providers...");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "button", 33)(8, "span", 34);
-    \u0275\u0275text(9, "All states");
+  }
+}
+function HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r2 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 31)(1, "div", 32)(2, "div", 33);
+    \u0275\u0275element(3, "img", 34);
+    \u0275\u0275elementStart(4, "div", 35)(5, "p", 16);
+    \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(10, "svg", 35);
-    \u0275\u0275element(11, "polyline", 36);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275element(12, "div", 37);
+    \u0275\u0275elementStart(7, "p", 36);
+    \u0275\u0275text(8, "Ready to connect now through TEFCA.");
     \u0275\u0275elementEnd()()();
-  }
-}
-function HealthSystemSearchComponent_div_32_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 38);
-    \u0275\u0275text(1, "Searching...");
-    \u0275\u0275elementEnd();
-  }
-}
-function HealthSystemSearchComponent_button_34_p_6_span_2_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "span", 50);
-    \u0275\u0275pipe(1, "safeHtml");
-  }
-  if (rf & 2) {
-    const highlight_r4 = ctx.$implicit;
-    \u0275\u0275property("innerHTML", \u0275\u0275pipeBind1(1, 1, highlight_r4), \u0275\u0275sanitizeHtml);
-  }
-}
-function HealthSystemSearchComponent_button_34_p_6_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 24);
-    \u0275\u0275text(1, " Found match(es): ");
-    \u0275\u0275template(2, HealthSystemSearchComponent_button_34_p_6_span_2_Template, 2, 3, "span", 49);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const brand_r2 = \u0275\u0275nextContext().$implicit;
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", brand_r2 == null ? null : brand_r2.searchHighlights);
-  }
-}
-function HealthSystemSearchComponent_button_34_span_8_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1);
-    \u0275\u0275pipe(2, "stateName");
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const stateCode_r5 = ctx.$implicit;
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate(\u0275\u0275pipeBind1(2, 1, stateCode_r5));
-  }
-}
-function HealthSystemSearchComponent_button_34_span_10_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const brand_r2 = \u0275\u0275nextContext().$implicit;
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("+ ", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(1, _c02)).length, "");
-  }
-}
-function HealthSystemSearchComponent_button_34_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 39);
-    \u0275\u0275listener("click", function HealthSystemSearchComponent_button_34_Template_button_click_0_listener() {
-      const brand_r2 = \u0275\u0275restoreView(_r1).$implicit;
-      const ctx_r2 = \u0275\u0275nextContext();
-      return \u0275\u0275resetView(ctx_r2.selectBrand(brand_r2.brand));
+    \u0275\u0275elementStart(9, "button", 37);
+    \u0275\u0275listener("click", function HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template_button_click_9_listener() {
+      const discoveredAccount_r3 = \u0275\u0275restoreView(_r2).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r0.connectDiscoveredAccount(discoveredAccount_r3.key, discoveredAccount_r3.value));
     });
-    \u0275\u0275elementStart(1, "div", 40);
-    \u0275\u0275element(2, "img", 41);
-    \u0275\u0275elementStart(3, "div", 42)(4, "p", 43);
-    \u0275\u0275text(5);
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(6, HealthSystemSearchComponent_button_34_p_6_Template, 3, 1, "p", 44);
-    \u0275\u0275elementStart(7, "p", 24);
-    \u0275\u0275template(8, HealthSystemSearchComponent_button_34_span_8_Template, 3, 3, "span", 45);
-    \u0275\u0275pipe(9, "slice");
-    \u0275\u0275template(10, HealthSystemSearchComponent_button_34_span_10_Template, 2, 2, "span", 46);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(11, "svg", 47);
-    \u0275\u0275element(12, "polyline", 48);
+    \u0275\u0275text(10);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
-    const brand_r2 = ctx.$implicit;
-    \u0275\u0275advance(2);
-    \u0275\u0275propertyInterpolate1("src", "https://cdn.fastenhealth.com/logos/sources/", brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.id, ".png", \u0275\u0275sanitizeUrl);
-    \u0275\u0275propertyInterpolate("alt", brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.name);
+    const discoveredAccount_r3 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(3);
     \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.name);
+    \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (discoveredAccount_r3.value.brand == null ? null : discoveredAccount_r3.value.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (discoveredAccount_r3.value.portal == null ? null : discoveredAccount_r3.value.portal.name) || (discoveredAccount_r3.value.brand == null ? null : discoveredAccount_r3.value.brand.name));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate((discoveredAccount_r3.value.portal == null ? null : discoveredAccount_r3.value.portal.name) || (discoveredAccount_r3.value.brand == null ? null : discoveredAccount_r3.value.brand.name));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("disabled", !!ctx_r0.authorizingVaultConnectionId);
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.searchHighlights) || \u0275\u0275pureFunction0(11, _c02)).length > 0);
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(9, 7, (brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(12, _c02), 0, 3));
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(13, _c02)).length > 4);
+    \u0275\u0275textInterpolate1(" ", ctx_r0.authorizingVaultConnectionId === discoveredAccount_r3.key ? "Connecting..." : "Connect now", " ");
   }
 }
-function HealthSystemSearchComponent_div_35_Template(rf, ctx) {
+function HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 51)(1, "div", 52)(2, "div", 53);
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(3, "svg", 17);
-    \u0275\u0275element(4, "circle", 54)(5, "path", 55);
+    const _r4 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 31)(1, "div", 32)(2, "div", 33);
+    \u0275\u0275element(3, "img", 34);
+    \u0275\u0275elementStart(4, "div", 35)(5, "p", 16);
+    \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(6, "span", 56);
-    \u0275\u0275text(7, "No results found");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "p", 57);
-    \u0275\u0275text(9, "We couldn\u2019t find any health systems matching your search.");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "button", 58);
-    \u0275\u0275text(11, " Request this health system ");
+    \u0275\u0275elementStart(7, "p", 36);
+    \u0275\u0275text(8, "A provider sign-in is still required before records can be added.");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(9, "button", 38);
+    \u0275\u0275listener("click", function HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template_button_click_9_listener() {
+      const pendingAccount_r5 = \u0275\u0275restoreView(_r4).$implicit;
+      const ctx_r0 = \u0275\u0275nextContext(3);
+      return \u0275\u0275resetView(ctx_r0.connectPendingAccount(pendingAccount_r5.key, pendingAccount_r5.value));
+    });
+    \u0275\u0275text(10, " Sign in to connect ");
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
-    \u0275\u0275advance(10);
-    \u0275\u0275property("routerLink", "/form/healthsystem");
+    const pendingAccount_r5 = ctx.$implicit;
+    const ctx_r0 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(3);
+    \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (pendingAccount_r5.value.brand == null ? null : pendingAccount_r5.value.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (pendingAccount_r5.value.portal == null ? null : pendingAccount_r5.value.portal.name) || (pendingAccount_r5.value.brand == null ? null : pendingAccount_r5.value.brand.name));
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate((pendingAccount_r5.value.portal == null ? null : pendingAccount_r5.value.portal.name) || (pendingAccount_r5.value.brand == null ? null : pendingAccount_r5.value.brand.name));
+    \u0275\u0275advance(3);
+    \u0275\u0275property("disabled", !!ctx_r0.authorizingVaultConnectionId);
+  }
+}
+function HealthSystemSearchComponent_div_0_ng_container_35_div_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 39)(1, "h3", 22);
+    \u0275\u0275text(2, "No TEFCA providers found");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "p", 40);
+    \u0275\u0275text(4, " We couldn\u2019t find any providers to add right now. You can refresh this page and try again later. ");
+    \u0275\u0275elementEnd()();
+  }
+}
+function HealthSystemSearchComponent_div_0_ng_container_35_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275template(1, HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template, 11, 5, "div", 29);
+    \u0275\u0275pipe(2, "keyvalue");
+    \u0275\u0275template(3, HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template, 11, 4, "div", 29);
+    \u0275\u0275pipe(4, "keyvalue");
+    \u0275\u0275template(5, HealthSystemSearchComponent_div_0_ng_container_35_div_5_Template, 5, 0, "div", 30);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const vaultProfile_r6 = \u0275\u0275nextContext().ngIf;
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(2, 3, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(7, _c1)));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(4, 5, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(8, _c1)));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r0.emptyTefcaResults);
+  }
+}
+function HealthSystemSearchComponent_div_0_ng_template_36_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 41);
+    \u0275\u0275text(1, " Finding providers from TEFCA for your account... ");
+    \u0275\u0275elementEnd();
+  }
+}
+function HealthSystemSearchComponent_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 2)(1, "div", 3)(2, "a", 4);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(3, "svg", 5);
+    \u0275\u0275element(4, "path", 6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(5, " Back to accounts ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(6, "div", 7)(7, "div", 8)(8, "p", 9);
+    \u0275\u0275text(9, "TEFCA discovery");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "div", 10)(11, "h1", 11);
+    \u0275\u0275text(12, "Add a healthcare provider");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "p", 12);
+    \u0275\u0275text(14, " We found these providers through TEFCA based on your verified identity. Connect the ones you want added to your vault. ");
+    \u0275\u0275elementEnd()()()();
+    \u0275\u0275element(15, "div", 13);
+    \u0275\u0275elementStart(16, "section", 14)(17, "div", 15)(18, "p", 16);
+    \u0275\u0275text(19, "Verified through TEFCA");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(20, "p", 17);
+    \u0275\u0275text(21, " Providers marked \u201CConnect now\u201D can be added immediately. Others may need you to sign in with the provider first. ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(22, HealthSystemSearchComponent_div_0_div_22_Template, 2, 1, "div", 18);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "section", 19)(24, "div", 20)(25, "div", 21)(26, "div")(27, "h2", 22);
+    \u0275\u0275text(28, "Available providers");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(29, "p", 23);
+    \u0275\u0275text(30);
+    \u0275\u0275pipe(31, "keyvalue");
+    \u0275\u0275pipe(32, "keyvalue");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(33, HealthSystemSearchComponent_div_0_div_33_Template, 2, 0, "div", 24);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(34, "div", 25);
+    \u0275\u0275template(35, HealthSystemSearchComponent_div_0_ng_container_35_Template, 6, 9, "ng-container", 26)(36, HealthSystemSearchComponent_div_0_ng_template_36_Template, 2, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const vaultProfile_r6 = ctx.ngIf;
+    const loadingState_r7 = \u0275\u0275reference(37);
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance(2);
+    \u0275\u0275property("routerLink", "/dashboard/accounts");
+    \u0275\u0275advance(20);
+    \u0275\u0275property("ngIf", ctx_r0.errorMessage);
+    \u0275\u0275advance(8);
+    \u0275\u0275textInterpolate2(" ", (vaultProfile_r6.connectedPatientAccounts || \u0275\u0275pureFunction0(11, _c03)).length, " connected, ", \u0275\u0275pipeBind1(31, 7, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(12, _c1)).length + \u0275\u0275pipeBind1(32, 9, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(13, _c1)).length, " available ");
+    \u0275\u0275advance(3);
+    \u0275\u0275property("ngIf", ctx_r0.loading);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", !ctx_r0.loading)("ngIfElse", loadingState_r7);
   }
 }
 var HealthSystemSearchComponent = class _HealthSystemSearchComponent {
-  constructor(fastenService, configService, router, logger) {
+  constructor(fastenService, configService, router, logger, injector) {
     this.fastenService = fastenService;
     this.configService = configService;
     this.router = router;
     this.logger = logger;
+    this.injector = injector;
     this.loading = false;
-    this.lighthouseBrandList = [];
-    this.showFilters = false;
-    this.filter = new SearchFilter();
-    this.resultLimits = {
-      totalItems: 0,
-      scrollComplete: false,
-      platformTypesBuckets: void 0,
-      categoryBuckets: void 0
-    };
+    this.errorMessage = "";
+    this.emptyTefcaResults = false;
+    this.authorizingVaultConnectionId = "";
   }
   ngOnInit() {
-    this.querySources(true);
-  }
-  querySources(reset) {
-    if (reset) {
-      this.resetSearch();
+    if (this.configService.systemConfig$.tefcaMode && !this.configService.vaultProfileConfig$.rlsQueryComplete) {
+      this.loadDiscoveredProviders();
     }
-    this.logger.debug("querySources()", this.filter);
+  }
+  loadDiscoveredProviders(forceReload = false) {
     if (this.loading) {
-      this.logger.info("already loading, ignoring querySources()");
-      return of(null);
+      return;
     }
-    if (!this.filter) {
-      this.filter = new SearchFilter();
-      this.logger.info("querySources() - no filter provided, using current form value", this.filter);
+    if (!forceReload && this.configService.vaultProfileConfig$.rlsQueryComplete) {
+      this.emptyTefcaResults = this.getAvailableAccountCount() === 0;
+      return;
     }
-    this.filter.fields = ["*"];
     this.loading = true;
-    var searchObservable = this.fastenService.searchCatalogBrands(ApiMode.Live, this.filter);
-    searchObservable.subscribe((wrapper) => {
-      this.logger.info("search sources", wrapper);
-      this.resultLimits.totalItems = wrapper?.hits?.total.value || 0;
-      this.lighthouseBrandList = this.lighthouseBrandList.concat((wrapper?.hits?.hits || []).map((result) => {
-        return {
-          brand: result._source,
-          searchHighlights: result?.highlight?.aliases || []
-        };
-      }));
-      if (!wrapper?.hits || !wrapper?.hits?.hits || wrapper?.hits?.hits?.length == 0 || wrapper?.hits?.total?.value == wrapper?.hits?.hits?.length) {
-        this.logger.debug("SCROLL_COMPLETE!@@@@@@@@");
-        this.resultLimits.scrollComplete = true;
-      } else {
-        this.logger.debug("SETTING NEXT SORT KEY:", wrapper.hits.hits[wrapper.hits.hits.length - 1].sort.join(","));
-        this.filter.searchAfter = wrapper.hits.hits[wrapper.hits.hits.length - 1].sort.join(",");
+    this.errorMessage = "";
+    this.emptyTefcaResults = false;
+    this.fastenService.recordLocatorRegisterAndPollForStatus().pipe(switchMap((rlsStatusResponse) => {
+      if (rlsStatusResponse.data.status === "success") {
+        return this.fastenService.recordLocatorResults(rlsStatusResponse.data.task_id);
       }
-      this.loading = false;
-    }, (error) => {
-      this.loading = false;
-      this.logger.error("sources FAILED", error);
-    }, () => {
-      this.loading = false;
-      this.logger.info("sources finished");
+      return of(new RecordLocatorResponse());
+    })).subscribe({
+      next: (rlsResponse) => {
+        const totals = StoreRecordLocatorResultsInVaultProfile(this.configService, rlsResponse);
+        this.configService.vaultProfileConfig = {
+          rlsQueryComplete: true
+        };
+        this.emptyTefcaResults = totals.numDiscovered + totals.numPending + totals.numConnected === 0;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.logger.error("Error fetching TEFCA-discovered providers", error);
+        this.configService.vaultProfileConfig = {
+          rlsQueryComplete: true
+        };
+        this.errorMessage = "We could not load your TEFCA-discovered providers right now. Please try again.";
+        this.emptyTefcaResults = true;
+        this.loading = false;
+      }
     });
-    return searchObservable;
   }
-  onScroll() {
-    if (!this.resultLimits.scrollComplete) {
-      this.querySources(false);
+  connectDiscoveredAccount(vaultProfileConnectionId, account) {
+    if (this.authorizingVaultConnectionId) {
+      return;
     }
+    this.authorizingVaultConnectionId = vaultProfileConnectionId;
+    this.errorMessage = "";
+    this.configService.vaultProfileAddConnectedAccount({
+      external_state: vaultProfileConnectionId,
+      org_connection_id: "",
+      connection_status: "connected",
+      platform_type: account.endpoint?.platform_type || "tefca",
+      brand_id: account.brand?.id,
+      portal_id: account.portal?.id,
+      endpoint_id: account.endpoint?.id,
+      vault_profile_connection_id: vaultProfileConnectionId,
+      patient_auth_type: SourceCredentialType.SourceCredentialTypeTefcaDirect
+    });
+    this.fastenService.authorizeTefcaDirect([vaultProfileConnectionId], this.configService.systemConfig$.externalId).subscribe({
+      next: (resp) => {
+        this.injector.runInContext(() => {
+          ProcessTefcaDirectAuthorizationResults([vaultProfileConnectionId], resp);
+        });
+        this.authorizingVaultConnectionId = "";
+        this.router.navigateByUrl("dashboard/accounts");
+      },
+      error: (error) => {
+        this.logger.error("Failed to authorize TEFCA provider", error);
+        this.injector.runInContext(() => {
+          ProcessTefcaDirectAuthorizationResults([vaultProfileConnectionId], null);
+        });
+        this.errorMessage = "We could not connect that provider right now. Please try again.";
+        this.authorizingVaultConnectionId = "";
+      }
+    });
   }
-  resetSearch() {
-    this.logger.info("reset search...");
-    this.lighthouseBrandList = [];
-    this.filter.searchAfter = [];
-    this.resultLimits = {
-      totalItems: 0,
-      scrollComplete: false,
-      platformTypesBuckets: void 0,
-      categoryBuckets: void 0
-    };
+  connectPendingAccount(externalState, pendingAccount) {
+    this.router.navigate(["/brand/connecting"], {
+      queryParams: {
+        brandId: pendingAccount.brand?.id,
+        portalId: pendingAccount.portal?.id,
+        endpointId: pendingAccount.endpoint?.id,
+        externalId: this.configService.systemConfig$.externalId,
+        externalState,
+        vaultProfileConnectionId: pendingAccount.vault_profile_connection_id
+      }
+    });
   }
-  selectBrand(brandItem) {
-    this.configService.searchConfig$.selectedBrand = brandItem;
-    this.router.navigateByUrl("brand/details");
+  getAvailableAccountCount() {
+    const vaultProfile = this.configService.vaultProfileConfig$;
+    return Object.keys(vaultProfile.discoveredPatientAccounts || {}).length + Object.keys(vaultProfile.pendingPatientAccounts || {}).length;
   }
   static {
     this.\u0275fac = function HealthSystemSearchComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _HealthSystemSearchComponent)(\u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
+      return new (__ngFactoryType__ || _HealthSystemSearchComponent)(\u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger), \u0275\u0275directiveInject(EnvironmentInjector));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemSearchComponent, selectors: [["app-health-system-search"]], standalone: false, decls: 36, vars: 10, consts: [[1, "vault-page-shell"], [1, "space-y-6"], ["id", "search-back", 1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "p-4", "sm:p-5"], [1, "flex", "flex-col", "gap-3", "sm:flex-row"], [1, "flex-1"], ["id", "search-input", "type", "text", "placeholder", "Search for your health system...", 1, "vault-input", 3, "ngModelChange", "keyup", "ngModel"], ["id", "search-filters", "type", "button", 1, "inline-flex", "h-[58px]", "w-[58px]", "items-center", "justify-center", "rounded-2xl", "border", "border-slate-200", "bg-white", "text-slate-600", "transition-all", "hover:border-[#5B47FB]", "hover:bg-[#EEF2FF]", "hover:text-[#5B47FB]", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "h-5", "w-5"], ["points", "22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"], ["id", "filters-container", "class", "mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4", 4, "ngIf"], [1, "vault-panel", "overflow-hidden"], [1, "border-b", "border-slate-100", "px-4", "py-4", "sm:px-5"], [1, "flex", "items-center", "justify-between", "gap-4"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["class", "text-sm font-medium text-[#5B47FB]", 4, "ngIf"], ["id", "search-results", "infiniteScroll", "", 1, "space-y-2", "overflow-y-auto", "p-3", "sm:p-4", 2, "max-height", "62vh", 3, "scrolled", "infiniteScrollDistance", "infiniteScrollThrottle", "scrollWindow"], ["type", "button", "class", "w-full rounded-lg border border-slate-200 bg-white p-4 text-left transition-all hover:border-[#5B47FB]/30 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-[#5B47FB] focus:ring-opacity-20", 3, "click", 4, "ngFor", "ngForOf"], ["class", "p-4 sm:p-5", 4, "ngIf"], ["id", "filters-container", 1, "mt-4", "rounded-lg", "border", "border-slate-200", "bg-slate-50", "p-4"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.16em]", "text-slate-500"], [1, "relative", "max-w-sm"], [1, "vault-field-label"], ["type", "button", "id", "state-filter-btn", 1, "flex", "w-full", "items-center", "justify-between", "rounded-2xl", "border", "border-slate-200", "bg-white", "px-4", "py-3", "text-sm", "text-slate-700"], ["id", "state-filter-value"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "h-4", "w-4", "opacity-50"], ["points", "6 9 12 15 18 9"], ["id", "state-filter-menu", 1, "hidden"], [1, "text-sm", "font-medium", "text-[#5B47FB]"], ["type", "button", 1, "w-full", "rounded-lg", "border", "border-slate-200", "bg-white", "p-4", "text-left", "transition-all", "hover:border-[#5B47FB]/30", "hover:shadow-sm", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:ring-opacity-20", 3, "click"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-10", "w-10", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "min-w-0", "flex-1"], [1, "font-semibold", "text-slate-900"], ["class", "mt-1 text-sm text-slate-500", 4, "ngIf"], [4, "ngFor", "ngForOf"], [4, "ngIf"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "h-5", "w-5", "text-slate-400"], ["points", "9 6 15 12 9 18"], [3, "innerHTML", 4, "ngFor", "ngForOf"], [3, "innerHTML"], [1, "p-4", "sm:p-5"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "items-center", "gap-2", "text-slate-700"], ["cx", "11", "cy", "11", "r", "8"], ["d", "m21 21-4.3-4.3"], [1, "font-medium"], [1, "mt-3", "text-sm", "text-slate-500"], ["type", "button", 1, "mt-4", "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-3", "text-sm", "font-semibold", "text-[#5B47FB]", "transition-colors", "hover:border-[#5B47FB]", "hover:bg-[#5B47FB]", "hover:text-white", 3, "routerLink"]], template: function HealthSystemSearchComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemSearchComponent, selectors: [["app-health-system-search"]], standalone: false, decls: 2, vars: 3, consts: [["loadingState", ""], ["class", "vault-page-shell", 4, "ngIf"], [1, "vault-page-shell"], [1, "space-y-6"], ["id", "search-back", 1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "p-5", "sm:p-6"], [1, "rounded-2xl", "border", "border-blue-200", "bg-blue-50", "px-4", "py-4", "text-sm", "text-slate-700"], [1, "font-semibold", "text-slate-900"], [1, "mt-1"], ["class", "mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700", 4, "ngIf"], [1, "vault-panel", "overflow-hidden"], [1, "border-b", "border-slate-100", "px-4", "py-4", "sm:px-5"], [1, "flex", "items-center", "justify-between", "gap-4"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["class", "text-sm font-medium text-[#5B47FB]", 4, "ngIf"], [1, "space-y-3", "p-3", "sm:p-4"], [4, "ngIf", "ngIfElse"], [1, "mt-4", "rounded-2xl", "border", "border-red-200", "bg-red-50", "px-4", "py-3", "text-sm", "text-red-700"], [1, "text-sm", "font-medium", "text-[#5B47FB]"], ["class", "rounded-2xl border border-slate-200 bg-white p-4", 4, "ngFor", "ngForOf"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-slate-200", "bg-white", "p-4"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-primary-button", 3, "click", "disabled"], ["type", "button", 1, "vault-secondary-button", 3, "click", "disabled"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center", "text-sm", "text-slate-500"]], template: function HealthSystemSearchComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "a", 2);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(3, "svg", 3);
-        \u0275\u0275element(4, "path", 4);
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(5, " Back to accounts ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(6, "div", 5)(7, "div", 6)(8, "p", 7);
-        \u0275\u0275text(9, "Directory search");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(10, "div", 8)(11, "h1", 9);
-        \u0275\u0275text(12, "Find your health system");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "p", 10);
-        \u0275\u0275text(14, "Search the catalog for hospitals, clinics, or labs you want to connect to your vault.");
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275element(15, "div", 11);
-        \u0275\u0275elementStart(16, "section", 12)(17, "div", 13)(18, "div", 14)(19, "input", 15);
-        \u0275\u0275twoWayListener("ngModelChange", function HealthSystemSearchComponent_Template_input_ngModelChange_19_listener($event) {
-          \u0275\u0275twoWayBindingSet(ctx.filter.query, $event) || (ctx.filter.query = $event);
-          return $event;
-        });
-        \u0275\u0275listener("keyup", function HealthSystemSearchComponent_Template_input_keyup_19_listener() {
-          return ctx.querySources(true);
-        });
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(20, "button", 16);
-        \u0275\u0275listener("click", function HealthSystemSearchComponent_Template_button_click_20_listener() {
-          return ctx.showFilters = !ctx.showFilters;
-        });
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(21, "svg", 17);
-        \u0275\u0275element(22, "polygon", 18);
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275template(23, HealthSystemSearchComponent_div_23_Template, 13, 0, "div", 19);
-        \u0275\u0275elementEnd();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(24, "section", 20)(25, "div", 21)(26, "div", 22)(27, "div")(28, "h2", 23);
-        \u0275\u0275text(29, "Available connections");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(30, "p", 24);
-        \u0275\u0275text(31);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275template(32, HealthSystemSearchComponent_div_32_Template, 2, 0, "div", 25);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(33, "div", 26);
-        \u0275\u0275listener("scrolled", function HealthSystemSearchComponent_Template_div_scrolled_33_listener() {
-          return ctx.onScroll();
-        });
-        \u0275\u0275template(34, HealthSystemSearchComponent_button_34_Template, 13, 14, "button", 27)(35, HealthSystemSearchComponent_div_35_Template, 12, 1, "div", 28);
-        \u0275\u0275elementEnd()()()();
+        \u0275\u0275template(0, HealthSystemSearchComponent_div_0_Template, 38, 14, "div", 1);
+        \u0275\u0275pipe(1, "async");
       }
       if (rf & 2) {
-        \u0275\u0275advance(2);
-        \u0275\u0275property("routerLink", "/dashboard/accounts");
-        \u0275\u0275advance(17);
-        \u0275\u0275twoWayProperty("ngModel", ctx.filter.query);
-        \u0275\u0275advance(4);
-        \u0275\u0275property("ngIf", ctx.showFilters);
-        \u0275\u0275advance(8);
-        \u0275\u0275textInterpolate1("", ctx.resultLimits.totalItems || ctx.lighthouseBrandList.length, " results");
-        \u0275\u0275advance();
-        \u0275\u0275property("ngIf", ctx.loading);
-        \u0275\u0275advance();
-        \u0275\u0275property("infiniteScrollDistance", 2)("infiniteScrollThrottle", 50)("scrollWindow", false);
-        \u0275\u0275advance();
-        \u0275\u0275property("ngForOf", ctx.lighthouseBrandList);
-        \u0275\u0275advance();
-        \u0275\u0275property("ngIf", !ctx.loading && ctx.lighthouseBrandList.length == 0);
+        \u0275\u0275property("ngIf", \u0275\u0275pipeBind1(1, 1, ctx.configService.vaultProfileConfigSubject));
       }
-    }, dependencies: [DefaultValueAccessor, NgControlStatus, NgModel, NgForOf, NgIf, RouterLink, InfiniteScrollDirective, ImageFallbackDirective, SlicePipe, SafeHtmlPipe, StateNamePipe], encapsulation: 2 });
+    }, dependencies: [NgForOf, NgIf, RouterLink, ImageFallbackDirective, AsyncPipe, KeyValuePipe], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemSearchComponent, { className: "HealthSystemSearchComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts", lineNumber: 22 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemSearchComponent, { className: "HealthSystemSearchComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts", lineNumber: 24 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/health-system-brand-details/health-system-brand-details.component.ts
-var _c03 = () => [];
+var _c04 = () => [];
 function HealthSystemBrandDetailsComponent_div_0_div_1_div_20_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 27);
@@ -61224,7 +60930,7 @@ function HealthSystemBrandDetailsComponent_div_0_div_1_div_21_span_7_Template(rf
   if (rf & 2) {
     const selectedBrand_r1 = \u0275\u0275nextContext(2).ngIf;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("+ ", (selectedBrand_r1.locations || \u0275\u0275pureFunction0(1, _c03)).length, "");
+    \u0275\u0275textInterpolate1("+ ", (selectedBrand_r1.locations || \u0275\u0275pureFunction0(1, _c04)).length, "");
   }
 }
 function HealthSystemBrandDetailsComponent_div_0_div_1_div_21_Template(rf, ctx) {
@@ -61244,9 +60950,9 @@ function HealthSystemBrandDetailsComponent_div_0_div_1_div_21_Template(rf, ctx) 
   if (rf & 2) {
     const selectedBrand_r1 = \u0275\u0275nextContext().ngIf;
     \u0275\u0275advance(5);
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(6, 2, selectedBrand_r1.locations || \u0275\u0275pureFunction0(6, _c03), 0, 3));
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(6, 2, selectedBrand_r1.locations || \u0275\u0275pureFunction0(6, _c04), 0, 3));
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngIf", (selectedBrand_r1.locations || \u0275\u0275pureFunction0(7, _c03)).length > 4);
+    \u0275\u0275property("ngIf", (selectedBrand_r1.locations || \u0275\u0275pureFunction0(7, _c04)).length > 4);
   }
 }
 function HealthSystemBrandDetailsComponent_div_0_div_1_span_24_Template(rf, ctx) {
@@ -61347,9 +61053,9 @@ function HealthSystemBrandDetailsComponent_div_0_div_1_Template(rf, ctx) {
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", selectedBrand_r1.locations);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", (selectedBrand_r1.portals || \u0275\u0275pureFunction0(9, _c03)).length, " sign-in option");
+    \u0275\u0275textInterpolate1(" ", (selectedBrand_r1.portals || \u0275\u0275pureFunction0(9, _c04)).length, " sign-in option");
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", (selectedBrand_r1.portals || \u0275\u0275pureFunction0(10, _c03)).length !== 1);
+    \u0275\u0275property("ngIf", (selectedBrand_r1.portals || \u0275\u0275pureFunction0(10, _c04)).length !== 1);
     \u0275\u0275advance(7);
     \u0275\u0275property("ngForOf", selectedBrand_r1.portals);
   }
@@ -61414,13 +61120,14 @@ function ConnectHelper(connectData) {
   if (!connectData.external_state) {
     connectData.external_state = v4_default();
   }
-  vaultApi.accountConnectWithPopup(connectData.brand_id, connectData.portal_id, connectData.endpoint_id, connectData.org_connection_id, connectData.external_id, connectData.external_state).subscribe((orgConnectionCallbackData) => {
+  connectData.public_id = configService.systemConfig$.publicId;
+  return vaultApi.accountConnectWithPopup(connectData).subscribe((orgConnectionCallbackData) => {
     console.log(orgConnectionCallbackData);
     if (!orgConnectionCallbackData) {
       return;
     }
     configService.vaultProfileAddConnectedAccount(orgConnectionCallbackData);
-    router.navigateByUrl("dashboard");
+    router.navigateByUrl("dashboard/accounts");
   }, (err) => {
     console.error("Error parsing error data", err);
     try {
@@ -61433,7 +61140,7 @@ function ConnectHelper(connectData) {
         errData = err;
       }
       if (errData.error == "timeout") {
-        return router.navigateByUrl("dashboard");
+        return router.navigateByUrl("dashboard/accounts");
       } else {
         console.error("an error occurred while attempting to connect health system", err);
         router.navigate(["form/support"], {
@@ -61444,6 +61151,7 @@ function ConnectHelper(connectData) {
             "portal_id": connectData.portal_id,
             "endpoint_id": connectData.endpoint_id,
             "org_connection_id": connectData.org_connection_id,
+            "vault_profile_connection_id": connectData.vault_profile_connection_id,
             "external_id": connectData.external_id,
             "external_state": connectData.external_state || errData.external_state,
             "request_id": errData.request_id
@@ -61459,6 +61167,7 @@ function ConnectHelper(connectData) {
           "portal_id": connectData.portal_id,
           "endpoint_id": connectData.endpoint_id,
           "org_connection_id": connectData.org_connection_id,
+          "vault_profile_connection_id": connectData.vault_profile_connection_id,
           "external_id": connectData.external_id,
           "external_state": connectData.external_state || err["external_state"]
         }
@@ -61469,7 +61178,7 @@ function ConnectHelper(connectData) {
 }
 
 // projects/fasten-connect-vault/src/app/pages/health-system-connecting/health-system-connecting.component.ts
-var _c04 = (a0, a1, a2, a3, a4, a5) => ({ brand_id: a0, portal_id: a1, endpoint_id: a2, org_connection_id: a3, external_id: a4, external_state: a5 });
+var _c05 = (a0, a1, a2, a3, a4, a5, a6) => ({ brand_id: a0, portal_id: a1, endpoint_id: a2, org_connection_id: a3, vault_profile_connection_id: a4, external_id: a5, external_state: a6 });
 function HealthSystemConnectingComponent_a_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -61503,23 +61212,27 @@ var HealthSystemConnectingComponent = class _HealthSystemConnectingComponent {
     this.orgConnectionId = "";
     this.externalId = "";
     this.externalState = "";
+    this.vaultProfileConnectionId = "";
+  }
+  ngOnDestroy() {
+    this.connectHelperSubscription?.unsubscribe();
   }
   ngOnInit() {
     this.injector.runInContext(() => {
-      ConnectHelper({
-        public_id: environment.org_credential_test_public_id,
+      this.connectHelperSubscription = ConnectHelper({
+        public_id: this.configService.systemConfig$.publicId,
         brand_id: this.brandId,
         portal_id: this.portalId,
         endpoint_id: this.endpointId,
         org_connection_id: this.orgConnectionId,
         external_id: this.externalId,
-        external_state: this.externalState
-        // connect_mode: this.connectMode,
+        external_state: this.externalState,
+        vault_profile_connection_id: this.vaultProfileConnectionId
       });
     });
   }
   cancelAccountConnect() {
-    this.router.navigateByUrl("dashboard");
+    this.router.navigateByUrl("dashboard/accounts");
   }
   static {
     this.\u0275fac = function HealthSystemConnectingComponent_Factory(__ngFactoryType__) {
@@ -61527,7 +61240,7 @@ var HealthSystemConnectingComponent = class _HealthSystemConnectingComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemConnectingComponent, selectors: [["app-health-system-connecting"]], inputs: { brandId: "brandId", portalId: "portalId", endpointId: "endpointId", orgConnectionId: "orgConnectionId", externalId: "externalId", externalState: "externalState" }, standalone: false, decls: 36, vars: 16, consts: [[1, "vault-page-shell"], [1, "mx-auto", "max-w-3xl", "space-y-6"], ["id", "connecting-back", "class", "vault-back-link cursor-pointer", 3, "click", 4, "ngIf"], ["class", "vault-divider", 4, "ngIf"], [1, "vault-panel", "px-6", "py-8", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-8"], [1, "space-y-3"], [1, "vault-page-kicker"], ["id", "connecting-title", 1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900", "sm:text-4xl"], ["id", "connecting-subtitle", 1, "mx-auto", "max-w-xl", "text-base", "leading-7", "text-slate-500"], [1, "flex", "items-center", "justify-center", "gap-4"], [1, "flex", "h-20", "w-20", "items-center", "justify-center", "rounded-lg", "border", "border-slate-200", "bg-white", "p-4", "shadow-sm"], ["imageFallback", "unknown-organization", "alt", "Organization Logo", 1, "h-full", "w-full", "object-contain", 3, "src"], [1, "flex", "items-center", "gap-2"], [1, "h-2.5", "w-2.5", "rounded-full", "bg-[#5B47FB]", "opacity-50", "animate-pulse"], [1, "h-2.5", "w-2.5", "rounded-full", "bg-[#5B47FB]", "opacity-70", "animate-pulse", 2, "animation-delay", "200ms"], [1, "h-2.5", "w-2.5", "rounded-full", "bg-[#5B47FB]", "animate-pulse", 2, "animation-delay", "400ms"], ["id", "connecting-system-logo-container", 1, "flex", "h-20", "w-20", "items-center", "justify-center", "rounded-lg", "border", "border-slate-200", "bg-white", "p-4", "shadow-sm"], ["id", "connecting-system-logo", "imageFallback", "hospital", 1, "h-full", "w-full", "object-contain", 3, "src"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-4"], [1, "flex", "items-center", "gap-2", "text-slate-700"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "h-5", "w-5"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"], ["d", "M12 17h.01"], [1, "font-medium"], [1, "text-sm", "leading-6", "text-slate-500"], ["type", "button", 1, "vault-secondary-button", 3, "routerLink", "queryParams"], ["id", "connecting-back", 1, "vault-back-link", "cursor-pointer", 3, "click"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-divider"]], template: function HealthSystemConnectingComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemConnectingComponent, selectors: [["app-health-system-connecting"]], inputs: { brandId: "brandId", portalId: "portalId", endpointId: "endpointId", orgConnectionId: "orgConnectionId", externalId: "externalId", externalState: "externalState", vaultProfileConnectionId: "vaultProfileConnectionId" }, standalone: false, decls: 36, vars: 17, consts: [[1, "vault-page-shell"], [1, "mx-auto", "max-w-3xl", "space-y-6"], ["id", "connecting-back", "class", "vault-back-link cursor-pointer", 3, "click", 4, "ngIf"], ["class", "vault-divider", 4, "ngIf"], [1, "vault-panel", "px-6", "py-8", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-8"], [1, "space-y-3"], [1, "vault-page-kicker"], ["id", "connecting-title", 1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900", "sm:text-4xl"], ["id", "connecting-subtitle", 1, "mx-auto", "max-w-xl", "text-base", "leading-7", "text-slate-500"], [1, "flex", "items-center", "justify-center", "gap-4"], [1, "flex", "h-20", "w-20", "items-center", "justify-center", "rounded-lg", "border", "border-slate-200", "bg-white", "p-4", "shadow-sm"], ["imageFallback", "unknown-organization", "alt", "Organization Logo", 1, "h-full", "w-full", "object-contain", 3, "src"], [1, "flex", "items-center", "gap-2"], [1, "h-2.5", "w-2.5", "rounded-full", "bg-[#5B47FB]", "opacity-50", "animate-pulse"], [1, "h-2.5", "w-2.5", "rounded-full", "bg-[#5B47FB]", "opacity-70", "animate-pulse", 2, "animation-delay", "200ms"], [1, "h-2.5", "w-2.5", "rounded-full", "bg-[#5B47FB]", "animate-pulse", 2, "animation-delay", "400ms"], ["id", "connecting-system-logo-container", 1, "flex", "h-20", "w-20", "items-center", "justify-center", "rounded-lg", "border", "border-slate-200", "bg-white", "p-4", "shadow-sm"], ["id", "connecting-system-logo", "imageFallback", "hospital", 1, "h-full", "w-full", "object-contain", 3, "src"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-4"], [1, "flex", "items-center", "gap-2", "text-slate-700"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "h-5", "w-5"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"], ["d", "M12 17h.01"], [1, "font-medium"], [1, "text-sm", "leading-6", "text-slate-500"], ["type", "button", 1, "vault-secondary-button", 3, "routerLink", "queryParams"], ["id", "connecting-back", 1, "vault-back-link", "cursor-pointer", 3, "click"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-divider"]], template: function HealthSystemConnectingComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
         \u0275\u0275template(2, HealthSystemConnectingComponent_a_2_Template, 4, 0, "a", 2)(3, HealthSystemConnectingComponent_div_3_Template, 1, 0, "div", 3);
@@ -61577,7 +61290,7 @@ var HealthSystemConnectingComponent = class _HealthSystemConnectingComponent {
         \u0275\u0275advance(7);
         \u0275\u0275propertyInterpolate1("src", "https://cdn.fastenhealth.com/logos/sources/", ctx.brandId, ".png", \u0275\u0275sanitizeUrl);
         \u0275\u0275advance(12);
-        \u0275\u0275property("routerLink", "/form/support")("queryParams", \u0275\u0275pureFunction6(9, _c04, ctx.brandId, ctx.portalId, ctx.endpointId, ctx.orgConnectionId, ctx.externalId, ctx.externalState));
+        \u0275\u0275property("routerLink", "/form/support")("queryParams", \u0275\u0275pureFunction7(9, _c05, ctx.brandId, ctx.portalId, ctx.endpointId, ctx.orgConnectionId, ctx.vaultProfileConnectionId, ctx.externalId, ctx.externalState));
       }
     }, dependencies: [NgIf, RouterLink, ImageFallbackDirective, AsyncPipe], encapsulation: 2 });
   }
@@ -61709,14 +61422,23 @@ function AppComponent_ng_template_7_Template(rf, ctx) {
   }
 }
 var AppComponent = class _AppComponent {
-  constructor(router) {
+  constructor(router, configService) {
     this.router = router;
+    this.configService = configService;
     this.title = "fastenhealth";
   }
   ngOnInit() {
     const navbarBackdrop = document.createElement("div");
     navbarBackdrop.classList.add("az-navbar-backdrop");
     document.querySelector("body")?.appendChild(navbarBackdrop);
+    const urlParams = new URLSearchParams(window.location.search);
+    this.configService.systemConfig = {
+      apiMode: this.getApiModeFromPublicId(ORG_CREDENTIAL_PUBLIC_ID),
+      publicId: ORG_CREDENTIAL_PUBLIC_ID,
+      externalId: urlParams.get("external-id") || "",
+      tefcaMode: true,
+      connectMode: ConnectMode.Popup
+    };
   }
   get currentPath() {
     return this.router.url.split("?")[0];
@@ -61745,9 +61467,16 @@ var AppComponent = class _AppComponent {
     }
     return "bg-[#DC3545] text-white text-center py-2 px-4 font-medium text-sm flex items-center justify-center gap-2";
   }
+  getApiModeFromPublicId(publicId) {
+    const publicIdParts = publicId.split("_");
+    if (publicIdParts.length === 3 && publicIdParts[1] === ApiMode.Live) {
+      return ApiMode.Live;
+    }
+    return ApiMode.Test;
+  }
   static {
     this.\u0275fac = function AppComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(Router));
+      return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(ConfigService));
     };
   }
   static {
@@ -61772,7 +61501,7 @@ var AppComponent = class _AppComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "projects/fasten-connect-vault/src/app/app.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AppComponent, { className: "AppComponent", filePath: "projects/fasten-connect-vault/src/app/app.component.ts", lineNumber: 11 });
 })();
 
 // node_modules/@fortawesome/free-solid-svg-icons/index.mjs
@@ -72489,6 +72218,513 @@ var icons2 = {
   faHandPointLeft: faHandPointLeft2
 };
 
+// node_modules/ngx-infinite-scroll/fesm2022/ngx-infinite-scroll.mjs
+function resolveContainerElement(selector, scrollWindow, defaultElement, fromRoot) {
+  const hasWindow = window && !!window.document && window.document.documentElement;
+  let container = hasWindow && scrollWindow ? window : defaultElement;
+  if (selector) {
+    const containerIsString = selector && hasWindow && typeof selector === "string";
+    container = containerIsString ? findElement(selector, defaultElement.nativeElement, fromRoot) : selector;
+    if (!container) {
+      throw new Error("ngx-infinite-scroll {resolveContainerElement()}: selector for");
+    }
+  }
+  return container;
+}
+function findElement(selector, customRoot, fromRoot) {
+  const rootEl = fromRoot ? window.document : customRoot;
+  return rootEl.querySelector(selector);
+}
+function inputPropChanged(prop) {
+  return prop && !prop.firstChange;
+}
+function hasWindowDefined() {
+  return typeof window !== "undefined";
+}
+var VerticalProps = {
+  clientHeight: "clientHeight",
+  offsetHeight: "offsetHeight",
+  scrollHeight: "scrollHeight",
+  pageYOffset: "pageYOffset",
+  offsetTop: "offsetTop",
+  scrollTop: "scrollTop",
+  top: "top"
+};
+var HorizontalProps = {
+  clientHeight: "clientWidth",
+  offsetHeight: "offsetWidth",
+  scrollHeight: "scrollWidth",
+  pageYOffset: "pageXOffset",
+  offsetTop: "offsetLeft",
+  scrollTop: "scrollLeft",
+  top: "left"
+};
+var AxisResolver = class {
+  constructor(vertical = true) {
+    this.vertical = vertical;
+    this.propsMap = vertical ? VerticalProps : HorizontalProps;
+  }
+  clientHeightKey() {
+    return this.propsMap.clientHeight;
+  }
+  offsetHeightKey() {
+    return this.propsMap.offsetHeight;
+  }
+  scrollHeightKey() {
+    return this.propsMap.scrollHeight;
+  }
+  pageYOffsetKey() {
+    return this.propsMap.pageYOffset;
+  }
+  offsetTopKey() {
+    return this.propsMap.offsetTop;
+  }
+  scrollTopKey() {
+    return this.propsMap.scrollTop;
+  }
+  topKey() {
+    return this.propsMap.top;
+  }
+};
+function shouldTriggerEvents(alwaysCallback, shouldFireScrollEvent2, isTriggeredCurrentTotal) {
+  if (alwaysCallback && shouldFireScrollEvent2) {
+    return true;
+  }
+  if (!isTriggeredCurrentTotal && shouldFireScrollEvent2) {
+    return true;
+  }
+  return false;
+}
+function createResolver({
+  windowElement,
+  axis
+}) {
+  return createResolverWithContainer({
+    axis,
+    isWindow: isElementWindow(windowElement)
+  }, windowElement);
+}
+function createResolverWithContainer(resolver, windowElement) {
+  const container = resolver.isWindow || windowElement && !windowElement.nativeElement ? windowElement : windowElement.nativeElement;
+  return __spreadProps(__spreadValues({}, resolver), {
+    container
+  });
+}
+function isElementWindow(windowElement) {
+  const isWindow = ["Window", "global"].some((obj) => Object.prototype.toString.call(windowElement).includes(obj));
+  return isWindow;
+}
+function getDocumentElement(isContainerWindow, windowElement) {
+  return isContainerWindow ? windowElement.document.documentElement : null;
+}
+function calculatePoints(element, resolver) {
+  const height = extractHeightForElement(resolver);
+  return resolver.isWindow ? calculatePointsForWindow(height, element, resolver) : calculatePointsForElement(height, element, resolver);
+}
+function calculatePointsForWindow(height, element, resolver) {
+  const {
+    axis,
+    container,
+    isWindow
+  } = resolver;
+  const {
+    offsetHeightKey,
+    clientHeightKey
+  } = extractHeightPropKeys(axis);
+  const scrolled = height + getElementPageYOffset(getDocumentElement(isWindow, container), axis, isWindow);
+  const nativeElementHeight = getElementHeight(element.nativeElement, isWindow, offsetHeightKey, clientHeightKey);
+  const totalToScroll = getElementOffsetTop(element.nativeElement, axis, isWindow) + nativeElementHeight;
+  return {
+    height,
+    scrolled,
+    totalToScroll,
+    isWindow
+  };
+}
+function calculatePointsForElement(height, element, resolver) {
+  const {
+    axis,
+    container
+  } = resolver;
+  const scrolled = container[axis.scrollTopKey()];
+  const totalToScroll = container[axis.scrollHeightKey()];
+  return {
+    height,
+    scrolled,
+    totalToScroll,
+    isWindow: false
+  };
+}
+function extractHeightPropKeys(axis) {
+  return {
+    offsetHeightKey: axis.offsetHeightKey(),
+    clientHeightKey: axis.clientHeightKey()
+  };
+}
+function extractHeightForElement({
+  container,
+  isWindow,
+  axis
+}) {
+  const {
+    offsetHeightKey,
+    clientHeightKey
+  } = extractHeightPropKeys(axis);
+  return getElementHeight(container, isWindow, offsetHeightKey, clientHeightKey);
+}
+function getElementHeight(elem, isWindow, offsetHeightKey, clientHeightKey) {
+  if (isNaN(elem[offsetHeightKey])) {
+    const docElem = getDocumentElement(isWindow, elem);
+    return docElem ? docElem[clientHeightKey] : 0;
+  } else {
+    return elem[offsetHeightKey];
+  }
+}
+function getElementOffsetTop(elem, axis, isWindow) {
+  const topKey = axis.topKey();
+  if (!elem.getBoundingClientRect) {
+    return;
+  }
+  return elem.getBoundingClientRect()[topKey] + getElementPageYOffset(elem, axis, isWindow);
+}
+function getElementPageYOffset(elem, axis, isWindow) {
+  const pageYOffset = axis.pageYOffsetKey();
+  const scrollTop = axis.scrollTopKey();
+  const offsetTop = axis.offsetTopKey();
+  if (isNaN(window.pageYOffset)) {
+    return getDocumentElement(isWindow, elem)[scrollTop];
+  } else if (elem.ownerDocument) {
+    return elem.ownerDocument.defaultView[pageYOffset];
+  } else {
+    return elem[offsetTop];
+  }
+}
+function shouldFireScrollEvent(container, distance = {
+  down: 0,
+  up: 0
+}, scrollingDown) {
+  let remaining;
+  let containerBreakpoint;
+  if (container.totalToScroll <= 0) {
+    return false;
+  }
+  const scrolledUntilNow = container.isWindow ? container.scrolled : container.height + container.scrolled;
+  if (scrollingDown) {
+    remaining = (container.totalToScroll - scrolledUntilNow) / container.totalToScroll;
+    const distanceDown = distance?.down ? distance.down : 0;
+    containerBreakpoint = distanceDown / 10;
+  } else {
+    const totalHiddenContentHeight = container.scrolled + (container.totalToScroll - scrolledUntilNow);
+    remaining = container.scrolled / totalHiddenContentHeight;
+    const distanceUp = distance?.up ? distance.up : 0;
+    containerBreakpoint = distanceUp / 10;
+  }
+  const shouldFireEvent = remaining <= containerBreakpoint;
+  return shouldFireEvent;
+}
+function isScrollingDownwards(lastScrollPosition, container) {
+  return lastScrollPosition < container.scrolled;
+}
+function getScrollStats(lastScrollPosition, container, distance) {
+  const scrollDown = isScrollingDownwards(lastScrollPosition, container);
+  return {
+    fire: shouldFireScrollEvent(container, distance, scrollDown),
+    scrollDown
+  };
+}
+var ScrollState = class {
+  constructor(attrs) {
+    this.lastScrollPosition = 0;
+    this.lastTotalToScroll = 0;
+    this.totalToScroll = 0;
+    this.triggered = {
+      down: 0,
+      up: 0
+    };
+    Object.assign(this, attrs);
+  }
+  updateScrollPosition(position) {
+    return this.lastScrollPosition = position;
+  }
+  updateTotalToScroll(totalToScroll) {
+    if (this.lastTotalToScroll !== totalToScroll) {
+      this.lastTotalToScroll = this.totalToScroll;
+      this.totalToScroll = totalToScroll;
+    }
+  }
+  updateScroll(scrolledUntilNow, totalToScroll) {
+    this.updateScrollPosition(scrolledUntilNow);
+    this.updateTotalToScroll(totalToScroll);
+  }
+  updateTriggeredFlag(scroll, isScrollingDown) {
+    if (isScrollingDown) {
+      this.triggered.down = scroll;
+    } else {
+      this.triggered.up = scroll;
+    }
+  }
+  isTriggeredScroll(totalToScroll, isScrollingDown) {
+    return isScrollingDown ? this.triggered.down === totalToScroll : this.triggered.up === totalToScroll;
+  }
+};
+function createScroller(config3) {
+  const {
+    scrollContainer,
+    scrollWindow,
+    element,
+    fromRoot
+  } = config3;
+  const resolver = createResolver({
+    axis: new AxisResolver(!config3.horizontal),
+    windowElement: resolveContainerElement(scrollContainer, scrollWindow, element, fromRoot)
+  });
+  const scrollState = new ScrollState({
+    totalToScroll: calculatePoints(element, resolver).totalToScroll
+  });
+  const options = {
+    container: resolver.container,
+    throttle: config3.throttle
+  };
+  const distance = {
+    up: config3.upDistance,
+    down: config3.downDistance
+  };
+  return attachScrollEvent(options).pipe(mergeMap(() => of(calculatePoints(element, resolver))), map((positionStats) => toInfiniteScrollParams(scrollState.lastScrollPosition, positionStats, distance)), tap(({
+    stats
+  }) => scrollState.updateScroll(stats.scrolled, stats.totalToScroll)), filter(({
+    fire,
+    scrollDown,
+    stats: {
+      totalToScroll
+    }
+  }) => shouldTriggerEvents(config3.alwaysCallback, fire, scrollState.isTriggeredScroll(totalToScroll, scrollDown))), tap(({
+    scrollDown,
+    stats: {
+      totalToScroll
+    }
+  }) => {
+    scrollState.updateTriggeredFlag(totalToScroll, scrollDown);
+  }), map(toInfiniteScrollAction));
+}
+function attachScrollEvent(options) {
+  let obs = fromEvent(options.container, "scroll");
+  if (options.throttle) {
+    obs = obs.pipe(throttleTime(options.throttle, void 0, {
+      leading: true,
+      trailing: true
+    }));
+  }
+  return obs;
+}
+function toInfiniteScrollParams(lastScrollPosition, stats, distance) {
+  const {
+    scrollDown,
+    fire
+  } = getScrollStats(lastScrollPosition, stats, distance);
+  return {
+    scrollDown,
+    fire,
+    stats
+  };
+}
+var InfiniteScrollActions = {
+  DOWN: "[NGX_ISE] DOWN",
+  UP: "[NGX_ISE] UP"
+};
+function toInfiniteScrollAction(response) {
+  const {
+    scrollDown,
+    stats: {
+      scrolled: currentScrollPosition
+    }
+  } = response;
+  return {
+    type: scrollDown ? InfiniteScrollActions.DOWN : InfiniteScrollActions.UP,
+    payload: {
+      currentScrollPosition
+    }
+  };
+}
+var InfiniteScrollDirective = class _InfiniteScrollDirective {
+  constructor(element, zone) {
+    this.element = element;
+    this.zone = zone;
+    this.scrolled = new EventEmitter();
+    this.scrolledUp = new EventEmitter();
+    this.infiniteScrollDistance = 2;
+    this.infiniteScrollUpDistance = 1.5;
+    this.infiniteScrollThrottle = 150;
+    this.infiniteScrollDisabled = false;
+    this.infiniteScrollContainer = null;
+    this.scrollWindow = true;
+    this.immediateCheck = false;
+    this.horizontal = false;
+    this.alwaysCallback = false;
+    this.fromRoot = false;
+  }
+  ngAfterViewInit() {
+    if (!this.infiniteScrollDisabled) {
+      this.setup();
+    }
+  }
+  ngOnChanges({
+    infiniteScrollContainer,
+    infiniteScrollDisabled,
+    infiniteScrollDistance
+  }) {
+    const containerChanged = inputPropChanged(infiniteScrollContainer);
+    const disabledChanged = inputPropChanged(infiniteScrollDisabled);
+    const distanceChanged = inputPropChanged(infiniteScrollDistance);
+    const shouldSetup = !disabledChanged && !this.infiniteScrollDisabled || disabledChanged && !infiniteScrollDisabled.currentValue || distanceChanged;
+    if (containerChanged || disabledChanged || distanceChanged) {
+      this.destroyScroller();
+      if (shouldSetup) {
+        this.setup();
+      }
+    }
+  }
+  ngOnDestroy() {
+    this.destroyScroller();
+  }
+  setup() {
+    if (!hasWindowDefined()) {
+      return;
+    }
+    this.zone.runOutsideAngular(() => {
+      this.disposeScroller = createScroller({
+        fromRoot: this.fromRoot,
+        alwaysCallback: this.alwaysCallback,
+        disable: this.infiniteScrollDisabled,
+        downDistance: this.infiniteScrollDistance,
+        element: this.element,
+        horizontal: this.horizontal,
+        scrollContainer: this.infiniteScrollContainer,
+        scrollWindow: this.scrollWindow,
+        throttle: this.infiniteScrollThrottle,
+        upDistance: this.infiniteScrollUpDistance
+      }).subscribe((payload) => this.handleOnScroll(payload));
+    });
+  }
+  handleOnScroll({
+    type,
+    payload
+  }) {
+    const emitter = type === InfiniteScrollActions.DOWN ? this.scrolled : this.scrolledUp;
+    if (hasObservers(emitter)) {
+      this.zone.run(() => emitter.emit(payload));
+    }
+  }
+  destroyScroller() {
+    if (this.disposeScroller) {
+      this.disposeScroller.unsubscribe();
+    }
+  }
+  static {
+    this.\u0275fac = function InfiniteScrollDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _InfiniteScrollDirective)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(NgZone));
+    };
+  }
+  static {
+    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({
+      type: _InfiniteScrollDirective,
+      selectors: [["", "infiniteScroll", ""], ["", "infinite-scroll", ""], ["", "data-infinite-scroll", ""]],
+      inputs: {
+        infiniteScrollDistance: "infiniteScrollDistance",
+        infiniteScrollUpDistance: "infiniteScrollUpDistance",
+        infiniteScrollThrottle: "infiniteScrollThrottle",
+        infiniteScrollDisabled: "infiniteScrollDisabled",
+        infiniteScrollContainer: "infiniteScrollContainer",
+        scrollWindow: "scrollWindow",
+        immediateCheck: "immediateCheck",
+        horizontal: "horizontal",
+        alwaysCallback: "alwaysCallback",
+        fromRoot: "fromRoot"
+      },
+      outputs: {
+        scrolled: "scrolled",
+        scrolledUp: "scrolledUp"
+      },
+      features: [\u0275\u0275NgOnChangesFeature]
+    });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollDirective, [{
+    type: Directive,
+    args: [{
+      selector: "[infiniteScroll], [infinite-scroll], [data-infinite-scroll]"
+    }]
+  }], () => [{
+    type: ElementRef
+  }, {
+    type: NgZone
+  }], {
+    scrolled: [{
+      type: Output
+    }],
+    scrolledUp: [{
+      type: Output
+    }],
+    infiniteScrollDistance: [{
+      type: Input
+    }],
+    infiniteScrollUpDistance: [{
+      type: Input
+    }],
+    infiniteScrollThrottle: [{
+      type: Input
+    }],
+    infiniteScrollDisabled: [{
+      type: Input
+    }],
+    infiniteScrollContainer: [{
+      type: Input
+    }],
+    scrollWindow: [{
+      type: Input
+    }],
+    immediateCheck: [{
+      type: Input
+    }],
+    horizontal: [{
+      type: Input
+    }],
+    alwaysCallback: [{
+      type: Input
+    }],
+    fromRoot: [{
+      type: Input
+    }]
+  });
+})();
+function hasObservers(emitter) {
+  return emitter.observed ?? emitter.observers.length > 0;
+}
+var InfiniteScrollModule = class _InfiniteScrollModule {
+  static {
+    this.\u0275fac = function InfiniteScrollModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _InfiniteScrollModule)();
+    };
+  }
+  static {
+    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
+      type: _InfiniteScrollModule
+    });
+  }
+  static {
+    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({});
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(InfiniteScrollModule, [{
+    type: NgModule,
+    args: [{
+      exports: [InfiniteScrollDirective],
+      imports: [InfiniteScrollDirective]
+    }]
+  }], null, null);
+})();
+
 // node_modules/@fortawesome/fontawesome-svg-core/index.mjs
 function _defineProperty(e, r2, t2) {
   return (r2 = _toPropertyKey(r2)) in e ? Object.defineProperty(e, r2, {
@@ -75292,7 +75528,7 @@ var text = api.text;
 var counter = api.counter;
 
 // node_modules/@fortawesome/angular-fontawesome/fesm2022/angular-fontawesome.mjs
-var _c05 = ["*"];
+var _c06 = ["*"];
 var faWarnIfIconDefinitionMissing = (iconSpec) => {
   throw new Error(`Could not find icon with iconName=${iconSpec.iconName} and prefix=${iconSpec.prefix} in the icon library.`);
 };
@@ -75539,7 +75775,7 @@ var FaStackComponent = class _FaStackComponent {
         size: "size"
       },
       features: [\u0275\u0275NgOnChangesFeature],
-      ngContentSelectors: _c05,
+      ngContentSelectors: _c06,
       decls: 1,
       vars: 0,
       template: function FaStackComponent_Template(rf, ctx) {
@@ -75900,7 +76136,7 @@ var FaLayersComponent = class _FaLayersComponent {
         fixedWidth: "fixedWidth"
       },
       features: [\u0275\u0275NgOnChangesFeature],
-      ngContentSelectors: _c05,
+      ngContentSelectors: _c06,
       decls: 1,
       vars: 0,
       template: function FaLayersComponent_Template(rf, ctx) {
