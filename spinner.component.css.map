@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/fasten-connect-vault/src/app/components/spinner/spinner.component.css"],
+  "sourcesContent": [":host {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  line-height: 0;\n}\n\n.vault-spinner {\n  display: inline-flex;\n  flex-shrink: 0;\n  border-style: solid;\n  border-radius: 999px;\n  animation: vault-spinner-rotate 1s linear infinite;\n  box-sizing: border-box;\n}\n\n@keyframes vault-spinner-rotate {\n  to {\n    transform: rotate(360deg);\n  }\n}\n"],
+  "mappings": ";AAAA;AACE,WAAS;AACT,eAAa;AACb,mBAAiB;AACjB,eAAa;AACf;AAEA,CAAC;AACC,WAAS;AACT,eAAa;AACb,gBAAc;AACd,iBAAe;AACf,aAAW,qBAAqB,GAAG,OAAO;AAC1C,cAAY;AACd;AAEA,WAJa;AAKX;AACE,eAAW,OAAO;AACpB;AACF;",
+  "names": []
+}
