@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.css"],
+  "sourcesContent": [":host {\n  display: block;\n}\n"],
+  "mappings": ";AAAA;AACE,WAAS;AACX;",
+  "names": []
+}

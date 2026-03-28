@@ -58114,7 +58114,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
     this.loading = true;
     console.log("Signin", this.existingVaultProfile.email);
     this.authService.VaultAuthBegin(this.existingVaultProfile.email).then((resp) => {
-      if (this.configService.systemConfig$.apiMode === ApiMode.Test) {
+      if (this.configService.systemConfig$?.apiMode === ApiMode.Test) {
         return this.authService.GetJWTPayload().then((payload) => {
           this.loading = false;
           if (payload) {
@@ -58918,398 +58918,208 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
 
 // projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts
 var _c02 = () => ({ exact: true });
-function DashboardComponent_a_29__svg_svg_4_Template(rf, ctx) {
+function DashboardComponent_article_81_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 37);
-    \u0275\u0275element(1, "rect", 38)(2, "rect", 39)(3, "rect", 40)(4, "rect", 41);
+    \u0275\u0275elementStart(0, "article", 48)(1, "div", 49)(2, "div")(3, "p", 50);
+    \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-  }
-}
-function DashboardComponent_a_29__svg_svg_5_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 37);
-    \u0275\u0275element(1, "path", 42)(2, "circle", 43)(3, "path", 44)(4, "path", 45);
+    \u0275\u0275elementStart(5, "p", 51);
+    \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-  }
-}
-function DashboardComponent_a_29__svg_svg_6_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 37);
-    \u0275\u0275element(1, "path", 46)(2, "path", 47);
-    \u0275\u0275elementEnd();
-  }
-}
-function DashboardComponent_a_29_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "a", 30, 0)(2, "div", 31);
-    \u0275\u0275elementContainerStart(3, 32);
-    \u0275\u0275template(4, DashboardComponent_a_29__svg_svg_4_Template, 5, 0, "svg", 33)(5, DashboardComponent_a_29__svg_svg_5_Template, 5, 0, "svg", 33)(6, DashboardComponent_a_29__svg_svg_6_Template, 3, 0, "svg", 33);
-    \u0275\u0275elementContainerEnd();
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "div", 34)(8, "p", 35);
-    \u0275\u0275text(9);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "p", 36);
-    \u0275\u0275text(11);
+    \u0275\u0275elementStart(7, "p", 52);
+    \u0275\u0275text(8);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(9, "span", 53);
+    \u0275\u0275text(10, " FC ");
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
-    const item_r1 = ctx.$implicit;
-    const routeLink_r2 = \u0275\u0275reference(1);
-    \u0275\u0275property("routerLink", item_r1.route)("routerLinkActiveOptions", \u0275\u0275pureFunction0(15, _c02))("ngClass", routeLink_r2.isActive ? "" : "bg-white text-slate-600 hover:bg-slate-50");
+    const metric_r1 = ctx.$implicit;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(metric_r1.label);
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngClass", routeLink_r2.isActive ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitch", item_r1.id);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "apps");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "accounts");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "settings");
+    \u0275\u0275textInterpolate(metric_r1.value);
     \u0275\u0275advance(2);
-    \u0275\u0275classProp("text-white", routeLink_r2.isActive)("text-slate-900", !routeLink_r2.isActive);
+    \u0275\u0275textInterpolate(metric_r1.delta);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate(item_r1.label);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngClass", routeLink_r2.isActive ? "text-white/75" : "text-slate-500");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate(item_r1.helper);
+    \u0275\u0275property("ngClass", metric_r1.accentClass);
   }
 }
 var DashboardComponent = class _DashboardComponent {
-  constructor() {
-    this.navItems = [
+  constructor(router) {
+    this.router = router;
+    this.metrics = [
       {
-        id: "apps",
-        label: "Dashboard",
-        route: "/dashboard/apps",
-        helper: "Usage, exports, and activity"
+        label: "Authorized apps",
+        value: "12",
+        delta: "+2 this month",
+        accentClass: "bg-[#EEF2FF] text-[#5B47FB]"
       },
       {
-        id: "accounts",
-        label: "Connections",
-        route: "/dashboard/accounts",
-        helper: "Institutions and patient links"
+        label: "Linked institutions",
+        value: "5",
+        delta: "1 needs attention",
+        accentClass: "bg-[#ECFDF3] text-[#027A48]"
       },
       {
-        id: "settings",
-        label: "Settings",
-        route: "/dashboard/settings",
-        helper: "Profile, security, and access"
+        label: "Records shared",
+        value: "428",
+        delta: "Last sync 2 hours ago",
+        accentClass: "bg-[#FFF7ED] text-[#C2410C]"
+      },
+      {
+        label: "Security posture",
+        value: "Strong",
+        delta: "Passkey enabled",
+        accentClass: "bg-[#F4F3FF] text-[#6D28D9]"
       }
     ];
   }
-  ngOnInit() {
+  get currentPath() {
+    return this.router.url.split("?")[0];
   }
-  static {
-    this.\u0275fac = function DashboardComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _DashboardComponent)();
+  get currentSection() {
+    if (this.currentPath.startsWith("/dashboard/accounts")) {
+      return {
+        title: "Connected accounts",
+        description: "Review linked providers, resolve expired connections, and add new institutions without leaving the vault."
+      };
+    }
+    if (this.currentPath.startsWith("/dashboard/settings")) {
+      return {
+        title: "Settings and security",
+        description: "Tune account preferences, strengthen sign-in security, and manage how your health data is shared."
+      };
+    }
+    return {
+      title: "Your health data dashboard",
+      description: "See what is connected, what has synced recently, and which apps can securely access your records."
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DashboardComponent, selectors: [["app-dashboard"]], standalone: false, decls: 42, vars: 1, consts: [["routeLink", "routerLinkActive"], ["id", "step-dashboard", 1, "dashboard-shell", "overflow-hidden", "rounded-[32px]", "border", "border-white/70", "bg-white/90", "shadow-[0_28px_90px_rgba(79,70,229,0.16)]", "backdrop-blur"], [1, "flex", "min-h-[calc(100vh-8.5rem)]", "flex-col", "lg:flex-row"], [1, "border-b", "border-slate-200/80", "bg-[linear-gradient(180deg,_#ffffff_0%,_#f5f7ff_100%)]", "p-5", "lg:w-[280px]", "lg:border-b-0", "lg:border-r", "lg:p-6"], [1, "rounded-[28px]", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)]", "p-5", "text-white", "shadow-[0_18px_45px_rgba(79,70,229,0.32)]"], [1, "flex", "items-center", "justify-between"], [1, "text-xs", "uppercase", "tracking-[0.3em]", "text-white/70"], [1, "mt-2", "text-2xl", "font-semibold", "tracking-tight"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-white/15"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-6", "w-6"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4Z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m9.5 12 1.7 1.7 3.3-3.7"], [1, "mt-4", "text-sm", "leading-6", "text-white/80"], [1, "mt-6", "rounded-[24px]", "border", "border-slate-200", "bg-white", "p-4", "shadow-sm"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.28em]", "text-slate-400"], [1, "mt-3", "flex", "items-center", "gap-3"], [1, "flex", "h-11", "w-11", "items-center", "justify-center", "rounded-2xl", "bg-[#eef2ff]", "text-[#4f46e5]"], [1, "text-sm", "font-semibold"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["aria-label", "Dashboard", 1, "mt-6", "space-y-2"], ["routerLinkActive", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)] text-white shadow-[0_14px_30px_rgba(79,70,229,0.24)]", "class", "group flex items-start gap-3 rounded-2xl px-4 py-3 transition-all duration-200", 3, "routerLink", "routerLinkActiveOptions", "ngClass", 4, "ngFor", "ngForOf"], [1, "mt-6", "rounded-[24px]", "border", "border-slate-200", "bg-[#f8f9ff]", "p-4"], [1, "text-sm", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/dashboard/accounts", 1, "mt-4", "inline-flex", "items-center", "gap-2", "rounded-full", "bg-slate-900", "px-4", "py-2", "text-sm", "font-medium", "text-white", "transition-colors", "hover:bg-slate-800"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m9 18 6-6-6-6"], [1, "flex-1", "overflow-y-auto", "bg-[linear-gradient(180deg,_rgba(248,249,255,0.65)_0%,_rgba(255,255,255,0.96)_100%)]"], [1, "p-4", "md:p-6", "lg:p-8"], ["routerLinkActive", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)] text-white shadow-[0_14px_30px_rgba(79,70,229,0.24)]", 1, "group", "flex", "items-start", "gap-3", "rounded-2xl", "px-4", "py-3", "transition-all", "duration-200", 3, "routerLink", "routerLinkActiveOptions", "ngClass"], [1, "mt-0.5", "flex", "h-10", "w-10", "items-center", "justify-center", "rounded-2xl", "transition-colors", 3, "ngClass"], [3, "ngSwitch"], ["xmlns", "http://www.w3.org/2000/svg", "class", "h-5 w-5", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 4, "ngSwitchCase"], [1, "min-w-0"], [1, "font-semibold"], [1, "mt-1", "text-sm", "leading-5", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-5", "w-5"], ["x", "3", "y", "3", "width", "7", "height", "7", "rx", "1.5"], ["x", "14", "y", "3", "width", "7", "height", "7", "rx", "1.5"], ["x", "14", "y", "14", "width", "7", "height", "7", "rx", "1.5"], ["x", "3", "y", "14", "width", "7", "height", "7", "rx", "1.5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"], ["cx", "9.5", "cy", "7", "r", "4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M22 21v-2a4 4 0 0 0-3-3.87"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M16 3.13a4 4 0 0 1 0 7.75"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7Z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.04-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.64 8.4a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.04a1.7 1.7 0 0 0 1.04-1.55V2.4a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.08 4a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87 1.7 1.7 0 0 0 1.55 1.04H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"]], template: function DashboardComponent_Template(rf, ctx) {
+    this.\u0275fac = function DashboardComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _DashboardComponent)(\u0275\u0275directiveInject(Router));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DashboardComponent, selectors: [["app-dashboard"]], standalone: false, decls: 84, vars: 12, consts: [["id", "step-dashboard", 1, "step-view", "overflow-hidden", "rounded-b-[28px]", "border", "border-slate-200", "bg-[#F4F7FB]", "text-slate-900", "shadow-[0_28px_80px_-52px_rgba(15,23,42,0.45)]"], [1, "flex", "min-h-[calc(100vh-68px)]", "flex-col", "lg:flex-row"], [1, "dashboard-sidebar", "w-full", "border-b", "border-slate-200/80", "bg-white/90", "px-5", "py-6", "backdrop-blur", "lg:w-[280px]", "lg:border-b-0", "lg:border-r", "lg:px-6", "lg:py-8"], [1, "flex", "items-center", "justify-between", "gap-3"], [1, "az-logo", "text-[30px]"], [1, "mt-2", "text-sm", "text-slate-500"], [1, "rounded-full", "border", "border-slate-200", "bg-slate-50", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.2em]", "text-slate-500"], [1, "mt-8", "rounded-[24px]", "bg-[#F7F5FF]", "p-4", "text-sm", "text-slate-600"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-[#5B47FB]"], [1, "mt-2", "text-base", "font-semibold", "text-slate-900"], [1, "mt-2", "leading-6"], ["aria-label", "Dashboard sections", 1, "mt-8", "flex", "flex-col", "gap-2"], ["routerLinkActive", "active", 1, "dashboard-nav-item", 3, "routerLink", "routerLinkActiveOptions"], [1, "dashboard-nav-icon"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-5", "w-5"], ["x", "3", "y", "4", "width", "7", "height", "7", "rx", "1.5"], ["x", "14", "y", "4", "width", "7", "height", "7", "rx", "1.5"], ["x", "3", "y", "14", "width", "7", "height", "7", "rx", "1.5"], ["x", "14", "y", "14", "width", "7", "height", "7", "rx", "1.5"], [1, "flex-1"], [1, "block", "text-sm", "font-semibold"], [1, "mt-1", "block", "text-xs", "text-slate-500"], ["d", "M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"], ["cx", "9.5", "cy", "7", "r", "4"], ["d", "M22 21v-2a4 4 0 0 0-3-3.87"], ["d", "M16 3.13a4 4 0 0 1 0 7.75"], ["cx", "12", "cy", "12", "r", "3"], ["d", "M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 8.92 4.6H9A1.65 1.65 0 0 0 10.5 3.09V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c0 .65.38 1.24.97 1.51H21a2 2 0 0 1 0 4h-.09c-.59.27-.97.86-.97 1.49Z"], [1, "mt-8", "rounded-[24px]", "bg-slate-950", "p-5", "text-white"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-white/60"], [1, "mt-3", "text-lg", "font-semibold"], [1, "mt-2", "text-sm", "leading-6", "text-slate-300"], ["routerLink", "/search", 1, "mt-5", "inline-flex", "items-center", "gap-2", "rounded-full", "bg-white", "px-4", "py-2", "text-sm", "font-semibold", "text-slate-900", "transition", "hover:bg-slate-100"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M5 12h14"], ["d", "m12 5 7 7-7 7"], [1, "flex", "min-h-0", "flex-1", "flex-col"], [1, "border-b", "border-slate-200/80", "bg-white/80", "px-5", "py-6", "backdrop-blur", "lg:px-10"], [1, "flex", "flex-col", "gap-6", "xl:flex-row", "xl:items-end", "xl:justify-between"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.24em]", "text-[#5B47FB]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-900", "sm:text-[2.2rem]"], [1, "mt-3", "max-w-3xl", "text-sm", "leading-6", "text-slate-500"], [1, "flex", "flex-col", "gap-3", "sm:flex-row"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-semibold", "text-slate-700", "transition", "hover:border-slate-300", "hover:text-slate-900"], ["routerLink", "/search", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "bg-[#5B47FB]", "px-4", "py-2.5", "text-sm", "font-semibold", "text-white", "transition", "hover:bg-[#4936E8]"], [1, "mt-6", "grid", "gap-4", "md:grid-cols-2", "xl:grid-cols-4"], ["class", "dashboard-metric-card", 4, "ngFor", "ngForOf"], [1, "dashboard-main", "flex-1", "overflow-y-auto", "px-5", "py-6", "lg:px-10", "lg:py-8"], [1, "dashboard-metric-card"], [1, "flex", "items-start", "justify-between", "gap-4"], [1, "text-sm", "font-medium", "text-slate-500"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-900"], [1, "mt-3", "text-sm", "text-slate-500"], [1, "inline-flex", "h-11", "w-11", "items-center", "justify-center", "rounded-2xl", "text-sm", "font-semibold", "shadow-sm", 3, "ngClass"]], template: function DashboardComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "aside", 3)(3, "div", 4)(4, "div", 5)(5, "div")(6, "p", 6);
-        \u0275\u0275text(7, "Fasten");
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "aside", 2)(3, "div", 3)(4, "div")(5, "p", 4);
+        \u0275\u0275text(6, "fasten");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(8, "h1", 7);
-        \u0275\u0275text(9, "Connect Vault");
+        \u0275\u0275elementStart(7, "p", 5);
+        \u0275\u0275text(8, "Vault workspace");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(10, "div", 8);
+        \u0275\u0275elementStart(9, "div", 6);
+        \u0275\u0275text(10, " Live ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(11, "div", 7)(12, "p", 8);
+        \u0275\u0275text(13, "Visibility");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(14, "p", 9);
+        \u0275\u0275text(15, "All of your connected health data in one place.");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(16, "p", 10);
+        \u0275\u0275text(17, "Review apps, institutions, and sharing settings from a single dashboard.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(18, "nav", 11)(19, "a", 12)(20, "span", 13);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(11, "svg", 9);
-        \u0275\u0275element(12, "path", 10)(13, "path", 11);
+        \u0275\u0275elementStart(21, "svg", 14);
+        \u0275\u0275element(22, "rect", 15)(23, "rect", 16)(24, "rect", 17)(25, "rect", 18);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(26, "span", 19)(27, "span", 20);
+        \u0275\u0275text(28, "Overview");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(29, "span", 21);
+        \u0275\u0275text(30, "Apps, exports, and recent activity");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(14, "p", 12);
-        \u0275\u0275text(15, " Monitor integrations, share health data safely, and keep your patients connected from one place. ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(16, "div", 13)(17, "p", 14);
-        \u0275\u0275text(18, "Workspace");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(19, "div", 15)(20, "div", 16)(21, "span", 17);
-        \u0275\u0275text(22, "FC");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(23, "div")(24, "p", 18);
-        \u0275\u0275text(25, "API Platform");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(26, "p", 19);
-        \u0275\u0275text(27, "Production environment");
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(28, "nav", 20);
-        \u0275\u0275template(29, DashboardComponent_a_29_Template, 12, 16, "a", 21);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(30, "div", 22)(31, "p", 23);
-        \u0275\u0275text(32, "Need to onboard another institution?");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(33, "p", 24);
-        \u0275\u0275text(34, " Use the connections view to add new health systems and keep record syncs healthy. ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(35, "a", 25);
-        \u0275\u0275text(36, " Review connections ");
+        \u0275\u0275elementStart(31, "a", 12)(32, "span", 13);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(37, "svg", 26);
-        \u0275\u0275element(38, "path", 27);
+        \u0275\u0275elementStart(33, "svg", 14);
+        \u0275\u0275element(34, "path", 22)(35, "circle", 23)(36, "path", 24)(37, "path", 25);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(38, "span", 19)(39, "span", 20);
+        \u0275\u0275text(40, "Accounts");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(41, "span", 21);
+        \u0275\u0275text(42, "Institutions and sync status");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(43, "a", 12)(44, "span", 13);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(45, "svg", 14);
+        \u0275\u0275element(46, "circle", 26)(47, "path", 27);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(48, "span", 19)(49, "span", 20);
+        \u0275\u0275text(50, "Settings");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(51, "span", 21);
+        \u0275\u0275text(52, "Security, preferences, and profile");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(53, "div", 28)(54, "p", 29);
+        \u0275\u0275text(55, "Need another account?");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(56, "p", 30);
+        \u0275\u0275text(57, "Connect a new provider in a few guided steps.");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(58, "p", 31);
+        \u0275\u0275text(59, "Search participating health systems and add another institution without leaving the vault.");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(60, "a", 32);
+        \u0275\u0275text(61, " Add institution ");
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(62, "svg", 33);
+        \u0275\u0275element(63, "path", 34)(64, "path", 35);
         \u0275\u0275elementEnd()()()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(39, "div", 28)(40, "div", 29);
-        \u0275\u0275element(41, "router-outlet");
+        \u0275\u0275elementStart(65, "section", 36)(66, "header", 37)(67, "div", 38)(68, "div")(69, "p", 39);
+        \u0275\u0275text(70, "Fasten Vault");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(71, "h1", 40);
+        \u0275\u0275text(72);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(73, "p", 41);
+        \u0275\u0275text(74);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(75, "div", 42)(76, "button", 43);
+        \u0275\u0275text(77, " Export activity ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(78, "a", 44);
+        \u0275\u0275text(79, " Add connection ");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(80, "div", 45);
+        \u0275\u0275template(81, DashboardComponent_article_81_Template, 11, 4, "article", 46);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(82, "main", 47);
+        \u0275\u0275element(83, "router-outlet");
         \u0275\u0275elementEnd()()()();
       }
       if (rf & 2) {
+        \u0275\u0275advance(19);
+        \u0275\u0275property("routerLink", "/dashboard/apps")("routerLinkActiveOptions", \u0275\u0275pureFunction0(9, _c02));
+        \u0275\u0275advance(12);
+        \u0275\u0275property("routerLink", "/dashboard/accounts")("routerLinkActiveOptions", \u0275\u0275pureFunction0(10, _c02));
+        \u0275\u0275advance(12);
+        \u0275\u0275property("routerLink", "/dashboard/settings")("routerLinkActiveOptions", \u0275\u0275pureFunction0(11, _c02));
         \u0275\u0275advance(29);
-        \u0275\u0275property("ngForOf", ctx.navItems);
+        \u0275\u0275textInterpolate(ctx.currentSection.title);
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate(ctx.currentSection.description);
+        \u0275\u0275advance(7);
+        \u0275\u0275property("ngForOf", ctx.metrics);
       }
-    }, dependencies: [NgClass, NgForOf, NgSwitch, NgSwitchCase, RouterOutlet, RouterLink, RouterLinkActive], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.dashboard-shell[_ngcontent-%COMP%] {\n  min-height: calc(100vh - 8.5rem);\n}\n/*# sourceMappingURL=dashboard.component.css.map */"] });
+    }, dependencies: [NgClass, NgForOf, RouterOutlet, RouterLink, RouterLinkActive], styles: ['\n\n[_nghost-%COMP%] {\n  display: block;\n  height: 100%;\n}\n#step-dashboard[_ngcontent-%COMP%] {\n  position: relative;\n}\n#step-dashboard[_ngcontent-%COMP%]::before {\n  content: "";\n  position: absolute;\n  left: -120px;\n  top: -160px;\n  width: 420px;\n  height: 420px;\n  border-radius: 9999px;\n  background:\n    radial-gradient(\n      circle,\n      rgba(91, 71, 251, 0.16) 0%,\n      rgba(91, 71, 251, 0) 72%);\n  pointer-events: none;\n}\n.dashboard-sidebar[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 1;\n}\n.dashboard-nav-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.875rem;\n  border-radius: 1.125rem;\n  border: 1px solid transparent;\n  padding: 0.9rem 1rem;\n  color: #0f172a;\n  transition: all 0.2s ease;\n}\n.dashboard-nav-item[_ngcontent-%COMP%]:hover {\n  border-color: rgba(148, 163, 184, 0.22);\n  background: rgba(248, 250, 252, 0.88);\n}\n.dashboard-nav-item.active[_ngcontent-%COMP%] {\n  border-color: rgba(91, 71, 251, 0.18);\n  background:\n    linear-gradient(\n      135deg,\n      rgba(91, 71, 251, 0.12),\n      rgba(120, 119, 198, 0.05));\n  box-shadow: 0 14px 36px -26px rgba(91, 71, 251, 0.75);\n}\n.dashboard-nav-item.active[_ngcontent-%COMP%]   .dashboard-nav-icon[_ngcontent-%COMP%] {\n  background: #5b47fb;\n  color: #ffffff;\n}\n.dashboard-nav-icon[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.5rem;\n  height: 2.5rem;\n  border-radius: 0.95rem;\n  background: #f8fafc;\n  color: #475569;\n  border: 1px solid rgba(148, 163, 184, 0.18);\n  transition: all 0.2s ease;\n}\n.dashboard-metric-card[_ngcontent-%COMP%] {\n  border-radius: 1.5rem;\n  border: 1px solid rgba(226, 232, 240, 0.95);\n  background: rgba(255, 255, 255, 0.94);\n  padding: 1.25rem;\n  box-shadow: 0 24px 50px -38px rgba(15, 23, 42, 0.38);\n}\n.dashboard-main[_ngcontent-%COMP%] {\n  scrollbar-width: thin;\n  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;\n}\n.dashboard-main[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 10px;\n}\n.dashboard-main[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.dashboard-main[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  border-radius: 9999px;\n  background: rgba(148, 163, 184, 0.45);\n}\n/*# sourceMappingURL=dashboard.component.css.map */'] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(DashboardComponent, { className: "DashboardComponent", filePath: "projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts", lineNumber: 16 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(DashboardComponent, { className: "DashboardComponent", filePath: "projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts", lineNumber: 15 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts
-function ConnectedAppsTabComponent_article_21__svg_svg_11_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 51);
-    \u0275\u0275element(1, "path", 52)(2, "circle", 53)(3, "path", 54)(4, "path", 55);
-    \u0275\u0275elementEnd();
-  }
-}
-function ConnectedAppsTabComponent_article_21__svg_svg_12_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 51);
-    \u0275\u0275element(1, "path", 56)(2, "path", 57)(3, "path", 58)(4, "path", 59)(5, "path", 60)(6, "path", 61);
-    \u0275\u0275elementEnd();
-  }
-}
-function ConnectedAppsTabComponent_article_21__svg_svg_13_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 51);
-    \u0275\u0275element(1, "path", 62)(2, "path", 63)(3, "path", 64);
-    \u0275\u0275elementEnd();
-  }
-}
-function ConnectedAppsTabComponent_article_21__svg_svg_14_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(0, "svg", 51);
-    \u0275\u0275element(1, "path", 65)(2, "path", 66);
-    \u0275\u0275elementEnd();
-  }
-}
-function ConnectedAppsTabComponent_article_21_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "article", 43)(1, "div", 44)(2, "div")(3, "p", 45);
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "p", 46);
-    \u0275\u0275text(6);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 47);
-    \u0275\u0275text(8);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "div", 48);
-    \u0275\u0275elementContainerStart(10, 49);
-    \u0275\u0275template(11, ConnectedAppsTabComponent_article_21__svg_svg_11_Template, 5, 0, "svg", 50)(12, ConnectedAppsTabComponent_article_21__svg_svg_12_Template, 7, 0, "svg", 50)(13, ConnectedAppsTabComponent_article_21__svg_svg_13_Template, 4, 0, "svg", 50)(14, ConnectedAppsTabComponent_article_21__svg_svg_14_Template, 3, 0, "svg", 50);
-    \u0275\u0275elementContainerEnd();
-    \u0275\u0275elementEnd()()();
-  }
-  if (rf & 2) {
-    const card_r1 = ctx.$implicit;
-    \u0275\u0275advance(4);
-    \u0275\u0275textInterpolate(card_r1.label);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(card_r1.value);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(card_r1.change);
-    \u0275\u0275advance(2);
-    \u0275\u0275property("ngSwitch", card_r1.icon);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "connections");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "institutions");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "exports");
-    \u0275\u0275advance();
-    \u0275\u0275property("ngSwitchCase", "success");
-  }
-}
-function ConnectedAppsTabComponent_ng_container_50_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementContainerStart(0);
-    \u0275\u0275text(1);
-    \u0275\u0275elementContainerEnd();
-  }
-  if (rf & 2) {
-    const line_r2 = ctx.$implicit;
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("", line_r2, "\n");
-  }
-}
-function ConnectedAppsTabComponent_tr_76_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr")(1, "td", 67);
-    \u0275\u0275text(2);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "td", 68);
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "td", 68)(6, "span", 69);
-    \u0275\u0275text(7);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "td", 68);
-    \u0275\u0275text(9);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "td", 67);
-    \u0275\u0275text(11);
-    \u0275\u0275elementEnd()();
-  }
-  if (rf & 2) {
-    const row_r3 = ctx.$implicit;
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r3.userId);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r3.institution);
-    \u0275\u0275advance(2);
-    \u0275\u0275classProp("bg-emerald-50", row_r3.status === "Connected")("text-emerald-600", row_r3.status === "Connected")("bg-amber-50", row_r3.status !== "Connected")("text-amber-600", row_r3.status !== "Connected");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", row_r3.status, " ");
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r3.connectedAt);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r3.records);
-  }
-}
-function ConnectedAppsTabComponent_tr_101_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr")(1, "td", 67);
-    \u0275\u0275text(2);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "td", 68);
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "td", 68)(6, "span", 69);
-    \u0275\u0275text(7);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "td", 68)(9, "span", 69);
-    \u0275\u0275text(10);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(11, "td", 68);
-    \u0275\u0275text(12);
-    \u0275\u0275elementEnd()();
-  }
-  if (rf & 2) {
-    const row_r4 = ctx.$implicit;
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r4.exportId);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r4.user);
-    \u0275\u0275advance(2);
-    \u0275\u0275classProp("bg-violet-50", row_r4.type === "Full")("text-violet-600", row_r4.type === "Full")("bg-sky-50", row_r4.type !== "Full")("text-sky-600", row_r4.type !== "Full");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", row_r4.type, " ");
-    \u0275\u0275advance(2);
-    \u0275\u0275classProp("bg-emerald-50", row_r4.status === "Completed")("text-emerald-600", row_r4.status === "Completed")("bg-amber-50", row_r4.status !== "Completed")("text-amber-600", row_r4.status !== "Completed");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", row_r4.status, " ");
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(row_r4.createdAt);
-  }
-}
 var ConnectedAppsTabComponent = class _ConnectedAppsTabComponent {
   constructor() {
-    this.statCards = [
-      {
-        label: "Active Connections",
-        value: "1,247",
-        change: "+12% from last week",
-        icon: "connections"
-      },
-      {
-        label: "Connected Institutions",
-        value: "89",
-        change: "+3 new this week",
-        icon: "institutions"
-      },
-      {
-        label: "Daily Exports",
-        value: "156",
-        change: "+8% from yesterday",
-        icon: "exports"
-      },
-      {
-        label: "API Success Rate",
-        value: "99.7%",
-        change: "Stable performance",
-        icon: "success"
-      }
-    ];
-    this.snippetLines = [
-      "import { FastenConnect } from '@fasten/connect-sdk';",
-      "",
-      "const fasten = new FastenConnect({",
-      "  apiKey: 'your-api-key-here',",
-      "  environment: 'sandbox',",
-      "});",
-      "",
-      "const connection = await fasten.connect.create({",
-      "  userId: 'user_abc123',",
-      "  redirectUri: 'https://yourapp.com/callback',",
-      "});"
-    ];
-    this.recentConnections = [
-      {
-        userId: "user_abc123",
-        institution: "Mayo Clinic",
-        status: "Connected",
-        connectedAt: "Jan 15, 10:30 AM",
-        records: "47"
-      },
-      {
-        userId: "user_def456",
-        institution: "Kaiser Permanente",
-        status: "Connected",
-        connectedAt: "Jan 15, 09:15 AM",
-        records: "23"
-      },
-      {
-        userId: "user_ghi789",
-        institution: "Cleveland Clinic",
-        status: "Pending",
-        connectedAt: "Jan 15, 08:45 AM",
-        records: "--"
-      }
-    ];
-    this.exportRows = [
-      {
-        exportId: "exp_001",
-        user: "user_abc123",
-        type: "Full",
-        status: "Completed",
-        createdAt: "Jan 15, 11:00 AM"
-      },
-      {
-        exportId: "exp_002",
-        user: "user_def456",
-        type: "Differential",
-        status: "Processing",
-        createdAt: "Jan 15, 10:45 AM"
-      },
-      {
-        exportId: "exp_003",
-        user: "user_jkl012",
-        type: "Full",
-        status: "Completed",
-        createdAt: "Jan 15, 10:30 AM"
-      }
-    ];
   }
   ngOnInit() {
   }
@@ -59319,251 +59129,219 @@ var ConnectedAppsTabComponent = class _ConnectedAppsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAppsTabComponent, selectors: [["connected-apps-tab"]], standalone: false, decls: 102, vars: 4, consts: [[1, "space-y-6", "md:space-y-8"], [1, "flex", "flex-col", "gap-5", "xl:flex-row", "xl:items-start", "xl:justify-between"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-[#6366f1]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950", "md:text-[2.5rem]"], [1, "mt-3", "max-w-3xl", "text-base", "leading-7", "text-slate-500", "md:text-lg"], [1, "flex", "flex-wrap", "gap-3"], ["type", "button", 1, "inline-flex", "items-center", "gap-2", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-slate-700", "transition-all", "hover:-translate-y-0.5", "hover:border-slate-300", "hover:shadow-md"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M7 17 17 7"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M7 7h10v10"], [1, "inline-flex", "items-center", "gap-2", "rounded-full", "bg-slate-900", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:-translate-y-0.5", "hover:bg-slate-800", "hover:shadow-lg"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 5v14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m19 12-7 7-7-7"], [1, "grid", "gap-4", "md:grid-cols-2", "2xl:grid-cols-4"], ["class", "rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.06)]", 4, "ngFor", "ngForOf"], [1, "grid", "gap-6", "xl:grid-cols-[1.4fr_1fr]"], [1, "overflow-hidden", "rounded-[30px]", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#5b47fb_42%,_#6d28d9_100%)]", "p-8", "text-white", "shadow-[0_25px_60px_rgba(91,71,251,0.32)]"], [1, "max-w-xl"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.3em]", "text-white/70"], [1, "mt-5", "text-3xl", "font-semibold", "tracking-tight", "md:text-4xl"], [1, "mt-4", "text-base", "leading-7", "text-white/80"], [1, "mt-8", "flex", "flex-wrap", "gap-3"], ["type", "button", 1, "inline-flex", "items-center", "gap-2", "rounded-full", "bg-white/12", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:bg-white/20"], [1, "inline-flex", "items-center", "rounded-full", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-[#4f46e5]", "transition-all", "hover:-translate-y-0.5", "hover:shadow-lg"], [1, "overflow-hidden", "rounded-[30px]", "bg-[#0f172a]", "p-5", "text-slate-100", "shadow-[0_25px_60px_rgba(15,23,42,0.22)]"], [1, "flex", "items-center", "justify-between"], [1, "rounded-full", "bg-white/10", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.28em]", "text-slate-300"], [1, "inline-flex", "items-center", "gap-1", "text-sm", "text-slate-400", "transition-colors", "hover:text-white"], ["x", "9", "y", "9", "width", "13", "height", "13", "rx", "2"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"], [1, "mt-4", "overflow-x-auto", "rounded-[24px]", "bg-white/5", "p-4", "text-sm", "leading-7", "text-slate-300"], [4, "ngFor", "ngForOf"], [1, "grid", "gap-6", "xl:grid-cols-2"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-center", "justify-between", "border-b", "border-slate-100", "px-6", "py-5"], [1, "text-xl", "font-semibold", "text-slate-950"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "rounded-full", "px-3", "py-1.5", "text-sm", "font-medium", "text-[#6366f1]", "transition-colors", "hover:bg-[#eef2ff]"], [1, "overflow-x-auto"], [1, "min-w-full", "text-left"], [1, "bg-slate-50/80", "text-xs", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "px-6", "py-4", "font-semibold"], [1, "divide-y", "divide-slate-100", "text-sm", "text-slate-600"], [1, "rounded-[26px]", "border", "border-slate-200", "bg-white", "p-5", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-start", "justify-between", "gap-4"], [1, "text-sm", "font-medium", "text-slate-500"], [1, "mt-2", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950"], [1, "mt-2", "text-sm", "font-medium", "text-emerald-500"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-[#eef2ff]", "text-[#6366f1]"], [3, "ngSwitch"], ["xmlns", "http://www.w3.org/2000/svg", "class", "h-5 w-5", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 4, "ngSwitchCase"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-5", "w-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"], ["cx", "9.5", "cy", "7", "r", "4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M19 8v6"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M22 11h-6"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M3 21h18"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 21V7l7-4 7 4v14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M9 10h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 10h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M9 14h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 14h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 3v12"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m7 10 5 5 5-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 21h14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m3 17 6-6 4 4 7-8"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M14 7h6v6"], [1, "px-6", "py-4", "font-medium", "text-slate-900"], [1, "px-6", "py-4"], [1, "inline-flex", "rounded-full", "px-3", "py-1", "text-xs", "font-semibold"]], template: function ConnectedAppsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAppsTabComponent, selectors: [["connected-apps-tab"]], standalone: false, decls: 186, vars: 0, consts: [[1, "space-y-6", "pb-12"], [1, "vault-panel", "overflow-hidden", "bg-gradient-to-br", "from-[#5B47FB]", "via-[#4F46E5]", "to-[#312E81]", "text-white"], [1, "grid", "gap-8", "px-6", "py-7", "lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)]", "lg:px-8", "lg:py-8"], [1, "space-y-5"], [1, "inline-flex", "items-center", "gap-2", "rounded-full", "border", "border-white/20", "bg-white/10", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-white/80"], [1, "text-3xl", "font-semibold", "tracking-tight", "sm:text-[2.25rem]"], [1, "mt-4", "max-w-2xl", "text-sm", "leading-7", "text-indigo-100"], [1, "flex", "flex-col", "gap-3", "sm:flex-row"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "bg-white", "px-4", "py-2.5", "text-sm", "font-semibold", "text-[#312E81]", "transition", "hover:bg-indigo-50"], ["routerLink", "/search", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-white/30", "bg-white/10", "px-4", "py-2.5", "text-sm", "font-semibold", "text-white", "transition", "hover:bg-white/15"], [1, "rounded-[24px]", "border", "border-white/10", "bg-slate-950/70", "p-5", "shadow-2xl", "shadow-slate-950/30"], [1, "flex", "items-center", "justify-between"], [1, "text-sm", "font-semibold", "text-white"], [1, "rounded-full", "bg-white/10", "px-3", "py-1", "text-xs", "font-medium", "text-indigo-100"], [1, "mt-5", "space-y-4", "text-sm", "text-slate-300"], [1, "rounded-2xl", "bg-white/5", "p-4"], [1, "font-medium", "text-white"], [1, "mt-2", "leading-6"], [1, "grid", "gap-3", "sm:grid-cols-2"], [1, "text-xs", "uppercase", "tracking-[0.22em]", "text-slate-400"], [1, "mt-2", "text-lg", "font-semibold", "text-white"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]"], [1, "vault-panel", "p-6", "lg:p-7"], [1, "flex", "flex-col", "gap-3", "border-b", "border-slate-200", "pb-5", "sm:flex-row", "sm:items-end", "sm:justify-between"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-[#5B47FB]"], [1, "mt-2", "text-xl", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "text-slate-500"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2", "text-sm", "font-semibold", "text-slate-700", "transition", "hover:border-slate-300", "hover:text-slate-900"], [1, "mt-6", "space-y-4"], [1, "vault-soft-panel", "flex", "flex-col", "gap-4", "p-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "flex", "items-start", "gap-4"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-[#EEF2FF]", "text-[#5B47FB]"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-6", "w-6"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "flex", "flex-wrap", "items-center", "gap-3"], [1, "text-base", "font-semibold", "text-slate-900"], [1, "vault-status-pill", "vault-status-pill--active"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], [1, "text-sm", "text-slate-500", "sm:text-right"], [1, "font-medium", "text-slate-900"], [1, "mt-1"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-emerald-50", "text-emerald-600"], ["d", "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"], ["x", "8", "y", "2", "width", "8", "height", "4", "rx", "1", "ry", "1"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-amber-50", "text-amber-600"], ["d", "M22 11.08V12a10 10 0 1 1-5.93-9.14"], ["points", "22 4 12 14.01 9 11.01"], [1, "vault-status-pill", "vault-status-pill--limited"], [1, "vault-soft-panel", "flex", "cursor-pointer", "items-center", "justify-between", "p-4", "transition", "hover:border-slate-300", "hover:bg-white"], [1, "flex", "items-center", "gap-4"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-slate-100", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M12 5v14M5 12h14"], [1, "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "m9 18 6-6-6-6"], [1, "space-y-6"], [1, "vault-panel", "p-6"], ["type", "button", 1, "text-sm", "font-semibold", "text-[#5B47FB]", "transition", "hover:text-[#4936E8]"], [1, "mt-5", "space-y-4"], [1, "flex", "items-start", "justify-between", "gap-4", "rounded-2xl", "border", "border-slate-200", "bg-slate-50/80", "p-4"], [1, "vault-status-pill", "vault-status-pill--muted"], [1, "mt-6", "space-y-5"], [1, "flex", "items-center", "justify-between", "text-sm"], [1, "font-medium", "text-slate-600"], [1, "mt-2", "h-2", "rounded-full", "bg-slate-100"], [1, "h-full", "w-[96%]", "rounded-full", "bg-[#5B47FB]"], [1, "h-full", "w-[88%]", "rounded-full", "bg-emerald-500"], [1, "h-full", "w-[61%]", "rounded-full", "bg-amber-400"]], template: function ConnectedAppsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "section", 0)(1, "header", 1)(2, "div")(3, "p", 2);
-        \u0275\u0275text(4, "Dashboard");
+        \u0275\u0275elementStart(0, "div", 0)(1, "section", 1)(2, "div", 2)(3, "div", 3)(4, "div", 4);
+        \u0275\u0275text(5, " Sharing overview ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "h2", 3);
-        \u0275\u0275text(6, "Welcome to your Fasten dashboard");
+        \u0275\u0275elementStart(6, "div")(7, "h2", 5);
+        \u0275\u0275text(8, "Trusted apps can access exactly what you approve.");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(7, "p", 4);
-        \u0275\u0275text(8, " Monitor your integrations, track usage, and manage your healthcare data connections from one polished workspace. ");
+        \u0275\u0275elementStart(9, "p", 6);
+        \u0275\u0275text(10, " Review every active connection, confirm what data is available, and launch a new sharing flow without leaving your vault. ");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(9, "div", 5)(10, "button", 6);
-        \u0275\u0275text(11, " View docs ");
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(12, "svg", 7);
-        \u0275\u0275element(13, "path", 8)(14, "path", 9);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(15, "button", 10);
-        \u0275\u0275text(16, " Launch sandbox export ");
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(17, "svg", 7);
-        \u0275\u0275element(18, "path", 11)(19, "path", 12);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(20, "div", 13);
-        \u0275\u0275template(21, ConnectedAppsTabComponent_article_21_Template, 15, 8, "article", 14);
+        \u0275\u0275elementStart(11, "div", 7)(12, "button", 8);
+        \u0275\u0275text(13, " Review consent ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(22, "div", 15)(23, "section", 16)(24, "div", 17)(25, "p", 18);
-        \u0275\u0275text(26, "SDK");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(27, "h3", 19);
-        \u0275\u0275text(28, "Add Fasten Connect to your app");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(29, "p", 20);
-        \u0275\u0275text(30, " Enable your users to securely connect their medical records from thousands of healthcare institutions with just a few lines of code. ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(31, "div", 21)(32, "button", 22);
-        \u0275\u0275text(33, " View documentation ");
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(34, "svg", 7);
-        \u0275\u0275element(35, "path", 8)(36, "path", 9);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(37, "button", 23);
-        \u0275\u0275text(38, " Get started ");
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(39, "section", 24)(40, "div", 25)(41, "span", 26);
-        \u0275\u0275text(42, "JavaScript");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(43, "button", 27);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(44, "svg", 7);
-        \u0275\u0275element(45, "rect", 28)(46, "path", 29);
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(47, " Copy ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(48, "pre", 30)(49, "code");
-        \u0275\u0275template(50, ConnectedAppsTabComponent_ng_container_50_Template, 2, 1, "ng-container", 31);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(51, "div", 32)(52, "section", 33)(53, "div", 34)(54, "div")(55, "h3", 35);
-        \u0275\u0275text(56, "Recent Connections");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(57, "p", 36);
-        \u0275\u0275text(58, "Latest patient and institution activity");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(59, "button", 37);
-        \u0275\u0275text(60, "View all");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(61, "div", 38)(62, "table", 39)(63, "thead", 40)(64, "tr")(65, "th", 41);
-        \u0275\u0275text(66, "User ID");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(67, "th", 41);
-        \u0275\u0275text(68, "Institution");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(69, "th", 41);
-        \u0275\u0275text(70, "Status");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(71, "th", 41);
-        \u0275\u0275text(72, "Connected");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(73, "th", 41);
-        \u0275\u0275text(74, "Records");
+        \u0275\u0275elementStart(14, "a", 9);
+        \u0275\u0275text(15, " Connect another institution ");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(75, "tbody", 42);
-        \u0275\u0275template(76, ConnectedAppsTabComponent_tr_76_Template, 12, 13, "tr", 31);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(77, "section", 33)(78, "div", 34)(79, "div")(80, "h3", 35);
-        \u0275\u0275text(81, "FHIR Export Log");
+        \u0275\u0275elementStart(16, "div", 10)(17, "div", 11)(18, "p", 12);
+        \u0275\u0275text(19, "Current sharing scope");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(82, "p", 36);
-        \u0275\u0275text(83, "Track export jobs and delivery states");
+        \u0275\u0275elementStart(20, "span", 13);
+        \u0275\u0275text(21, "Updated 2h ago");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(84, "button", 37);
-        \u0275\u0275text(85, "View all");
+        \u0275\u0275elementStart(22, "div", 14)(23, "div", 15)(24, "p", 16);
+        \u0275\u0275text(25, "Acme Labs");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(26, "p", 17);
+        \u0275\u0275text(27, "Lab results, medications, and visit summaries are available for export through January 2027.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(86, "div", 38)(87, "table", 39)(88, "thead", 40)(89, "tr")(90, "th", 41);
-        \u0275\u0275text(91, "Export ID");
+        \u0275\u0275elementStart(28, "div", 18)(29, "div", 15)(30, "p", 19);
+        \u0275\u0275text(31, "Retention");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(92, "th", 41);
-        \u0275\u0275text(93, "User");
+        \u0275\u0275elementStart(32, "p", 20);
+        \u0275\u0275text(33, "90 days");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(34, "div", 15)(35, "p", 19);
+        \u0275\u0275text(36, "Permission level");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(94, "th", 41);
-        \u0275\u0275text(95, "Type");
+        \u0275\u0275elementStart(37, "p", 20);
+        \u0275\u0275text(38, "Read only");
+        \u0275\u0275elementEnd()()()()()()();
+        \u0275\u0275elementStart(39, "div", 21)(40, "section", 22)(41, "div", 23)(42, "div")(43, "p", 24);
+        \u0275\u0275text(44, "Authorized apps");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(96, "th", 41);
-        \u0275\u0275text(97, "Status");
+        \u0275\u0275elementStart(45, "h3", 25);
+        \u0275\u0275text(46, "Connected Apps");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(98, "th", 41);
-        \u0275\u0275text(99, "Created");
+        \u0275\u0275elementStart(47, "p", 26);
+        \u0275\u0275text(48, "Apps currently approved to read or export data from your vault.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(49, "button", 27);
+        \u0275\u0275text(50, " View audit trail ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(51, "div", 28)(52, "article", 29)(53, "div", 30)(54, "div", 31);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(55, "svg", 32);
+        \u0275\u0275element(56, "path", 33)(57, "polygon", 34);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(58, "div")(59, "div", 35)(60, "h4", 36);
+        \u0275\u0275text(61, "Acme Labs");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(62, "span", 37);
+        \u0275\u0275text(63, "ACTIVE");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(64, "p", 38);
+        \u0275\u0275text(65, "Reads test results and care summaries for in-app care coordination features.");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(100, "tbody", 42);
-        \u0275\u0275template(101, ConnectedAppsTabComponent_tr_101_Template, 13, 21, "tr", 31);
-        \u0275\u0275elementEnd()()()()()();
+        \u0275\u0275elementStart(66, "div", 39)(67, "p", 40);
+        \u0275\u0275text(68, "Last export");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(69, "p", 41);
+        \u0275\u0275text(70, "Today at 9:14 AM");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(71, "article", 29)(72, "div", 30)(73, "div", 42);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(74, "svg", 32);
+        \u0275\u0275element(75, "path", 43)(76, "rect", 44);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(77, "div")(78, "div", 35)(79, "h4", 36);
+        \u0275\u0275text(80, "Example PHR");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(81, "span", 37);
+        \u0275\u0275text(82, "ACTIVE");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(83, "p", 38);
+        \u0275\u0275text(84, "Stores consolidated records for your personal health notebook and reminders.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(85, "div", 39)(86, "p", 40);
+        \u0275\u0275text(87, "Last export");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(88, "p", 41);
+        \u0275\u0275text(89, "Yesterday at 4:42 PM");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(90, "article", 29)(91, "div", 30)(92, "div", 45);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(93, "svg", 32);
+        \u0275\u0275element(94, "path", 46)(95, "polyline", 47);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(96, "div")(97, "div", 35)(98, "h4", 36);
+        \u0275\u0275text(99, "Clear Claims");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(100, "span", 48);
+        \u0275\u0275text(101, "LIMITED");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(102, "p", 38);
+        \u0275\u0275text(103, "Claims history is available, but this app is waiting on renewed account verification.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(104, "div", 39)(105, "p", 40);
+        \u0275\u0275text(106, "Action needed");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(107, "p", 41);
+        \u0275\u0275text(108, "Re-verify account");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(109, "div", 49)(110, "div", 50)(111, "div", 51);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(112, "svg", 52);
+        \u0275\u0275element(113, "path", 53);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(114, "div")(115, "p", 54);
+        \u0275\u0275text(116, "Add an app");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(117, "p", 55);
+        \u0275\u0275text(118, "Approve another application to securely read records from your vault.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(119, "svg", 56);
+        \u0275\u0275element(120, "path", 57);
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(121, "div", 58)(122, "section", 59)(123, "div", 11)(124, "div")(125, "p", 24);
+        \u0275\u0275text(126, "Recent exports");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(127, "h3", 25);
+        \u0275\u0275text(128, "Latest activity");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(129, "button", 60);
+        \u0275\u0275text(130, "View all");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(131, "div", 61)(132, "div", 62)(133, "div")(134, "p", 54);
+        \u0275\u0275text(135, "Medication export completed");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(136, "p", 55);
+        \u0275\u0275text(137, "Acme Labs exported a refreshed medication list.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(138, "span", 37);
+        \u0275\u0275text(139, "SUCCESS");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(140, "div", 62)(141, "div")(142, "p", 54);
+        \u0275\u0275text(143, "Claims sync queued");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(144, "p", 55);
+        \u0275\u0275text(145, "Clear Claims requested a new claims pull from Mayo Clinic.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(146, "span", 63);
+        \u0275\u0275text(147, "QUEUED");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(148, "div", 62)(149, "div")(150, "p", 54);
+        \u0275\u0275text(151, "Consent updated");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(152, "p", 55);
+        \u0275\u0275text(153, "Example PHR access was narrowed to visit summaries only.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(154, "span", 37);
+        \u0275\u0275text(155, "UPDATED");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(156, "section", 59)(157, "p", 24);
+        \u0275\u0275text(158, "Coverage snapshot");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(159, "h3", 25);
+        \u0275\u0275text(160, "What apps can read today");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(161, "div", 64)(162, "div")(163, "div", 65)(164, "span", 66);
+        \u0275\u0275text(165, "Clinical summaries");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(166, "span", 54);
+        \u0275\u0275text(167, "96%");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(168, "div", 67);
+        \u0275\u0275element(169, "div", 68);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(170, "div")(171, "div", 65)(172, "span", 66);
+        \u0275\u0275text(173, "Lab results");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(174, "span", 54);
+        \u0275\u0275text(175, "88%");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(176, "div", 67);
+        \u0275\u0275element(177, "div", 69);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(178, "div")(179, "div", 65)(180, "span", 66);
+        \u0275\u0275text(181, "Claims history");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(182, "span", 54);
+        \u0275\u0275text(183, "61%");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(184, "div", 67);
+        \u0275\u0275element(185, "div", 70);
+        \u0275\u0275elementEnd()()()()()()();
       }
-      if (rf & 2) {
-        \u0275\u0275advance(21);
-        \u0275\u0275property("ngForOf", ctx.statCards);
-        \u0275\u0275advance(29);
-        \u0275\u0275property("ngForOf", ctx.snippetLines);
-        \u0275\u0275advance(26);
-        \u0275\u0275property("ngForOf", ctx.recentConnections);
-        \u0275\u0275advance(25);
-        \u0275\u0275property("ngForOf", ctx.exportRows);
-      }
-    }, dependencies: [NgForOf, NgSwitch, NgSwitchCase], encapsulation: 2 });
+    }, dependencies: [RouterLink], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n/*# sourceMappingURL=connected-apps-tab.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAppsTabComponent, { className: "ConnectedAppsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts", lineNumber: 32 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAppsTabComponent, { className: "ConnectedAppsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts", lineNumber: 9 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
-function ConnectedAccountsTabComponent_article_47_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "article", 39)(1, "div", 40)(2, "div", 41);
-    \u0275\u0275text(3);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "div")(5, "h4", 42);
-    \u0275\u0275text(6);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 43);
-    \u0275\u0275text(8);
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(9, "div", 44)(10, "div", 45)(11, "span", 46);
-    \u0275\u0275text(12);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "span", 47);
-    \u0275\u0275text(14);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(15, "p", 43);
-    \u0275\u0275text(16);
-    \u0275\u0275elementEnd()()();
-  }
-  if (rf & 2) {
-    const institution_r1 = ctx.$implicit;
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", institution_r1.name.charAt(0), " ");
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(institution_r1.name);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(institution_r1.category);
-    \u0275\u0275advance(3);
-    \u0275\u0275classProp("bg-emerald-50", institution_r1.status === "Healthy")("text-emerald-600", institution_r1.status === "Healthy")("bg-amber-50", institution_r1.status !== "Healthy")("text-amber-600", institution_r1.status !== "Healthy");
-    \u0275\u0275advance();
-    \u0275\u0275textInterpolate1(" ", institution_r1.status, " ");
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", institution_r1.records, " ");
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(institution_r1.sync);
-  }
-}
-function ConnectedAccountsTabComponent_tr_84_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "tr")(1, "td", 48);
-    \u0275\u0275text(2);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "td", 49);
-    \u0275\u0275text(4);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "td", 49);
-    \u0275\u0275text(6);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "td", 49);
-    \u0275\u0275text(8);
-    \u0275\u0275elementEnd()();
-  }
-  if (rf & 2) {
-    const activity_r2 = ctx.$implicit;
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(activity_r2.source);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(activity_r2.patient);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(activity_r2.action);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(activity_r2.timestamp);
-  }
-}
 var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
   constructor() {
-    this.institutions = [
-      {
-        name: "Mayo Clinic",
-        category: "Hospital system",
-        status: "Healthy",
-        records: "47 records",
-        sync: "Synced 2 minutes ago"
-      },
-      {
-        name: "Cleveland Clinic",
-        category: "Hospital system",
-        status: "Healthy",
-        records: "23 records",
-        sync: "Synced 12 minutes ago"
-      },
-      {
-        name: "Quest Diagnostics",
-        category: "Lab network",
-        status: "Needs attention",
-        records: "14 records",
-        sync: "Token expires in 2 days"
-      }
-    ];
-    this.activities = [
-      {
-        source: "Mayo Clinic",
-        patient: "Jason K.",
-        action: "FHIR export completed",
-        timestamp: "Today, 10:30 AM"
-      },
-      {
-        source: "Cleveland Clinic",
-        patient: "Jason K.",
-        action: "Consent refreshed",
-        timestamp: "Today, 09:15 AM"
-      },
-      {
-        source: "Quest Diagnostics",
-        patient: "Jason K.",
-        action: "Re-authentication required",
-        timestamp: "Yesterday, 05:40 PM"
-      }
-    ];
   }
   ngOnInit() {
   }
@@ -59573,162 +59351,147 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 85, vars: 2, consts: [[1, "space-y-6", "md:space-y-8"], [1, "flex", "flex-col", "gap-4", "xl:flex-row", "xl:items-end", "xl:justify-between"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-[#6366f1]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950"], [1, "mt-3", "max-w-2xl", "text-base", "leading-7", "text-slate-500"], ["routerLink", "/search", 1, "inline-flex", "items-center", "gap-2", "rounded-full", "bg-slate-900", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:-translate-y-0.5", "hover:bg-slate-800", "hover:shadow-lg"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 5v14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 12h14"], [1, "grid", "gap-4", "md:grid-cols-3"], [1, "rounded-[26px]", "border", "border-slate-200", "bg-white", "p-5", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "text-sm", "font-medium", "text-slate-500"], [1, "mt-2", "text-sm", "font-medium", "text-emerald-500"], [1, "mt-2", "text-sm", "font-medium", "text-sky-500"], [1, "grid", "gap-6", "xl:grid-cols-[1.15fr_0.85fr]"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "p-6", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-center", "justify-between"], [1, "text-xl", "font-semibold", "text-slate-950"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "rounded-full", "bg-[#eef2ff]", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.24em]", "text-[#6366f1]"], [1, "mt-5", "space-y-4"], ["class", "flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8faff_100%)] p-5 md:flex-row md:items-center md:justify-between", 4, "ngFor", "ngForOf"], [1, "overflow-hidden", "rounded-[30px]", "bg-[linear-gradient(145deg,_#0f172a_0%,_#1e293b_100%)]", "p-6", "text-white", "shadow-[0_24px_60px_rgba(15,23,42,0.24)]"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.3em]", "text-white/60"], [1, "mt-4", "text-2xl", "font-semibold", "tracking-tight"], [1, "mt-4", "text-sm", "leading-7", "text-slate-300"], [1, "mt-8", "rounded-[24px]", "bg-white/5", "p-4"], [1, "text-sm", "font-medium", "text-slate-300"], [1, "mt-2", "text-lg", "font-semibold", "text-white"], ["routerLink", "/search", 1, "mt-6", "inline-flex", "items-center", "gap-2", "rounded-full", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-slate-900", "transition-all", "hover:-translate-y-0.5", "hover:shadow-lg"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m12 5 7 7-7 7"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "border-b", "border-slate-100", "px-6", "py-5"], [1, "overflow-x-auto"], [1, "min-w-full", "text-left"], [1, "bg-slate-50/80", "text-xs", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "px-6", "py-4", "font-semibold"], [1, "divide-y", "divide-slate-100", "text-sm", "text-slate-600"], [4, "ngFor", "ngForOf"], [1, "flex", "flex-col", "gap-4", "rounded-[24px]", "border", "border-slate-200", "bg-[linear-gradient(180deg,_#ffffff_0%,_#f8faff_100%)]", "p-5", "md:flex-row", "md:items-center", "md:justify-between"], [1, "flex", "items-center", "gap-4"], [1, "flex", "h-14", "w-14", "items-center", "justify-center", "rounded-2xl", "bg-[#eef2ff]", "text-lg", "font-semibold", "text-[#4f46e5]"], [1, "text-lg", "font-semibold", "text-slate-950"], [1, "text-sm", "text-slate-500"], [1, "flex", "flex-col", "gap-3", "md:items-end"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "inline-flex", "rounded-full", "px-3", "py-1", "text-xs", "font-semibold"], [1, "inline-flex", "rounded-full", "bg-slate-100", "px-3", "py-1", "text-xs", "font-semibold", "text-slate-500"], [1, "px-6", "py-4", "font-medium", "text-slate-900"], [1, "px-6", "py-4"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 118, vars: 0, consts: [["id", "overview", 1, "space-y-6", "pb-12"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]"], [1, "vault-panel", "p-6", "lg:p-7"], [1, "flex", "flex-col", "gap-3", "border-b", "border-slate-200", "pb-5", "sm:flex-row", "sm:items-end", "sm:justify-between"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-[#5B47FB]"], [1, "mt-2", "text-xl", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "text-slate-500"], ["routerLink", "/search", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "bg-[#5B47FB]", "px-4", "py-2", "text-sm", "font-semibold", "text-white", "transition", "hover:bg-[#4936E8]"], [1, "mt-6", "space-y-4"], [1, "vault-soft-panel", "flex", "flex-col", "gap-4", "p-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "flex", "items-start", "gap-4"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-sky-50", "text-sky-600", "font-semibold"], [1, "flex", "flex-wrap", "items-center", "gap-3"], [1, "text-base", "font-semibold", "text-slate-900"], [1, "vault-status-pill", "vault-status-pill--active"], [1, "grid", "gap-1", "text-sm", "text-slate-500", "sm:text-right"], [1, "font-medium", "text-slate-900"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-emerald-50", "text-emerald-600", "font-semibold"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-amber-50", "text-amber-600", "font-semibold"], [1, "vault-status-pill", "vault-status-pill--limited"], ["routerLink", "/search", 1, "vault-soft-panel", "flex", "items-center", "justify-between", "p-4", "transition", "hover:border-slate-300", "hover:bg-white"], [1, "flex", "items-center", "gap-4"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-slate-100", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M12 5v14M5 12h14"], [1, "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "m9 18 6-6-6-6"], [1, "space-y-6"], [1, "vault-panel", "p-6"], [1, "mt-5", "grid", "gap-4", "sm:grid-cols-3", "xl:grid-cols-1"], [1, "vault-soft-panel", "p-4"], [1, "text-sm", "font-medium", "text-slate-500"], [1, "mt-2", "text-3xl", "font-semibold", "text-slate-900"], [1, "mt-5", "space-y-4"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50/80", "p-4"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "section", 0)(1, "header", 1)(2, "div")(3, "p", 2);
-        \u0275\u0275text(4, "Connections");
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "section", 2)(3, "div", 3)(4, "div")(5, "p", 4);
+        \u0275\u0275text(6, "Institution health");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "h2", 3);
-        \u0275\u0275text(6, "Connected health systems");
+        \u0275\u0275elementStart(7, "h2", 5);
+        \u0275\u0275text(8, "Connected health systems");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(7, "p", 4);
-        \u0275\u0275text(8, " Review institution health, see sync activity, and add new patient record connections without leaving the dashboard. ");
+        \u0275\u0275elementStart(9, "p", 6);
+        \u0275\u0275text(10, "Monitor sync freshness, identify expiring links, and connect another provider when needed.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(9, "a", 5);
-        \u0275\u0275text(10, " Add an account ");
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(11, "svg", 6);
-        \u0275\u0275element(12, "path", 7)(13, "path", 8);
+        \u0275\u0275elementStart(11, "a", 7);
+        \u0275\u0275text(12, " Add account ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(13, "div", 8)(14, "article", 9)(15, "div", 10)(16, "div", 11);
+        \u0275\u0275text(17, "MC");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(18, "div")(19, "div", 12)(20, "h3", 13);
+        \u0275\u0275text(21, "Mayo Clinic");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(22, "span", 14);
+        \u0275\u0275text(23, "CONNECTED");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(24, "p", 6);
+        \u0275\u0275text(25, "Primary care, medications, and lab results are syncing on schedule.");
         \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(26, "div", 15)(27, "span", 16);
+        \u0275\u0275text(28, "Last sync");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(29, "span");
+        \u0275\u0275text(30, "Today at 8:12 AM");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(31, "article", 9)(32, "div", 10)(33, "div", 17);
+        \u0275\u0275text(34, "CC");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(35, "div")(36, "div", 12)(37, "h3", 13);
+        \u0275\u0275text(38, "Cleveland Clinic");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(39, "span", 14);
+        \u0275\u0275text(40, "CONNECTED");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(41, "p", 6);
+        \u0275\u0275text(42, "Recent visits and clinical summaries arrived in the latest sync window.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(43, "div", 15)(44, "span", 16);
+        \u0275\u0275text(45, "Last sync");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(46, "span");
+        \u0275\u0275text(47, "Yesterday at 6:41 PM");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(48, "article", 9)(49, "div", 10)(50, "div", 18);
+        \u0275\u0275text(51, "QD");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(52, "div")(53, "div", 12)(54, "h3", 13);
+        \u0275\u0275text(55, "Quest Diagnostics");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(56, "span", 19);
+        \u0275\u0275text(57, "EXPIRED");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(58, "p", 6);
+        \u0275\u0275text(59, "Lab access expired and needs renewed authentication before new results can sync.");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(60, "div", 15)(61, "span", 16);
+        \u0275\u0275text(62, "Action");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(63, "span");
+        \u0275\u0275text(64, "Reconnect account");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(65, "a", 20)(66, "div", 21)(67, "div", 22);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(68, "svg", 23);
+        \u0275\u0275element(69, "path", 24);
+        \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(14, "div", 9)(15, "article", 10)(16, "p", 11);
-        \u0275\u0275text(17, "Connected systems");
+        \u0275\u0275elementStart(70, "div")(71, "p", 25);
+        \u0275\u0275text(72, "Add another provider");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(18, "p", 3);
-        \u0275\u0275text(19, "3");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(20, "p", 12);
-        \u0275\u0275text(21, "2 healthy, 1 expiring soon");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(22, "article", 10)(23, "p", 11);
-        \u0275\u0275text(24, "Records available");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(25, "p", 3);
-        \u0275\u0275text(26, "84");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(27, "p", 12);
-        \u0275\u0275text(28, "Across labs, hospital, and specialist feeds");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(29, "article", 10)(30, "p", 11);
-        \u0275\u0275text(31, "Sync cadence");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(32, "p", 3);
-        \u0275\u0275text(33, "15 min");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(34, "p", 13);
-        \u0275\u0275text(35, "Automatic background refresh enabled");
+        \u0275\u0275elementStart(73, "p", 26);
+        \u0275\u0275text(74, "Search supported institutions and create a new connection.");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(36, "div", 14)(37, "section", 15)(38, "div", 16)(39, "div")(40, "h3", 17);
-        \u0275\u0275text(41, "Institution status");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(42, "p", 18);
-        \u0275\u0275text(43, "Live connection health across linked providers");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(44, "span", 19);
-        \u0275\u0275text(45, "Realtime");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(46, "div", 20);
-        \u0275\u0275template(47, ConnectedAccountsTabComponent_article_47_Template, 17, 14, "article", 21);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(48, "section", 22)(49, "p", 23);
-        \u0275\u0275text(50, "Recommendation");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(51, "h3", 24);
-        \u0275\u0275text(52, "Keep expiring accounts active");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(53, "p", 25);
-        \u0275\u0275text(54, " Quest Diagnostics is nearing token expiry. Refresh the connection now to avoid delayed record exports or failed refresh jobs. ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(55, "div", 26)(56, "p", 27);
-        \u0275\u0275text(57, "Suggested next step");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(58, "p", 28);
-        \u0275\u0275text(59, "Reconnect Quest Diagnostics within the next 48 hours.");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(60, "a", 29);
-        \u0275\u0275text(61, " Add or refresh account ");
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(62, "svg", 6);
-        \u0275\u0275element(63, "path", 8)(64, "path", 30);
+        \u0275\u0275elementStart(75, "svg", 27);
+        \u0275\u0275element(76, "path", 28);
         \u0275\u0275elementEnd()()()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(65, "section", 31)(66, "div", 32)(67, "h3", 17);
-        \u0275\u0275text(68, "Recent activity");
+        \u0275\u0275elementStart(77, "div", 29)(78, "section", 30)(79, "p", 4);
+        \u0275\u0275text(80, "Sync summary");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(69, "p", 18);
-        \u0275\u0275text(70, "A quick audit trail for record sync and consent events");
+        \u0275\u0275elementStart(81, "h3", 5);
+        \u0275\u0275text(82, "Connection health");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(83, "div", 31)(84, "div", 32)(85, "p", 33);
+        \u0275\u0275text(86, "Healthy connections");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(87, "p", 34);
+        \u0275\u0275text(88, "4");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(71, "div", 33)(72, "table", 34)(73, "thead", 35)(74, "tr")(75, "th", 36);
-        \u0275\u0275text(76, "Institution");
+        \u0275\u0275elementStart(89, "div", 32)(90, "p", 33);
+        \u0275\u0275text(91, "Needs review");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(77, "th", 36);
-        \u0275\u0275text(78, "Patient");
+        \u0275\u0275elementStart(92, "p", 34);
+        \u0275\u0275text(93, "1");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(94, "div", 32)(95, "p", 33);
+        \u0275\u0275text(96, "Average freshness");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(79, "th", 36);
-        \u0275\u0275text(80, "Action");
+        \u0275\u0275elementStart(97, "p", 34);
+        \u0275\u0275text(98, "6h");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(99, "section", 30)(100, "p", 4);
+        \u0275\u0275text(101, "Recommended next steps");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(81, "th", 36);
-        \u0275\u0275text(82, "Timestamp");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(83, "tbody", 37);
-        \u0275\u0275template(84, ConnectedAccountsTabComponent_tr_84_Template, 9, 4, "tr", 38);
-        \u0275\u0275elementEnd()()()()();
+        \u0275\u0275elementStart(102, "div", 35)(103, "div", 36)(104, "p", 25);
+        \u0275\u0275text(105, "Reconnect Quest Diagnostics");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(106, "p", 37);
+        \u0275\u0275text(107, "Renew access to restore lab imports and keep connected apps up to date.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(108, "div", 36)(109, "p", 25);
+        \u0275\u0275text(110, "Add a regional hospital");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(111, "p", 37);
+        \u0275\u0275text(112, "Extend your vault coverage by linking another provider in your network.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(113, "div", 36)(114, "p", 25);
+        \u0275\u0275text(115, "Review sync notifications");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(116, "p", 37);
+        \u0275\u0275text(117, "Enable alerts so you know when a connection expires or a refresh completes.");
+        \u0275\u0275elementEnd()()()()()()();
       }
-      if (rf & 2) {
-        \u0275\u0275advance(47);
-        \u0275\u0275property("ngForOf", ctx.institutions);
-        \u0275\u0275advance(37);
-        \u0275\u0275property("ngForOf", ctx.activities);
-      }
-    }, dependencies: [NgForOf, RouterLink], encapsulation: 2 });
+    }, dependencies: [RouterLink], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n/*# sourceMappingURL=connected-accounts-tab.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 24 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 9 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
-function SettingsTabComponent_article_69_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "article", 39)(1, "div")(2, "h4", 40);
-    \u0275\u0275text(3);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "p", 41);
-    \u0275\u0275text(5);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(6, "button", 42);
-    \u0275\u0275text(7);
-    \u0275\u0275elementEnd()();
-  }
-  if (rf & 2) {
-    const item_r1 = ctx.$implicit;
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate(item_r1.title);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(item_r1.description);
-    \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" ", item_r1.action, " ");
-  }
-}
 var SettingsTabComponent = class _SettingsTabComponent {
   constructor() {
-    this.securityItems = [
-      {
-        title: "Password",
-        description: "Rotate credentials regularly and require strong sign-in hygiene.",
-        action: "Change"
-      },
-      {
-        title: "Passkey",
-        description: "Set up passwordless sign-in for faster, more secure account access.",
-        action: "Set up"
-      },
-      {
-        title: "Session controls",
-        description: "Review active sessions, revoke stale tokens, and tighten device trust.",
-        action: "Review"
-      }
-    ];
   }
   ngOnInit() {
   }
@@ -59738,108 +59501,96 @@ var SettingsTabComponent = class _SettingsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 81, vars: 1, consts: [[1, "space-y-6", "md:space-y-8"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-[#6366f1]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950"], [1, "mt-3", "max-w-2xl", "text-base", "leading-7", "text-slate-500"], [1, "grid", "gap-6", "xl:grid-cols-[1.1fr_0.9fr]"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "p-6", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-center", "gap-4"], [1, "flex", "h-16", "w-16", "items-center", "justify-center", "rounded-[24px]", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)]", "text-xl", "font-semibold", "text-white"], [1, "text-xl", "font-semibold", "text-slate-950"], [1, "text-sm", "text-slate-500"], [1, "mt-6", "grid", "gap-4", "md:grid-cols-2"], [1, "block"], [1, "text-sm", "font-medium", "text-slate-600"], ["type", "text", "value", "Jason Kulatunga", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-3", "text-slate-900", "outline-none", "transition-all", "focus:border-[#6366f1]", "focus:bg-white", "focus:ring-4", "focus:ring-[#c7d2fe]"], ["type", "email", "value", "j***@fastenhealth.com", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-3", "text-slate-900", "outline-none", "transition-all", "focus:border-[#6366f1]", "focus:bg-white", "focus:ring-4", "focus:ring-[#c7d2fe]"], [1, "block", "md:col-span-2"], ["type", "text", "value", "API Platform / Production", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-3", "text-slate-900", "outline-none", "transition-all", "focus:border-[#6366f1]", "focus:bg-white", "focus:ring-4", "focus:ring-[#c7d2fe]"], [1, "mt-6", "flex", "flex-wrap", "gap-3"], [1, "inline-flex", "items-center", "rounded-full", "bg-slate-900", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:-translate-y-0.5", "hover:bg-slate-800", "hover:shadow-lg"], [1, "inline-flex", "items-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-slate-700", "transition-all", "hover:-translate-y-0.5", "hover:border-slate-300", "hover:shadow-md"], [1, "overflow-hidden", "rounded-[30px]", "bg-[linear-gradient(145deg,_#0f172a_0%,_#1e1b4b_100%)]", "p-6", "text-white", "shadow-[0_24px_60px_rgba(15,23,42,0.24)]"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.3em]", "text-white/60"], [1, "mt-4", "text-2xl", "font-semibold", "tracking-tight"], [1, "mt-4", "text-sm", "leading-7", "text-slate-300"], [1, "mt-8", "grid", "gap-3", "sm:grid-cols-3"], [1, "rounded-[22px]", "bg-white/5", "p-4"], [1, "text-xs", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-lg", "font-semibold"], [1, "flex", "flex-col", "gap-2", "md:flex-row", "md:items-end", "md:justify-between"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "rounded-full", "bg-[#eef2ff]", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.24em]", "text-[#6366f1]"], [1, "mt-5", "space-y-4"], ["class", "flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-slate-50/70 p-5 md:flex-row md:items-center md:justify-between", 4, "ngFor", "ngForOf"], [1, "rounded-[30px]", "border", "border-red-200", "bg-[linear-gradient(180deg,_#fff5f5_0%,_#fff1f2_100%)]", "p-6", "shadow-[0_12px_40px_rgba(239,68,68,0.10)]"], [1, "flex", "flex-col", "gap-4", "md:flex-row", "md:items-center", "md:justify-between"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-red-500"], [1, "mt-2", "text-2xl", "font-semibold", "text-red-700"], [1, "mt-2", "max-w-2xl", "text-sm", "leading-7", "text-red-600"], [1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-red-600", "transition-all", "hover:-translate-y-0.5", "hover:border-red-300", "hover:bg-red-50"], [1, "flex", "flex-col", "gap-4", "rounded-[24px]", "border", "border-slate-200", "bg-slate-50/70", "p-5", "md:flex-row", "md:items-center", "md:justify-between"], [1, "text-lg", "font-semibold", "text-slate-950"], [1, "mt-1", "text-sm", "leading-6", "text-slate-500"], [1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-[#4f46e5]", "transition-all", "hover:-translate-y-0.5", "hover:border-[#c7d2fe]", "hover:bg-[#eef2ff]"]], template: function SettingsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 77, vars: 0, consts: [["id", "settings", 1, "space-y-6", "pb-12"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]"], [1, "vault-panel", "p-6", "lg:p-7"], [1, "border-b", "border-slate-200", "pb-5"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-[#5B47FB]"], [1, "mt-2", "text-xl", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "text-slate-500"], [1, "mt-6", "grid", "gap-5", "md:grid-cols-2"], [1, "block"], [1, "text-sm", "font-medium", "text-slate-700"], ["type", "text", "value", "Jason Kulatunga", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-white", "px-4", "py-3", "text-slate-900", "shadow-sm", "outline-none", "transition", "focus:border-[#5B47FB]", "focus:ring-4", "focus:ring-[#5B47FB]/10"], ["type", "email", "value", "j***@fastenhealth.com", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-white", "px-4", "py-3", "text-slate-900", "shadow-sm", "outline-none", "transition", "focus:border-[#5B47FB]", "focus:ring-4", "focus:ring-[#5B47FB]/10"], [1, "block", "md:col-span-2"], [1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-white", "px-4", "py-3", "text-slate-900", "shadow-sm", "outline-none", "transition", "focus:border-[#5B47FB]", "focus:ring-4", "focus:ring-[#5B47FB]/10"], [1, "mt-6", "flex", "flex-col", "gap-3", "sm:flex-row", "sm:justify-end"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-semibold", "text-slate-700", "transition", "hover:border-slate-300", "hover:text-slate-900"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "bg-[#5B47FB]", "px-4", "py-2.5", "text-sm", "font-semibold", "text-white", "transition", "hover:bg-[#4936E8]"], [1, "space-y-6"], [1, "vault-panel", "p-6"], [1, "mt-5", "space-y-4"], [1, "vault-soft-panel", "flex", "items-center", "justify-between", "gap-4", "p-4"], [1, "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2", "text-sm", "font-semibold", "text-[#5B47FB]", "transition", "hover:border-[#5B47FB]/30", "hover:bg-[#EEF2FF]"], [1, "vault-status-pill", "vault-status-pill--active"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.22em]", "text-[#DC2626]"], [1, "mt-5", "rounded-[24px]", "border", "border-red-200", "bg-red-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "text-lg", "font-semibold", "text-red-700"], [1, "mt-2", "max-w-md", "text-sm", "leading-6", "text-red-600"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-semibold", "text-red-600", "transition", "hover:border-red-300", "hover:bg-red-100"]], template: function SettingsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "section", 0)(1, "header")(2, "p", 1);
-        \u0275\u0275text(3, "Settings");
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "section", 2)(3, "div", 3)(4, "p", 4);
+        \u0275\u0275text(5, "Profile");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(4, "h2", 2);
-        \u0275\u0275text(5, "Account and security controls");
+        \u0275\u0275elementStart(6, "h2", 5);
+        \u0275\u0275text(7, "Account Settings");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(6, "p", 3);
-        \u0275\u0275text(7, " Manage your profile, secure your workspace, and control how Fasten interacts with your connected data. ");
+        \u0275\u0275elementStart(8, "p", 6);
+        \u0275\u0275text(9, "Manage your account preferences, identity details, and how Fasten reaches you.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(8, "div", 4)(9, "section", 5)(10, "div", 6)(11, "div", 7);
-        \u0275\u0275text(12, " JK ");
+        \u0275\u0275elementStart(10, "div", 7)(11, "label", 8)(12, "span", 9);
+        \u0275\u0275text(13, "Full name");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "div")(14, "h3", 8);
-        \u0275\u0275text(15, "Jason Kulatunga");
+        \u0275\u0275element(14, "input", 10);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(16, "p", 9);
-        \u0275\u0275text(17, "Workspace owner");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(18, "div", 10)(19, "label", 11)(20, "span", 12);
-        \u0275\u0275text(21, "Full name");
+        \u0275\u0275elementStart(15, "label", 8)(16, "span", 9);
+        \u0275\u0275text(17, "Email address");
         \u0275\u0275elementEnd();
-        \u0275\u0275element(22, "input", 13);
+        \u0275\u0275element(18, "input", 11);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(23, "label", 11)(24, "span", 12);
-        \u0275\u0275text(25, "Email address");
+        \u0275\u0275elementStart(19, "label", 12)(20, "span", 9);
+        \u0275\u0275text(21, "Notification preference");
         \u0275\u0275elementEnd();
-        \u0275\u0275element(26, "input", 14);
+        \u0275\u0275elementStart(22, "select", 13)(23, "option");
+        \u0275\u0275text(24, "Email me for sync failures and completed exports");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(27, "label", 15)(28, "span", 12);
-        \u0275\u0275text(29, "Default organization");
+        \u0275\u0275elementStart(25, "option");
+        \u0275\u0275text(26, "Only email me for security alerts");
         \u0275\u0275elementEnd();
-        \u0275\u0275element(30, "input", 16);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(31, "div", 17)(32, "button", 18);
-        \u0275\u0275text(33, " Save changes ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(34, "button", 19);
-        \u0275\u0275text(35, " Manage team access ");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(36, "section", 20)(37, "p", 21);
-        \u0275\u0275text(38, "Security posture");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(39, "h3", 22);
-        \u0275\u0275text(40, "Your workspace is protected");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(41, "p", 23);
-        \u0275\u0275text(42, " MFA is enabled, audit logging is active, and API token rotation is scheduled weekly for production keys. ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(43, "div", 24)(44, "div", 25)(45, "p", 26);
-        \u0275\u0275text(46, "MFA");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(47, "p", 27);
-        \u0275\u0275text(48, "Enabled");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(49, "div", 25)(50, "p", 26);
-        \u0275\u0275text(51, "Sessions");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(52, "p", 27);
-        \u0275\u0275text(53, "4 active");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(54, "div", 25)(55, "p", 26);
-        \u0275\u0275text(56, "Audit logs");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(57, "p", 27);
-        \u0275\u0275text(58, "Healthy");
-        \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(59, "section", 5)(60, "div", 28)(61, "div")(62, "h3", 8);
-        \u0275\u0275text(63, "Security controls");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(64, "p", 29);
-        \u0275\u0275text(65, "Strengthen sign-in and account recovery across the workspace");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(66, "span", 30);
-        \u0275\u0275text(67, "Recommended actions");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(68, "div", 31);
-        \u0275\u0275template(69, SettingsTabComponent_article_69_Template, 8, 3, "article", 32);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(70, "section", 33)(71, "div", 34)(72, "div")(73, "p", 35);
-        \u0275\u0275text(74, "Danger Zone");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(75, "h3", 36);
-        \u0275\u0275text(76, "Delete account");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(77, "p", 37);
-        \u0275\u0275text(78, " Permanently delete your account, revoke all active data sharing, and remove access to stored records. This cannot be undone. ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(79, "button", 38);
-        \u0275\u0275text(80, " Delete account ");
+        \u0275\u0275elementStart(27, "option");
+        \u0275\u0275text(28, "Do not send email notifications");
         \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(29, "div", 14)(30, "button", 15);
+        \u0275\u0275text(31, " Cancel ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(32, "button", 16);
+        \u0275\u0275text(33, " Save changes ");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(34, "div", 17)(35, "section", 18)(36, "p", 4);
+        \u0275\u0275text(37, "Security");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(38, "h3", 5);
+        \u0275\u0275text(39, "Sign-in controls");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(40, "div", 19)(41, "div", 20)(42, "div")(43, "p", 21);
+        \u0275\u0275text(44, "Password");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(45, "p", 22);
+        \u0275\u0275text(46, "Update your password to maintain account security.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(47, "button", 23);
+        \u0275\u0275text(48, " Change ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(49, "div", 20)(50, "div")(51, "p", 21);
+        \u0275\u0275text(52, "Passkey");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(53, "p", 22);
+        \u0275\u0275text(54, "Passwordless sign-in is active on one trusted device.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(55, "button", 23);
+        \u0275\u0275text(56, " Manage ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(57, "div", 20)(58, "div")(59, "p", 21);
+        \u0275\u0275text(60, "Session alerts");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(61, "p", 22);
+        \u0275\u0275text(62, "Get notified when a new browser signs in to your vault.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(63, "span", 24);
+        \u0275\u0275text(64, "ON");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(65, "section", 18)(66, "p", 25);
+        \u0275\u0275text(67, "Danger Zone");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(68, "div", 26)(69, "div", 27)(70, "div")(71, "h3", 28);
+        \u0275\u0275text(72, "Delete Account");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(73, "p", 29);
+        \u0275\u0275text(74, "Permanently remove your Fasten vault, linked institutions, and saved sharing preferences.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(75, "button", 30);
+        \u0275\u0275text(76, " Delete ");
+        \u0275\u0275elementEnd()()()()()()();
       }
-      if (rf & 2) {
-        \u0275\u0275advance(69);
-        \u0275\u0275property("ngForOf", ctx.securityItems);
-      }
-    }, dependencies: [NgForOf], encapsulation: 2 });
+    }, dependencies: [NgSelectOption, \u0275NgSelectMultipleOption], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n/*# sourceMappingURL=settings-tab.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 15 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 9 });
 })();
 
 // projects/fasten-connect-vault/src/app/dashboard-routing.module.ts
@@ -62143,6 +61894,15 @@ var AppComponent = class _AppComponent {
     this.showHeader = false;
     this.showFooter = true;
   }
+  get currentPath() {
+    return this.router.url.split("?")[0];
+  }
+  get isAuthSignInRoute() {
+    return this.currentPath === "/auth/signin";
+  }
+  get isDashboardRoute() {
+    return this.currentPath.startsWith("/dashboard");
+  }
   ngOnInit() {
     const navbarBackdrop = document.createElement("div");
     navbarBackdrop.classList.add("az-navbar-backdrop");
@@ -62158,54 +61918,32 @@ var AppComponent = class _AppComponent {
       }
     }
   }
-  get currentPath() {
-    return this.router.url.split("?")[0];
-  }
-  get isSigninRoute() {
-    return this.currentPath === "/auth/signin";
-  }
-  get isDashboardRoute() {
-    return this.currentPath.startsWith("/dashboard");
-  }
-  get bannerClasses() {
-    return this.isDashboardRoute ? "w-full px-4 md:px-6" : "mx-auto w-full max-w-[440px] rounded-t-[28px]";
-  }
-  get containerClasses() {
-    if (this.isSigninRoute) {
-      return "marketing-container";
-    }
-    if (this.isDashboardRoute) {
-      return "mx-auto w-full max-w-[1440px] px-4 pb-6 pt-4 md:px-6 md:pb-10 md:pt-6";
-    }
-    return "mx-auto w-full max-w-[440px] overflow-hidden rounded-b-[28px] bg-white shadow-[0_30px_80px_rgba(15,23,42,0.12)]";
-  }
   static {
     this.\u0275fac = function AppComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(Router));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 9, vars: 2, consts: [[1, "min-h-screen", "bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.10),_transparent_28%),linear-gradient(180deg,_#f8f9ff_0%,_#eef2ff_100%)]", "text-slate-900"], ["id", "test-mode-banner", 1, "bg-[#DC3545]", "text-white", "text-center", "py-2", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 8, vars: 2, consts: [["id", "test-mode-banner", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
+        \u0275\u0275elementStart(0, "div", 0);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(2, "svg", 2);
-        \u0275\u0275element(3, "path", 3)(4, "path", 4)(5, "path", 5);
+        \u0275\u0275elementStart(1, "svg", 1);
+        \u0275\u0275element(2, "path", 2)(3, "path", 3)(4, "path", 4);
         \u0275\u0275elementEnd();
-        \u0275\u0275text(6, " You are using Fasten in test mode ");
+        \u0275\u0275text(5, " You are using Fasten in test mode\n");
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(7, "div", 6);
-        \u0275\u0275element(8, "router-outlet");
-        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(6, "div", 5);
+        \u0275\u0275element(7, "router-outlet");
+        \u0275\u0275elementEnd();
       }
       if (rf & 2) {
-        \u0275\u0275advance();
-        \u0275\u0275property("ngClass", ctx.bannerClasses);
+        \u0275\u0275property("ngClass", ctx.isDashboardRoute ? "w-full rounded-t-[28px] bg-[#DC3545] text-white text-center py-3 px-4 font-medium text-sm flex items-center justify-center gap-2" : "mx-auto w-full max-w-[440px] bg-[#DC3545] text-white text-center py-2 px-4 font-medium text-sm flex items-center justify-center gap-2");
         \u0275\u0275advance(6);
-        \u0275\u0275property("ngClass", ctx.containerClasses);
+        \u0275\u0275property("ngClass", ctx.isAuthSignInRoute ? "marketing-container" : ctx.isDashboardRoute ? "w-full min-h-[calc(100vh-68px)]" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
       }
-    }, dependencies: [NgClass, RouterOutlet], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n  min-height: 100vh;\n}\n/*# sourceMappingURL=app.component.css.map */"] });
+    }, dependencies: [NgClass, RouterOutlet], encapsulation: 2 });
   }
 };
 (() => {
