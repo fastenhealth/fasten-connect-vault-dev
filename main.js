@@ -56586,6 +56586,54 @@ function ProcessTefcaDirectAuthorizationResults(vaultConnectionIds, resp) {
   });
 }
 
+// projects/shared-library/src/lib/utils/patient-demographics.ts
+function formatPatientDemographicsName(demographics) {
+  if (!demographics?.patientName?.length) {
+    return "Not available";
+  }
+  const patientName = demographics.patientName[0];
+  const givenNames = (patientName?.given || []).map((name) => name?.trim()).filter((name) => !!name).join(" ");
+  const familyName = (patientName?.family || "").trim();
+  const suffix = patientName?.suffix ? String(patientName.suffix).trim() : "";
+  const parts = [givenNames, familyName, suffix].filter((part) => !!part);
+  return parts.length ? parts.join(" ") : "Not available";
+}
+function formatPatientDemographicsAddress(demographics) {
+  if (!demographics?.addressInformation?.length) {
+    return "Not available";
+  }
+  const address = demographics.addressInformation[0];
+  if (!address) {
+    return "Not available";
+  }
+  const streetLine = [address.street, address.unit].map((value) => toCleanString(value)).filter((value) => !!value).join(" ");
+  const cityState = [
+    toCleanString(address.city),
+    toCleanString(address.state)
+  ].filter((value) => !!value).join(", ");
+  const zip = toCleanString(address.zip);
+  const country = toCleanString(address.country);
+  const county = toCleanString(address.county);
+  const lines = [
+    streetLine,
+    [cityState, zip].filter((value) => !!value).join(" "),
+    [country, county ? `${county} County` : ""].filter((value) => !!value).join(", ")
+  ].filter((line) => !!line);
+  return lines.length ? lines.join("\n") : "Not available";
+}
+function formatPatientDemographicsBirthdate(demographics) {
+  if (demographics?.birthDate) {
+    return String(demographics.birthDate).trim().split("T")[0];
+  }
+  return "Not available";
+}
+function toCleanString(value) {
+  if (value === null || value === void 0) {
+    return "";
+  }
+  return String(value).trim();
+}
+
 // projects/shared-library/src/lib/shared-library.service.ts
 var SharedLibraryService = class _SharedLibraryService {
   constructor() {
@@ -60229,6 +60277,7 @@ var SpinnerComponent = class _SpinnerComponent {
 
 // projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
 var _c02 = () => [];
+var _c1 = (a0) => ["/dashboard/accounts", a0];
 function ConnectedAccountsTabComponent_section_15_div_1_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 17)(1, "div", 18)(2, "span", 19);
@@ -60259,9 +60308,9 @@ function ConnectedAccountsTabComponent_section_15_div_2_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r1.errorMessage);
   }
 }
-function ConnectedAccountsTabComponent_section_15_div_3_div_1_Template(rf, ctx) {
+function ConnectedAccountsTabComponent_section_15_div_3_a_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 24)(1, "div", 25);
+    \u0275\u0275elementStart(0, "a", 24)(1, "div", 25);
     \u0275\u0275element(2, "img", 26);
     \u0275\u0275elementStart(3, "div", 27)(4, "p", 28);
     \u0275\u0275text(5);
@@ -60271,10 +60320,17 @@ function ConnectedAccountsTabComponent_section_15_div_3_div_1_Template(rf, ctx) 
     \u0275\u0275elementEnd()()();
     \u0275\u0275elementStart(8, "div", 30)(9, "span", 31);
     \u0275\u0275text(10, "Active");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(11, "svg", 32);
+    \u0275\u0275element(12, "path", 33);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
     const account_r3 = ctx.$implicit;
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(6, _c1, ctx_r1.getAccountRouteId(account_r3)));
+    \u0275\u0275attribute("aria-label", "View details for " + ((account_r3.portal == null ? null : account_r3.portal.name) || (account_r3.brand == null ? null : account_r3.brand.name)));
     \u0275\u0275advance(2);
     \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (account_r3.brand == null ? null : account_r3.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (account_r3.portal == null ? null : account_r3.portal.name) || (account_r3.brand == null ? null : account_r3.brand.name));
     \u0275\u0275advance(3);
@@ -60286,7 +60342,7 @@ function ConnectedAccountsTabComponent_section_15_div_3_div_1_Template(rf, ctx) 
 function ConnectedAccountsTabComponent_section_15_div_3_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 22);
-    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_3_div_1_Template, 11, 4, "div", 23);
+    \u0275\u0275template(1, ConnectedAccountsTabComponent_section_15_div_3_a_1_Template, 13, 8, "a", 23);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -60297,20 +60353,20 @@ function ConnectedAccountsTabComponent_section_15_div_3_Template(rf, ctx) {
 }
 function ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 33)(1, "h2", 34);
+    \u0275\u0275elementStart(0, "div", 35)(1, "h2", 36);
     \u0275\u0275text(2, "No connected providers yet");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "p", 35);
+    \u0275\u0275elementStart(3, "p", 37);
     \u0275\u0275text(4, " Add an account to review the healthcare providers we discovered for you through TEFCA. ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "a", 36);
+    \u0275\u0275elementStart(5, "a", 38);
     \u0275\u0275text(6, " Add account ");
     \u0275\u0275elementEnd()();
   }
 }
 function ConnectedAccountsTabComponent_section_15_ng_template_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275template(0, ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template, 7, 0, "div", 32);
+    \u0275\u0275template(0, ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template, 7, 0, "div", 34);
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
@@ -60371,13 +60427,16 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
       }
     });
   }
+  getAccountRouteId(account) {
+    return account.vault_profile_connection_id || account.org_connection_id;
+  }
   static {
     this.\u0275fac = function ConnectedAccountsTabComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _ConnectedAccountsTabComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(NGXLogger));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "rounded-2xl border border-slate-200 bg-slate-50 px-6 py-10 text-center", 4, "ngIf"], ["class", "mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700", 4, "ngIf"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-10", "text-center"], [1, "inline-flex", "items-center", "gap-3", "text-sm", "font-medium", "text-slate-600"], [1, "inline-flex", "h-6", "w-6", "items-center", "justify-center", "rounded-full", "bg-slate-900"], [1, "mb-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-5", "py-4", "text-sm", "text-rose-700"], ["type", "button", 1, "vault-text-button", "mt-3", 3, "click"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 4, "ngFor", "ngForOf"], [1, "vault-list-row"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "rounded-2xl border border-slate-200 bg-slate-50 px-6 py-10 text-center", 4, "ngIf"], ["class", "mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700", 4, "ngIf"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-10", "text-center"], [1, "inline-flex", "items-center", "gap-3", "text-sm", "font-medium", "text-slate-600"], [1, "inline-flex", "h-6", "w-6", "items-center", "justify-center", "rounded-full", "bg-slate-900"], [1, "mb-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-5", "py-4", "text-sm", "text-rose-700"], ["type", "button", 1, "vault-text-button", "mt-3", 3, "click"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 3, "routerLink", 4, "ngFor", "ngForOf"], [1, "vault-list-row", 3, "routerLink"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400", "transition-colors", "hover:text-slate-700"], ["d", "M9 18l6-6-6-6"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "div", 3)(3, "p", 4);
         \u0275\u0275text(4, "Health systems");
@@ -60409,7 +60468,7 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 15 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 16 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
@@ -60511,6 +60570,517 @@ var SettingsTabComponent = class _SettingsTabComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 9 });
 })();
 
+// projects/fasten-connect-vault/src/app/pages/account-details/account-details.component.ts
+function AccountDetailsComponent_button_75_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "button", 47);
+    \u0275\u0275listener("click", function AccountDetailsComponent_button_75_Template_button_click_0_listener() {
+      const action_r2 = \u0275\u0275restoreView(_r1).$implicit;
+      const ctx_r2 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r2.triggerMockExport(action_r2));
+    });
+    \u0275\u0275elementStart(1, "span", 48)(2, "span", 49);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "span", 50);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(6, "svg", 51);
+    \u0275\u0275element(7, "path", 52)(8, "path", 53);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const action_r2 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(action_r2.label);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(action_r2.description);
+  }
+}
+function AccountDetailsComponent_div_76_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 54);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r2.exportFeedback, " ");
+  }
+}
+function AccountDetailsComponent_section_77_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "section", 55)(1, "div", 6)(2, "p", 7);
+    \u0275\u0275text(3, "Patient matching");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "h2", 34);
+    \u0275\u0275text(5, "Patient demographics used for matching");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(6, "p", 35);
+    \u0275\u0275text(7, " These demographics reflect the TEFCA-mode identity verification details used to match you to this institution. ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(8, "div", 56)(9, "div", 57)(10, "p", 25);
+    \u0275\u0275text(11, "Name");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "p", 27);
+    \u0275\u0275text(13);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(14, "div", 57)(15, "p", 25);
+    \u0275\u0275text(16, "Birthdate");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(17, "p", 27);
+    \u0275\u0275text(18);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(19, "div", 57)(20, "p", 25);
+    \u0275\u0275text(21, "Gender");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(22, "p", 58);
+    \u0275\u0275text(23);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(24, "div", 59)(25, "p", 25);
+    \u0275\u0275text(26, "Address");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(27, "p", 60);
+    \u0275\u0275text(28);
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const ctx_r2 = \u0275\u0275nextContext();
+    \u0275\u0275advance(13);
+    \u0275\u0275textInterpolate(ctx_r2.formattedPatientName);
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(ctx_r2.formattedPatientBirthdate);
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate((ctx_r2.patientDemographics == null ? null : ctx_r2.patientDemographics.gender) || "Not available");
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(ctx_r2.formattedPatientAddress);
+  }
+}
+function AccountDetailsComponent_div_88_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 61)(1, "div", 62)(2, "div", 63);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(3, "svg", 64);
+    \u0275\u0275element(4, "path", 65)(5, "polygon", 66);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(6, "div", 67)(7, "p", 49);
+    \u0275\u0275text(8);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "p", 68);
+    \u0275\u0275text(10);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(11, "span", 12);
+    \u0275\u0275text(12);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const app_r4 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngClass", app_r4.accentClasses);
+    \u0275\u0275advance(6);
+    \u0275\u0275textInterpolate(app_r4.name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(app_r4.description);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(app_r4.status);
+  }
+}
+function AccountDetailsComponent_div_98_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 69)(1, "div", 67)(2, "div", 70)(3, "p", 49);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "span", 71);
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "p", 68);
+    \u0275\u0275text(8);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(9, "p", 72);
+    \u0275\u0275text(10);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const activity_r5 = ctx.$implicit;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(activity_r5.appName);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r5.status);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r5.summary);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r5.timestamp);
+  }
+}
+var AccountDetailsComponent = class _AccountDetailsComponent {
+  constructor(route, configService) {
+    this.route = route;
+    this.configService = configService;
+    this.accountId = "";
+    this.institutionWebsite = "";
+    this.consentExpiresLabel = "";
+    this.consentDurationLabel = "";
+    this.appsUsingConnection = [];
+    this.activityHistory = [];
+    this.exportActions = [];
+    this.exportFeedback = "";
+  }
+  ngOnInit() {
+    this.accountId = this.route.snapshot.paramMap.get("accountId") || "";
+    this.account = this.findSelectedAccount();
+    this.institutionWebsite = this.buildInstitutionWebsite();
+    const consentExpiresAt = this.account?.consent_expires_at || this.buildMockConsentExpiration();
+    this.consentExpiresLabel = this.formatConsentExpiration(consentExpiresAt);
+    this.consentDurationLabel = this.getConsentDurationLabel(consentExpiresAt);
+    this.patientDemographics = this.shouldShowPatientDemographics() ? this.configService.vaultProfileConfig$.verifiedIdentityPatientDemographics || this.buildMockPatientDemographics() : void 0;
+    this.appsUsingConnection = this.buildMockApps();
+    this.activityHistory = this.buildMockActivityHistory();
+    this.exportActions = [
+      {
+        id: "pdf",
+        label: "Export as PDF",
+        description: "Generate a portable summary for download or sharing."
+      },
+      {
+        id: "smart-health-link",
+        label: "Export as Smart Health Link",
+        description: "Create a mock SMART Health Link for app-based retrieval."
+      },
+      {
+        id: "cms-patient-document",
+        label: "Export as CMS Patient Document",
+        description: "Prepare a mock CMS-compatible patient document package."
+      }
+    ];
+  }
+  get accountDisplayName() {
+    return this.account?.portal?.name || this.account?.brand?.name || "Connected institution";
+  }
+  get accountSubtitle() {
+    if (this.account?.patient_auth_type === "tefca_direct") {
+      return "Connected through TEFCA discovery and available for approved apps.";
+    }
+    return "Connected and available for approved record-sharing activity.";
+  }
+  get shouldDisplayPatientDemographicsSection() {
+    return !!this.patientDemographics;
+  }
+  get formattedPatientName() {
+    return formatPatientDemographicsName(this.patientDemographics);
+  }
+  get formattedPatientBirthdate() {
+    return formatPatientDemographicsBirthdate(this.patientDemographics);
+  }
+  get formattedPatientAddress() {
+    return formatPatientDemographicsAddress(this.patientDemographics);
+  }
+  triggerMockExport(action) {
+    this.exportFeedback = `${action.label} has been queued as a mock export action for ${this.accountDisplayName}.`;
+  }
+  findSelectedAccount() {
+    const connectedAccounts = this.configService.vaultProfileConfig$.connectedPatientAccounts || [];
+    const matchingAccount = connectedAccounts.find((candidate) => candidate.vault_profile_connection_id === this.accountId || candidate.org_connection_id === this.accountId);
+    if (matchingAccount) {
+      return matchingAccount;
+    }
+    return {
+      org_connection_id: this.accountId,
+      connection_status: "connected",
+      platform_type: "tefca",
+      patient_auth_type: "tefca_direct",
+      vault_profile_connection_id: this.accountId,
+      brand: {
+        id: "mock-brand",
+        name: "Connected Institution",
+        portals: [],
+        hidden: false,
+        last_updated: "",
+        portal_ids: ["mock-portal"]
+      },
+      portal: {
+        id: "mock-portal",
+        name: "Institution Portal",
+        last_updated: "",
+        endpoint_ids: ["mock-endpoint"]
+      },
+      endpoint: {
+        id: "mock-endpoint",
+        platform_type: "tefca"
+      }
+    };
+  }
+  buildInstitutionWebsite() {
+    const name = (this.account?.brand?.name || this.account?.portal?.name || "connected-institution").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return `https://www.${name || "connected-institution"}.example.org`;
+  }
+  buildMockConsentExpiration() {
+    const consentDate = /* @__PURE__ */ new Date();
+    consentDate.setDate(consentDate.getDate() + 180);
+    return consentDate.toISOString();
+  }
+  formatConsentExpiration(consentExpiresAt) {
+    const parsedDate = new Date(consentExpiresAt);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "Not available";
+    }
+    return parsedDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  }
+  getConsentDurationLabel(consentExpiresAt) {
+    const parsedDate = new Date(consentExpiresAt);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return "Duration unavailable";
+    }
+    const msUntilExpiration = parsedDate.getTime() - Date.now();
+    const dayCount = Math.max(0, Math.ceil(msUntilExpiration / (1e3 * 60 * 60 * 24)));
+    if (dayCount === 0) {
+      return "Expires today";
+    }
+    if (dayCount === 1) {
+      return "Expires in 1 day";
+    }
+    return `Expires in ${dayCount} days`;
+  }
+  shouldShowPatientDemographics() {
+    return this.account?.platform_type === "tefca" || !!this.configService.systemConfig$.tefcaMode;
+  }
+  buildMockPatientDemographics() {
+    return {
+      patientName: [{
+        given: ["Jordan", "A."],
+        family: "Lee",
+        suffix: ""
+      }],
+      birthDate: "1986-04-12",
+      gender: "female",
+      addressInformation: [{
+        street: "742 Evergreen Terrace",
+        unit: "Unit 3B",
+        city: "Springfield",
+        state: "IL",
+        zip: "62704",
+        country: "USA",
+        county: "Sangamon"
+      }]
+    };
+  }
+  buildMockApps() {
+    return [
+      {
+        name: "Acme Labs",
+        description: `Reads clinical summaries and lab data from ${this.accountDisplayName}.`,
+        status: "Active sync",
+        accentClasses: "bg-indigo-50 text-indigo-600"
+      },
+      {
+        name: "Example PHR",
+        description: `Uses this connection to keep your timeline current and searchable.`,
+        status: "Patient-authorized",
+        accentClasses: "bg-emerald-50 text-emerald-600"
+      },
+      {
+        name: "Clear Claims",
+        description: `Recently checked coverage-linked records tied to this institution.`,
+        status: "Recent request",
+        accentClasses: "bg-sky-50 text-sky-600"
+      }
+    ];
+  }
+  buildMockActivityHistory() {
+    return [
+      {
+        appName: "Example PHR",
+        summary: `Requested updated encounter data from ${this.accountDisplayName}.`,
+        timestamp: "2 hours ago",
+        status: "Completed"
+      },
+      {
+        appName: "Acme Labs",
+        summary: "Retrieved the latest CCD summary and medication list.",
+        timestamp: "Yesterday",
+        status: "Completed"
+      },
+      {
+        appName: "Clear Claims",
+        summary: "Checked demographic match confidence for linked coverage.",
+        timestamp: "3 days ago",
+        status: "Viewed"
+      }
+    ];
+  }
+  static {
+    this.\u0275fac = function AccountDetailsComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _AccountDetailsComponent)(\u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(ConfigService));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountDetailsComponent, selectors: [["app-account-details"]], standalone: false, decls: 99, vars: 20, consts: [[1, "vault-page-shell"], [1, "space-y-6"], ["routerLink", "/dashboard/accounts", 1, "vault-back-link"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M15 18l-6-6 6-6"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-3xl"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "vault-status-pill", 3, "ngClass"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "flex", "flex-col", "gap-6", "lg:flex-row", "lg:items-start", "lg:justify-between"], [1, "flex", "items-start", "gap-5"], ["imageFallback", "", 1, "h-20", "w-20", "rounded-2xl", "border", "border-slate-200", "bg-white", "object-contain", "p-3", 3, "src", "alt"], [1, "text-sm", "font-medium", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "text-slate-950"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], [1, "grid", "gap-4", "sm:grid-cols-2"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-4"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.2em]", "text-slate-400"], ["target", "_blank", "rel", "noreferrer", 1, "mt-2", "inline-flex", "text-sm", "font-semibold", "text-[#5B47FB]", "hover:text-[#4338ca]", 3, "href"], [1, "mt-2", "text-sm", "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "w-full", "max-w-sm", "rounded-3xl", "border", "border-slate-200", "bg-slate-50", "p-5"], [1, "mt-4", "space-y-4", "text-sm"], [1, "font-medium", "text-slate-500"], [1, "mt-1", "break-all", "font-semibold", "text-slate-900"], [1, "mt-1", "font-semibold", "text-slate-900"], [1, "vault-card-title", "text-xl"], [1, "vault-card-copy"], [1, "mt-6", "space-y-3"], ["type", "button", "class", "vault-secondary-button w-full justify-between px-4 py-4 text-left", 3, "click", 4, "ngFor", "ngForOf"], ["class", "mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-700", 4, "ngIf"], ["class", "vault-panel mt-6 p-6 sm:p-8", 4, "ngIf"], [1, "mt-6", "grid", "gap-6", "xl:grid-cols-2"], [1, "vault-panel", "p-3", "sm:p-4"], [1, "px-3", "pt-3", "sm:px-4", "sm:pt-4"], [1, "vault-card-copy", "mt-2"], [1, "mt-3", "divide-y", "divide-slate-100"], ["class", "vault-list-row", 4, "ngFor", "ngForOf"], ["class", "vault-list-row items-start", 4, "ngFor", "ngForOf"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-between", "px-4", "py-4", "text-left", 3, "click"], [1, "flex", "flex-col", "items-start", "gap-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "font-normal", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "M5 12h14"], ["d", "m12 5 7 7-7 7"], [1, "mt-5", "rounded-2xl", "border", "border-emerald-200", "bg-emerald-50", "px-4", "py-4", "text-sm", "text-emerald-700"], [1, "vault-panel", "mt-6", "p-6", "sm:p-8"], [1, "mt-6", "grid", "gap-4", "md:grid-cols-2", "xl:grid-cols-4"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-5", "py-5"], [1, "mt-2", "text-sm", "font-semibold", "capitalize", "text-slate-900"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-5", "py-5", "md:col-span-2", "xl:col-span-1"], [1, "mt-2", "whitespace-pre-line", "text-sm", "font-semibold", "text-slate-900"], [1, "vault-list-row"], [1, "flex", "items-center", "gap-4"], [1, "vault-icon-tile", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "space-y-1"], [1, "text-sm", "text-slate-500"], [1, "vault-list-row", "items-start"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "vault-status-pill", "is-warning"], [1, "text-sm", "font-medium", "text-slate-400"]], template: function AccountDetailsComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "a", 2);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(3, "svg", 3);
+        \u0275\u0275element(4, "path", 4);
+        \u0275\u0275elementEnd();
+        \u0275\u0275text(5, " Back to connected accounts ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(6, "div", 5)(7, "div", 6)(8, "p", 7);
+        \u0275\u0275text(9, "Account details");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(10, "div", 8)(11, "h1", 9);
+        \u0275\u0275text(12);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(13, "p", 10);
+        \u0275\u0275text(14);
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(15, "div", 11)(16, "span", 12);
+        \u0275\u0275text(17, "Connected");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(18, "span", 13);
+        \u0275\u0275text(19);
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275element(20, "div", 14);
+        \u0275\u0275elementStart(21, "div", 15)(22, "section", 16)(23, "div", 17)(24, "div", 18);
+        \u0275\u0275element(25, "img", 19);
+        \u0275\u0275elementStart(26, "div", 6)(27, "div")(28, "p", 20);
+        \u0275\u0275text(29, "Institution metadata");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(30, "h2", 21);
+        \u0275\u0275text(31);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(32, "p", 22);
+        \u0275\u0275text(33);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(34, "div", 23)(35, "div", 24)(36, "p", 25);
+        \u0275\u0275text(37, "Website");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(38, "a", 26);
+        \u0275\u0275text(39);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(40, "div", 24)(41, "p", 25);
+        \u0275\u0275text(42, "Consent expires at");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(43, "p", 27);
+        \u0275\u0275text(44);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(45, "p", 28);
+        \u0275\u0275text(46);
+        \u0275\u0275elementEnd()()()()();
+        \u0275\u0275elementStart(47, "div", 29)(48, "p", 25);
+        \u0275\u0275text(49, "Connection identifiers");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(50, "dl", 30)(51, "div")(52, "dt", 31);
+        \u0275\u0275text(53, "Vault connection ID");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(54, "dd", 32);
+        \u0275\u0275text(55);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(56, "div")(57, "dt", 31);
+        \u0275\u0275text(58, "Organization connection ID");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(59, "dd", 32);
+        \u0275\u0275text(60);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(61, "div")(62, "dt", 31);
+        \u0275\u0275text(63, "Authorization type");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(64, "dd", 33);
+        \u0275\u0275text(65);
+        \u0275\u0275elementEnd()()()()()();
+        \u0275\u0275elementStart(66, "section", 16)(67, "div", 6)(68, "p", 7);
+        \u0275\u0275text(69, "Export actions");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(70, "h2", 34);
+        \u0275\u0275text(71, "Share or package this connection");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(72, "p", 35);
+        \u0275\u0275text(73, " These actions are mocked for now and only demonstrate the export pathways available for this connected account. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(74, "div", 36);
+        \u0275\u0275template(75, AccountDetailsComponent_button_75_Template, 9, 2, "button", 37);
+        \u0275\u0275elementEnd();
+        \u0275\u0275template(76, AccountDetailsComponent_div_76_Template, 2, 1, "div", 38);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275template(77, AccountDetailsComponent_section_77_Template, 29, 4, "section", 39);
+        \u0275\u0275elementStart(78, "div", 40)(79, "section", 41)(80, "div", 42)(81, "p", 7);
+        \u0275\u0275text(82, "Connected apps");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(83, "h2", 34);
+        \u0275\u0275text(84, "Apps using this connection");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(85, "p", 43);
+        \u0275\u0275text(86, "Apps below are mocked examples of clients currently reading from this institution connection.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(87, "div", 44);
+        \u0275\u0275template(88, AccountDetailsComponent_div_88_Template, 13, 4, "div", 45);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(89, "section", 41)(90, "div", 42)(91, "p", 7);
+        \u0275\u0275text(92, "Activity history");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(93, "h2", 34);
+        \u0275\u0275text(94, "Recent access on this connection");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(95, "p", 43);
+        \u0275\u0275text(96, "Recent app requests are mocked so we can validate the page structure before service integrations exist.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(97, "div", 44);
+        \u0275\u0275template(98, AccountDetailsComponent_div_98_Template, 11, 4, "div", 46);
+        \u0275\u0275elementEnd()()()();
+      }
+      if (rf & 2) {
+        \u0275\u0275advance(12);
+        \u0275\u0275textInterpolate(ctx.accountDisplayName);
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate1(" ", ctx.accountSubtitle, " ");
+        \u0275\u0275advance(4);
+        \u0275\u0275property("ngClass", (ctx.account == null ? null : ctx.account.platform_type) === "tefca" ? "is-active" : "is-warning");
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", (ctx.account == null ? null : ctx.account.platform_type) || "Unknown", " ");
+        \u0275\u0275advance(6);
+        \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (ctx.account == null ? null : ctx.account.brand == null ? null : ctx.account.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", ctx.accountDisplayName);
+        \u0275\u0275advance(6);
+        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.brand == null ? null : ctx.account.brand.name) || ctx.accountDisplayName);
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate1(" ", (ctx.account == null ? null : ctx.account.portal == null ? null : ctx.account.portal.name) || "Patient access portal", " is the current connection endpoint for this institution. ");
+        \u0275\u0275advance(5);
+        \u0275\u0275property("href", ctx.institutionWebsite, \u0275\u0275sanitizeUrl);
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", ctx.institutionWebsite, " ");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate(ctx.consentExpiresLabel);
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate(ctx.consentDurationLabel);
+        \u0275\u0275advance(9);
+        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.vault_profile_connection_id) || "Not available");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.org_connection_id) || "Pending authorization");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.patient_auth_type) || "Unknown");
+        \u0275\u0275advance(10);
+        \u0275\u0275property("ngForOf", ctx.exportActions);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.exportFeedback);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.shouldDisplayPatientDemographicsSection);
+        \u0275\u0275advance(11);
+        \u0275\u0275property("ngForOf", ctx.appsUsingConnection);
+        \u0275\u0275advance(10);
+        \u0275\u0275property("ngForOf", ctx.activityHistory);
+      }
+    }, dependencies: [NgClass, NgForOf, NgIf, RouterLink, ImageFallbackDirective], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n/*# sourceMappingURL=account-details.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AccountDetailsComponent, { className: "AccountDetailsComponent", filePath: "projects/fasten-connect-vault/src/app/pages/account-details/account-details.component.ts", lineNumber: 38 });
+})();
+
 // projects/fasten-connect-vault/src/app/dashboard-routing.module.ts
 var dashboardRoutes = [
   {
@@ -60519,6 +61089,7 @@ var dashboardRoutes = [
     children: [
       { path: "", redirectTo: "apps", pathMatch: "full" },
       { path: "apps", pathMatch: "full", component: ConnectedAppsTabComponent },
+      { path: "accounts/:accountId", component: AccountDetailsComponent },
       { path: "accounts", pathMatch: "full", component: ConnectedAccountsTabComponent },
       { path: "settings", pathMatch: "full", component: SettingsTabComponent }
     ],
@@ -60711,7 +61282,7 @@ var IdentityVerificationErrorComponent = class _IdentityVerificationErrorCompone
 
 // projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts
 var _c03 = () => [];
-var _c1 = () => ({});
+var _c12 = () => ({});
 function HealthSystemSearchComponent_div_0_div_22_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 27);
@@ -60819,9 +61390,9 @@ function HealthSystemSearchComponent_div_0_ng_container_35_Template(rf, ctx) {
     const vaultProfile_r6 = \u0275\u0275nextContext().ngIf;
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(2, 3, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(7, _c1)));
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(2, 3, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(7, _c12)));
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(4, 5, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(8, _c1)));
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(4, 5, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(8, _c12)));
     \u0275\u0275advance(2);
     \u0275\u0275property("ngIf", ctx_r0.emptyTefcaResults);
   }
@@ -60884,7 +61455,7 @@ function HealthSystemSearchComponent_div_0_Template(rf, ctx) {
     \u0275\u0275advance(20);
     \u0275\u0275property("ngIf", ctx_r0.errorMessage);
     \u0275\u0275advance(8);
-    \u0275\u0275textInterpolate2(" ", (vaultProfile_r6.connectedPatientAccounts || \u0275\u0275pureFunction0(11, _c03)).length, " connected, ", \u0275\u0275pipeBind1(31, 7, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(12, _c1)).length + \u0275\u0275pipeBind1(32, 9, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(13, _c1)).length, " available ");
+    \u0275\u0275textInterpolate2(" ", (vaultProfile_r6.connectedPatientAccounts || \u0275\u0275pureFunction0(11, _c03)).length, " connected, ", \u0275\u0275pipeBind1(31, 7, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(12, _c12)).length + \u0275\u0275pipeBind1(32, 9, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(13, _c12)).length, " available ");
     \u0275\u0275advance(3);
     \u0275\u0275property("ngIf", ctx_r0.loading);
     \u0275\u0275advance(2);
