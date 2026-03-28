@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.css"],
+  "sourcesContent": [":host {\n  display: block;\n}\n\n.dashboard-shell {\n  min-height: calc(100vh - 8.5rem);\n}\n"],
+  "mappings": ";AAAA;AACE,WAAS;AACX;AAEA,CAAC;AACC,cAAY,KAAK,MAAM,EAAE;AAC3B;",
+  "names": []
+}

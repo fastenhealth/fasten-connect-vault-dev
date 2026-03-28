@@ -58917,8 +58917,91 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts
+var _c02 = () => ({ exact: true });
+function DashboardComponent_a_29__svg_svg_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 37);
+    \u0275\u0275element(1, "rect", 38)(2, "rect", 39)(3, "rect", 40)(4, "rect", 41);
+    \u0275\u0275elementEnd();
+  }
+}
+function DashboardComponent_a_29__svg_svg_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 37);
+    \u0275\u0275element(1, "path", 42)(2, "circle", 43)(3, "path", 44)(4, "path", 45);
+    \u0275\u0275elementEnd();
+  }
+}
+function DashboardComponent_a_29__svg_svg_6_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 37);
+    \u0275\u0275element(1, "path", 46)(2, "path", 47);
+    \u0275\u0275elementEnd();
+  }
+}
+function DashboardComponent_a_29_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "a", 30, 0)(2, "div", 31);
+    \u0275\u0275elementContainerStart(3, 32);
+    \u0275\u0275template(4, DashboardComponent_a_29__svg_svg_4_Template, 5, 0, "svg", 33)(5, DashboardComponent_a_29__svg_svg_5_Template, 5, 0, "svg", 33)(6, DashboardComponent_a_29__svg_svg_6_Template, 3, 0, "svg", 33);
+    \u0275\u0275elementContainerEnd();
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "div", 34)(8, "p", 35);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "p", 36);
+    \u0275\u0275text(11);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const item_r1 = ctx.$implicit;
+    const routeLink_r2 = \u0275\u0275reference(1);
+    \u0275\u0275property("routerLink", item_r1.route)("routerLinkActiveOptions", \u0275\u0275pureFunction0(15, _c02))("ngClass", routeLink_r2.isActive ? "" : "bg-white text-slate-600 hover:bg-slate-50");
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngClass", routeLink_r2.isActive ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitch", item_r1.id);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "apps");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "accounts");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "settings");
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("text-white", routeLink_r2.isActive)("text-slate-900", !routeLink_r2.isActive);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(item_r1.label);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngClass", routeLink_r2.isActive ? "text-white/75" : "text-slate-500");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(item_r1.helper);
+  }
+}
 var DashboardComponent = class _DashboardComponent {
   constructor() {
+    this.navItems = [
+      {
+        id: "apps",
+        label: "Dashboard",
+        route: "/dashboard/apps",
+        helper: "Usage, exports, and activity"
+      },
+      {
+        id: "accounts",
+        label: "Connections",
+        route: "/dashboard/accounts",
+        helper: "Institutions and patient links"
+      },
+      {
+        id: "settings",
+        label: "Settings",
+        route: "/dashboard/settings",
+        helper: "Profile, security, and access"
+      }
+    ];
   }
   ngOnInit() {
   }
@@ -58928,48 +59011,305 @@ var DashboardComponent = class _DashboardComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DashboardComponent, selectors: [["app-dashboard"]], standalone: false, decls: 20, vars: 18, consts: [["applink", "routerLinkActive"], ["accountlink", "routerLinkActive"], ["settingslink", "routerLinkActive"], ["id", "step-dashboard", 1, "step-view", "h-[600px]", "flex", "flex-col", "bg-white"], [1, "flex-none"], [1, "p-6", "border-b", "border-gray-200"], [1, "flex", "justify-center"], [1, "az-logo", "text-2xl"], [1, "border-b", "border-gray-200"], ["aria-label", "Tabs", 1, "flex", "justify-between", "px-6"], ["data-tab", "overview", 1, "tab-btn", "px-3", "py-4", "text-sm", "font-medium", "border-b-2", 3, "routerLink", "routerLinkActive"], ["data-tab", "accounts", 1, "tab-btn", "px-3", "py-4", "text-sm", "font-medium", "border-b-2", 3, "routerLink", "routerLinkActive"], ["data-tab", "settings", 1, "tab-btn", "px-3", "py-4", "text-sm", "font-medium", "border-b-2", 3, "routerLink", "routerLinkActive"], [1, "flex-1", "bg-gray-50", "overflow-hidden"], [1, "h-[calc(600px-132px)]", "overflow-y-auto"]], template: function DashboardComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DashboardComponent, selectors: [["app-dashboard"]], standalone: false, decls: 42, vars: 1, consts: [["routeLink", "routerLinkActive"], ["id", "step-dashboard", 1, "dashboard-shell", "overflow-hidden", "rounded-[32px]", "border", "border-white/70", "bg-white/90", "shadow-[0_28px_90px_rgba(79,70,229,0.16)]", "backdrop-blur"], [1, "flex", "min-h-[calc(100vh-8.5rem)]", "flex-col", "lg:flex-row"], [1, "border-b", "border-slate-200/80", "bg-[linear-gradient(180deg,_#ffffff_0%,_#f5f7ff_100%)]", "p-5", "lg:w-[280px]", "lg:border-b-0", "lg:border-r", "lg:p-6"], [1, "rounded-[28px]", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)]", "p-5", "text-white", "shadow-[0_18px_45px_rgba(79,70,229,0.32)]"], [1, "flex", "items-center", "justify-between"], [1, "text-xs", "uppercase", "tracking-[0.3em]", "text-white/70"], [1, "mt-2", "text-2xl", "font-semibold", "tracking-tight"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-white/15"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-6", "w-6"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4Z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m9.5 12 1.7 1.7 3.3-3.7"], [1, "mt-4", "text-sm", "leading-6", "text-white/80"], [1, "mt-6", "rounded-[24px]", "border", "border-slate-200", "bg-white", "p-4", "shadow-sm"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.28em]", "text-slate-400"], [1, "mt-3", "flex", "items-center", "gap-3"], [1, "flex", "h-11", "w-11", "items-center", "justify-center", "rounded-2xl", "bg-[#eef2ff]", "text-[#4f46e5]"], [1, "text-sm", "font-semibold"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["aria-label", "Dashboard", 1, "mt-6", "space-y-2"], ["routerLinkActive", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)] text-white shadow-[0_14px_30px_rgba(79,70,229,0.24)]", "class", "group flex items-start gap-3 rounded-2xl px-4 py-3 transition-all duration-200", 3, "routerLink", "routerLinkActiveOptions", "ngClass", 4, "ngFor", "ngForOf"], [1, "mt-6", "rounded-[24px]", "border", "border-slate-200", "bg-[#f8f9ff]", "p-4"], [1, "text-sm", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/dashboard/accounts", 1, "mt-4", "inline-flex", "items-center", "gap-2", "rounded-full", "bg-slate-900", "px-4", "py-2", "text-sm", "font-medium", "text-white", "transition-colors", "hover:bg-slate-800"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m9 18 6-6-6-6"], [1, "flex-1", "overflow-y-auto", "bg-[linear-gradient(180deg,_rgba(248,249,255,0.65)_0%,_rgba(255,255,255,0.96)_100%)]"], [1, "p-4", "md:p-6", "lg:p-8"], ["routerLinkActive", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)] text-white shadow-[0_14px_30px_rgba(79,70,229,0.24)]", 1, "group", "flex", "items-start", "gap-3", "rounded-2xl", "px-4", "py-3", "transition-all", "duration-200", 3, "routerLink", "routerLinkActiveOptions", "ngClass"], [1, "mt-0.5", "flex", "h-10", "w-10", "items-center", "justify-center", "rounded-2xl", "transition-colors", 3, "ngClass"], [3, "ngSwitch"], ["xmlns", "http://www.w3.org/2000/svg", "class", "h-5 w-5", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 4, "ngSwitchCase"], [1, "min-w-0"], [1, "font-semibold"], [1, "mt-1", "text-sm", "leading-5", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-5", "w-5"], ["x", "3", "y", "3", "width", "7", "height", "7", "rx", "1.5"], ["x", "14", "y", "3", "width", "7", "height", "7", "rx", "1.5"], ["x", "14", "y", "14", "width", "7", "height", "7", "rx", "1.5"], ["x", "3", "y", "14", "width", "7", "height", "7", "rx", "1.5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"], ["cx", "9.5", "cy", "7", "r", "4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M22 21v-2a4 4 0 0 0-3-3.87"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M16 3.13a4 4 0 0 1 0 7.75"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7Z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.04-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1.04H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.64 8.4a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.04a1.7 1.7 0 0 0 1.04-1.55V2.4a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.08 4a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87 1.7 1.7 0 0 0 1.55 1.04H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"]], template: function DashboardComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 3)(1, "div", 4)(2, "div", 5)(3, "div", 6)(4, "h1", 7);
-        \u0275\u0275text(5, "fasten");
+        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "aside", 3)(3, "div", 4)(4, "div", 5)(5, "div")(6, "p", 6);
+        \u0275\u0275text(7, "Fasten");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(8, "h1", 7);
+        \u0275\u0275text(9, "Connect Vault");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(10, "div", 8);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(11, "svg", 9);
+        \u0275\u0275element(12, "path", 10)(13, "path", 11);
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(6, "div", 8)(7, "nav", 9)(8, "button", 10, 0);
-        \u0275\u0275text(10, " Overview ");
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(14, "p", 12);
+        \u0275\u0275text(15, " Monitor integrations, share health data safely, and keep your patients connected from one place. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(16, "div", 13)(17, "p", 14);
+        \u0275\u0275text(18, "Workspace");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(11, "button", 11, 1);
-        \u0275\u0275text(13, " Accounts ");
+        \u0275\u0275elementStart(19, "div", 15)(20, "div", 16)(21, "span", 17);
+        \u0275\u0275text(22, "FC");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(23, "div")(24, "p", 18);
+        \u0275\u0275text(25, "API Platform");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(14, "button", 12, 2);
-        \u0275\u0275text(16, " Settings ");
+        \u0275\u0275elementStart(26, "p", 19);
+        \u0275\u0275text(27, "Production environment");
         \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(17, "div", 13)(18, "div", 14);
-        \u0275\u0275element(19, "router-outlet");
-        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(28, "nav", 20);
+        \u0275\u0275template(29, DashboardComponent_a_29_Template, 12, 16, "a", 21);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(30, "div", 22)(31, "p", 23);
+        \u0275\u0275text(32, "Need to onboard another institution?");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(33, "p", 24);
+        \u0275\u0275text(34, " Use the connections view to add new health systems and keep record syncs healthy. ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(35, "a", 25);
+        \u0275\u0275text(36, " Review connections ");
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(37, "svg", 26);
+        \u0275\u0275element(38, "path", 27);
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(39, "div", 28)(40, "div", 29);
+        \u0275\u0275element(41, "router-outlet");
+        \u0275\u0275elementEnd()()()();
       }
       if (rf & 2) {
-        const applink_r1 = \u0275\u0275reference(9);
-        const accountlink_r2 = \u0275\u0275reference(12);
-        const settingslink_r3 = \u0275\u0275reference(15);
-        \u0275\u0275advance(8);
-        \u0275\u0275classProp("border-transparent", !applink_r1.isActive)("hover:text-gray-700", !applink_r1.isActive);
-        \u0275\u0275property("routerLink", "/dashboard/apps")("routerLinkActive", "active border-[#5B47FB] text-[#5B47FB]");
-        \u0275\u0275advance(3);
-        \u0275\u0275classProp("border-transparent", !accountlink_r2.isActive)("hover:text-gray-700", !accountlink_r2.isActive);
-        \u0275\u0275property("routerLink", "/dashboard/accounts")("routerLinkActive", "active border-[#5B47FB] text-[#5B47FB]");
-        \u0275\u0275advance(3);
-        \u0275\u0275classProp("border-transparent", !settingslink_r3.isActive)("hover:text-gray-700", !settingslink_r3.isActive);
-        \u0275\u0275property("routerLink", "/dashboard/settings")("routerLinkActive", "active border-[#5B47FB] text-[#5B47FB]");
+        \u0275\u0275advance(29);
+        \u0275\u0275property("ngForOf", ctx.navItems);
       }
-    }, dependencies: [RouterOutlet, RouterLink, RouterLinkActive], encapsulation: 2 });
+    }, dependencies: [NgClass, NgForOf, NgSwitch, NgSwitchCase, RouterOutlet, RouterLink, RouterLinkActive], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.dashboard-shell[_ngcontent-%COMP%] {\n  min-height: calc(100vh - 8.5rem);\n}\n/*# sourceMappingURL=dashboard.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(DashboardComponent, { className: "DashboardComponent", filePath: "projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(DashboardComponent, { className: "DashboardComponent", filePath: "projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts", lineNumber: 16 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts
+function ConnectedAppsTabComponent_article_21__svg_svg_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 51);
+    \u0275\u0275element(1, "path", 52)(2, "circle", 53)(3, "path", 54)(4, "path", 55);
+    \u0275\u0275elementEnd();
+  }
+}
+function ConnectedAppsTabComponent_article_21__svg_svg_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 51);
+    \u0275\u0275element(1, "path", 56)(2, "path", 57)(3, "path", 58)(4, "path", 59)(5, "path", 60)(6, "path", 61);
+    \u0275\u0275elementEnd();
+  }
+}
+function ConnectedAppsTabComponent_article_21__svg_svg_13_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 51);
+    \u0275\u0275element(1, "path", 62)(2, "path", 63)(3, "path", 64);
+    \u0275\u0275elementEnd();
+  }
+}
+function ConnectedAppsTabComponent_article_21__svg_svg_14_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(0, "svg", 51);
+    \u0275\u0275element(1, "path", 65)(2, "path", 66);
+    \u0275\u0275elementEnd();
+  }
+}
+function ConnectedAppsTabComponent_article_21_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "article", 43)(1, "div", 44)(2, "div")(3, "p", 45);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "p", 46);
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "p", 47);
+    \u0275\u0275text(8);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(9, "div", 48);
+    \u0275\u0275elementContainerStart(10, 49);
+    \u0275\u0275template(11, ConnectedAppsTabComponent_article_21__svg_svg_11_Template, 5, 0, "svg", 50)(12, ConnectedAppsTabComponent_article_21__svg_svg_12_Template, 7, 0, "svg", 50)(13, ConnectedAppsTabComponent_article_21__svg_svg_13_Template, 4, 0, "svg", 50)(14, ConnectedAppsTabComponent_article_21__svg_svg_14_Template, 3, 0, "svg", 50);
+    \u0275\u0275elementContainerEnd();
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const card_r1 = ctx.$implicit;
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(card_r1.label);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(card_r1.value);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(card_r1.change);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngSwitch", card_r1.icon);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "connections");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "institutions");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "exports");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "success");
+  }
+}
+function ConnectedAppsTabComponent_ng_container_50_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275text(1);
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    const line_r2 = ctx.$implicit;
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("", line_r2, "\n");
+  }
+}
+function ConnectedAppsTabComponent_tr_76_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr")(1, "td", 67);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "td", 68);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "td", 68)(6, "span", 69);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(8, "td", 68);
+    \u0275\u0275text(9);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "td", 67);
+    \u0275\u0275text(11);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const row_r3 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r3.userId);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r3.institution);
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("bg-emerald-50", row_r3.status === "Connected")("text-emerald-600", row_r3.status === "Connected")("bg-amber-50", row_r3.status !== "Connected")("text-amber-600", row_r3.status !== "Connected");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", row_r3.status, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r3.connectedAt);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r3.records);
+  }
+}
+function ConnectedAppsTabComponent_tr_101_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr")(1, "td", 67);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "td", 68);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "td", 68)(6, "span", 69);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(8, "td", 68)(9, "span", 69);
+    \u0275\u0275text(10);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(11, "td", 68);
+    \u0275\u0275text(12);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const row_r4 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r4.exportId);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r4.user);
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("bg-violet-50", row_r4.type === "Full")("text-violet-600", row_r4.type === "Full")("bg-sky-50", row_r4.type !== "Full")("text-sky-600", row_r4.type !== "Full");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", row_r4.type, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275classProp("bg-emerald-50", row_r4.status === "Completed")("text-emerald-600", row_r4.status === "Completed")("bg-amber-50", row_r4.status !== "Completed")("text-amber-600", row_r4.status !== "Completed");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", row_r4.status, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(row_r4.createdAt);
+  }
+}
 var ConnectedAppsTabComponent = class _ConnectedAppsTabComponent {
   constructor() {
+    this.statCards = [
+      {
+        label: "Active Connections",
+        value: "1,247",
+        change: "+12% from last week",
+        icon: "connections"
+      },
+      {
+        label: "Connected Institutions",
+        value: "89",
+        change: "+3 new this week",
+        icon: "institutions"
+      },
+      {
+        label: "Daily Exports",
+        value: "156",
+        change: "+8% from yesterday",
+        icon: "exports"
+      },
+      {
+        label: "API Success Rate",
+        value: "99.7%",
+        change: "Stable performance",
+        icon: "success"
+      }
+    ];
+    this.snippetLines = [
+      "import { FastenConnect } from '@fasten/connect-sdk';",
+      "",
+      "const fasten = new FastenConnect({",
+      "  apiKey: 'your-api-key-here',",
+      "  environment: 'sandbox',",
+      "});",
+      "",
+      "const connection = await fasten.connect.create({",
+      "  userId: 'user_abc123',",
+      "  redirectUri: 'https://yourapp.com/callback',",
+      "});"
+    ];
+    this.recentConnections = [
+      {
+        userId: "user_abc123",
+        institution: "Mayo Clinic",
+        status: "Connected",
+        connectedAt: "Jan 15, 10:30 AM",
+        records: "47"
+      },
+      {
+        userId: "user_def456",
+        institution: "Kaiser Permanente",
+        status: "Connected",
+        connectedAt: "Jan 15, 09:15 AM",
+        records: "23"
+      },
+      {
+        userId: "user_ghi789",
+        institution: "Cleveland Clinic",
+        status: "Pending",
+        connectedAt: "Jan 15, 08:45 AM",
+        records: "--"
+      }
+    ];
+    this.exportRows = [
+      {
+        exportId: "exp_001",
+        user: "user_abc123",
+        type: "Full",
+        status: "Completed",
+        createdAt: "Jan 15, 11:00 AM"
+      },
+      {
+        exportId: "exp_002",
+        user: "user_def456",
+        type: "Differential",
+        status: "Processing",
+        createdAt: "Jan 15, 10:45 AM"
+      },
+      {
+        exportId: "exp_003",
+        user: "user_jkl012",
+        type: "Full",
+        status: "Completed",
+        createdAt: "Jan 15, 10:30 AM"
+      }
+    ];
   }
   ngOnInit() {
   }
@@ -58979,88 +59319,251 @@ var ConnectedAppsTabComponent = class _ConnectedAppsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAppsTabComponent, selectors: [["connected-apps-tab"]], standalone: false, decls: 56, vars: 0, consts: [[1, "tab-content", "p-6", "pb-12"], [1, "space-y-6"], [1, "space-y-4"], [1, "text-2xl", "font-semibold", "text-gray-900"], [1, "text-gray-600"], [1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300"], [1, "flex", "items-center", "gap-3"], [1, "w-10", "h-10", "rounded", "bg-indigo-50", "flex", "items-center", "justify-center"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "w-6", "h-6", "text-indigo-600"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "font-medium"], [1, "flex", "items-center", "gap-2"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-[#EEF2FF]", "text-[#5B47FB]", "rounded-full"], [1, "text-gray-400", "hover:text-gray-500"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M9 18l6-6-6-6"], [1, "w-10", "h-10", "rounded", "bg-emerald-50", "flex", "items-center", "justify-center"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "w-6", "h-6", "text-emerald-600"], ["d", "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"], ["x", "8", "y", "2", "width", "8", "height", "4", "rx", "1", "ry", "1"], [1, "w-10", "h-10", "rounded", "bg-sky-50", "flex", "items-center", "justify-center"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "w-6", "h-6", "text-sky-600"], ["d", "M22 11.08V12a10 10 0 1 1-5.93-9.14"], ["points", "22 4 12 14.01 9 11.01"], [1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300", "cursor-pointer"], [1, "w-10", "h-10", "rounded", "bg-gray-100", "flex", "items-center", "justify-center"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-6", "h-6", "text-gray-500"], ["d", "M12 5v14M5 12h14"], [1, "font-medium", "text-gray-700"]], template: function ConnectedAppsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAppsTabComponent, selectors: [["connected-apps-tab"]], standalone: false, decls: 102, vars: 4, consts: [[1, "space-y-6", "md:space-y-8"], [1, "flex", "flex-col", "gap-5", "xl:flex-row", "xl:items-start", "xl:justify-between"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-[#6366f1]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950", "md:text-[2.5rem]"], [1, "mt-3", "max-w-3xl", "text-base", "leading-7", "text-slate-500", "md:text-lg"], [1, "flex", "flex-wrap", "gap-3"], ["type", "button", 1, "inline-flex", "items-center", "gap-2", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-slate-700", "transition-all", "hover:-translate-y-0.5", "hover:border-slate-300", "hover:shadow-md"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M7 17 17 7"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M7 7h10v10"], [1, "inline-flex", "items-center", "gap-2", "rounded-full", "bg-slate-900", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:-translate-y-0.5", "hover:bg-slate-800", "hover:shadow-lg"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 5v14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m19 12-7 7-7-7"], [1, "grid", "gap-4", "md:grid-cols-2", "2xl:grid-cols-4"], ["class", "rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_12px_40px_rgba(15,23,42,0.06)]", 4, "ngFor", "ngForOf"], [1, "grid", "gap-6", "xl:grid-cols-[1.4fr_1fr]"], [1, "overflow-hidden", "rounded-[30px]", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#5b47fb_42%,_#6d28d9_100%)]", "p-8", "text-white", "shadow-[0_25px_60px_rgba(91,71,251,0.32)]"], [1, "max-w-xl"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.3em]", "text-white/70"], [1, "mt-5", "text-3xl", "font-semibold", "tracking-tight", "md:text-4xl"], [1, "mt-4", "text-base", "leading-7", "text-white/80"], [1, "mt-8", "flex", "flex-wrap", "gap-3"], ["type", "button", 1, "inline-flex", "items-center", "gap-2", "rounded-full", "bg-white/12", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:bg-white/20"], [1, "inline-flex", "items-center", "rounded-full", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-[#4f46e5]", "transition-all", "hover:-translate-y-0.5", "hover:shadow-lg"], [1, "overflow-hidden", "rounded-[30px]", "bg-[#0f172a]", "p-5", "text-slate-100", "shadow-[0_25px_60px_rgba(15,23,42,0.22)]"], [1, "flex", "items-center", "justify-between"], [1, "rounded-full", "bg-white/10", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.28em]", "text-slate-300"], [1, "inline-flex", "items-center", "gap-1", "text-sm", "text-slate-400", "transition-colors", "hover:text-white"], ["x", "9", "y", "9", "width", "13", "height", "13", "rx", "2"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"], [1, "mt-4", "overflow-x-auto", "rounded-[24px]", "bg-white/5", "p-4", "text-sm", "leading-7", "text-slate-300"], [4, "ngFor", "ngForOf"], [1, "grid", "gap-6", "xl:grid-cols-2"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-center", "justify-between", "border-b", "border-slate-100", "px-6", "py-5"], [1, "text-xl", "font-semibold", "text-slate-950"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "rounded-full", "px-3", "py-1.5", "text-sm", "font-medium", "text-[#6366f1]", "transition-colors", "hover:bg-[#eef2ff]"], [1, "overflow-x-auto"], [1, "min-w-full", "text-left"], [1, "bg-slate-50/80", "text-xs", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "px-6", "py-4", "font-semibold"], [1, "divide-y", "divide-slate-100", "text-sm", "text-slate-600"], [1, "rounded-[26px]", "border", "border-slate-200", "bg-white", "p-5", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-start", "justify-between", "gap-4"], [1, "text-sm", "font-medium", "text-slate-500"], [1, "mt-2", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950"], [1, "mt-2", "text-sm", "font-medium", "text-emerald-500"], [1, "flex", "h-12", "w-12", "items-center", "justify-center", "rounded-2xl", "bg-[#eef2ff]", "text-[#6366f1]"], [3, "ngSwitch"], ["xmlns", "http://www.w3.org/2000/svg", "class", "h-5 w-5", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 4, "ngSwitchCase"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "1.8", 1, "h-5", "w-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"], ["cx", "9.5", "cy", "7", "r", "4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M19 8v6"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M22 11h-6"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M3 21h18"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 21V7l7-4 7 4v14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M9 10h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 10h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M9 14h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 14h.01"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 3v12"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m7 10 5 5 5-5"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 21h14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m3 17 6-6 4 4 7-8"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M14 7h6v6"], [1, "px-6", "py-4", "font-medium", "text-slate-900"], [1, "px-6", "py-4"], [1, "inline-flex", "rounded-full", "px-3", "py-1", "text-xs", "font-semibold"]], template: function ConnectedAppsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h2", 3);
-        \u0275\u0275text(4, "Connected Apps");
+        \u0275\u0275elementStart(0, "section", 0)(1, "header", 1)(2, "div")(3, "p", 2);
+        \u0275\u0275text(4, "Dashboard");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "p", 4);
-        \u0275\u0275text(6, "View and manage apps that have access to your medical records");
+        \u0275\u0275elementStart(5, "h2", 3);
+        \u0275\u0275text(6, "Welcome to your Fasten dashboard");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(7, "div", 5)(8, "div", 6)(9, "div", 7);
+        \u0275\u0275elementStart(7, "p", 4);
+        \u0275\u0275text(8, " Monitor your integrations, track usage, and manage your healthcare data connections from one polished workspace. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(9, "div", 5)(10, "button", 6);
+        \u0275\u0275text(11, " View docs ");
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(10, "svg", 8);
-        \u0275\u0275element(11, "path", 9)(12, "polygon", 10);
+        \u0275\u0275elementStart(12, "svg", 7);
+        \u0275\u0275element(13, "path", 8)(14, "path", 9);
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(13, "span", 11);
-        \u0275\u0275text(14, "Acme Labs");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(15, "div", 12)(16, "span", 13);
-        \u0275\u0275text(17, "ACTIVE");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(18, "button", 14);
+        \u0275\u0275elementStart(15, "button", 10);
+        \u0275\u0275text(16, " Launch sandbox export ");
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(19, "svg", 15);
-        \u0275\u0275element(20, "path", 16);
+        \u0275\u0275elementStart(17, "svg", 7);
+        \u0275\u0275element(18, "path", 11)(19, "path", 12);
         \u0275\u0275elementEnd()()()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(21, "div", 5)(22, "div", 6)(23, "div", 17);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(24, "svg", 18);
-        \u0275\u0275element(25, "path", 19)(26, "rect", 20);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(27, "span", 11);
-        \u0275\u0275text(28, "Example PHR");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(29, "div", 12)(30, "span", 13);
-        \u0275\u0275text(31, "ACTIVE");
+        \u0275\u0275elementStart(20, "div", 13);
+        \u0275\u0275template(21, ConnectedAppsTabComponent_article_21_Template, 15, 8, "article", 14);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(32, "button", 14);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(33, "svg", 15);
-        \u0275\u0275element(34, "path", 16);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(35, "div", 5)(36, "div", 6)(37, "div", 21);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(38, "svg", 22);
-        \u0275\u0275element(39, "path", 23)(40, "polyline", 24);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(41, "span", 11);
-        \u0275\u0275text(42, "Clear Claims");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(43, "div", 12)(44, "span", 13);
-        \u0275\u0275text(45, "ACTIVE");
+        \u0275\u0275elementStart(22, "div", 15)(23, "section", 16)(24, "div", 17)(25, "p", 18);
+        \u0275\u0275text(26, "SDK");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(46, "button", 14);
+        \u0275\u0275elementStart(27, "h3", 19);
+        \u0275\u0275text(28, "Add Fasten Connect to your app");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(29, "p", 20);
+        \u0275\u0275text(30, " Enable your users to securely connect their medical records from thousands of healthcare institutions with just a few lines of code. ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(31, "div", 21)(32, "button", 22);
+        \u0275\u0275text(33, " View documentation ");
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(47, "svg", 15);
-        \u0275\u0275element(48, "path", 16);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(49, "div", 25)(50, "div", 6)(51, "div", 26);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(52, "svg", 27);
-        \u0275\u0275element(53, "path", 28);
+        \u0275\u0275elementStart(34, "svg", 7);
+        \u0275\u0275element(35, "path", 8)(36, "path", 9);
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(54, "span", 29);
-        \u0275\u0275text(55, "Add an app");
+        \u0275\u0275elementStart(37, "button", 23);
+        \u0275\u0275text(38, " Get started ");
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(39, "section", 24)(40, "div", 25)(41, "span", 26);
+        \u0275\u0275text(42, "JavaScript");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(43, "button", 27);
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(44, "svg", 7);
+        \u0275\u0275element(45, "rect", 28)(46, "path", 29);
+        \u0275\u0275elementEnd();
+        \u0275\u0275text(47, " Copy ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(48, "pre", 30)(49, "code");
+        \u0275\u0275template(50, ConnectedAppsTabComponent_ng_container_50_Template, 2, 1, "ng-container", 31);
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(51, "div", 32)(52, "section", 33)(53, "div", 34)(54, "div")(55, "h3", 35);
+        \u0275\u0275text(56, "Recent Connections");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(57, "p", 36);
+        \u0275\u0275text(58, "Latest patient and institution activity");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(59, "button", 37);
+        \u0275\u0275text(60, "View all");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(61, "div", 38)(62, "table", 39)(63, "thead", 40)(64, "tr")(65, "th", 41);
+        \u0275\u0275text(66, "User ID");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(67, "th", 41);
+        \u0275\u0275text(68, "Institution");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(69, "th", 41);
+        \u0275\u0275text(70, "Status");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(71, "th", 41);
+        \u0275\u0275text(72, "Connected");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(73, "th", 41);
+        \u0275\u0275text(74, "Records");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(75, "tbody", 42);
+        \u0275\u0275template(76, ConnectedAppsTabComponent_tr_76_Template, 12, 13, "tr", 31);
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275elementStart(77, "section", 33)(78, "div", 34)(79, "div")(80, "h3", 35);
+        \u0275\u0275text(81, "FHIR Export Log");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(82, "p", 36);
+        \u0275\u0275text(83, "Track export jobs and delivery states");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(84, "button", 37);
+        \u0275\u0275text(85, "View all");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(86, "div", 38)(87, "table", 39)(88, "thead", 40)(89, "tr")(90, "th", 41);
+        \u0275\u0275text(91, "Export ID");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(92, "th", 41);
+        \u0275\u0275text(93, "User");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(94, "th", 41);
+        \u0275\u0275text(95, "Type");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(96, "th", 41);
+        \u0275\u0275text(97, "Status");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(98, "th", 41);
+        \u0275\u0275text(99, "Created");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(100, "tbody", 42);
+        \u0275\u0275template(101, ConnectedAppsTabComponent_tr_101_Template, 13, 21, "tr", 31);
         \u0275\u0275elementEnd()()()()()();
       }
-    }, encapsulation: 2 });
+      if (rf & 2) {
+        \u0275\u0275advance(21);
+        \u0275\u0275property("ngForOf", ctx.statCards);
+        \u0275\u0275advance(29);
+        \u0275\u0275property("ngForOf", ctx.snippetLines);
+        \u0275\u0275advance(26);
+        \u0275\u0275property("ngForOf", ctx.recentConnections);
+        \u0275\u0275advance(25);
+        \u0275\u0275property("ngForOf", ctx.exportRows);
+      }
+    }, dependencies: [NgForOf, NgSwitch, NgSwitchCase], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAppsTabComponent, { className: "ConnectedAppsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAppsTabComponent, { className: "ConnectedAppsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-apps-tab/connected-apps-tab.component.ts", lineNumber: 32 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
+function ConnectedAccountsTabComponent_article_47_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "article", 39)(1, "div", 40)(2, "div", 41);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div")(5, "h4", 42);
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "p", 43);
+    \u0275\u0275text(8);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(9, "div", 44)(10, "div", 45)(11, "span", 46);
+    \u0275\u0275text(12);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "span", 47);
+    \u0275\u0275text(14);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(15, "p", 43);
+    \u0275\u0275text(16);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const institution_r1 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", institution_r1.name.charAt(0), " ");
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(institution_r1.name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(institution_r1.category);
+    \u0275\u0275advance(3);
+    \u0275\u0275classProp("bg-emerald-50", institution_r1.status === "Healthy")("text-emerald-600", institution_r1.status === "Healthy")("bg-amber-50", institution_r1.status !== "Healthy")("text-amber-600", institution_r1.status !== "Healthy");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", institution_r1.status, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", institution_r1.records, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(institution_r1.sync);
+  }
+}
+function ConnectedAccountsTabComponent_tr_84_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "tr")(1, "td", 48);
+    \u0275\u0275text(2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "td", 49);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "td", 49);
+    \u0275\u0275text(6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "td", 49);
+    \u0275\u0275text(8);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const activity_r2 = ctx.$implicit;
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r2.source);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r2.patient);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r2.action);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(activity_r2.timestamp);
+  }
+}
 var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
   constructor() {
+    this.institutions = [
+      {
+        name: "Mayo Clinic",
+        category: "Hospital system",
+        status: "Healthy",
+        records: "47 records",
+        sync: "Synced 2 minutes ago"
+      },
+      {
+        name: "Cleveland Clinic",
+        category: "Hospital system",
+        status: "Healthy",
+        records: "23 records",
+        sync: "Synced 12 minutes ago"
+      },
+      {
+        name: "Quest Diagnostics",
+        category: "Lab network",
+        status: "Needs attention",
+        records: "14 records",
+        sync: "Token expires in 2 days"
+      }
+    ];
+    this.activities = [
+      {
+        source: "Mayo Clinic",
+        patient: "Jason K.",
+        action: "FHIR export completed",
+        timestamp: "Today, 10:30 AM"
+      },
+      {
+        source: "Cleveland Clinic",
+        patient: "Jason K.",
+        action: "Consent refreshed",
+        timestamp: "Today, 09:15 AM"
+      },
+      {
+        source: "Quest Diagnostics",
+        patient: "Jason K.",
+        action: "Re-authentication required",
+        timestamp: "Yesterday, 05:40 PM"
+      }
+    ];
   }
   ngOnInit() {
   }
@@ -59070,73 +59573,162 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 45, vars: 0, consts: [["id", "overview", 1, "tab-content", "p-6", "pb-12"], [1, "space-y-6"], [1, "space-y-4"], [1, "text-2xl", "font-semibold", "text-gray-900"], [1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300"], [1, "flex", "items-center", "gap-3"], ["src", "https://logo.clearbit.com/mayoclinic.org", "alt", "Mayo Clinic", 1, "w-10", "h-10", "rounded", "object-contain"], [1, "font-medium"], [1, "flex", "items-center", "gap-2"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-[#EEF2FF]", "text-[#5B47FB]", "rounded-full"], [1, "text-gray-400", "hover:text-gray-500"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M9 18l6-6-6-6"], ["src", "https://logo.clearbit.com/clevelandclinic.org", "alt", "Cleveland Clinic", 1, "w-10", "h-10", "rounded", "object-contain"], ["src", "https://logo.clearbit.com/questdiagnostics.com", "alt", "Quest Diagnostics", 1, "w-10", "h-10", "rounded", "object-contain"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-yellow-100", "text-yellow-800", "rounded-full"], ["routerLink", "/search", 1, "flex", "items-center", "justify-between", "p-4", "bg-white", "border", "border-gray-200", "rounded-lg", "hover:border-gray-300", "cursor-pointer"], [1, "w-10", "h-10", "rounded", "bg-gray-100", "flex", "items-center", "justify-center"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-6", "h-6", "text-gray-500"], ["d", "M12 5v14M5 12h14"], [1, "font-medium", "text-gray-700"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 85, vars: 2, consts: [[1, "space-y-6", "md:space-y-8"], [1, "flex", "flex-col", "gap-4", "xl:flex-row", "xl:items-end", "xl:justify-between"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-[#6366f1]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950"], [1, "mt-3", "max-w-2xl", "text-base", "leading-7", "text-slate-500"], ["routerLink", "/search", 1, "inline-flex", "items-center", "gap-2", "rounded-full", "bg-slate-900", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:-translate-y-0.5", "hover:bg-slate-800", "hover:shadow-lg"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M12 5v14"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 12h14"], [1, "grid", "gap-4", "md:grid-cols-3"], [1, "rounded-[26px]", "border", "border-slate-200", "bg-white", "p-5", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "text-sm", "font-medium", "text-slate-500"], [1, "mt-2", "text-sm", "font-medium", "text-emerald-500"], [1, "mt-2", "text-sm", "font-medium", "text-sky-500"], [1, "grid", "gap-6", "xl:grid-cols-[1.15fr_0.85fr]"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "p-6", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-center", "justify-between"], [1, "text-xl", "font-semibold", "text-slate-950"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "rounded-full", "bg-[#eef2ff]", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.24em]", "text-[#6366f1]"], [1, "mt-5", "space-y-4"], ["class", "flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#f8faff_100%)] p-5 md:flex-row md:items-center md:justify-between", 4, "ngFor", "ngForOf"], [1, "overflow-hidden", "rounded-[30px]", "bg-[linear-gradient(145deg,_#0f172a_0%,_#1e293b_100%)]", "p-6", "text-white", "shadow-[0_24px_60px_rgba(15,23,42,0.24)]"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.3em]", "text-white/60"], [1, "mt-4", "text-2xl", "font-semibold", "tracking-tight"], [1, "mt-4", "text-sm", "leading-7", "text-slate-300"], [1, "mt-8", "rounded-[24px]", "bg-white/5", "p-4"], [1, "text-sm", "font-medium", "text-slate-300"], [1, "mt-2", "text-lg", "font-semibold", "text-white"], ["routerLink", "/search", 1, "mt-6", "inline-flex", "items-center", "gap-2", "rounded-full", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-slate-900", "transition-all", "hover:-translate-y-0.5", "hover:shadow-lg"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "m12 5 7 7-7 7"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "border-b", "border-slate-100", "px-6", "py-5"], [1, "overflow-x-auto"], [1, "min-w-full", "text-left"], [1, "bg-slate-50/80", "text-xs", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "px-6", "py-4", "font-semibold"], [1, "divide-y", "divide-slate-100", "text-sm", "text-slate-600"], [4, "ngFor", "ngForOf"], [1, "flex", "flex-col", "gap-4", "rounded-[24px]", "border", "border-slate-200", "bg-[linear-gradient(180deg,_#ffffff_0%,_#f8faff_100%)]", "p-5", "md:flex-row", "md:items-center", "md:justify-between"], [1, "flex", "items-center", "gap-4"], [1, "flex", "h-14", "w-14", "items-center", "justify-center", "rounded-2xl", "bg-[#eef2ff]", "text-lg", "font-semibold", "text-[#4f46e5]"], [1, "text-lg", "font-semibold", "text-slate-950"], [1, "text-sm", "text-slate-500"], [1, "flex", "flex-col", "gap-3", "md:items-end"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "inline-flex", "rounded-full", "px-3", "py-1", "text-xs", "font-semibold"], [1, "inline-flex", "rounded-full", "bg-slate-100", "px-3", "py-1", "text-xs", "font-semibold", "text-slate-500"], [1, "px-6", "py-4", "font-medium", "text-slate-900"], [1, "px-6", "py-4"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h3", 3);
-        \u0275\u0275text(4, "Connected Health Systems");
+        \u0275\u0275elementStart(0, "section", 0)(1, "header", 1)(2, "div")(3, "p", 2);
+        \u0275\u0275text(4, "Connections");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "div", 4)(6, "div", 5);
-        \u0275\u0275element(7, "img", 6);
-        \u0275\u0275elementStart(8, "span", 7);
-        \u0275\u0275text(9, "Mayo Clinic");
+        \u0275\u0275elementStart(5, "h2", 3);
+        \u0275\u0275text(6, "Connected health systems");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(7, "p", 4);
+        \u0275\u0275text(8, " Review institution health, see sync activity, and add new patient record connections without leaving the dashboard. ");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(10, "div", 8)(11, "span", 9);
-        \u0275\u0275text(12, "ACTIVE");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "button", 10);
+        \u0275\u0275elementStart(9, "a", 5);
+        \u0275\u0275text(10, " Add an account ");
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(14, "svg", 11);
-        \u0275\u0275element(15, "path", 12);
+        \u0275\u0275elementStart(11, "svg", 6);
+        \u0275\u0275element(12, "path", 7)(13, "path", 8);
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275namespaceHTML();
+        \u0275\u0275elementStart(14, "div", 9)(15, "article", 10)(16, "p", 11);
+        \u0275\u0275text(17, "Connected systems");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(18, "p", 3);
+        \u0275\u0275text(19, "3");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(20, "p", 12);
+        \u0275\u0275text(21, "2 healthy, 1 expiring soon");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(22, "article", 10)(23, "p", 11);
+        \u0275\u0275text(24, "Records available");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(25, "p", 3);
+        \u0275\u0275text(26, "84");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(27, "p", 12);
+        \u0275\u0275text(28, "Across labs, hospital, and specialist feeds");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(29, "article", 10)(30, "p", 11);
+        \u0275\u0275text(31, "Sync cadence");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(32, "p", 3);
+        \u0275\u0275text(33, "15 min");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(34, "p", 13);
+        \u0275\u0275text(35, "Automatic background refresh enabled");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(36, "div", 14)(37, "section", 15)(38, "div", 16)(39, "div")(40, "h3", 17);
+        \u0275\u0275text(41, "Institution status");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(42, "p", 18);
+        \u0275\u0275text(43, "Live connection health across linked providers");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(44, "span", 19);
+        \u0275\u0275text(45, "Realtime");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(46, "div", 20);
+        \u0275\u0275template(47, ConnectedAccountsTabComponent_article_47_Template, 17, 14, "article", 21);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(48, "section", 22)(49, "p", 23);
+        \u0275\u0275text(50, "Recommendation");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(51, "h3", 24);
+        \u0275\u0275text(52, "Keep expiring accounts active");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(53, "p", 25);
+        \u0275\u0275text(54, " Quest Diagnostics is nearing token expiry. Refresh the connection now to avoid delayed record exports or failed refresh jobs. ");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(55, "div", 26)(56, "p", 27);
+        \u0275\u0275text(57, "Suggested next step");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(58, "p", 28);
+        \u0275\u0275text(59, "Reconnect Quest Diagnostics within the next 48 hours.");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(60, "a", 29);
+        \u0275\u0275text(61, " Add or refresh account ");
+        \u0275\u0275namespaceSVG();
+        \u0275\u0275elementStart(62, "svg", 6);
+        \u0275\u0275element(63, "path", 8)(64, "path", 30);
         \u0275\u0275elementEnd()()()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(16, "div", 4)(17, "div", 5);
-        \u0275\u0275element(18, "img", 13);
-        \u0275\u0275elementStart(19, "span", 7);
-        \u0275\u0275text(20, "Cleveland Clinic");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(21, "div", 8)(22, "span", 9);
-        \u0275\u0275text(23, "ACTIVE");
+        \u0275\u0275elementStart(65, "section", 31)(66, "div", 32)(67, "h3", 17);
+        \u0275\u0275text(68, "Recent activity");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(24, "button", 10);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(25, "svg", 11);
-        \u0275\u0275element(26, "path", 12);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(27, "div", 4)(28, "div", 5);
-        \u0275\u0275element(29, "img", 14);
-        \u0275\u0275elementStart(30, "span", 7);
-        \u0275\u0275text(31, "Quest Diagnostics");
+        \u0275\u0275elementStart(69, "p", 18);
+        \u0275\u0275text(70, "A quick audit trail for record sync and consent events");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(32, "div", 8)(33, "span", 15);
-        \u0275\u0275text(34, "EXPIRED");
+        \u0275\u0275elementStart(71, "div", 33)(72, "table", 34)(73, "thead", 35)(74, "tr")(75, "th", 36);
+        \u0275\u0275text(76, "Institution");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(35, "button", 10);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(36, "svg", 11);
-        \u0275\u0275element(37, "path", 12);
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(38, "a", 16)(39, "div", 5)(40, "div", 17);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(41, "svg", 18);
-        \u0275\u0275element(42, "path", 19);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(43, "span", 20);
-        \u0275\u0275text(44, "Add an account");
-        \u0275\u0275elementEnd()()()()()();
+        \u0275\u0275elementStart(77, "th", 36);
+        \u0275\u0275text(78, "Patient");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(79, "th", 36);
+        \u0275\u0275text(80, "Action");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(81, "th", 36);
+        \u0275\u0275text(82, "Timestamp");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(83, "tbody", 37);
+        \u0275\u0275template(84, ConnectedAccountsTabComponent_tr_84_Template, 9, 4, "tr", 38);
+        \u0275\u0275elementEnd()()()()();
       }
-    }, dependencies: [RouterLink], encapsulation: 2 });
+      if (rf & 2) {
+        \u0275\u0275advance(47);
+        \u0275\u0275property("ngForOf", ctx.institutions);
+        \u0275\u0275advance(37);
+        \u0275\u0275property("ngForOf", ctx.activities);
+      }
+    }, dependencies: [NgForOf, RouterLink], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ConnectedAccountsTabComponent, { className: "ConnectedAccountsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts", lineNumber: 24 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
+function SettingsTabComponent_article_69_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "article", 39)(1, "div")(2, "h4", 40);
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "p", 41);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(6, "button", 42);
+    \u0275\u0275text(7);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const item_r1 = ctx.$implicit;
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate(item_r1.title);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate(item_r1.description);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", item_r1.action, " ");
+  }
+}
 var SettingsTabComponent = class _SettingsTabComponent {
   constructor() {
+    this.securityItems = [
+      {
+        title: "Password",
+        description: "Rotate credentials regularly and require strong sign-in hygiene.",
+        action: "Change"
+      },
+      {
+        title: "Passkey",
+        description: "Set up passwordless sign-in for faster, more secure account access.",
+        action: "Set up"
+      },
+      {
+        title: "Session controls",
+        description: "Review active sessions, revoke stale tokens, and tighten device trust.",
+        action: "Review"
+      }
+    ];
   }
   ngOnInit() {
   }
@@ -59146,69 +59738,108 @@ var SettingsTabComponent = class _SettingsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 52, vars: 0, consts: [["id", "settings", 1, "tab-content", "p-6", "pb-12"], [1, "space-y-8"], [1, "text-2xl", "font-semibold", "text-gray-900"], [1, "text-gray-600", "mt-1"], [1, "space-y-4"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "block", "text-sm", "font-medium", "text-gray-700"], ["type", "text", "value", "Jason Kulatunga", 1, "mt-1.5", "block", "w-full", "px-3", "py-2", "border", "border-gray-300", "rounded-lg", "shadow-sm", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:ring-opacity-20"], ["type", "email", "value", "j***@fastenhealth.com", 1, "mt-1.5", "block", "w-full", "px-3", "py-2", "border", "border-gray-300", "rounded-lg", "shadow-sm", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:ring-opacity-20"], [1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-2.5", "px-4", "rounded-lg", "transition-colors"], [1, "flex", "items-center", "justify-between", "p-4", "bg-gray-50", "rounded-lg"], [1, "font-medium", "text-gray-900"], [1, "text-sm", "text-gray-600"], [1, "inline-flex", "items-center", "px-4", "py-2", "bg-white", "border", "border-gray-200", "rounded-lg", "shadow-sm", "text-[#5B47FB]", "hover:text-[#4936E8]", "hover:border-[#5B47FB]", "hover:bg-[#EEF2FF]", "font-medium", "transition-all", "whitespace-nowrap"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "flex", "items-center", "justify-between", "p-4", "bg-red-50", "rounded-lg"], [1, "font-medium", "text-red-700"], [1, "text-sm", "text-red-600"], [1, "inline-flex", "items-center", "px-4", "py-2", "bg-white", "border", "border-red-200", "rounded-lg", "shadow-sm", "text-red-600", "hover:text-red-700", "hover:border-red-300", "hover:bg-red-50", "font-medium", "transition-all"]], template: function SettingsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 81, vars: 1, consts: [[1, "space-y-6", "md:space-y-8"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-[#6366f1]"], [1, "mt-3", "text-3xl", "font-semibold", "tracking-tight", "text-slate-950"], [1, "mt-3", "max-w-2xl", "text-base", "leading-7", "text-slate-500"], [1, "grid", "gap-6", "xl:grid-cols-[1.1fr_0.9fr]"], [1, "rounded-[30px]", "border", "border-slate-200", "bg-white", "p-6", "shadow-[0_12px_40px_rgba(15,23,42,0.06)]"], [1, "flex", "items-center", "gap-4"], [1, "flex", "h-16", "w-16", "items-center", "justify-center", "rounded-[24px]", "bg-[linear-gradient(135deg,_#4f46e5_0%,_#6d28d9_100%)]", "text-xl", "font-semibold", "text-white"], [1, "text-xl", "font-semibold", "text-slate-950"], [1, "text-sm", "text-slate-500"], [1, "mt-6", "grid", "gap-4", "md:grid-cols-2"], [1, "block"], [1, "text-sm", "font-medium", "text-slate-600"], ["type", "text", "value", "Jason Kulatunga", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-3", "text-slate-900", "outline-none", "transition-all", "focus:border-[#6366f1]", "focus:bg-white", "focus:ring-4", "focus:ring-[#c7d2fe]"], ["type", "email", "value", "j***@fastenhealth.com", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-3", "text-slate-900", "outline-none", "transition-all", "focus:border-[#6366f1]", "focus:bg-white", "focus:ring-4", "focus:ring-[#c7d2fe]"], [1, "block", "md:col-span-2"], ["type", "text", "value", "API Platform / Production", 1, "mt-2", "block", "w-full", "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-4", "py-3", "text-slate-900", "outline-none", "transition-all", "focus:border-[#6366f1]", "focus:bg-white", "focus:ring-4", "focus:ring-[#c7d2fe]"], [1, "mt-6", "flex", "flex-wrap", "gap-3"], [1, "inline-flex", "items-center", "rounded-full", "bg-slate-900", "px-4", "py-2.5", "text-sm", "font-medium", "text-white", "transition-all", "hover:-translate-y-0.5", "hover:bg-slate-800", "hover:shadow-lg"], [1, "inline-flex", "items-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-slate-700", "transition-all", "hover:-translate-y-0.5", "hover:border-slate-300", "hover:shadow-md"], [1, "overflow-hidden", "rounded-[30px]", "bg-[linear-gradient(145deg,_#0f172a_0%,_#1e1b4b_100%)]", "p-6", "text-white", "shadow-[0_24px_60px_rgba(15,23,42,0.24)]"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.3em]", "text-white/60"], [1, "mt-4", "text-2xl", "font-semibold", "tracking-tight"], [1, "mt-4", "text-sm", "leading-7", "text-slate-300"], [1, "mt-8", "grid", "gap-3", "sm:grid-cols-3"], [1, "rounded-[22px]", "bg-white/5", "p-4"], [1, "text-xs", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-lg", "font-semibold"], [1, "flex", "flex-col", "gap-2", "md:flex-row", "md:items-end", "md:justify-between"], [1, "mt-1", "text-sm", "text-slate-500"], [1, "rounded-full", "bg-[#eef2ff]", "px-3", "py-1", "text-xs", "font-semibold", "uppercase", "tracking-[0.24em]", "text-[#6366f1]"], [1, "mt-5", "space-y-4"], ["class", "flex flex-col gap-4 rounded-[24px] border border-slate-200 bg-slate-50/70 p-5 md:flex-row md:items-center md:justify-between", 4, "ngFor", "ngForOf"], [1, "rounded-[30px]", "border", "border-red-200", "bg-[linear-gradient(180deg,_#fff5f5_0%,_#fff1f2_100%)]", "p-6", "shadow-[0_12px_40px_rgba(239,68,68,0.10)]"], [1, "flex", "flex-col", "gap-4", "md:flex-row", "md:items-center", "md:justify-between"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.28em]", "text-red-500"], [1, "mt-2", "text-2xl", "font-semibold", "text-red-700"], [1, "mt-2", "max-w-2xl", "text-sm", "leading-7", "text-red-600"], [1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-red-600", "transition-all", "hover:-translate-y-0.5", "hover:border-red-300", "hover:bg-red-50"], [1, "flex", "flex-col", "gap-4", "rounded-[24px]", "border", "border-slate-200", "bg-slate-50/70", "p-5", "md:flex-row", "md:items-center", "md:justify-between"], [1, "text-lg", "font-semibold", "text-slate-950"], [1, "mt-1", "text-sm", "leading-6", "text-slate-500"], [1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-slate-200", "bg-white", "px-4", "py-2.5", "text-sm", "font-medium", "text-[#4f46e5]", "transition-all", "hover:-translate-y-0.5", "hover:border-[#c7d2fe]", "hover:bg-[#eef2ff]"]], template: function SettingsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div")(3, "h2", 2);
-        \u0275\u0275text(4, "Account Settings");
+        \u0275\u0275elementStart(0, "section", 0)(1, "header")(2, "p", 1);
+        \u0275\u0275text(3, "Settings");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "p", 3);
-        \u0275\u0275text(6, "Manage your account preferences and security settings");
+        \u0275\u0275elementStart(4, "h2", 2);
+        \u0275\u0275text(5, "Account and security controls");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(6, "p", 3);
+        \u0275\u0275text(7, " Manage your profile, secure your workspace, and control how Fasten interacts with your connected data. ");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(7, "div", 4)(8, "h3", 5);
-        \u0275\u0275text(9, "Profile Information");
+        \u0275\u0275elementStart(8, "div", 4)(9, "section", 5)(10, "div", 6)(11, "div", 7);
+        \u0275\u0275text(12, " JK ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(10, "div", 4)(11, "div")(12, "label", 6);
-        \u0275\u0275text(13, "Full Name");
+        \u0275\u0275elementStart(13, "div")(14, "h3", 8);
+        \u0275\u0275text(15, "Jason Kulatunga");
         \u0275\u0275elementEnd();
-        \u0275\u0275element(14, "input", 7);
+        \u0275\u0275elementStart(16, "p", 9);
+        \u0275\u0275text(17, "Workspace owner");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(18, "div", 10)(19, "label", 11)(20, "span", 12);
+        \u0275\u0275text(21, "Full name");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(15, "div")(16, "label", 6);
-        \u0275\u0275text(17, "Email Address");
+        \u0275\u0275element(22, "input", 13);
         \u0275\u0275elementEnd();
-        \u0275\u0275element(18, "input", 8);
+        \u0275\u0275elementStart(23, "label", 11)(24, "span", 12);
+        \u0275\u0275text(25, "Email address");
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(26, "input", 14);
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(27, "label", 15)(28, "span", 12);
+        \u0275\u0275text(29, "Default organization");
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(30, "input", 16);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(19, "button", 9);
-        \u0275\u0275text(20, " Save Changes ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(21, "div", 4)(22, "h3", 5);
-        \u0275\u0275text(23, "Security");
+        \u0275\u0275elementStart(31, "div", 17)(32, "button", 18);
+        \u0275\u0275text(33, " Save changes ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(24, "div", 4)(25, "div", 10)(26, "div")(27, "h4", 11);
-        \u0275\u0275text(28, "Password");
+        \u0275\u0275elementStart(34, "button", 19);
+        \u0275\u0275text(35, " Manage team access ");
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(36, "section", 20)(37, "p", 21);
+        \u0275\u0275text(38, "Security posture");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(29, "p", 12);
-        \u0275\u0275text(30, "Update your password to maintain account security");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(31, "button", 13);
-        \u0275\u0275text(32, " Change ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(33, "div", 10)(34, "div")(35, "h4", 11);
-        \u0275\u0275text(36, "Passkey");
+        \u0275\u0275elementStart(39, "h3", 22);
+        \u0275\u0275text(40, "Your workspace is protected");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(37, "p", 12);
-        \u0275\u0275text(38, "Set up a passkey for passwordless sign-in");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(39, "button", 13);
-        \u0275\u0275text(40, " Set up ");
-        \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(41, "div", 4)(42, "h3", 14);
-        \u0275\u0275text(43, "Danger Zone");
+        \u0275\u0275elementStart(41, "p", 23);
+        \u0275\u0275text(42, " MFA is enabled, audit logging is active, and API token rotation is scheduled weekly for production keys. ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(44, "div", 15)(45, "div")(46, "h4", 16);
-        \u0275\u0275text(47, "Delete Account");
+        \u0275\u0275elementStart(43, "div", 24)(44, "div", 25)(45, "p", 26);
+        \u0275\u0275text(46, "MFA");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(48, "p", 17);
-        \u0275\u0275text(49, "Permanently delete your account and all data");
+        \u0275\u0275elementStart(47, "p", 27);
+        \u0275\u0275text(48, "Enabled");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(50, "button", 18);
-        \u0275\u0275text(51, " Delete ");
+        \u0275\u0275elementStart(49, "div", 25)(50, "p", 26);
+        \u0275\u0275text(51, "Sessions");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(52, "p", 27);
+        \u0275\u0275text(53, "4 active");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(54, "div", 25)(55, "p", 26);
+        \u0275\u0275text(56, "Audit logs");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(57, "p", 27);
+        \u0275\u0275text(58, "Healthy");
         \u0275\u0275elementEnd()()()()();
+        \u0275\u0275elementStart(59, "section", 5)(60, "div", 28)(61, "div")(62, "h3", 8);
+        \u0275\u0275text(63, "Security controls");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(64, "p", 29);
+        \u0275\u0275text(65, "Strengthen sign-in and account recovery across the workspace");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(66, "span", 30);
+        \u0275\u0275text(67, "Recommended actions");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(68, "div", 31);
+        \u0275\u0275template(69, SettingsTabComponent_article_69_Template, 8, 3, "article", 32);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(70, "section", 33)(71, "div", 34)(72, "div")(73, "p", 35);
+        \u0275\u0275text(74, "Danger Zone");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(75, "h3", 36);
+        \u0275\u0275text(76, "Delete account");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(77, "p", 37);
+        \u0275\u0275text(78, " Permanently delete your account, revoke all active data sharing, and remove access to stored records. This cannot be undone. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(79, "button", 38);
+        \u0275\u0275text(80, " Delete account ");
+        \u0275\u0275elementEnd()()()();
       }
-    }, encapsulation: 2 });
+      if (rf & 2) {
+        \u0275\u0275advance(69);
+        \u0275\u0275property("ngForOf", ctx.securityItems);
+      }
+    }, dependencies: [NgForOf], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 15 });
 })();
 
 // projects/fasten-connect-vault/src/app/dashboard-routing.module.ts
@@ -60805,7 +61436,7 @@ var InfiniteScrollModule = class _InfiniteScrollModule {
 })();
 
 // projects/fasten-connect-vault/src/app/pages/health-system-search/health-system-search.component.ts
-var _c02 = () => [];
+var _c03 = () => [];
 function HealthSystemSearchComponent_div_14_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 17)(1, "h3", 18);
@@ -60876,7 +61507,7 @@ function HealthSystemSearchComponent_button_16_span_9_Template(rf, ctx) {
   if (rf & 2) {
     const brand_r2 = \u0275\u0275nextContext().$implicit;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("+ ", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(1, _c02)).length, "");
+    \u0275\u0275textInterpolate1("+ ", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(1, _c03)).length, "");
   }
 }
 function HealthSystemSearchComponent_button_16_Template(rf, ctx) {
@@ -60912,11 +61543,11 @@ function HealthSystemSearchComponent_button_16_Template(rf, ctx) {
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.name);
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.searchHighlights) || \u0275\u0275pureFunction0(11, _c02)).length > 0);
+    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.searchHighlights) || \u0275\u0275pureFunction0(11, _c03)).length > 0);
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(8, 7, (brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(12, _c02), 0, 3));
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(8, 7, (brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(12, _c03), 0, 3));
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(13, _c02)).length > 4);
+    \u0275\u0275property("ngIf", ((brand_r2 == null ? null : brand_r2.brand == null ? null : brand_r2.brand.locations) || \u0275\u0275pureFunction0(13, _c03)).length > 4);
   }
 }
 function HealthSystemSearchComponent_div_17_Template(rf, ctx) {
@@ -61091,7 +61722,7 @@ var HealthSystemSearchComponent = class _HealthSystemSearchComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/pages/health-system-brand-details/health-system-brand-details.component.ts
-var _c03 = () => [];
+var _c04 = () => [];
 function HealthSystemBrandDetailsComponent_div_20_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 20);
@@ -61140,7 +61771,7 @@ function HealthSystemBrandDetailsComponent_div_22_span_8_Template(rf, ctx) {
     let tmp_2_0;
     const ctx_r0 = \u0275\u0275nextContext(2);
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate1("+ ", (((tmp_2_0 = \u0275\u0275pipeBind1(2, 1, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.locations) || \u0275\u0275pureFunction0(3, _c03)).length, "");
+    \u0275\u0275textInterpolate1("+ ", (((tmp_2_0 = \u0275\u0275pipeBind1(2, 1, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.locations) || \u0275\u0275pureFunction0(3, _c04)).length, "");
   }
 }
 function HealthSystemBrandDetailsComponent_div_22_Template(rf, ctx) {
@@ -61164,9 +61795,9 @@ function HealthSystemBrandDetailsComponent_div_22_Template(rf, ctx) {
     let tmp_2_0;
     const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance(5);
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(7, 4, ((tmp_1_0 = \u0275\u0275pipeBind1(6, 2, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_1_0.selectedBrand == null ? null : tmp_1_0.selectedBrand.locations) || \u0275\u0275pureFunction0(10, _c03), 0, 3));
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind3(7, 4, ((tmp_1_0 = \u0275\u0275pipeBind1(6, 2, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_1_0.selectedBrand == null ? null : tmp_1_0.selectedBrand.locations) || \u0275\u0275pureFunction0(10, _c04), 0, 3));
     \u0275\u0275advance(3);
-    \u0275\u0275property("ngIf", (((tmp_2_0 = \u0275\u0275pipeBind1(9, 8, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.locations) || \u0275\u0275pureFunction0(11, _c03)).length > 4);
+    \u0275\u0275property("ngIf", (((tmp_2_0 = \u0275\u0275pipeBind1(9, 8, ctx_r0.configService.searchConfigSubject)) == null ? null : tmp_2_0.selectedBrand == null ? null : tmp_2_0.selectedBrand.locations) || \u0275\u0275pureFunction0(11, _c04)).length > 4);
   }
 }
 function HealthSystemBrandDetailsComponent_ng_container_25_div_1_Template(rf, ctx) {
@@ -61348,7 +61979,7 @@ function ConnectHelper(connectData) {
 }
 
 // projects/fasten-connect-vault/src/app/pages/health-system-connecting/health-system-connecting.component.ts
-var _c04 = (a0, a1, a2, a3, a4, a5) => ({ brand_id: a0, portal_id: a1, endpoint_id: a2, org_connection_id: a3, external_id: a4, external_state: a5 });
+var _c05 = (a0, a1, a2, a3, a4, a5) => ({ brand_id: a0, portal_id: a1, endpoint_id: a2, org_connection_id: a3, external_id: a4, external_state: a5 });
 function HealthSystemConnectingComponent_button_3_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
@@ -61457,7 +62088,7 @@ var HealthSystemConnectingComponent = class _HealthSystemConnectingComponent {
         \u0275\u0275advance(8);
         \u0275\u0275propertyInterpolate1("src", "https://cdn.fastenhealth.com/logos/sources/", ctx.brandId, ".png", \u0275\u0275sanitizeUrl);
         \u0275\u0275advance(15);
-        \u0275\u0275property("routerLink", "/form/support")("queryParams", \u0275\u0275pureFunction6(9, _c04, ctx.brandId, ctx.portalId, ctx.endpointId, ctx.orgConnectionId, ctx.externalId, ctx.externalState));
+        \u0275\u0275property("routerLink", "/form/support")("queryParams", \u0275\u0275pureFunction6(9, _c05, ctx.brandId, ctx.portalId, ctx.endpointId, ctx.orgConnectionId, ctx.externalId, ctx.externalState));
       }
     }, dependencies: [NgIf, RouterLink, ImageFallbackDirective, AsyncPipe], encapsulation: 2 });
   }
@@ -61527,31 +62158,54 @@ var AppComponent = class _AppComponent {
       }
     }
   }
+  get currentPath() {
+    return this.router.url.split("?")[0];
+  }
+  get isSigninRoute() {
+    return this.currentPath === "/auth/signin";
+  }
+  get isDashboardRoute() {
+    return this.currentPath.startsWith("/dashboard");
+  }
+  get bannerClasses() {
+    return this.isDashboardRoute ? "w-full px-4 md:px-6" : "mx-auto w-full max-w-[440px] rounded-t-[28px]";
+  }
+  get containerClasses() {
+    if (this.isSigninRoute) {
+      return "marketing-container";
+    }
+    if (this.isDashboardRoute) {
+      return "mx-auto w-full max-w-[1440px] px-4 pb-6 pt-4 md:px-6 md:pb-10 md:pt-6";
+    }
+    return "mx-auto w-full max-w-[440px] overflow-hidden rounded-b-[28px] bg-white shadow-[0_30px_80px_rgba(15,23,42,0.12)]";
+  }
   static {
     this.\u0275fac = function AppComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _AppComponent)(\u0275\u0275directiveInject(Router));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 8, vars: 1, consts: [["id", "test-mode-banner", 1, "mx-auto", "w-full", "max-w-[440px]", "bg-[#DC3545]", "text-white", "text-center", "py-2", "px-4", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 9, vars: 2, consts: [[1, "min-h-screen", "bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.10),_transparent_28%),linear-gradient(180deg,_#f8f9ff_0%,_#eef2ff_100%)]", "text-slate-900"], ["id", "test-mode-banner", 1, "bg-[#DC3545]", "text-white", "text-center", "py-2", "font-medium", "text-sm", "flex", "items-center", "justify-center", "gap-2", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0);
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(1, "svg", 1);
-        \u0275\u0275element(2, "path", 2)(3, "path", 3)(4, "path", 4);
+        \u0275\u0275elementStart(2, "svg", 2);
+        \u0275\u0275element(3, "path", 3)(4, "path", 4)(5, "path", 5);
         \u0275\u0275elementEnd();
-        \u0275\u0275text(5, " You are using Fasten in test mode\n");
+        \u0275\u0275text(6, " You are using Fasten in test mode ");
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(6, "div", 5);
-        \u0275\u0275element(7, "router-outlet");
-        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(7, "div", 6);
+        \u0275\u0275element(8, "router-outlet");
+        \u0275\u0275elementEnd()();
       }
       if (rf & 2) {
+        \u0275\u0275advance();
+        \u0275\u0275property("ngClass", ctx.bannerClasses);
         \u0275\u0275advance(6);
-        \u0275\u0275property("ngClass", ctx.router.url.split("?")[0] == "/auth/signin" ? "marketing-container" : "mx-auto w-full max-w-[440px] bg-white rounded-lg shadow-lg");
+        \u0275\u0275property("ngClass", ctx.containerClasses);
       }
-    }, dependencies: [NgClass, RouterOutlet], encapsulation: 2 });
+    }, dependencies: [NgClass, RouterOutlet], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n  min-height: 100vh;\n}\n/*# sourceMappingURL=app.component.css.map */"] });
   }
 };
 (() => {
@@ -75075,7 +75729,7 @@ var text = api.text;
 var counter = api.counter;
 
 // node_modules/@fortawesome/angular-fontawesome/fesm2022/angular-fontawesome.mjs
-var _c05 = ["*"];
+var _c06 = ["*"];
 var faWarnIfIconDefinitionMissing = (iconSpec) => {
   throw new Error(`Could not find icon with iconName=${iconSpec.iconName} and prefix=${iconSpec.prefix} in the icon library.`);
 };
@@ -75322,7 +75976,7 @@ var FaStackComponent = class _FaStackComponent {
         size: "size"
       },
       features: [\u0275\u0275NgOnChangesFeature],
-      ngContentSelectors: _c05,
+      ngContentSelectors: _c06,
       decls: 1,
       vars: 0,
       template: function FaStackComponent_Template(rf, ctx) {
@@ -75683,7 +76337,7 @@ var FaLayersComponent = class _FaLayersComponent {
         fixedWidth: "fixedWidth"
       },
       features: [\u0275\u0275NgOnChangesFeature],
-      ngContentSelectors: _c05,
+      ngContentSelectors: _c06,
       decls: 1,
       vars: 0,
       template: function FaLayersComponent_Template(rf, ctx) {
