@@ -57942,10 +57942,11 @@ var AuthService = class _AuthService {
     this.vaultConfigService = vaultConfigService;
     this.IsAuthenticatedSubject = new BehaviorSubject(false);
   }
-  VaultAuthBegin(email) {
+  VaultAuthBegin(email, cspPromptForce) {
     return __async(this, null, function* () {
       let resp = yield this._httpClient.post(`${environment.connect_api_endpoint_base}/bridge/vault_auth_begin`, {
-        "email": email
+        "email": email,
+        "csp_prompt_force": cspPromptForce
       }, { withCredentials: true, params: { "public_id": ORG_CREDENTIAL_PUBLIC_ID } }).toPromise();
       return resp;
     });
@@ -58093,10 +58094,11 @@ function VaultSigninComponent_p_44_Template(rf, ctx) {
   }
 }
 var VaultSigninComponent = class _VaultSigninComponent {
-  constructor(configService, authService, routerService) {
+  constructor(configService, authService, routerService, logger) {
     this.configService = configService;
     this.authService = authService;
     this.routerService = routerService;
+    this.logger = logger;
     this.loading = false;
     this.showMessage = false;
     this.submitted = false;
@@ -58111,13 +58113,27 @@ var VaultSigninComponent = class _VaultSigninComponent {
     this.submitted = true;
     this.loading = true;
     console.log("Signin", this.existingVaultProfile.email);
-    this.authService.VaultAuthBegin(this.existingVaultProfile.email).then(() => {
-      this.loading = false;
-      this.routerService.navigate(["auth/signin/code"], {
-        queryParams: {
-          currentEmail: this.existingVaultProfile.email
-        }
-      });
+    this.authService.VaultAuthBegin(this.existingVaultProfile.email).then((resp) => {
+      if (this.configService.systemConfig$.apiMode === ApiMode.Test) {
+        return this.authService.GetJWTPayload().then((payload) => {
+          this.loading = false;
+          if (payload) {
+            if (resp?.has_verified_identity && resp?.verified_identity_csp_type) {
+              this.logger.info("setting verified identity csp_type csp type to", resp.verified_identity_csp_type);
+              this.configService.vaultProfileConfig = {
+                verifiedIdentityCspType: resp.verified_identity_csp_type,
+                verifiedIdentityPatientDemographics: resp.verified_identity_patient_demographics
+              };
+            }
+            return this.routerService.navigateByUrl("dashboard");
+          } else {
+            return this.routerService.navigate(["auth/signin/code"], { queryParams: { currentEmail: this.existingVaultProfile.email } });
+          }
+        });
+      } else {
+        this.loading = false;
+        return this.routerService.navigate(["auth/signin/code"], { queryParams: { currentEmail: this.existingVaultProfile.email } });
+      }
     }).catch((err) => {
       this.loading = false;
       if (err?.name) {
@@ -58129,7 +58145,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
   }
   static {
     this.\u0275fac = function VaultSigninComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _VaultSigninComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(Router));
+      return new (__ngFactoryType__ || _VaultSigninComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
     };
   }
   static {
@@ -58247,7 +58263,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 13 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 14 });
 })();
 
 // projects/fasten-connect-vault/src/app/auth-guards/is-authenticated-auth-guard.ts
