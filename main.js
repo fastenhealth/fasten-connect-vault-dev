@@ -59417,8 +59417,8 @@ var dashboardRoutes = [
       { path: "apps", pathMatch: "full", component: ConnectedAppsTabComponent },
       { path: "accounts", pathMatch: "full", component: ConnectedAccountsTabComponent },
       { path: "settings", pathMatch: "full", component: SettingsTabComponent }
-    ]
-    // canActivate: [IsAuthenticatedAuthGuard]
+    ],
+    canActivate: [IsAuthenticatedAuthGuard]
   }
 ];
 var DashboardRoutingModule = class _DashboardRoutingModule {
