@@ -402,6 +402,9 @@ a {
     padding: 2rem 1rem 2.25rem;
   }
 }
+.grecaptcha-badge {
+  visibility: hidden;
+}
 
 /* projects/fasten-connect-vault/src/styles.css */
 *,
