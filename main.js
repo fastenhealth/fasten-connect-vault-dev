@@ -57007,7 +57007,7 @@ var environment = {
   connect_api_endpoint_base: "https://api.connect-dev.fastenhealth.com/v1",
   connect_api_jwt_issuer_host: "https://api.connect-dev.fastenhealth.com/v1",
   jwks_uri: "https://cdn.fastenhealth.com/jwks/fasten-connect/dev.json",
-  org_credential_test_public_id: "public_test_c0p7aft8apvyp1d23xe87mt1lshuc5yiroz61drsir571",
+  org_credential_test_public_id: "public_test_eer7vp076phxhg7e0257qkvofdc2eitx591lnjak311sy",
   org_credential_live_public_id: "public_test_c0p7aft8apvyp1d23xe87mt1lshuc5yiroz61drsir571"
 };
 
