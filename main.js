@@ -56974,6 +56974,7 @@ var SharedLibraryModule = class _SharedLibraryModule {
 // projects/fasten-connect-vault/src/environments/environment.ts
 var environment = {
   name: "development",
+  csp_prompt_force: true,
   //specify the lighthouse base that we're going to use to authenticate against all our source/providers. Must not have trailing slash
   lighthouse_api_endpoint_base: "https://lighthouse.fastenhealth.com",
   connect_base_domain: "connect-dev.fastenhealth.com",
@@ -58596,7 +58597,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
     this.submitted = true;
     this.loading = true;
     console.log("Signin", this.existingVaultProfile.email);
-    this.authService.VaultAuthBegin(this.existingVaultProfile.email, true).then((resp) => {
+    this.authService.VaultAuthBegin(this.existingVaultProfile.email, environment.csp_prompt_force).then((resp) => {
       if (this.configService.systemConfig$?.apiMode === ApiMode.Test) {
         return this.authService.GetJWTPayload().then((payload) => {
           this.loading = false;
@@ -58747,7 +58748,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 14 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 15 });
 })();
 
 // projects/fasten-connect-vault/src/app/auth-guards/is-authenticated-auth-guard.ts
