@@ -61015,23 +61015,23 @@ var SettingsTabComponent = class _SettingsTabComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/components/account-export-modal/account-export-modal.component.ts
-function AccountExportModalComponent_div_0_div_10_label_16_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_10_label_14_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "label", 25)(1, "span", 26)(2, "input", 27);
-    \u0275\u0275listener("change", function AccountExportModalComponent_div_0_div_10_label_16_Template_input_change_2_listener() {
+    \u0275\u0275elementStart(0, "label", 24)(1, "span", 25)(2, "input", 26);
+    \u0275\u0275listener("change", function AccountExportModalComponent_div_0_div_10_label_14_Template_input_change_2_listener() {
       const option_r5 = \u0275\u0275restoreView(_r4).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.toggleExportResource(option_r5.resourceType));
     });
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "span", 28);
+    \u0275\u0275elementStart(3, "span", 27);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(4, "svg", 29);
-    \u0275\u0275element(5, "path", 30);
+    \u0275\u0275elementStart(4, "svg", 28);
+    \u0275\u0275element(5, "path", 29);
     \u0275\u0275elementEnd()()();
     \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(6, "span", 31)(7, "span", 32);
+    \u0275\u0275elementStart(6, "span", 30)(7, "span", 31);
     \u0275\u0275text(8);
     \u0275\u0275elementEnd()()();
   }
@@ -61043,11 +61043,11 @@ function AccountExportModalComponent_div_0_div_10_label_16_Template(rf, ctx) {
     \u0275\u0275textInterpolate(option_r5.label);
   }
 }
-function AccountExportModalComponent_div_0_div_10_section_17_button_9_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_10_section_15_button_7_Template(rf, ctx) {
   if (rf & 1) {
     const _r6 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 35);
-    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_10_section_17_button_9_Template_button_click_0_listener() {
+    \u0275\u0275elementStart(0, "button", 34);
+    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_10_section_15_button_7_Template_button_click_0_listener() {
       const duration_r7 = \u0275\u0275restoreView(_r6).$implicit;
       const ctx_r1 = \u0275\u0275nextContext(4);
       return \u0275\u0275resetView(ctx_r1.setExportDuration(duration_r7.id));
@@ -61063,24 +61063,21 @@ function AccountExportModalComponent_div_0_div_10_section_17_button_9_Template(r
     \u0275\u0275textInterpolate1(" ", duration_r7.label, " ");
   }
 }
-function AccountExportModalComponent_div_0_div_10_section_17_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_10_section_15_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "section", 13)(1, "div", 15)(2, "p", 16);
-    \u0275\u0275text(3, "Access Window");
+    \u0275\u0275elementStart(0, "section", 13)(1, "div", 15)(2, "h4", 16);
+    \u0275\u0275text(3, "Choose how long access lasts");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "h4", 17);
-    \u0275\u0275text(5, "Choose how long access lasts");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "p", 18);
-    \u0275\u0275text(7);
+    \u0275\u0275elementStart(4, "p", 17);
+    \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "div", 33);
-    \u0275\u0275template(9, AccountExportModalComponent_div_0_div_10_section_17_button_9_Template, 2, 3, "button", 34);
+    \u0275\u0275elementStart(6, "div", 32);
+    \u0275\u0275template(7, AccountExportModalComponent_div_0_div_10_section_15_button_7_Template, 2, 3, "button", 33);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(3);
-    \u0275\u0275advance(7);
+    \u0275\u0275advance(5);
     \u0275\u0275textInterpolate1(" Choose how long this ", ctx_r1.action.label.toLowerCase(), " should remain accessible. ");
     \u0275\u0275advance(2);
     \u0275\u0275property("ngForOf", ctx_r1.exportDurationOptions)("ngForTrackBy", ctx_r1.trackByDurationId);
@@ -61089,35 +61086,32 @@ function AccountExportModalComponent_div_0_div_10_section_17_Template(rf, ctx) {
 function AccountExportModalComponent_div_0_div_10_Template(rf, ctx) {
   if (rf & 1) {
     const _r3 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 12)(1, "section", 13)(2, "div", 14)(3, "div", 15)(4, "p", 16);
-    \u0275\u0275text(5, "Record Content");
+    \u0275\u0275elementStart(0, "div", 12)(1, "section", 13)(2, "div", 14)(3, "div", 15)(4, "h3", 16);
+    \u0275\u0275text(5, "Choose what to include");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "h3", 17);
-    \u0275\u0275text(7, "Choose what to include");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "p", 18);
-    \u0275\u0275text(9, " Select exactly which parts of your medical record to include in this export. ");
+    \u0275\u0275elementStart(6, "p", 17);
+    \u0275\u0275text(7, " Select exactly which parts of your medical record to include in this export. ");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(10, "div", 19)(11, "span", 20);
-    \u0275\u0275text(12);
+    \u0275\u0275elementStart(8, "div", 18)(9, "span", 19);
+    \u0275\u0275text(10);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "button", 21);
-    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_10_Template_button_click_13_listener() {
+    \u0275\u0275elementStart(11, "button", 20);
+    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_10_Template_button_click_11_listener() {
       \u0275\u0275restoreView(_r3);
       const ctx_r1 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r1.selectAllResources());
     });
-    \u0275\u0275text(14, " Select all ");
+    \u0275\u0275text(12, " Select all ");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(15, "div", 22);
-    \u0275\u0275template(16, AccountExportModalComponent_div_0_div_10_label_16_Template, 9, 2, "label", 23);
+    \u0275\u0275elementStart(13, "div", 21);
+    \u0275\u0275template(14, AccountExportModalComponent_div_0_div_10_label_14_Template, 9, 2, "label", 22);
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(17, AccountExportModalComponent_div_0_div_10_section_17_Template, 10, 3, "section", 24);
+    \u0275\u0275template(15, AccountExportModalComponent_div_0_div_10_section_15_Template, 8, 3, "section", 23);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance(12);
+    \u0275\u0275advance(10);
     \u0275\u0275textInterpolate1("", ctx_r1.selectedResourceCount, " selected");
     \u0275\u0275advance();
     \u0275\u0275classProp("opacity-50", ctx_r1.areAllResourcesSelected);
@@ -61128,15 +61122,15 @@ function AccountExportModalComponent_div_0_div_10_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r1.requiresTimeboxedAccess);
   }
 }
-function AccountExportModalComponent_div_0_div_11_div_22_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_11_div_20_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 45)(1, "div")(2, "p", 46);
+    \u0275\u0275elementStart(0, "div", 43)(1, "div")(2, "p", 44);
     \u0275\u0275text(3, "QR Code Generation");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "p", 47);
+    \u0275\u0275elementStart(4, "p", 45);
     \u0275\u0275text(5, "Creating a scannable share experience for the selected export.");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(6, "p", 48)(7, "span");
+    \u0275\u0275elementStart(6, "p", 46)(7, "span");
     \u0275\u0275text(8);
     \u0275\u0275elementEnd()()();
   }
@@ -61149,36 +61143,33 @@ function AccountExportModalComponent_div_0_div_11_div_22_Template(rf, ctx) {
 }
 function AccountExportModalComponent_div_0_div_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 36)(1, "div", 37);
-    \u0275\u0275element(2, "app-spinner", 38);
-    \u0275\u0275elementStart(3, "div", 39)(4, "p", 40);
-    \u0275\u0275text(5, "Export in progress");
+    \u0275\u0275elementStart(0, "div", 35)(1, "div", 36);
+    \u0275\u0275element(2, "app-spinner", 37);
+    \u0275\u0275elementStart(3, "div", 38)(4, "h3", 39);
+    \u0275\u0275text(5);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "h3", 41);
+    \u0275\u0275elementStart(6, "p", 40);
     \u0275\u0275text(7);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(8, "p", 42);
-    \u0275\u0275text(9);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(10, "section", 43)(11, "div", 44)(12, "div", 45)(13, "div")(14, "p", 46);
-    \u0275\u0275text(15, "Retrieving medical record data");
+    \u0275\u0275elementStart(8, "section", 41)(9, "div", 42)(10, "div", 43)(11, "div")(12, "p", 44);
+    \u0275\u0275text(13, "Retrieving medical record data");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(16, "p", 47);
-    \u0275\u0275text(17, "Polling export status every 5 seconds.");
+    \u0275\u0275elementStart(14, "p", 45);
+    \u0275\u0275text(15, "Polling export status every 5 seconds.");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(18, "p", 48);
-    \u0275\u0275text(19, " Last checked: ");
-    \u0275\u0275elementStart(20, "span");
-    \u0275\u0275text(21);
+    \u0275\u0275elementStart(16, "p", 46);
+    \u0275\u0275text(17, " Last checked: ");
+    \u0275\u0275elementStart(18, "span");
+    \u0275\u0275text(19);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275template(22, AccountExportModalComponent_div_0_div_11_div_22_Template, 9, 3, "div", 49);
+    \u0275\u0275template(20, AccountExportModalComponent_div_0_div_11_div_20_Template, 9, 3, "div", 47);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
     \u0275\u0275advance(2);
     \u0275\u0275property("sizePx", 48)("strokeWidthPx", 4);
-    \u0275\u0275advance(5);
+    \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(ctx_r1.exportLoadingTitle);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(ctx_r1.exportLoadingMessage);
@@ -61190,32 +61181,32 @@ function AccountExportModalComponent_div_0_div_11_Template(rf, ctx) {
     \u0275\u0275property("ngIf", ctx_r1.requiresTimeboxedAccess);
   }
 }
-function AccountExportModalComponent_div_0_div_12_div_9_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_12_div_7_Template(rf, ctx) {
   if (rf & 1) {
     const _r8 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 55)(1, "div", 56)(2, "div", 57)(3, "dt");
+    \u0275\u0275elementStart(0, "div", 53)(1, "div", 54)(2, "div", 55)(3, "dt");
     \u0275\u0275text(4, "Export type");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(5, "dd");
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "div", 57)(8, "dt");
+    \u0275\u0275elementStart(7, "div", 55)(8, "dt");
     \u0275\u0275text(9, "Institution");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(10, "dd");
     \u0275\u0275text(11);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(12, "div", 57)(13, "dt");
+    \u0275\u0275elementStart(12, "div", 55)(13, "dt");
     \u0275\u0275text(14, "Selected categories");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(15, "dd");
     \u0275\u0275text(16);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(17, "a", 58);
+    \u0275\u0275elementStart(17, "a", 56);
     \u0275\u0275text(18, " Download ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(19, "button", 59);
-    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_12_div_9_Template_button_click_19_listener() {
+    \u0275\u0275elementStart(19, "button", 57);
+    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_12_div_7_Template_button_click_19_listener() {
       \u0275\u0275restoreView(_r8);
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.requestClose());
@@ -61235,54 +61226,54 @@ function AccountExportModalComponent_div_0_div_12_div_9_Template(rf, ctx) {
     \u0275\u0275property("href", ctx_r1.mockDownloadUrl, \u0275\u0275sanitizeUrl);
   }
 }
-function AccountExportModalComponent_div_0_div_12_div_10__svg_rect_14_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_12_div_8__svg_rect_14_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275namespaceSVG();
-    \u0275\u0275element(0, "rect", 78);
+    \u0275\u0275element(0, "rect", 76);
   }
   if (rf & 2) {
     const cell_r10 = ctx.$implicit;
     \u0275\u0275attribute("x", cell_r10.x)("y", cell_r10.y);
   }
 }
-function AccountExportModalComponent_div_0_div_12_div_10_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_12_div_8_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 60)(1, "div", 61);
+    \u0275\u0275elementStart(0, "div", 58)(1, "div", 59);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(2, "svg", 62);
-    \u0275\u0275element(3, "rect", 63);
-    \u0275\u0275elementStart(4, "g", 64);
-    \u0275\u0275element(5, "rect", 65)(6, "rect", 66)(7, "rect", 67)(8, "rect", 68)(9, "rect", 69)(10, "rect", 70)(11, "rect", 71)(12, "rect", 72)(13, "rect", 73);
-    \u0275\u0275template(14, AccountExportModalComponent_div_0_div_12_div_10__svg_rect_14_Template, 1, 2, "rect", 74);
+    \u0275\u0275elementStart(2, "svg", 60);
+    \u0275\u0275element(3, "rect", 61);
+    \u0275\u0275elementStart(4, "g", 62);
+    \u0275\u0275element(5, "rect", 63)(6, "rect", 64)(7, "rect", 65)(8, "rect", 66)(9, "rect", 67)(10, "rect", 68)(11, "rect", 69)(12, "rect", 70)(13, "rect", 71);
+    \u0275\u0275template(14, AccountExportModalComponent_div_0_div_12_div_8__svg_rect_14_Template, 1, 2, "rect", 72);
     \u0275\u0275elementEnd()()();
     \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(15, "div", 56)(16, "div", 57)(17, "dt");
+    \u0275\u0275elementStart(15, "div", 54)(16, "div", 55)(17, "dt");
     \u0275\u0275text(18, "Export type");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(19, "dd");
     \u0275\u0275text(20);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(21, "div", 57)(22, "dt");
+    \u0275\u0275elementStart(21, "div", 55)(22, "dt");
     \u0275\u0275text(23, "Institution");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(24, "dd");
     \u0275\u0275text(25);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(26, "div", 57)(27, "dt");
+    \u0275\u0275elementStart(26, "div", 55)(27, "dt");
     \u0275\u0275text(28, "Access duration");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(29, "dd");
     \u0275\u0275text(30);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(31, "p", 75);
+    \u0275\u0275elementStart(31, "p", 73);
     \u0275\u0275text(32);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(33, "div", 76)(34, "a", 77);
+    \u0275\u0275elementStart(33, "div", 74)(34, "a", 75);
     \u0275\u0275text(35, " Open Document ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(36, "button", 59);
-    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_12_div_10_Template_button_click_36_listener() {
+    \u0275\u0275elementStart(36, "button", 57);
+    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_12_div_8_Template_button_click_36_listener() {
       \u0275\u0275restoreView(_r9);
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.requestClose());
@@ -61308,21 +61299,18 @@ function AccountExportModalComponent_div_0_div_12_div_10_Template(rf, ctx) {
 }
 function AccountExportModalComponent_div_0_div_12_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 36)(1, "section", 50)(2, "div", 51)(3, "p", 40);
-    \u0275\u0275text(4, "Export complete");
+    \u0275\u0275elementStart(0, "div", 35)(1, "section", 48)(2, "div", 49)(3, "h3", 39);
+    \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "h3", 41);
+    \u0275\u0275elementStart(5, "p", 50);
     \u0275\u0275text(6);
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 52);
-    \u0275\u0275text(8);
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(9, AccountExportModalComponent_div_0_div_12_div_9_Template, 21, 4, "div", 53)(10, AccountExportModalComponent_div_0_div_12_div_10_Template, 38, 7, "div", 54);
+    \u0275\u0275template(7, AccountExportModalComponent_div_0_div_12_div_7_Template, 21, 4, "div", 51)(8, AccountExportModalComponent_div_0_div_12_div_8_Template, 38, 7, "div", 52);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance(6);
+    \u0275\u0275advance(4);
     \u0275\u0275textInterpolate(ctx_r1.exportResultTitle);
     \u0275\u0275advance(2);
     \u0275\u0275textInterpolate(ctx_r1.exportResultSummary);
@@ -61335,10 +61323,10 @@ function AccountExportModalComponent_div_0_div_12_Template(rf, ctx) {
 function AccountExportModalComponent_div_0_footer_13_Template(rf, ctx) {
   if (rf & 1) {
     const _r11 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "footer", 79)(1, "p", 47);
+    \u0275\u0275elementStart(0, "footer", 77)(1, "p", 45);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "div", 80)(4, "button", 81);
+    \u0275\u0275elementStart(3, "div", 78)(4, "button", 79);
     \u0275\u0275listener("click", function AccountExportModalComponent_div_0_footer_13_Template_button_click_4_listener() {
       \u0275\u0275restoreView(_r11);
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -61346,7 +61334,7 @@ function AccountExportModalComponent_div_0_footer_13_Template(rf, ctx) {
     });
     \u0275\u0275text(5, " Cancel ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "button", 82);
+    \u0275\u0275elementStart(6, "button", 80);
     \u0275\u0275listener("click", function AccountExportModalComponent_div_0_footer_13_Template_button_click_6_listener() {
       \u0275\u0275restoreView(_r11);
       const ctx_r1 = \u0275\u0275nextContext(2);
@@ -61391,13 +61379,13 @@ function AccountExportModalComponent_div_0_Template(rf, ctx) {
     \u0275\u0275elementStart(7, "svg", 6);
     \u0275\u0275element(8, "path", 7)(9, "path", 8);
     \u0275\u0275elementEnd()()();
-    \u0275\u0275template(10, AccountExportModalComponent_div_0_div_10_Template, 18, 7, "div", 9)(11, AccountExportModalComponent_div_0_div_11_Template, 23, 10, "div", 10)(12, AccountExportModalComponent_div_0_div_12_Template, 11, 4, "div", 10)(13, AccountExportModalComponent_div_0_footer_13_Template, 8, 4, "footer", 11);
+    \u0275\u0275template(10, AccountExportModalComponent_div_0_div_10_Template, 16, 7, "div", 9)(11, AccountExportModalComponent_div_0_div_11_Template, 21, 10, "div", 10)(12, AccountExportModalComponent_div_0_div_12_Template, 9, 4, "div", 10)(13, AccountExportModalComponent_div_0_footer_13_Template, 8, 4, "footer", 11);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate1(" ", ctx_r1.exportModalState === "config" ? ctx_r1.action.label : ctx_r1.exportModalState === "loading" ? ctx_r1.exportLoadingTitle : ctx_r1.exportResultTitle, " ");
+    \u0275\u0275textInterpolate1(" ", ctx_r1.exportModalTitle, " ");
     \u0275\u0275advance(5);
     \u0275\u0275property("ngIf", ctx_r1.exportModalState === "config");
     \u0275\u0275advance();
@@ -61471,14 +61459,14 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
   get requiresTimeboxedAccess() {
     return !!this.action && this.action.id !== "pdf";
   }
+  get exportModalTitle() {
+    return this.action?.label || "Account export";
+  }
   get exportLoadingTitle() {
-    if (!this.action) {
-      return "Preparing export";
-    }
     if (this.exportLoadingPhase === "qr-generation") {
-      return this.action.id === "cms-patient-document" ? "Generating CMS Patient Document QR Code" : "Generating Smart Health Link QR Code";
+      return "Generating QR code";
     }
-    return `Preparing ${this.action.label}`;
+    return "Preparing export";
   }
   get exportLoadingMessage() {
     if (this.exportLoadingPhase === "qr-generation") {
@@ -61487,7 +61475,7 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     return "Retrieving medical record data and checking export status every 5 seconds.";
   }
   get exportResultTitle() {
-    return this.action?.id === "pdf" ? "Export Ready to Download" : this.action?.id === "cms-patient-document" ? "CMS Patient Document Ready" : "Smart Health Link Ready";
+    return this.action?.id === "pdf" ? "Download ready" : this.action?.id === "cms-patient-document" ? "Document ready" : "Link ready";
   }
   get exportResultSummary() {
     if (this.action?.id === "pdf") {
@@ -61678,14 +61666,14 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountExportModalComponent, selectors: [["app-account-export-modal"]], inputs: { isOpen: "isOpen", action: "action", accountDisplayName: "accountDisplayName" }, outputs: { closed: "closed" }, standalone: false, features: [\u0275\u0275NgOnChangesFeature], decls: 1, vars: 1, consts: [["class", "export-modal-backdrop", 3, "click", 4, "ngIf"], [1, "export-modal-backdrop", 3, "click"], [1, "export-modal-panel", 3, "click"], [1, "export-modal-header"], [1, "export-modal-title"], ["type", "button", "aria-label", "Close export modal", 1, "export-modal-close", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5"], ["d", "M18 6 6 18"], ["d", "m6 6 12 12"], ["class", "export-modal-body", 4, "ngIf"], ["class", "export-modal-body export-modal-body--centered", 4, "ngIf"], ["class", "export-modal-footer", 4, "ngIf"], [1, "export-modal-body"], [1, "export-modal-section"], [1, "export-section-header"], [1, "export-config-section-heading"], [1, "vault-page-kicker", "export-config-section-kicker"], [1, "export-section-title", "export-config-section-title"], [1, "vault-page-copy", "export-config-section-copy"], [1, "export-section-actions"], [1, "vault-status-pill", "is-active"], ["type", "button", 1, "vault-secondary-button", "export-select-all-button", 3, "click", "disabled"], [1, "export-resource-checklist"], ["class", "export-resource-card", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["class", "export-modal-section", 4, "ngIf"], [1, "export-resource-card"], [1, "export-resource-toggle"], ["type", "checkbox", 3, "change", "checked"], [1, "export-resource-checkmark"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", 1, "h-4", "w-4"], ["d", "M5 13l4 4L19 7"], [1, "export-resource-copy"], [1, "export-resource-label"], [1, "export-duration-options"], ["type", "button", "class", "export-duration-button", 3, "is-selected", "click", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["type", "button", 1, "export-duration-button", 3, "click"], [1, "export-modal-body", "export-modal-body--centered"], [1, "export-loading-status"], [3, "sizePx", "strokeWidthPx"], [1, "space-y-2"], [1, "vault-page-kicker"], [1, "export-section-title"], [1, "vault-page-copy", "export-loading-copy"], [1, "export-modal-section", "export-loading-section"], [1, "export-loading-steps"], [1, "export-loading-step"], [1, "export-step-title"], [1, "vault-page-copy"], [1, "export-step-meta"], ["class", "export-loading-step", 3, "is-active", 4, "ngIf"], [1, "export-modal-section", "export-result-section"], [1, "space-y-2", "text-center"], [1, "vault-page-copy", "export-result-copy"], ["class", "export-result-download", 4, "ngIf"], ["class", "export-result-qr", 4, "ngIf"], [1, "export-result-download"], [1, "export-result-summary-grid"], [1, "export-result-summary-row"], ["download", "fasten-health-export.pdf", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "click"], [1, "export-result-qr"], [1, "mock-qr-frame"], ["viewBox", "0 0 232 232", "role", "img", "aria-label", "Mock QR code", 1, "mock-qr-code"], ["width", "232", "height", "232", "fill", "white"], ["fill", "#111827"], ["x", "0", "y", "0", "width", "64", "height", "64"], ["x", "8", "y", "8", "width", "48", "height", "48", "fill", "white"], ["x", "16", "y", "16", "width", "32", "height", "32"], ["x", "168", "y", "0", "width", "64", "height", "64"], ["x", "176", "y", "8", "width", "48", "height", "48", "fill", "white"], ["x", "184", "y", "16", "width", "32", "height", "32"], ["x", "0", "y", "168", "width", "64", "height", "64"], ["x", "8", "y", "176", "width", "48", "height", "48", "fill", "white"], ["x", "16", "y", "184", "width", "32", "height", "32"], ["width", "8", "height", "8", 4, "ngFor", "ngForOf", "ngForTrackBy"], [1, "export-result-copy"], [1, "flex", "w-full", "flex-col", "gap-3", "sm:flex-row"], ["target", "_blank", "rel", "noreferrer", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["width", "8", "height", "8"], [1, "export-modal-footer"], [1, "export-footer-actions"], ["type", "button", 1, "vault-secondary-button", "px-5", "py-3", 3, "click"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click", "disabled"]], template: function AccountExportModalComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountExportModalComponent, selectors: [["app-account-export-modal"]], inputs: { isOpen: "isOpen", action: "action", accountDisplayName: "accountDisplayName" }, outputs: { closed: "closed" }, standalone: false, features: [\u0275\u0275NgOnChangesFeature], decls: 1, vars: 1, consts: [["class", "export-modal-backdrop", 3, "click", 4, "ngIf"], [1, "export-modal-backdrop", 3, "click"], [1, "export-modal-panel", 3, "click"], [1, "export-modal-header"], [1, "export-modal-title"], ["type", "button", "aria-label", "Close export modal", 1, "export-modal-close", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5"], ["d", "M18 6 6 18"], ["d", "m6 6 12 12"], ["class", "export-modal-body", 4, "ngIf"], ["class", "export-modal-body export-modal-body--centered", 4, "ngIf"], ["class", "export-modal-footer", 4, "ngIf"], [1, "export-modal-body"], [1, "export-modal-section"], [1, "export-section-header"], [1, "export-config-section-heading"], [1, "export-section-title", "export-config-section-title"], [1, "vault-page-copy", "export-config-section-copy"], [1, "export-section-actions"], [1, "vault-status-pill", "is-active"], ["type", "button", 1, "vault-secondary-button", "export-select-all-button", 3, "click", "disabled"], [1, "export-resource-checklist"], ["class", "export-resource-card", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["class", "export-modal-section", 4, "ngIf"], [1, "export-resource-card"], [1, "export-resource-toggle"], ["type", "checkbox", 3, "change", "checked"], [1, "export-resource-checkmark"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", 1, "h-4", "w-4"], ["d", "M5 13l4 4L19 7"], [1, "export-resource-copy"], [1, "export-resource-label"], [1, "export-duration-options"], ["type", "button", "class", "export-duration-button", 3, "is-selected", "click", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["type", "button", 1, "export-duration-button", 3, "click"], [1, "export-modal-body", "export-modal-body--centered"], [1, "export-loading-status"], [3, "sizePx", "strokeWidthPx"], [1, "space-y-2"], [1, "export-section-title"], [1, "vault-page-copy", "export-loading-copy"], [1, "export-modal-section", "export-loading-section"], [1, "export-loading-steps"], [1, "export-loading-step"], [1, "export-step-title"], [1, "vault-page-copy"], [1, "export-step-meta"], ["class", "export-loading-step", 3, "is-active", 4, "ngIf"], [1, "export-modal-section", "export-result-section"], [1, "space-y-2", "text-center"], [1, "vault-page-copy", "export-result-copy"], ["class", "export-result-download", 4, "ngIf"], ["class", "export-result-qr", 4, "ngIf"], [1, "export-result-download"], [1, "export-result-summary-grid"], [1, "export-result-summary-row"], ["download", "fasten-health-export.pdf", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "click"], [1, "export-result-qr"], [1, "mock-qr-frame"], ["viewBox", "0 0 232 232", "role", "img", "aria-label", "Mock QR code", 1, "mock-qr-code"], ["width", "232", "height", "232", "fill", "white"], ["fill", "#111827"], ["x", "0", "y", "0", "width", "64", "height", "64"], ["x", "8", "y", "8", "width", "48", "height", "48", "fill", "white"], ["x", "16", "y", "16", "width", "32", "height", "32"], ["x", "168", "y", "0", "width", "64", "height", "64"], ["x", "176", "y", "8", "width", "48", "height", "48", "fill", "white"], ["x", "184", "y", "16", "width", "32", "height", "32"], ["x", "0", "y", "168", "width", "64", "height", "64"], ["x", "8", "y", "176", "width", "48", "height", "48", "fill", "white"], ["x", "16", "y", "184", "width", "32", "height", "32"], ["width", "8", "height", "8", 4, "ngFor", "ngForOf", "ngForTrackBy"], [1, "export-result-copy"], [1, "flex", "w-full", "flex-col", "gap-3", "sm:flex-row"], ["target", "_blank", "rel", "noreferrer", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["width", "8", "height", "8"], [1, "export-modal-footer"], [1, "export-footer-actions"], ["type", "button", 1, "vault-secondary-button", "px-5", "py-3", 3, "click"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click", "disabled"]], template: function AccountExportModalComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275template(0, AccountExportModalComponent_div_0_Template, 14, 5, "div", 0);
       }
       if (rf & 2) {
         \u0275\u0275property("ngIf", ctx.isOpen && ctx.action);
       }
-    }, dependencies: [NgForOf, NgIf, SpinnerComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.export-modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1.5rem;\n  background: rgba(15, 23, 42, 0.52);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.export-modal-panel[_ngcontent-%COMP%] {\n  width: min(100%, 980px);\n  max-height: calc(100vh - 3rem);\n  overflow: auto;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);\n}\n.export-modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 1.1rem 1.25rem;\n  border-bottom: 1px solid #e5e7eb;\n}\n.export-modal-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 1.5rem;\n  font-weight: 600;\n  letter-spacing: -0.025em;\n  line-height: 1.25;\n}\n.export-modal-close[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.5rem;\n  height: 2.5rem;\n  flex-shrink: 0;\n  border: 1px solid #d1d5db;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  color: #6b7280;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-modal-close[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n  border-color: #cbd5e1;\n  color: #111827;\n}\n.export-modal-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  padding: 1.5rem;\n}\n.export-modal-body--centered[_ngcontent-%COMP%] {\n  justify-content: center;\n  min-height: 460px;\n}\n.export-modal-section[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  padding: 1.25rem;\n  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);\n}\n.export-section-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.export-section-actions[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.export-config-section-heading[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n}\n.export-config-section-kicker[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  line-height: 1.1;\n}\n.export-select-all-button[_ngcontent-%COMP%] {\n  min-height: 2rem;\n  padding: 0.5rem 0.75rem;\n}\n.export-config-section-title[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1.25;\n}\n.export-config-section-copy[_ngcontent-%COMP%] {\n  font-size: 0.8125rem;\n  line-height: 1.4;\n}\n.export-section-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 1.25rem;\n  font-weight: 600;\n  line-height: 1.35;\n}\n.export-resource-checklist[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 0.75rem;\n}\n.export-resource-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.75rem;\n  min-width: 0;\n  padding: 0.9rem 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.export-resource-card[_ngcontent-%COMP%]:hover {\n  border-color: #cbd5e1;\n  background: #f8fafc;\n}\n.export-resource-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  margin-top: 0.1rem;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  position: absolute;\n  opacity: 0;\n  pointer-events: none;\n}\n.export-resource-checkmark[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 1.25rem;\n  height: 1.25rem;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 0.3rem;\n  background: #ffffff;\n  color: transparent;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .export-resource-checkmark[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #5b47fb;\n  color: #ffffff;\n}\n.export-resource-copy[_ngcontent-%COMP%] {\n  display: flex;\n  min-width: 0;\n  flex-direction: column;\n}\n.export-resource-label[_ngcontent-%COMP%] {\n  color: #0f172a;\n  font-size: 0.9rem;\n  font-weight: 600;\n  line-height: 1.45;\n}\n.export-duration-options[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.export-duration-button[_ngcontent-%COMP%] {\n  border: 1px solid #d1d5db;\n  border-radius: 999px;\n  background: #ffffff;\n  color: #111827;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 0.45rem 0.7rem;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-duration-button[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n}\n.export-duration-button.is-selected[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #eef2ff;\n  color: #5b47fb;\n}\n.export-loading-status[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n  text-align: center;\n}\n.export-loading-copy[_ngcontent-%COMP%], \n.export-result-copy[_ngcontent-%COMP%] {\n  margin: 0 auto;\n  max-width: 42rem;\n  text-align: center;\n}\n.export-loading-section[_ngcontent-%COMP%], \n.export-result-section[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n}\n.export-loading-steps[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.export-loading-step[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  gap: 1rem;\n  align-items: center;\n  padding: 1rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-loading-steps[_ngcontent-%COMP%]   .export-loading-step[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%], \n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #5b47fb;\n}\n.export-loading-step.is-complete[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-step-title[_ngcontent-%COMP%] {\n  margin: 0 0 0.2rem;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.export-step-meta[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #64748b;\n  font-size: 0.875rem;\n  font-weight: 500;\n  text-align: right;\n}\n.export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-result-download[_ngcontent-%COMP%], \n.export-result-qr[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n}\n.export-result-summary-grid[_ngcontent-%COMP%] {\n  width: 100%;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);\n  gap: 1rem;\n  align-items: start;\n  padding: 0.95rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-grid[_ngcontent-%COMP%]   .export-result-summary-row[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dt[_ngcontent-%COMP%] {\n  color: #64748b;\n  font-size: 0.75rem;\n  font-weight: 600;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dd[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n  line-height: 1.55;\n}\n.mock-qr-frame[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  padding: 1.5rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n}\n.mock-qr-code[_ngcontent-%COMP%] {\n  width: min(100%, 240px);\n  height: auto;\n  aspect-ratio: 1;\n}\n.export-modal-footer[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 0 1.5rem 1.5rem;\n  border-top: 1px solid #e5e7eb;\n}\n.export-footer-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  padding-top: 1rem;\n}\n@media (max-width: 767px) {\n  .export-modal-header[_ngcontent-%COMP%], \n   .export-modal-body[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n  .export-modal-title[_ngcontent-%COMP%] {\n    font-size: 1.25rem;\n  }\n  .export-section-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: space-between;\n  }\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .export-loading-step[_ngcontent-%COMP%], \n   .export-result-summary-row[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    grid-template-columns: minmax(0, 1fr);\n    flex-direction: column;\n    align-items: stretch;\n  }\n  .export-step-meta[_ngcontent-%COMP%] {\n    text-align: left;\n  }\n  .export-footer-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    flex-direction: column-reverse;\n  }\n  .export-footer-actions[_ngcontent-%COMP%]   .vault-primary-button[_ngcontent-%COMP%], \n   .export-footer-actions[_ngcontent-%COMP%]   .vault-secondary-button[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: center;\n  }\n}\n@media (min-width: 1024px) {\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n}\n/*# sourceMappingURL=account-export-modal.component.css.map */"] });
+    }, dependencies: [NgForOf, NgIf, SpinnerComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.export-modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1.5rem;\n  background: rgba(15, 23, 42, 0.52);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.export-modal-panel[_ngcontent-%COMP%] {\n  width: min(100%, 980px);\n  max-height: calc(100vh - 3rem);\n  overflow: auto;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);\n}\n.export-modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 1.1rem 1.25rem;\n  border-bottom: 1px solid #e5e7eb;\n}\n.export-modal-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 1.5rem;\n  font-weight: 600;\n  letter-spacing: -0.025em;\n  line-height: 1.25;\n}\n.export-modal-close[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.5rem;\n  height: 2.5rem;\n  flex-shrink: 0;\n  border: 1px solid #d1d5db;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  color: #6b7280;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-modal-close[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n  border-color: #cbd5e1;\n  color: #111827;\n}\n.export-modal-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  padding: 1.5rem;\n}\n.export-modal-body--centered[_ngcontent-%COMP%] {\n  justify-content: center;\n  min-height: 460px;\n}\n.export-modal-section[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  padding: 1.25rem;\n  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);\n}\n.export-section-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.export-section-actions[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.export-config-section-heading[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n}\n.export-config-section-kicker[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  line-height: 1.1;\n}\n.export-select-all-button[_ngcontent-%COMP%] {\n  min-height: 2rem;\n  padding: 0.5rem 0.75rem;\n}\n.export-config-section-title[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1.25;\n}\n.export-config-section-copy[_ngcontent-%COMP%] {\n  font-size: 0.8125rem;\n  line-height: 1.4;\n}\n.export-section-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #4338ca;\n  font-size: 1.25rem;\n  font-weight: 600;\n  line-height: 1.35;\n}\n.export-resource-checklist[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 0.75rem;\n}\n.export-resource-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.75rem;\n  min-width: 0;\n  padding: 0.9rem 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.export-resource-card[_ngcontent-%COMP%]:hover {\n  border-color: #cbd5e1;\n  background: #f8fafc;\n}\n.export-resource-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  margin-top: 0.1rem;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  position: absolute;\n  opacity: 0;\n  pointer-events: none;\n}\n.export-resource-checkmark[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 1.25rem;\n  height: 1.25rem;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 0.3rem;\n  background: #ffffff;\n  color: transparent;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .export-resource-checkmark[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #5b47fb;\n  color: #ffffff;\n}\n.export-resource-copy[_ngcontent-%COMP%] {\n  display: flex;\n  min-width: 0;\n  flex-direction: column;\n}\n.export-resource-label[_ngcontent-%COMP%] {\n  color: #0f172a;\n  font-size: 0.9rem;\n  font-weight: 600;\n  line-height: 1.45;\n}\n.export-duration-options[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.export-duration-button[_ngcontent-%COMP%] {\n  border: 1px solid #d1d5db;\n  border-radius: 999px;\n  background: #ffffff;\n  color: #111827;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 0.45rem 0.7rem;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-duration-button[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n}\n.export-duration-button.is-selected[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #eef2ff;\n  color: #5b47fb;\n}\n.export-loading-status[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n  text-align: center;\n}\n.export-loading-copy[_ngcontent-%COMP%], \n.export-result-copy[_ngcontent-%COMP%] {\n  margin: 0 auto;\n  max-width: 42rem;\n  text-align: center;\n}\n.export-loading-section[_ngcontent-%COMP%], \n.export-result-section[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n}\n.export-loading-steps[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.export-loading-step[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  gap: 1rem;\n  align-items: center;\n  padding: 1rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-loading-steps[_ngcontent-%COMP%]   .export-loading-step[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%], \n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #5b47fb;\n}\n.export-loading-step.is-complete[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-step-title[_ngcontent-%COMP%] {\n  margin: 0 0 0.2rem;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.export-step-meta[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #64748b;\n  font-size: 0.875rem;\n  font-weight: 500;\n  text-align: right;\n}\n.export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-result-download[_ngcontent-%COMP%], \n.export-result-qr[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n}\n.export-result-summary-grid[_ngcontent-%COMP%] {\n  width: 100%;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);\n  gap: 1rem;\n  align-items: start;\n  padding: 0.95rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-grid[_ngcontent-%COMP%]   .export-result-summary-row[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dt[_ngcontent-%COMP%] {\n  color: #64748b;\n  font-size: 0.75rem;\n  font-weight: 600;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dd[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n  line-height: 1.55;\n}\n.mock-qr-frame[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  padding: 1.5rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n}\n.mock-qr-code[_ngcontent-%COMP%] {\n  width: min(100%, 240px);\n  height: auto;\n  aspect-ratio: 1;\n}\n.export-modal-footer[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 0 1.5rem 1.5rem;\n  border-top: 1px solid #e5e7eb;\n}\n.export-footer-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  padding-top: 1rem;\n}\n@media (max-width: 767px) {\n  .export-modal-header[_ngcontent-%COMP%], \n   .export-modal-body[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n  .export-modal-title[_ngcontent-%COMP%] {\n    font-size: 1.25rem;\n  }\n  .export-section-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: space-between;\n  }\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .export-loading-step[_ngcontent-%COMP%], \n   .export-result-summary-row[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    grid-template-columns: minmax(0, 1fr);\n    flex-direction: column;\n    align-items: stretch;\n  }\n  .export-step-meta[_ngcontent-%COMP%] {\n    text-align: left;\n  }\n  .export-footer-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    flex-direction: column-reverse;\n  }\n  .export-footer-actions[_ngcontent-%COMP%]   .vault-primary-button[_ngcontent-%COMP%], \n   .export-footer-actions[_ngcontent-%COMP%]   .vault-secondary-button[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: center;\n  }\n}\n@media (min-width: 1024px) {\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n}\n/*# sourceMappingURL=account-export-modal.component.css.map */"] });
   }
 };
 (() => {
@@ -61693,11 +61681,11 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/pages/account-details/account-details.component.ts
-function AccountDetailsComponent_button_75_Template(rf, ctx) {
+function AccountDetailsComponent_button_65_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "button", 39);
-    \u0275\u0275listener("click", function AccountDetailsComponent_button_75_Template_button_click_0_listener() {
+    \u0275\u0275listener("click", function AccountDetailsComponent_button_65_Template_button_click_0_listener() {
       const action_r2 = \u0275\u0275restoreView(_r1).$implicit;
       const ctx_r2 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r2.openExportModal(action_r2));
@@ -61721,13 +61709,13 @@ function AccountDetailsComponent_button_75_Template(rf, ctx) {
     \u0275\u0275textInterpolate(action_r2.description);
   }
 }
-function AccountDetailsComponent_section_76_Template(rf, ctx) {
+function AccountDetailsComponent_section_66_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "section", 46)(1, "div", 6)(2, "p", 7);
-    \u0275\u0275text(3, "Patient matching");
+    \u0275\u0275text(3, "Matched Demographics");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(4, "h2", 26);
-    \u0275\u0275text(5, "Patient Demographics");
+    \u0275\u0275text(5, "Patient Profile");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(6, "p", 27);
     \u0275\u0275text(7, " These demographics reflect the TEFCA-mode identity verification details used to match you to this institution. ");
@@ -61750,7 +61738,7 @@ function AccountDetailsComponent_section_76_Template(rf, ctx) {
     \u0275\u0275elementStart(22, "dd", 48);
     \u0275\u0275text(23);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(24, "div", 25)(25, "dt");
+    \u0275\u0275elementStart(24, "div", 22)(25, "dt");
     \u0275\u0275text(26, "Address");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(27, "dd", 49);
@@ -61769,7 +61757,7 @@ function AccountDetailsComponent_section_76_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r2.formattedPatientAddress);
   }
 }
-function AccountDetailsComponent_div_87_Template(rf, ctx) {
+function AccountDetailsComponent_div_77_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 50)(1, "div", 51)(2, "div", 52);
@@ -61809,7 +61797,7 @@ function AccountDetailsComponent_div_87_Template(rf, ctx) {
     \u0275\u0275text(29, "Terms");
     \u0275\u0275elementEnd()()()()();
     \u0275\u0275elementStart(30, "button", 67);
-    \u0275\u0275listener("click", function AccountDetailsComponent_div_87_Template_button_click_30_listener() {
+    \u0275\u0275listener("click", function AccountDetailsComponent_div_77_Template_button_click_30_listener() {
       const app_r5 = \u0275\u0275restoreView(_r4).$implicit;
       const ctx_r2 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r2.disconnectMockApp(app_r5.name));
@@ -61839,7 +61827,7 @@ function AccountDetailsComponent_div_87_Template(rf, ctx) {
     \u0275\u0275attribute("aria-label", "Disconnect " + app_r5.name)("title", "Disconnect " + app_r5.name);
   }
 }
-function AccountDetailsComponent_div_88_Template(rf, ctx) {
+function AccountDetailsComponent_div_78_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 74);
     \u0275\u0275text(1);
@@ -61851,7 +61839,7 @@ function AccountDetailsComponent_div_88_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", ctx_r2.appActionFeedback, " ");
   }
 }
-function AccountDetailsComponent_div_98_Template(rf, ctx) {
+function AccountDetailsComponent_div_88_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 50)(1, "div", 75)(2, "div", 76)(3, "p", 41);
     \u0275\u0275text(4);
@@ -61885,7 +61873,6 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
     this.accountId = "";
     this.institutionWebsite = "";
     this.consentExpiresLabel = "";
-    this.consentDurationLabel = "";
     this.appsUsingConnection = [];
     this.activityHistory = [];
     this.exportActions = [];
@@ -61898,7 +61885,6 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
     this.institutionWebsite = this.buildInstitutionWebsite();
     const consentExpiresAt = this.account?.consent_expires_at || this.buildMockConsentExpiration();
     this.consentExpiresLabel = this.formatConsentExpiration(consentExpiresAt);
-    this.consentDurationLabel = this.getConsentDurationLabel(consentExpiresAt);
     this.patientDemographics = this.shouldShowPatientDemographics() ? this.configService.vaultProfileConfig$.verifiedIdentityPatientDemographics || this.buildMockPatientDemographics() : void 0;
     this.appsUsingConnection = this.buildMockApps();
     this.activityHistory = this.buildMockActivityHistory();
@@ -62003,21 +61989,6 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
       day: "numeric"
     });
   }
-  getConsentDurationLabel(consentExpiresAt) {
-    const parsedDate = new Date(consentExpiresAt);
-    if (Number.isNaN(parsedDate.getTime())) {
-      return "Duration unavailable";
-    }
-    const msUntilExpiration = parsedDate.getTime() - Date.now();
-    const dayCount = Math.max(0, Math.ceil(msUntilExpiration / (1e3 * 60 * 60 * 24)));
-    if (dayCount === 0) {
-      return "Expires today";
-    }
-    if (dayCount === 1) {
-      return "Expires in 1 day";
-    }
-    return `Expires in ${dayCount} days`;
-  }
   shouldShowPatientDemographics() {
     return this.account?.platform_type === "tefca" || !!this.configService.systemConfig$.tefcaMode;
   }
@@ -62094,7 +62065,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountDetailsComponent, selectors: [["app-account-details"]], standalone: false, decls: 100, vars: 22, consts: [[1, "vault-page-shell"], [1, "space-y-6"], ["routerLink", "/dashboard/accounts", 1, "vault-back-link"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M15 18l-6-6 6-6"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "vault-page-title"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "vault-status-pill", 3, "ngClass"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "flex", "flex-col", "gap-6"], [1, "flex", "items-center", "gap-5"], ["imageFallback", "", 1, "h-20", "w-20", "rounded-2xl", "border", "border-slate-200", "bg-white", "object-contain", "p-3", 3, "src", "alt"], [1, "space-y-2"], [1, "text-sm", "font-medium", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "text-slate-950"], [1, "account-details-grid"], [1, "account-details-item"], ["target", "_blank", "rel", "noreferrer", 1, "text-[#5B47FB]", "hover:text-[#4338ca]", 3, "href"], [1, "break-all"], [1, "account-details-item", "account-details-item--full"], [1, "vault-card-title", "text-xl"], [1, "vault-card-copy"], [1, "mt-6", "space-y-3"], ["type", "button", "class", "vault-secondary-button w-full justify-between px-4 py-4 text-left", 3, "click", 4, "ngFor", "ngForOf"], ["class", "vault-panel mt-6 p-6 sm:p-8", 4, "ngIf"], [1, "mt-6", "grid", "gap-6", "xl:grid-cols-2"], [1, "vault-panel", "p-3", "sm:p-4"], [1, "px-3", "pt-3", "sm:px-4", "sm:pt-4"], [1, "vault-card-copy", "mt-2"], [1, "mt-3", "divide-y", "divide-slate-100"], ["class", "vault-list-row items-start", 4, "ngFor", "ngForOf"], ["class", "mx-3 mb-3 mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-700 sm:mx-4", 4, "ngIf"], [3, "closed", "isOpen", "action", "accountDisplayName"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-between", "px-4", "py-4", "text-left", 3, "click"], [1, "flex", "flex-col", "items-start", "gap-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "font-normal", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "M5 12h14"], ["d", "m12 5 7 7-7 7"], [1, "vault-panel", "mt-6", "p-6", "sm:p-8"], [1, "account-details-grid", "mt-6"], [1, "capitalize"], [1, "whitespace-pre-line"], [1, "vault-list-row", "items-start"], [1, "flex", "items-start", "gap-4"], [1, "vault-icon-tile", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "flex", "flex-wrap", "gap-x-3", "gap-y-2", "text-xs"], ["target", "_blank", "rel", "noreferrer", 1, "inline-flex", "items-center", "gap-1.5", "rounded-full", "border", "border-slate-200", "px-2.5", "py-1", "text-slate-500", "transition-colors", "hover:border-slate-300", "hover:bg-slate-50", "hover:text-slate-700", 3, "href"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-3", "w-3"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M2 12h20"], ["d", "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"], ["d", "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"], ["d", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"], ["d", "M14 2v6h6"], ["d", "M8 13h8"], ["d", "M8 17h5"], ["type", "button", 1, "vault-secondary-button", "self-center", "border-rose-200", "px-3", "py-2", "text-xs", "text-rose-600", "hover:border-rose-300", "hover:bg-rose-50", "hover:text-rose-700", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-4", "w-4"], ["d", "M3 6h18"], ["d", "M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"], ["d", "M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"], ["d", "M10 11v6"], ["d", "M14 11v6"], [1, "mx-3", "mb-3", "mt-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-4", "py-4", "text-sm", "text-rose-700", "sm:mx-4"], [1, "space-y-1"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "vault-status-pill", "is-warning"], [1, "text-sm", "text-slate-500"], [1, "text-sm", "font-medium", "text-slate-400"]], template: function AccountDetailsComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountDetailsComponent, selectors: [["app-account-details"]], standalone: false, decls: 90, vars: 20, consts: [[1, "vault-page-shell"], [1, "space-y-6"], ["routerLink", "/dashboard/accounts", 1, "vault-back-link"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M15 18l-6-6 6-6"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "vault-page-title"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "vault-status-pill", 3, "ngClass"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "flex", "flex-col", "gap-6"], [1, "flex", "items-center", "gap-5"], ["imageFallback", "", 1, "h-20", "w-20", "rounded-2xl", "border", "border-slate-200", "bg-white", "object-contain", "p-3", 3, "src", "alt"], [1, "space-y-2"], [1, "text-sm", "font-medium", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "text-slate-950"], [1, "account-details-grid"], [1, "account-details-item"], ["target", "_blank", "rel", "noreferrer", 1, "text-[#5B47FB]", "hover:text-[#4338ca]", 3, "href"], [1, "break-all"], [1, "account-details-item", "account-details-item--full"], [1, "vault-card-title", "text-xl"], [1, "vault-card-copy"], [1, "mt-6", "space-y-3"], ["type", "button", "class", "vault-secondary-button w-full justify-between px-4 py-4 text-left", 3, "click", 4, "ngFor", "ngForOf"], ["class", "vault-panel mt-6 p-6 sm:p-8", 4, "ngIf"], [1, "mt-6", "grid", "gap-6", "xl:grid-cols-2"], [1, "vault-panel", "p-3", "sm:p-4"], [1, "px-3", "pt-3", "sm:px-4", "sm:pt-4"], [1, "vault-card-copy", "mt-2"], [1, "mt-3", "divide-y", "divide-slate-100"], ["class", "vault-list-row items-start", 4, "ngFor", "ngForOf"], ["class", "mx-3 mb-3 mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-700 sm:mx-4", 4, "ngIf"], [3, "closed", "isOpen", "action", "accountDisplayName"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-between", "px-4", "py-4", "text-left", 3, "click"], [1, "flex", "flex-col", "items-start", "gap-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "font-normal", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "M5 12h14"], ["d", "m12 5 7 7-7 7"], [1, "vault-panel", "mt-6", "p-6", "sm:p-8"], [1, "account-details-grid", "mt-6"], [1, "capitalize"], [1, "whitespace-pre-line"], [1, "vault-list-row", "items-start"], [1, "flex", "items-start", "gap-4"], [1, "vault-icon-tile", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "flex", "flex-wrap", "gap-x-3", "gap-y-2", "text-xs"], ["target", "_blank", "rel", "noreferrer", 1, "inline-flex", "items-center", "gap-1.5", "rounded-full", "border", "border-slate-200", "px-2.5", "py-1", "text-slate-500", "transition-colors", "hover:border-slate-300", "hover:bg-slate-50", "hover:text-slate-700", 3, "href"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-3", "w-3"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M2 12h20"], ["d", "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"], ["d", "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"], ["d", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"], ["d", "M14 2v6h6"], ["d", "M8 13h8"], ["d", "M8 17h5"], ["type", "button", 1, "vault-secondary-button", "self-center", "border-rose-200", "px-3", "py-2", "text-xs", "text-rose-600", "hover:border-rose-300", "hover:bg-rose-50", "hover:text-rose-700", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-4", "w-4"], ["d", "M3 6h18"], ["d", "M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"], ["d", "M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"], ["d", "M10 11v6"], ["d", "M14 11v6"], [1, "mx-3", "mb-3", "mt-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-4", "py-4", "text-sm", "text-rose-700", "sm:mx-4"], [1, "space-y-1"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "vault-status-pill", "activity-status-pill", "is-warning"], [1, "text-sm", "text-slate-500"], [1, "text-sm", "font-medium", "text-slate-400"]], template: function AccountDetailsComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "a", 2);
         \u0275\u0275namespaceSVG();
@@ -62132,82 +62103,70 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
         \u0275\u0275text(35);
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(36, "div", 22)(37, "dt");
-        \u0275\u0275text(38, "Portal");
+        \u0275\u0275text(38, "Consent expires at");
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(39, "dd");
         \u0275\u0275text(40);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(41, "div", 22)(42, "dt");
-        \u0275\u0275text(43, "Consent expires at");
+        \u0275\u0275text(43, "Vault connection ID");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(44, "dd");
+        \u0275\u0275elementStart(44, "dd", 24);
         \u0275\u0275text(45);
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(46, "div", 22)(47, "dt");
-        \u0275\u0275text(48, "Duration");
+        \u0275\u0275text(48, "TEFCA Directory ID");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(49, "dd");
+        \u0275\u0275elementStart(49, "dd", 24);
         \u0275\u0275text(50);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(51, "div", 22)(52, "dt");
-        \u0275\u0275text(53, "Vault connection ID");
+        \u0275\u0275elementStart(51, "div", 25)(52, "dt");
+        \u0275\u0275text(53, "Authorization type");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(54, "dd", 24);
+        \u0275\u0275elementStart(54, "dd");
         \u0275\u0275text(55);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(56, "div", 22)(57, "dt");
-        \u0275\u0275text(58, "Organization connection ID");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(59, "dd", 24);
-        \u0275\u0275text(60);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(61, "div", 25)(62, "dt");
-        \u0275\u0275text(63, "Authorization type");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(64, "dd");
-        \u0275\u0275text(65);
         \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(66, "section", 14)(67, "div", 6)(68, "p", 7);
-        \u0275\u0275text(69, "Export actions");
+        \u0275\u0275elementStart(56, "section", 14)(57, "div", 6)(58, "p", 7);
+        \u0275\u0275text(59, "Export actions");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(70, "h2", 26);
-        \u0275\u0275text(71, "Share or package this connection");
+        \u0275\u0275elementStart(60, "h2", 26);
+        \u0275\u0275text(61, "Share or package this connection");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(72, "p", 27);
-        \u0275\u0275text(73, " These actions are mocked for now and only demonstrate the export pathways available for this connected account. ");
+        \u0275\u0275elementStart(62, "p", 27);
+        \u0275\u0275text(63, " These actions are mocked for now and only demonstrate the export pathways available for this connected account. ");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(74, "div", 28);
-        \u0275\u0275template(75, AccountDetailsComponent_button_75_Template, 9, 2, "button", 29);
+        \u0275\u0275elementStart(64, "div", 28);
+        \u0275\u0275template(65, AccountDetailsComponent_button_65_Template, 9, 2, "button", 29);
         \u0275\u0275elementEnd()()();
-        \u0275\u0275template(76, AccountDetailsComponent_section_76_Template, 29, 4, "section", 30);
-        \u0275\u0275elementStart(77, "div", 31)(78, "section", 32)(79, "div", 33)(80, "p", 7);
-        \u0275\u0275text(81, "Connected apps");
+        \u0275\u0275template(66, AccountDetailsComponent_section_66_Template, 29, 4, "section", 30);
+        \u0275\u0275elementStart(67, "div", 31)(68, "section", 32)(69, "div", 33)(70, "p", 7);
+        \u0275\u0275text(71, "Connected apps");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(82, "h2", 26);
-        \u0275\u0275text(83, "Apps using this connection");
+        \u0275\u0275elementStart(72, "h2", 26);
+        \u0275\u0275text(73, "Apps using this connection");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(84, "p", 34);
-        \u0275\u0275text(85, "Apps below are mocked examples of clients currently reading from this institution connection.");
+        \u0275\u0275elementStart(74, "p", 34);
+        \u0275\u0275text(75, "Apps below are mocked examples of clients currently reading from this institution connection.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(86, "div", 35);
-        \u0275\u0275template(87, AccountDetailsComponent_div_87_Template, 39, 7, "div", 36);
+        \u0275\u0275elementStart(76, "div", 35);
+        \u0275\u0275template(77, AccountDetailsComponent_div_77_Template, 39, 7, "div", 36);
         \u0275\u0275elementEnd();
-        \u0275\u0275template(88, AccountDetailsComponent_div_88_Template, 2, 1, "div", 37);
+        \u0275\u0275template(78, AccountDetailsComponent_div_78_Template, 2, 1, "div", 37);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(89, "section", 32)(90, "div", 33)(91, "p", 7);
-        \u0275\u0275text(92, "Activity history");
+        \u0275\u0275elementStart(79, "section", 32)(80, "div", 33)(81, "p", 7);
+        \u0275\u0275text(82, "Activity history");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(93, "h2", 26);
-        \u0275\u0275text(94, "Recent access on this connection");
+        \u0275\u0275elementStart(83, "h2", 26);
+        \u0275\u0275text(84, "Recent access on this connection");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(95, "p", 34);
-        \u0275\u0275text(96, "Recent app requests are mocked so we can validate the page structure before service integrations exist.");
+        \u0275\u0275elementStart(85, "p", 34);
+        \u0275\u0275text(86, "Recent app requests are mocked so we can validate the page structure before service integrations exist.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(97, "div", 35);
-        \u0275\u0275template(98, AccountDetailsComponent_div_98_Template, 11, 4, "div", 36);
+        \u0275\u0275elementStart(87, "div", 35);
+        \u0275\u0275template(88, AccountDetailsComponent_div_88_Template, 11, 4, "div", 36);
         \u0275\u0275elementEnd()()()();
-        \u0275\u0275elementStart(99, "app-account-export-modal", 38);
-        \u0275\u0275listener("closed", function AccountDetailsComponent_Template_app_account_export_modal_closed_99_listener() {
+        \u0275\u0275elementStart(89, "app-account-export-modal", 38);
+        \u0275\u0275listener("closed", function AccountDetailsComponent_Template_app_account_export_modal_closed_89_listener() {
           return ctx.closeExportModal();
         });
         \u0275\u0275elementEnd();
@@ -62228,15 +62187,11 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
         \u0275\u0275advance();
         \u0275\u0275textInterpolate1(" ", ctx.institutionWebsite, " ");
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.portal == null ? null : ctx.account.portal.name) || "Patient access portal");
-        \u0275\u0275advance(5);
         \u0275\u0275textInterpolate(ctx.consentExpiresLabel);
-        \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate(ctx.consentDurationLabel);
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.vault_profile_connection_id) || "Not available");
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.org_connection_id) || "Pending authorization");
+        \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.tefca_directory_id) || "Not available");
         \u0275\u0275advance(5);
         \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.patient_auth_type) || "Unknown");
         \u0275\u0275advance(10);
@@ -62252,7 +62207,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
         \u0275\u0275advance();
         \u0275\u0275property("isOpen", ctx.isExportModalOpen)("action", ctx.selectedExportAction)("accountDisplayName", ctx.accountDisplayName);
       }
-    }, dependencies: [NgClass, NgForOf, NgIf, RouterLink, ImageFallbackDirective, AccountExportModalComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.account-details-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(1, minmax(0, 1fr));\n  gap: 0 1.5rem;\n  border-top: 1px solid #e5e7eb;\n}\n.account-details-item[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);\n  gap: 1rem;\n  align-items: start;\n  padding: 0.95rem 0;\n  border-bottom: 1px solid #e5e7eb;\n}\n.account-details-item[_ngcontent-%COMP%]   dt[_ngcontent-%COMP%] {\n  color: #64748b;\n  font-size: 0.75rem;\n  font-weight: 600;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n.account-details-item[_ngcontent-%COMP%]   dd[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n  line-height: 1.55;\n}\n@media (min-width: 1024px) {\n  .account-details-grid[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n  .account-details-item--full[_ngcontent-%COMP%] {\n    grid-column: 1 / -1;\n  }\n}\n@media (max-width: 639px) {\n  .account-details-item[_ngcontent-%COMP%] {\n    grid-template-columns: minmax(0, 1fr);\n    gap: 0.35rem;\n  }\n}\n/*# sourceMappingURL=account-details.component.css.map */"] });
+    }, dependencies: [NgClass, NgForOf, NgIf, RouterLink, ImageFallbackDirective, AccountExportModalComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.account-details-grid[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(1, minmax(0, 1fr));\n  gap: 0 1.5rem;\n  border-top: 1px solid #e5e7eb;\n}\n.account-details-item[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);\n  gap: 1rem;\n  align-items: start;\n  padding: 0.95rem 0;\n  border-bottom: 1px solid #e5e7eb;\n}\n.account-details-item[_ngcontent-%COMP%]   dt[_ngcontent-%COMP%] {\n  color: #64748b;\n  font-size: 0.75rem;\n  font-weight: 600;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n.account-details-item[_ngcontent-%COMP%]   dd[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.8125rem;\n  font-weight: 600;\n  line-height: 1.4;\n}\n.activity-status-pill[_ngcontent-%COMP%] {\n  padding: 0.125rem 0.45rem;\n  font-size: 0.6875rem;\n  line-height: 1;\n}\n@media (min-width: 1024px) {\n  .account-details-grid[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n  .account-details-item--full[_ngcontent-%COMP%] {\n    grid-column: 1 / -1;\n  }\n}\n@media (max-width: 639px) {\n  .account-details-item[_ngcontent-%COMP%] {\n    grid-template-columns: minmax(0, 1fr);\n    gap: 0.35rem;\n  }\n}\n/*# sourceMappingURL=account-details.component.css.map */"] });
   }
 };
 (() => {
