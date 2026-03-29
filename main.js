@@ -61807,10 +61807,6 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.lastStatusCheckLabel = this.formatStatusCheckLabel(/* @__PURE__ */ new Date());
     this.downloadUrl = "";
     this.resultDocumentUrl = "";
-    if (exportResponse.status === "success") {
-      this.completeExportFlow(exportResponse);
-      return;
-    }
     if (!exportResponse.task_id) {
       this.handleExportPollingFailure("We could not start this export. Please try again.");
       return;
@@ -61886,6 +61882,10 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     return `data:text/plain;charset=utf-8,${encodeURIComponent(fileContents)}`;
   }
   resolveExportResultUrl(exportResponse) {
+    const matchingDownloadLink = exportResponse.download_links?.find((downloadLink) => downloadLink?.export_type === this.exportType && typeof downloadLink.url === "string" && downloadLink.url.length > 0)?.url;
+    if (matchingDownloadLink) {
+      return matchingDownloadLink;
+    }
     const responseUrl = [
       exportResponse.download_url,
       exportResponse.content_url,
