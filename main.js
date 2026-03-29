@@ -60548,6 +60548,14 @@ var FastenService = class _FastenService {
       }
     }).pipe(map((resp) => resp.data));
   }
+  getVaultEhiExport(taskId) {
+    const url = `${environment.connect_api_endpoint_base}/bridge/vault/ehi-export/${taskId}`;
+    return this._httpClient.get(url, {
+      params: {
+        public_id: this.configService.systemConfig$.publicId
+      }
+    }).pipe(map((resp) => resp.data));
+  }
   openWindowInPopup(redirectUrlParts) {
     const isDesktop = this.deviceService.isDesktop();
     let features = "";
@@ -61330,7 +61338,7 @@ function AccountExportModalComponent_div_0_div_12_div_7_Template(rf, ctx) {
     \u0275\u0275advance(5);
     \u0275\u0275textInterpolate(ctx_r1.selectedResourceListLabel);
     \u0275\u0275advance();
-    \u0275\u0275property("href", ctx_r1.mockDownloadUrl, \u0275\u0275sanitizeUrl);
+    \u0275\u0275property("href", ctx_r1.downloadUrl, \u0275\u0275sanitizeUrl);
   }
 }
 function AccountExportModalComponent_div_0_div_12_div_8__svg_rect_14_Template(rf, ctx) {
@@ -61541,15 +61549,14 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.selectedExportDurationId = "1-week";
     this.lastStatusCheckLabel = "";
     this.retrievalCheckCount = 0;
-    this.mockDownloadUrl = "";
-    this.resultDocumentUrl = "https://example.org/mock-patient-export";
+    this.downloadUrl = "";
+    this.resultDocumentUrl = "";
     this.mockQrCells = [];
     this.recaptchaState = "pending";
     this.recaptchaErrorMessage = "";
     this.recaptchaToken = "";
     this.exportRequestErrorMessage = "";
-    this.retrievalIntervalId = null;
-    this.qrGenerationTimeoutId = null;
+    this.retrievalPollingSubscription = null;
     this.resetExportConfiguration();
     this.mockQrCells = this.buildMockQrCells();
   }
@@ -61622,9 +61629,9 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
   }
   get exportResultSummary() {
     if (this.exportType === "pdf") {
-      return `Your mock PDF export includes ${this.selectedResourceListLabel}.`;
+      return `Your PDF export includes ${this.selectedResourceListLabel}.`;
     }
-    return `Your mock share package includes ${this.selectedResourceCount} selected record categories and will stay active for ${this.getSelectedDurationLabel().toLowerCase()}.`;
+    return `Your share package includes ${this.selectedResourceCount} selected record categories and will stay active for ${this.getSelectedDurationLabel().toLowerCase()}.`;
   }
   get selectedDurationLabel() {
     return this.getSelectedDurationLabel();
@@ -61702,8 +61709,9 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
         this.recaptchaErrorMessage = "We could not complete the reCAPTCHA security check. Please try again.";
         return;
       }
+      let exportResponse;
       try {
-        yield firstValueFrom(this.fastenService.registerVaultEhiExport({
+        exportResponse = yield firstValueFrom(this.fastenService.registerVaultEhiExport({
           org_connection_id: this.orgConnectionId,
           filters: {
             resource_types: this.exportResourceOptions.filter((option) => option.selected).map((option) => option.resourceType)
@@ -61717,7 +61725,12 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
         this.exportRequestErrorMessage = "We could not register this export request. Please try again.";
         return;
       }
-      this.startExportFlow();
+      if (exportResponse.status === "failed") {
+        this.recaptchaState = "pending";
+        this.exportRequestErrorMessage = this.getExportFailureMessage(exportResponse) || "We could not register this export request. Please try again.";
+        return;
+      }
+      this.startExportFlow(exportResponse);
     });
   }
   // Config state interactions: keep the selection model isolated from loading and complete behavior.
@@ -61748,7 +61761,8 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.exportLoadingPhase = "retrieving";
     this.lastStatusCheckLabel = "";
     this.retrievalCheckCount = 0;
-    this.mockDownloadUrl = "";
+    this.downloadUrl = "";
+    this.resultDocumentUrl = "";
     this.recaptchaState = "pending";
     this.recaptchaErrorMessage = "";
     this.recaptchaToken = "";
@@ -61762,7 +61776,8 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.exportLoadingPhase = "retrieving";
     this.lastStatusCheckLabel = "";
     this.retrievalCheckCount = 0;
-    this.mockDownloadUrl = "";
+    this.downloadUrl = "";
+    this.resultDocumentUrl = "";
     this.recaptchaState = "pending";
     this.recaptchaErrorMessage = "";
     this.recaptchaToken = "";
@@ -61784,55 +61799,58 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.selectedExportDurationId = "1-week";
   }
   // Loading state: once the backend request is registered, the modal advances through retrieval first.
-  startExportFlow() {
+  startExportFlow(exportResponse) {
+    this.recaptchaState = "pending";
     this.exportModalState = "loading";
     this.exportLoadingPhase = "retrieving";
     this.retrievalCheckCount = 0;
     this.lastStatusCheckLabel = this.formatStatusCheckLabel(/* @__PURE__ */ new Date());
-    this.mockDownloadUrl = "";
-    this.startRetrievalPolling();
+    this.downloadUrl = "";
+    this.resultDocumentUrl = "";
+    if (exportResponse.status === "success") {
+      this.completeExportFlow(exportResponse);
+      return;
+    }
+    if (!exportResponse.task_id) {
+      this.handleExportPollingFailure("We could not start this export. Please try again.");
+      return;
+    }
+    this.startRetrievalPolling(exportResponse.task_id);
   }
-  // Loading state: timeboxed exports add a second QR-generation phase before the result screen is shown.
-  startRetrievalPolling() {
+  // Loading state: poll the real export task endpoint until the export succeeds or fails.
+  startRetrievalPolling(taskId) {
     this.clearExportTimers();
-    this.retrievalIntervalId = setInterval(() => {
+    this.retrievalPollingSubscription = timer(0, 5e3).pipe(switchMap(() => {
       this.retrievalCheckCount += 1;
       this.lastStatusCheckLabel = this.formatStatusCheckLabel(/* @__PURE__ */ new Date());
-      if (this.retrievalCheckCount >= 3) {
-        if (this.retrievalIntervalId) {
-          clearInterval(this.retrievalIntervalId);
-          this.retrievalIntervalId = null;
-        }
-        if (this.requiresTimeboxedAccess) {
-          this.exportLoadingPhase = "qr-generation";
-          this.startQrGenerationPhase();
+      return this.fastenService.getVaultEhiExport(taskId);
+    })).subscribe({
+      next: (response) => {
+        if (response.status === "success") {
+          this.completeExportFlow(response);
           return;
         }
-        this.completeExportFlow();
+        if (response.status === "failed") {
+          this.handleExportPollingFailure(this.getExportFailureMessage(response) || "We could not complete this export. Please try again.");
+        }
+      },
+      error: () => {
+        this.handleExportPollingFailure("We could not retrieve the export status. Please try again.");
       }
-    }, 5e3);
-  }
-  // Loading state: shareable exports pause briefly to simulate packaging the QR experience.
-  startQrGenerationPhase() {
-    this.qrGenerationTimeoutId = setTimeout(() => {
-      this.completeExportFlow();
-    }, 2500);
+    });
   }
   // Loading -> complete transition: PDF exports expose a download URL, while link-based exports render the QR result.
-  completeExportFlow() {
+  completeExportFlow(exportResponse) {
     this.clearExportTimers();
     this.exportModalState = "complete";
-    this.mockDownloadUrl = this.exportType === "pdf" ? this.buildMockDownloadUrl() : "";
+    this.downloadUrl = this.exportType === "pdf" ? this.resolveExportResultUrl(exportResponse) : "";
+    this.resultDocumentUrl = this.exportType === "pdf" ? "" : this.resolveExportResultUrl(exportResponse);
   }
   // Shared timer cleanup: both close/reset paths and loading transitions reuse the same teardown.
   clearExportTimers() {
-    if (this.retrievalIntervalId) {
-      clearInterval(this.retrievalIntervalId);
-      this.retrievalIntervalId = null;
-    }
-    if (this.qrGenerationTimeoutId) {
-      clearTimeout(this.qrGenerationTimeoutId);
-      this.qrGenerationTimeoutId = null;
+    if (this.retrievalPollingSubscription) {
+      this.retrievalPollingSubscription.unsubscribe();
+      this.retrievalPollingSubscription = null;
     }
   }
   getSelectedDurationLabel() {
@@ -61866,6 +61884,34 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
       `Selected resources: ${selectedResources}`
     ].join("\n");
     return `data:text/plain;charset=utf-8,${encodeURIComponent(fileContents)}`;
+  }
+  resolveExportResultUrl(exportResponse) {
+    const responseUrl = [
+      exportResponse.download_url,
+      exportResponse.content_url,
+      exportResponse["share_url"],
+      exportResponse["url"]
+    ].find((candidate) => typeof candidate === "string" && candidate.length > 0);
+    if (responseUrl) {
+      return responseUrl;
+    }
+    return this.exportType === "pdf" ? this.buildMockDownloadUrl() : "https://example.org/mock-patient-export";
+  }
+  handleExportPollingFailure(message2) {
+    this.clearExportTimers();
+    this.recaptchaState = "pending";
+    this.exportModalState = "config";
+    this.exportLoadingPhase = "retrieving";
+    this.downloadUrl = "";
+    this.resultDocumentUrl = "";
+    this.exportRequestErrorMessage = message2;
+  }
+  getExportFailureMessage(exportResponse) {
+    const messageParts = [
+      exportResponse.error_description,
+      exportResponse.error
+    ].filter((value) => typeof value === "string" && value.length > 0);
+    return messageParts.join(" ");
   }
   buildMockQrCells() {
     const cells = [];
