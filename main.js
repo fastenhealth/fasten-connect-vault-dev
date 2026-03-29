@@ -60801,68 +60801,65 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
-function SettingsTabComponent_div_66_span_11_Template(rf, ctx) {
+function SettingsTabComponent_div_71_span_9_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
     \u0275\u0275text(1, "Reset Connections");
     \u0275\u0275elementEnd();
   }
 }
-function SettingsTabComponent_div_66_span_12_Template(rf, ctx) {
+function SettingsTabComponent_div_71_span_10_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
     \u0275\u0275text(1, "Resetting...");
     \u0275\u0275elementEnd();
   }
 }
-function SettingsTabComponent_div_66_span_14_Template(rf, ctx) {
+function SettingsTabComponent_div_71_span_12_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 47);
     \u0275\u0275text(1, "Connections reset successfully.");
     \u0275\u0275elementEnd();
   }
 }
-function SettingsTabComponent_div_66_span_15_Template(rf, ctx) {
+function SettingsTabComponent_div_71_span_13_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 48);
     \u0275\u0275text(1, "Unable to reset connections right now.");
     \u0275\u0275elementEnd();
   }
 }
-function SettingsTabComponent_div_66_span_16_Template(rf, ctx) {
+function SettingsTabComponent_div_71_span_14_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1, "Available only while test mode is enabled.");
+    \u0275\u0275text(1, "Only in test mode.");
     \u0275\u0275elementEnd();
   }
 }
-function SettingsTabComponent_div_66_Template(rf, ctx) {
+function SettingsTabComponent_div_71_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 37)(1, "div", 19)(2, "div", 22)(3, "p", 38);
-    \u0275\u0275text(4, "Test Tools");
+    \u0275\u0275elementStart(0, "div", 37)(1, "div", 19)(2, "div", 22)(3, "h3", 38);
+    \u0275\u0275text(4, "Reset connection state");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "h3", 23);
-    \u0275\u0275text(6, "Reset connection state");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 39);
-    \u0275\u0275text(8, "Clear test vault connections so you can rerun connection and verification flows from a clean slate.");
+    \u0275\u0275elementStart(5, "p", 39);
+    \u0275\u0275text(6, "Clear test vault connections so you can rerun connection and verification flows from a clean slate.");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "div", 40)(10, "button", 41);
-    \u0275\u0275listener("click", function SettingsTabComponent_div_66_Template_button_click_10_listener() {
+    \u0275\u0275elementStart(7, "div", 40)(8, "button", 41);
+    \u0275\u0275listener("click", function SettingsTabComponent_div_71_Template_button_click_8_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.onResetConnections());
     });
-    \u0275\u0275template(11, SettingsTabComponent_div_66_span_11_Template, 2, 0, "span", 42)(12, SettingsTabComponent_div_66_span_12_Template, 2, 0, "span", 42);
+    \u0275\u0275template(9, SettingsTabComponent_div_71_span_9_Template, 2, 0, "span", 42)(10, SettingsTabComponent_div_71_span_10_Template, 2, 0, "span", 42);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(13, "p", 43);
-    \u0275\u0275template(14, SettingsTabComponent_div_66_span_14_Template, 2, 0, "span", 44)(15, SettingsTabComponent_div_66_span_15_Template, 2, 0, "span", 45)(16, SettingsTabComponent_div_66_span_16_Template, 2, 0, "span", 46);
+    \u0275\u0275elementStart(11, "p", 43);
+    \u0275\u0275template(12, SettingsTabComponent_div_71_span_12_Template, 2, 0, "span", 44)(13, SettingsTabComponent_div_71_span_13_Template, 2, 0, "span", 45)(14, SettingsTabComponent_div_71_span_14_Template, 2, 0, "span", 46);
     \u0275\u0275elementEnd()()()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
-    \u0275\u0275advance(10);
+    \u0275\u0275advance(8);
     \u0275\u0275property("disabled", ctx_r1.resetButtonState === "loading");
     \u0275\u0275attribute("aria-busy", ctx_r1.resetButtonState === "loading");
     \u0275\u0275advance();
@@ -60924,7 +60921,7 @@ var SettingsTabComponent = class _SettingsTabComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 81, vars: 1, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8"], [1, "space-y-5"], [1, "vault-card-title"], [1, "vault-card-copy", "mt-2"], [1, "grid", "gap-5", "md:grid-cols-2"], [1, "vault-field-label"], ["type", "text", "value", "Jason Kulatunga", 1, "vault-input"], ["type", "email", "value", "j***@fastenhealth.com", 1, "vault-input"], ["type", "button", 1, "vault-primary-button"], [1, "space-y-4"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-secondary-button"], [1, "space-y-6"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], ["class", "rounded-lg border border-amber-200 bg-amber-50 p-5", 4, "ngIf"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "mt-2", "text-sm", "leading-6", "text-red-500"], [1, "rounded-lg", "border", "border-red-100", "bg-red-50", "p-5"], [1, "font-semibold", "text-red-700"], [1, "text-sm", "text-red-600"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-3", "text-sm", "font-semibold", "text-red-600", "transition-colors", "hover:border-red-300", "hover:bg-red-50", "hover:text-red-700"], [1, "rounded-lg", "border", "border-amber-200", "bg-amber-50", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-amber-700"], [1, "text-sm", "text-slate-600"], [1, "flex", "flex-col", "gap-3", "sm:flex-row", "sm:items-center", "sm:justify-between"], ["type", "button", 1, "vault-secondary-button", "inline-flex", "items-center", "justify-center", 3, "click", "disabled"], [4, "ngIf"], [1, "text-sm", "text-slate-500", 3, "ngSwitch"], ["class", "text-green-600", 4, "ngSwitchCase"], ["class", "text-red-600", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [1, "text-green-600"], [1, "text-red-600"]], template: function SettingsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 81, vars: 1, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8"], [1, "space-y-5"], [1, "vault-card-title"], [1, "vault-card-copy", "mt-2"], [1, "grid", "gap-5", "md:grid-cols-2"], [1, "vault-field-label"], ["type", "text", "value", "Jason Kulatunga", 1, "vault-input"], ["type", "email", "value", "j***@fastenhealth.com", 1, "vault-input"], ["type", "button", 1, "vault-primary-button"], [1, "space-y-4"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-secondary-button"], [1, "space-y-6"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "mt-2", "text-sm", "leading-6", "text-red-500"], ["class", "rounded-lg border border-amber-200 bg-amber-50 p-5", 4, "ngIf"], [1, "rounded-lg", "border", "border-red-100", "bg-red-50", "p-5"], [1, "font-semibold", "text-red-700"], [1, "text-sm", "text-red-600"], ["type", "button", 1, "vault-secondary-button", "border-red-200", "bg-white", "text-red-600", "hover:border-red-300", "hover:bg-red-100", "hover:text-red-700"], [1, "rounded-lg", "border", "border-amber-200", "bg-amber-50", "p-5"], [1, "font-semibold", "text-amber-700"], [1, "text-sm", "text-amber-600"], [1, "flex", "flex-col", "gap-3", "sm:flex-row", "sm:items-center", "sm:justify-between"], ["type", "button", 1, "vault-secondary-button", "inline-flex", "items-center", "justify-center", "border-amber-300", "bg-white", "text-amber-800", "hover:border-amber-400", "hover:bg-amber-100", "hover:text-amber-900", 3, "click", "disabled"], [4, "ngIf"], [1, "text-sm", "text-amber-800", 3, "ngSwitch"], ["class", "text-green-700", 4, "ngSwitchCase"], ["class", "text-red-700", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [1, "text-green-700"], [1, "text-red-700"]], template: function SettingsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "p", 3);
         \u0275\u0275text(4, "Profile");
@@ -60988,14 +60985,13 @@ var SettingsTabComponent = class _SettingsTabComponent {
         \u0275\u0275elementStart(63, "p", 13);
         \u0275\u0275text(64, "App and account access can be reviewed from the dashboard at any time before you make permanent changes.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(65, "div", 19);
-        \u0275\u0275template(66, SettingsTabComponent_div_66_Template, 17, 7, "div", 30);
-        \u0275\u0275elementStart(67, "div")(68, "h2", 31);
-        \u0275\u0275text(69, "Danger Zone");
+        \u0275\u0275elementStart(65, "div", 19)(66, "div")(67, "h2", 30);
+        \u0275\u0275text(68, "Danger Zone");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(70, "p", 32);
-        \u0275\u0275text(71, "These actions affect your vault permanently and should only be used if you intend to remove your account.");
+        \u0275\u0275elementStart(69, "p", 31);
+        \u0275\u0275text(70, "These actions affect your vault permanently and should only be used if you intend to remove your account.");
         \u0275\u0275elementEnd()();
+        \u0275\u0275template(71, SettingsTabComponent_div_71_Template, 15, 7, "div", 32);
         \u0275\u0275elementStart(72, "div", 33)(73, "div", 19)(74, "div", 22)(75, "h3", 34);
         \u0275\u0275text(76, "Delete Account");
         \u0275\u0275elementEnd();
@@ -61007,7 +61003,7 @@ var SettingsTabComponent = class _SettingsTabComponent {
         \u0275\u0275elementEnd()()()()()()()();
       }
       if (rf & 2) {
-        \u0275\u0275advance(66);
+        \u0275\u0275advance(71);
         \u0275\u0275property("ngIf", ctx.configService.systemConfig$.apiMode === ctx.ApiMode.Test);
       }
     }, dependencies: [NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault], encapsulation: 2 });
