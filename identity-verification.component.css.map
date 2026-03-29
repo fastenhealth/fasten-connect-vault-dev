@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.css"],
-  "sourcesContent": [".clear-button {\n  border-radius: 32px;\n  background-color: #041A55;\n\n  font-family: \"Inter\", serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n\n  height: 56px;\n  width: min(100%, 328px);\n}\n"],
-  "mappings": ";AAAA,CAAC;AACC,iBAAe;AACf,oBAAkB;AAElB,eAAa,OAAO,EAAE;AACtB,eAAa;AACb,aAAW;AACX,eAAa;AAEb,UAAQ;AACR,SAAO,IAAI,IAAI,EAAE;AACnB;",
+  "sourcesContent": [".clear-button {\n  border-radius: 32px;\n  background-color: #041A55;\n\n  font-family: \"Inter\", sans-serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n\n  height: 56px;\n  width: min(100%, 328px);\n}\n\n.idme-button {\n  background-color: #08833D;\n  font-family: \"Open Sans Light\", sans-serif;\n}\n\n.tools-button-icon {\n  transition: transform 0.25s ease, opacity 0.25s ease;\n}\n\n.tools-button-icon-pop {\n  animation: tools-button-pop 0.45s ease;\n}\n\n@keyframes tools-button-pop {\n  0% {\n    transform: scale(0.6);\n    opacity: 0;\n  }\n  60% {\n    transform: scale(1.1);\n    opacity: 1;\n  }\n  100% {\n    transform: scale(1);\n    opacity: 1;\n  }\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,iBAAe;AACf,oBAAkB;AAElB,eAAa,OAAO,EAAE;AACtB,eAAa;AACb,aAAW;AACX,eAAa;AAEb,UAAQ;AACR,SAAO,IAAI,IAAI,EAAE;AACnB;AAEA,CAAC;AACC,oBAAkB;AAClB,eAAa,iBAAiB,EAAE;AAClC;AAEA,CAAC;AACC,cAAY,UAAU,MAAM,IAAI,EAAE,QAAQ,MAAM;AAClD;AAEA,CAAC;AACC,aAAW,iBAAiB,MAAM;AACpC;AAEA,WAHa;AAIX;AACE,eAAW,MAAM;AACjB,aAAS;AACX;AACA;AACE,eAAW,MAAM;AACjB,aAAS;AACX;AACA;AACE,eAAW,MAAM;AACjB,aAAS;AACX;AACF;",
   "names": []
 }

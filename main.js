@@ -3896,7 +3896,7 @@ var require_lodash = __commonJS({
         var defer2 = baseRest(function(func, args) {
           return baseDelay(func, 1, args);
         });
-        var delay = baseRest(function(func, wait, args) {
+        var delay2 = baseRest(function(func, wait, args) {
           return baseDelay(func, toNumber(wait) || 0, args);
         });
         function flip(func) {
@@ -5011,7 +5011,7 @@ var require_lodash = __commonJS({
         lodash.defaults = defaults;
         lodash.defaultsDeep = defaultsDeep;
         lodash.defer = defer2;
-        lodash.delay = delay;
+        lodash.delay = delay2;
         lodash.difference = difference;
         lodash.differenceBy = differenceBy;
         lodash.differenceWith = differenceWith;
@@ -10582,7 +10582,7 @@ var Action = class extends Subscription {
   constructor(scheduler, work) {
     super();
   }
-  schedule(state, delay = 0) {
+  schedule(state, delay2 = 0) {
     return this;
   }
 };
@@ -10615,7 +10615,7 @@ var AsyncAction = class extends Action {
     this.work = work;
     this.pending = false;
   }
-  schedule(state, delay = 0) {
+  schedule(state, delay2 = 0) {
     var _a;
     if (this.closed) {
       return this;
@@ -10624,18 +10624,18 @@ var AsyncAction = class extends Action {
     const id = this.id;
     const scheduler = this.scheduler;
     if (id != null) {
-      this.id = this.recycleAsyncId(scheduler, id, delay);
+      this.id = this.recycleAsyncId(scheduler, id, delay2);
     }
     this.pending = true;
-    this.delay = delay;
-    this.id = (_a = this.id) !== null && _a !== void 0 ? _a : this.requestAsyncId(scheduler, this.id, delay);
+    this.delay = delay2;
+    this.id = (_a = this.id) !== null && _a !== void 0 ? _a : this.requestAsyncId(scheduler, this.id, delay2);
     return this;
   }
-  requestAsyncId(scheduler, _id, delay = 0) {
-    return intervalProvider.setInterval(scheduler.flush.bind(scheduler, this), delay);
+  requestAsyncId(scheduler, _id, delay2 = 0) {
+    return intervalProvider.setInterval(scheduler.flush.bind(scheduler, this), delay2);
   }
-  recycleAsyncId(_scheduler, id, delay = 0) {
-    if (delay != null && this.delay === delay && this.pending === false) {
+  recycleAsyncId(_scheduler, id, delay2 = 0) {
+    if (delay2 != null && this.delay === delay2 && this.pending === false) {
       return id;
     }
     if (id != null) {
@@ -10643,12 +10643,12 @@ var AsyncAction = class extends Action {
     }
     return void 0;
   }
-  execute(state, delay) {
+  execute(state, delay2) {
     if (this.closed) {
       return new Error("executing a cancelled action");
     }
     this.pending = false;
-    const error = this._execute(state, delay);
+    const error = this._execute(state, delay2);
     if (error) {
       return error;
     } else if (this.pending === false && this.id != null) {
@@ -10696,8 +10696,8 @@ var Scheduler = class _Scheduler {
     this.schedulerActionCtor = schedulerActionCtor;
     this.now = now;
   }
-  schedule(work, delay = 0, state) {
-    return new this.schedulerActionCtor(this, work).schedule(state, delay);
+  schedule(work, delay2 = 0, state) {
+    return new this.schedulerActionCtor(this, work).schedule(state, delay2);
   }
 };
 Scheduler.now = dateTimestampProvider.now;
@@ -11028,15 +11028,15 @@ function process2(asyncIterable, subscriber) {
 }
 
 // node_modules/rxjs/dist/esm/internal/util/executeSchedule.js
-function executeSchedule(parentSubscription, scheduler, work, delay = 0, repeat2 = false) {
+function executeSchedule(parentSubscription, scheduler, work, delay2 = 0, repeat2 = false) {
   const scheduleSubscription = scheduler.schedule(function() {
     work();
     if (repeat2) {
-      parentSubscription.add(this.schedule(null, delay));
+      parentSubscription.add(this.schedule(null, delay2));
     } else {
       this.unsubscribe();
     }
-  }, delay);
+  }, delay2);
   parentSubscription.add(scheduleSubscription);
   if (!repeat2) {
     return scheduleSubscription;
@@ -11044,16 +11044,16 @@ function executeSchedule(parentSubscription, scheduler, work, delay = 0, repeat2
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/observeOn.js
-function observeOn(scheduler, delay = 0) {
+function observeOn(scheduler, delay2 = 0) {
   return operate((source, subscriber) => {
-    source.subscribe(createOperatorSubscriber(subscriber, (value) => executeSchedule(subscriber, scheduler, () => subscriber.next(value), delay), () => executeSchedule(subscriber, scheduler, () => subscriber.complete(), delay), (err) => executeSchedule(subscriber, scheduler, () => subscriber.error(err), delay)));
+    source.subscribe(createOperatorSubscriber(subscriber, (value) => executeSchedule(subscriber, scheduler, () => subscriber.next(value), delay2), () => executeSchedule(subscriber, scheduler, () => subscriber.complete(), delay2), (err) => executeSchedule(subscriber, scheduler, () => subscriber.error(err), delay2)));
   });
 }
 
 // node_modules/rxjs/dist/esm/internal/operators/subscribeOn.js
-function subscribeOn(scheduler, delay = 0) {
+function subscribeOn(scheduler, delay2 = 0) {
   return operate((source, subscriber) => {
-    subscriber.add(scheduler.schedule(() => source.subscribe(subscriber), delay));
+    subscriber.add(scheduler.schedule(() => source.subscribe(subscriber), delay2));
   });
 }
 
@@ -11226,7 +11226,7 @@ function timeout(config3, schedulerArg) {
     let timerSubscription;
     let lastValue = null;
     let seen = 0;
-    const startTimer = (delay) => {
+    const startTimer = (delay2) => {
       timerSubscription = executeSchedule(subscriber, scheduler, () => {
         try {
           originalSourceSubscription.unsubscribe();
@@ -11238,7 +11238,7 @@ function timeout(config3, schedulerArg) {
         } catch (err) {
           subscriber.error(err);
         }
-      }, delay);
+      }, delay2);
     };
     originalSourceSubscription = source.subscribe(createOperatorSubscriber(subscriber, (value) => {
       timerSubscription === null || timerSubscription === void 0 ? void 0 : timerSubscription.unsubscribe();
@@ -11651,6 +11651,32 @@ function take(count) {
   });
 }
 
+// node_modules/rxjs/dist/esm/internal/operators/ignoreElements.js
+function ignoreElements() {
+  return operate((source, subscriber) => {
+    source.subscribe(createOperatorSubscriber(subscriber, noop));
+  });
+}
+
+// node_modules/rxjs/dist/esm/internal/operators/mapTo.js
+function mapTo(value) {
+  return map(() => value);
+}
+
+// node_modules/rxjs/dist/esm/internal/operators/delayWhen.js
+function delayWhen(delayDurationSelector, subscriptionDelay) {
+  if (subscriptionDelay) {
+    return (source) => concat(subscriptionDelay.pipe(take(1), ignoreElements()), source.pipe(delayWhen(delayDurationSelector)));
+  }
+  return mergeMap((value, index) => innerFrom(delayDurationSelector(value, index)).pipe(take(1), mapTo(value)));
+}
+
+// node_modules/rxjs/dist/esm/internal/operators/delay.js
+function delay(due, scheduler = asyncScheduler) {
+  const duration = timer(due, scheduler);
+  return delayWhen(() => duration);
+}
+
 // node_modules/rxjs/dist/esm/internal/operators/throwIfEmpty.js
 function throwIfEmpty(errorFactory = defaultErrorFactory) {
   return operate((source, subscriber) => {
@@ -11709,12 +11735,12 @@ function last2(predicate, defaultValue) {
 // node_modules/rxjs/dist/esm/internal/operators/repeat.js
 function repeat(countOrConfig) {
   let count = Infinity;
-  let delay;
+  let delay2;
   if (countOrConfig != null) {
     if (typeof countOrConfig === "object") {
       ({
         count = Infinity,
-        delay
+        delay: delay2
       } = countOrConfig);
     } else {
       count = countOrConfig;
@@ -11726,8 +11752,8 @@ function repeat(countOrConfig) {
     const resubscribe = () => {
       sourceSub === null || sourceSub === void 0 ? void 0 : sourceSub.unsubscribe();
       sourceSub = null;
-      if (delay != null) {
-        const notifier = typeof delay === "number" ? timer(delay) : innerFrom(delay(soFar));
+      if (delay2 != null) {
+        const notifier = typeof delay2 === "number" ? timer(delay2) : innerFrom(delay2(soFar));
         const notifierSubscriber = createOperatorSubscriber(subscriber, () => {
           notifierSubscriber.unsubscribe();
           subscribeToSource();
@@ -11770,7 +11796,7 @@ function retry(configOrCount = Infinity) {
   }
   const {
     count = Infinity,
-    delay,
+    delay: delay2,
     resetOnSuccess = false
   } = config3;
   return count <= 0 ? identity : operate((source, subscriber) => {
@@ -11794,8 +11820,8 @@ function retry(configOrCount = Infinity) {
               syncUnsub = true;
             }
           };
-          if (delay != null) {
-            const notifier = typeof delay === "number" ? timer(delay) : innerFrom(delay(err, soFar));
+          if (delay2 != null) {
+            const notifier = typeof delay2 === "number" ? timer(delay2) : innerFrom(delay2(err, soFar));
             const notifierSubscriber = createOperatorSubscriber(subscriber, () => {
               notifierSubscriber.unsubscribe();
               resub();
@@ -23753,13 +23779,13 @@ var IdleScheduler = class _IdleScheduler {
     })
   );
 };
-function onTimer(delay) {
-  return (callback, injector) => scheduleTimerTrigger(delay, callback, injector);
+function onTimer(delay2) {
+  return (callback, injector) => scheduleTimerTrigger(delay2, callback, injector);
 }
-function scheduleTimerTrigger(delay, callback, injector) {
+function scheduleTimerTrigger(delay2, callback, injector) {
   const scheduler = injector.get(TimerScheduler);
   const cleanupFn = () => scheduler.remove(callback);
-  scheduler.add(delay, callback);
+  scheduler.add(delay2, callback);
   return cleanupFn;
 }
 var TimerScheduler = class _TimerScheduler {
@@ -23780,9 +23806,9 @@ var TimerScheduler = class _TimerScheduler {
   // the current callback invocation. The shape of this list is the same
   // as the shape of the `current` list.
   deferred = [];
-  add(delay, callback) {
+  add(delay2, callback) {
     const target = this.executingCallbacks ? this.deferred : this.current;
-    this.addToQueue(target, Date.now() + delay, callback);
+    this.addToQueue(target, Date.now() + delay2, callback);
     this.scheduleTimer();
   }
   remove(callback) {
@@ -26211,43 +26237,43 @@ function \u0275\u0275deferHydrateOnImmediate() {
     triggerHydrationFromBlockName(injector, ssrUniqueId);
   }
 }
-function \u0275\u0275deferOnTimer(delay) {
+function \u0275\u0275deferOnTimer(delay2) {
   const lView = getLView();
   const tNode = getCurrentTNode();
   if (ngDevMode) {
-    trackTriggerForDebugging(lView[TVIEW], tNode, `on timer(${delay}ms)`);
+    trackTriggerForDebugging(lView[TVIEW], tNode, `on timer(${delay2}ms)`);
   }
   if (!shouldAttachTrigger(0, lView, tNode)) return;
-  scheduleDelayedTrigger(onTimer(delay));
+  scheduleDelayedTrigger(onTimer(delay2));
 }
-function \u0275\u0275deferPrefetchOnTimer(delay) {
+function \u0275\u0275deferPrefetchOnTimer(delay2) {
   const lView = getLView();
   const tNode = getCurrentTNode();
   if (ngDevMode) {
-    trackTriggerForDebugging(lView[TVIEW], tNode, `prefetch on timer(${delay}ms)`);
+    trackTriggerForDebugging(lView[TVIEW], tNode, `prefetch on timer(${delay2}ms)`);
   }
   if (!shouldAttachTrigger(1, lView, tNode)) return;
   scheduleDelayedPrefetching(
-    onTimer(delay),
+    onTimer(delay2),
     5
     /* DeferBlockTrigger.Timer */
   );
 }
-function \u0275\u0275deferHydrateOnTimer(delay) {
+function \u0275\u0275deferHydrateOnTimer(delay2) {
   const lView = getLView();
   const tNode = getCurrentTNode();
   if (ngDevMode) {
-    trackTriggerForDebugging(lView[TVIEW], tNode, `hydrate on timer(${delay}ms)`);
+    trackTriggerForDebugging(lView[TVIEW], tNode, `hydrate on timer(${delay2}ms)`);
   }
   if (!shouldAttachTrigger(2, lView, tNode)) return;
   const hydrateTriggers = getHydrateTriggers(getTView(), tNode);
   hydrateTriggers.set(5, {
-    delay
+    delay: delay2
   });
   if (false) {
     triggerDeferBlock(2, lView, tNode);
   } else {
-    scheduleDelayedHydrating(onTimer(delay), lView, tNode);
+    scheduleDelayedHydrating(onTimer(delay2), lView, tNode);
   }
 }
 function \u0275\u0275deferOnHover(triggerIndex, walkUpTimes) {
@@ -56494,6 +56520,263 @@ function waitForPostMessageOrgConnectionOrTimeout(logger, openedWindow, sdkMode)
   );
 }
 
+// node_modules/rxjs/dist/esm/internal/observable/dom/WebSocketSubject.js
+var DEFAULT_WEBSOCKET_CONFIG = {
+  url: "",
+  deserializer: (e) => JSON.parse(e.data),
+  serializer: (value) => JSON.stringify(value)
+};
+var WEBSOCKETSUBJECT_INVALID_ERROR_OBJECT = "WebSocketSubject.error must be called with an object with an error code, and an optional reason: { code: number, reason: string }";
+var WebSocketSubject = class _WebSocketSubject extends AnonymousSubject {
+  constructor(urlConfigOrSource, destination) {
+    super();
+    this._socket = null;
+    if (urlConfigOrSource instanceof Observable) {
+      this.destination = destination;
+      this.source = urlConfigOrSource;
+    } else {
+      const config3 = this._config = Object.assign({}, DEFAULT_WEBSOCKET_CONFIG);
+      this._output = new Subject();
+      if (typeof urlConfigOrSource === "string") {
+        config3.url = urlConfigOrSource;
+      } else {
+        for (const key in urlConfigOrSource) {
+          if (urlConfigOrSource.hasOwnProperty(key)) {
+            config3[key] = urlConfigOrSource[key];
+          }
+        }
+      }
+      if (!config3.WebSocketCtor && WebSocket) {
+        config3.WebSocketCtor = WebSocket;
+      } else if (!config3.WebSocketCtor) {
+        throw new Error("no WebSocket constructor can be found");
+      }
+      this.destination = new ReplaySubject();
+    }
+  }
+  lift(operator) {
+    const sock = new _WebSocketSubject(this._config, this.destination);
+    sock.operator = operator;
+    sock.source = this;
+    return sock;
+  }
+  _resetState() {
+    this._socket = null;
+    if (!this.source) {
+      this.destination = new ReplaySubject();
+    }
+    this._output = new Subject();
+  }
+  multiplex(subMsg, unsubMsg, messageFilter) {
+    const self2 = this;
+    return new Observable((observer) => {
+      try {
+        self2.next(subMsg());
+      } catch (err) {
+        observer.error(err);
+      }
+      const subscription = self2.subscribe({
+        next: (x2) => {
+          try {
+            if (messageFilter(x2)) {
+              observer.next(x2);
+            }
+          } catch (err) {
+            observer.error(err);
+          }
+        },
+        error: (err) => observer.error(err),
+        complete: () => observer.complete()
+      });
+      return () => {
+        try {
+          self2.next(unsubMsg());
+        } catch (err) {
+          observer.error(err);
+        }
+        subscription.unsubscribe();
+      };
+    });
+  }
+  _connectSocket() {
+    const {
+      WebSocketCtor,
+      protocol,
+      url,
+      binaryType
+    } = this._config;
+    const observer = this._output;
+    let socket = null;
+    try {
+      socket = protocol ? new WebSocketCtor(url, protocol) : new WebSocketCtor(url);
+      this._socket = socket;
+      if (binaryType) {
+        this._socket.binaryType = binaryType;
+      }
+    } catch (e) {
+      observer.error(e);
+      return;
+    }
+    const subscription = new Subscription(() => {
+      this._socket = null;
+      if (socket && socket.readyState === 1) {
+        socket.close();
+      }
+    });
+    socket.onopen = (evt) => {
+      const {
+        _socket
+      } = this;
+      if (!_socket) {
+        socket.close();
+        this._resetState();
+        return;
+      }
+      const {
+        openObserver
+      } = this._config;
+      if (openObserver) {
+        openObserver.next(evt);
+      }
+      const queue = this.destination;
+      this.destination = Subscriber.create((x2) => {
+        if (socket.readyState === 1) {
+          try {
+            const {
+              serializer
+            } = this._config;
+            socket.send(serializer(x2));
+          } catch (e) {
+            this.destination.error(e);
+          }
+        }
+      }, (err) => {
+        const {
+          closingObserver
+        } = this._config;
+        if (closingObserver) {
+          closingObserver.next(void 0);
+        }
+        if (err && err.code) {
+          socket.close(err.code, err.reason);
+        } else {
+          observer.error(new TypeError(WEBSOCKETSUBJECT_INVALID_ERROR_OBJECT));
+        }
+        this._resetState();
+      }, () => {
+        const {
+          closingObserver
+        } = this._config;
+        if (closingObserver) {
+          closingObserver.next(void 0);
+        }
+        socket.close();
+        this._resetState();
+      });
+      if (queue && queue instanceof ReplaySubject) {
+        subscription.add(queue.subscribe(this.destination));
+      }
+    };
+    socket.onerror = (e) => {
+      this._resetState();
+      observer.error(e);
+    };
+    socket.onclose = (e) => {
+      if (socket === this._socket) {
+        this._resetState();
+      }
+      const {
+        closeObserver
+      } = this._config;
+      if (closeObserver) {
+        closeObserver.next(e);
+      }
+      if (e.wasClean) {
+        observer.complete();
+      } else {
+        observer.error(e);
+      }
+    };
+    socket.onmessage = (e) => {
+      try {
+        const {
+          deserializer
+        } = this._config;
+        observer.next(deserializer(e));
+      } catch (err) {
+        observer.error(err);
+      }
+    };
+  }
+  _subscribe(subscriber) {
+    const {
+      source
+    } = this;
+    if (source) {
+      return source.subscribe(subscriber);
+    }
+    if (!this._socket) {
+      this._connectSocket();
+    }
+    this._output.subscribe(subscriber);
+    subscriber.add(() => {
+      const {
+        _socket
+      } = this;
+      if (this._output.observers.length === 0) {
+        if (_socket && (_socket.readyState === 1 || _socket.readyState === 0)) {
+          _socket.close();
+        }
+        this._resetState();
+      }
+    });
+    return subscriber;
+  }
+  unsubscribe() {
+    const {
+      _socket
+    } = this;
+    if (_socket && (_socket.readyState === 1 || _socket.readyState === 0)) {
+      _socket.close();
+    }
+    this._resetState();
+    super.unsubscribe();
+  }
+};
+
+// node_modules/rxjs/dist/esm/internal/observable/dom/webSocket.js
+function webSocket(urlConfigOrSource) {
+  return new WebSocketSubject(urlConfigOrSource);
+}
+
+// projects/shared-library/src/lib/utils/websocket.ts
+function waitForWebsocketOrgConnectionOrTimeout(logger, websocketUrl, openedWindow, sdkMode) {
+  logger.info(`waiting for websocket notification from popup window`);
+  const subject = webSocket(websocketUrl.toString());
+  return subject.pipe(timeout(ConnectWindowTimeout), map((message2) => {
+    logger.debug("websocket message received", message2);
+    if (message2.error) {
+      throw new Error(JSON.stringify(message2));
+    }
+    return message2;
+  }), catchError((err) => {
+    if (err instanceof TimeoutError) {
+      logger.error("websocket connection timed out");
+      if (openedWindow && !openedWindow.closed) {
+        try {
+          openedWindow.close();
+        } catch (e) {
+          logger.error("failed to close opened window after timeout", e);
+        }
+      }
+      return throwError(() => new Error('{"error":"timeout","error_description":"The connection timed out waiting for user to complete authentication."}'));
+    } else {
+      logger.error("websocket connection error", err);
+      return throwError(() => err);
+    }
+  }));
+}
+
 // projects/shared-library/src/lib/utils/tefca.ts
 function StoreRecordLocatorResultsInVaultProfile(configService, rlsResponse) {
   const numDiscovered = Object.keys(rlsResponse.discovered_patient_accounts || {}).length;
@@ -58313,11 +58596,12 @@ var VaultSigninComponent = class _VaultSigninComponent {
     this.submitted = true;
     this.loading = true;
     console.log("Signin", this.existingVaultProfile.email);
-    this.authService.VaultAuthBegin(this.existingVaultProfile.email).then((resp) => {
+    this.authService.VaultAuthBegin(this.existingVaultProfile.email, true).then((resp) => {
       if (this.configService.systemConfig$?.apiMode === ApiMode.Test) {
         return this.authService.GetJWTPayload().then((payload) => {
           this.loading = false;
           if (payload) {
+            const hasVerifiedIdentity = !!(resp?.has_verified_identity || payload?.has_verified_identity);
             if (resp?.has_verified_identity && resp?.verified_identity_csp_type) {
               this.logger.info("setting verified identity csp_type csp type to", resp.verified_identity_csp_type);
               this.configService.vaultProfileConfig = {
@@ -58325,7 +58609,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
                 verifiedIdentityPatientDemographics: resp.verified_identity_patient_demographics
               };
             }
-            return this.routerService.navigateByUrl("dashboard");
+            return this.routerService.navigateByUrl(hasVerifiedIdentity ? "dashboard" : "/auth/identity/verification");
           } else {
             return this.routerService.navigate(["auth/signin/code"], { queryParams: { currentEmail: this.existingVaultProfile.email } });
           }
@@ -59053,7 +59337,8 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
           verifiedIdentityPatientDemographics: resp.verified_identity_patient_demographics
         };
       }
-      this.routerService.navigateByUrl("dashboard");
+      const nextPath = resp?.has_verified_identity ? "dashboard" : "/auth/identity/verification";
+      this.routerService.navigateByUrl(nextPath);
     }).catch((err) => {
       console.error(err);
       this.loading = false;
@@ -60119,12 +60404,25 @@ var FastenService = class _FastenService {
       }
     });
   }
-  verificationWithPopup() {
+  verificationWithWebsocket(cspType) {
+    const roomId = v4_default();
+    const websocketUrl = this.generateWebsocketURL(roomId);
     const redirectUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
     redirectUrl.searchParams.set("public_id", this.configService.systemConfig$.publicId);
+    redirectUrl.searchParams.set("csp_type", cspType || CspType.ClearCsp);
+    redirectUrl.searchParams.set("connect_mode", ConnectMode.Websocket);
+    redirectUrl.searchParams.set("room_id", roomId);
+    this.logger.debug(redirectUrl.toString());
+    const openedWindow = this.openWindowInPopup(redirectUrl);
+    return this.waitForWebsocketNotification(websocketUrl, openedWindow).pipe(delay(2500));
+  }
+  verificationWithPopup(cspType) {
+    const redirectUrl = new URL(`${environment.connect_api_endpoint_base}/bridge/identity_verification/connect`);
+    redirectUrl.searchParams.set("public_id", this.configService.systemConfig$.publicId);
+    redirectUrl.searchParams.set("csp_type", cspType || CspType.ClearCsp);
     redirectUrl.searchParams.set("connect_mode", ConnectMode.Popup);
     const openedWindow = this.openWindowInPopup(redirectUrl);
-    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+    return this.waitForPopupNotification(openedWindow);
   }
   recordLocatorRegisterAndPollForStatus() {
     return this._httpClient.get(`${environment.connect_api_endpoint_base}/bridge/record_locator`, {
@@ -60198,13 +60496,21 @@ var FastenService = class _FastenService {
     redirectUrlParts.searchParams.set("connect_mode", ConnectMode.Popup);
     this.logger.debug(redirectUrlParts.toString());
     const openedWindow = this.openWindowInPopup(redirectUrlParts);
-    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, SDKMode.None);
+    return this.waitForPopupNotification(openedWindow, SDKMode.None);
   }
   authorizeTefcaDirect(vaultConnectionIds, externalId) {
     const url = `${environment.connect_api_endpoint_base}/bridge/vault_connection/authorize`;
     return this._httpClient.post(url, {
       vault_connection_ids: vaultConnectionIds,
       external_id: externalId
+    }, {
+      params: { public_id: this.configService.systemConfig$.publicId }
+    }).pipe(map((resp) => resp.data));
+  }
+  revokeVaultProfileConnections(vaultProfileConnectionIds) {
+    const url = `${environment.connect_api_endpoint_base}/bridge/vault_connection/revoke`;
+    return this._httpClient.post(url, {
+      vault_connection_ids: vaultProfileConnectionIds
     }, {
       params: { public_id: this.configService.systemConfig$.publicId }
     }).pipe(map((resp) => resp.data));
@@ -60238,6 +60544,22 @@ var FastenService = class _FastenService {
     }
     redirectUrlParts.search = redirectParams.toString();
     return redirectUrlParts;
+  }
+  generateWebsocketURL(roomId) {
+    const websocketUrlParts = new URL(`wss://websocket.${environment.connect_base_domain}/v1`);
+    const websocketParams = new URLSearchParams();
+    websocketParams.set("public_id", this.configService.systemConfig$.publicId);
+    websocketParams.set("room_id", roomId);
+    websocketUrlParts.search = websocketParams.toString();
+    return websocketUrlParts;
+  }
+  waitForPopupNotification(openedWindow, overrideSdkMode) {
+    const sdkMode = overrideSdkMode ?? this.configService.systemConfig$.sdkMode;
+    return waitForPostMessageOrgConnectionOrTimeout(this.logger, openedWindow, sdkMode);
+  }
+  waitForWebsocketNotification(websocketUrl, openedWindow, overrideSdkMode) {
+    const sdkMode = overrideSdkMode ?? this.configService.systemConfig$.sdkMode;
+    return waitForWebsocketOrgConnectionOrTimeout(this.logger, websocketUrl, openedWindow, sdkMode);
   }
   static {
     this.\u0275fac = function FastenService_Factory(__ngFactoryType__) {
@@ -60479,18 +60801,130 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts
-var SettingsTabComponent = class _SettingsTabComponent {
-  constructor() {
+function SettingsTabComponent_div_66_span_11_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1, "Reset Connections");
+    \u0275\u0275elementEnd();
   }
-  ngOnInit() {
+}
+function SettingsTabComponent_div_66_span_12_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1, "Resetting...");
+    \u0275\u0275elementEnd();
+  }
+}
+function SettingsTabComponent_div_66_span_14_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 47);
+    \u0275\u0275text(1, "Connections reset successfully.");
+    \u0275\u0275elementEnd();
+  }
+}
+function SettingsTabComponent_div_66_span_15_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 48);
+    \u0275\u0275text(1, "Unable to reset connections right now.");
+    \u0275\u0275elementEnd();
+  }
+}
+function SettingsTabComponent_div_66_span_16_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span");
+    \u0275\u0275text(1, "Available only while test mode is enabled.");
+    \u0275\u0275elementEnd();
+  }
+}
+function SettingsTabComponent_div_66_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 37)(1, "div", 19)(2, "div", 22)(3, "p", 38);
+    \u0275\u0275text(4, "Test Tools");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(5, "h3", 23);
+    \u0275\u0275text(6, "Reset connection state");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "p", 39);
+    \u0275\u0275text(8, "Clear test vault connections so you can rerun connection and verification flows from a clean slate.");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(9, "div", 40)(10, "button", 41);
+    \u0275\u0275listener("click", function SettingsTabComponent_div_66_Template_button_click_10_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.onResetConnections());
+    });
+    \u0275\u0275template(11, SettingsTabComponent_div_66_span_11_Template, 2, 0, "span", 42)(12, SettingsTabComponent_div_66_span_12_Template, 2, 0, "span", 42);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(13, "p", 43);
+    \u0275\u0275template(14, SettingsTabComponent_div_66_span_14_Template, 2, 0, "span", 44)(15, SettingsTabComponent_div_66_span_15_Template, 2, 0, "span", 45)(16, SettingsTabComponent_div_66_span_16_Template, 2, 0, "span", 46);
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance(10);
+    \u0275\u0275property("disabled", ctx_r1.resetButtonState === "loading");
+    \u0275\u0275attribute("aria-busy", ctx_r1.resetButtonState === "loading");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.resetButtonState !== "loading");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.resetButtonState === "loading");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitch", ctx_r1.resetButtonState);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "success");
+    \u0275\u0275advance();
+    \u0275\u0275property("ngSwitchCase", "error");
+  }
+}
+var SettingsTabComponent = class _SettingsTabComponent {
+  constructor(configService, fastenService, logger) {
+    this.configService = configService;
+    this.fastenService = fastenService;
+    this.logger = logger;
+    this.resetButtonState = "idle";
+    this.ApiMode = ApiMode;
+  }
+  ngOnDestroy() {
+    if (this.resetButtonResetTimer) {
+      clearTimeout(this.resetButtonResetTimer);
+    }
+  }
+  onResetConnections() {
+    if (this.resetButtonState === "loading") {
+      return;
+    }
+    this.setResetButtonState("loading");
+    this.fastenService.revokeVaultProfileConnections().subscribe({
+      next: () => {
+        this.logger.info("Reset vault profile connections for test mode");
+        this.setResetButtonState("success");
+      },
+      error: (error) => {
+        this.logger.error("Failed to reset vault profile connections", error);
+        this.setResetButtonState("error");
+      }
+    });
+  }
+  setResetButtonState(state) {
+    if (this.resetButtonResetTimer) {
+      clearTimeout(this.resetButtonResetTimer);
+      this.resetButtonResetTimer = void 0;
+    }
+    this.resetButtonState = state;
+    if (state === "success" || state === "error") {
+      this.resetButtonResetTimer = setTimeout(() => {
+        this.resetButtonState = "idle";
+      }, 1600);
+    }
   }
   static {
     this.\u0275fac = function SettingsTabComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _SettingsTabComponent)();
+      return new (__ngFactoryType__ || _SettingsTabComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(NGXLogger));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 80, vars: 0, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8"], [1, "space-y-5"], [1, "vault-card-title"], [1, "vault-card-copy", "mt-2"], [1, "grid", "gap-5", "md:grid-cols-2"], [1, "vault-field-label"], ["type", "text", "value", "Jason Kulatunga", 1, "vault-input"], ["type", "email", "value", "j***@fastenhealth.com", 1, "vault-input"], ["type", "button", 1, "vault-primary-button"], [1, "space-y-4"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-secondary-button"], [1, "space-y-6"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "mt-2", "text-sm", "leading-6", "text-red-500"], [1, "rounded-lg", "border", "border-red-100", "bg-red-50", "p-5"], [1, "font-semibold", "text-red-700"], [1, "text-sm", "text-red-600"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-3", "text-sm", "font-semibold", "text-red-600", "transition-colors", "hover:border-red-300", "hover:bg-red-50", "hover:text-red-700"]], template: function SettingsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SettingsTabComponent, selectors: [["settings-tab"]], standalone: false, decls: 81, vars: 1, consts: [[1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8"], [1, "space-y-5"], [1, "vault-card-title"], [1, "vault-card-copy", "mt-2"], [1, "grid", "gap-5", "md:grid-cols-2"], [1, "vault-field-label"], ["type", "text", "value", "Jason Kulatunga", 1, "vault-input"], ["type", "email", "value", "j***@fastenhealth.com", 1, "vault-input"], ["type", "button", 1, "vault-primary-button"], [1, "space-y-4"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-secondary-button"], [1, "space-y-6"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], ["class", "rounded-lg border border-amber-200 bg-amber-50 p-5", 4, "ngIf"], [1, "text-lg", "font-semibold", "text-red-600"], [1, "mt-2", "text-sm", "leading-6", "text-red-500"], [1, "rounded-lg", "border", "border-red-100", "bg-red-50", "p-5"], [1, "font-semibold", "text-red-700"], [1, "text-sm", "text-red-600"], ["type", "button", 1, "inline-flex", "items-center", "justify-center", "rounded-full", "border", "border-red-200", "bg-white", "px-4", "py-3", "text-sm", "font-semibold", "text-red-600", "transition-colors", "hover:border-red-300", "hover:bg-red-50", "hover:text-red-700"], [1, "rounded-lg", "border", "border-amber-200", "bg-amber-50", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-amber-700"], [1, "text-sm", "text-slate-600"], [1, "flex", "flex-col", "gap-3", "sm:flex-row", "sm:items-center", "sm:justify-between"], ["type", "button", 1, "vault-secondary-button", "inline-flex", "items-center", "justify-center", 3, "click", "disabled"], [4, "ngIf"], [1, "text-sm", "text-slate-500", 3, "ngSwitch"], ["class", "text-green-600", 4, "ngSwitchCase"], ["class", "text-red-600", 4, "ngSwitchCase"], [4, "ngSwitchDefault"], [1, "text-green-600"], [1, "text-red-600"]], template: function SettingsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "p", 3);
         \u0275\u0275text(4, "Profile");
@@ -60554,27 +60988,33 @@ var SettingsTabComponent = class _SettingsTabComponent {
         \u0275\u0275elementStart(63, "p", 13);
         \u0275\u0275text(64, "App and account access can be reviewed from the dashboard at any time before you make permanent changes.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(65, "div", 19)(66, "div")(67, "h2", 30);
-        \u0275\u0275text(68, "Danger Zone");
+        \u0275\u0275elementStart(65, "div", 19);
+        \u0275\u0275template(66, SettingsTabComponent_div_66_Template, 17, 7, "div", 30);
+        \u0275\u0275elementStart(67, "div")(68, "h2", 31);
+        \u0275\u0275text(69, "Danger Zone");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(69, "p", 31);
-        \u0275\u0275text(70, "These actions affect your vault permanently and should only be used if you intend to remove your account.");
+        \u0275\u0275elementStart(70, "p", 32);
+        \u0275\u0275text(71, "These actions affect your vault permanently and should only be used if you intend to remove your account.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(71, "div", 32)(72, "div", 19)(73, "div", 22)(74, "h3", 33);
-        \u0275\u0275text(75, "Delete Account");
+        \u0275\u0275elementStart(72, "div", 33)(73, "div", 19)(74, "div", 22)(75, "h3", 34);
+        \u0275\u0275text(76, "Delete Account");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(76, "p", 34);
-        \u0275\u0275text(77, "Permanently delete your account and all associated data.");
+        \u0275\u0275elementStart(77, "p", 35);
+        \u0275\u0275text(78, "Permanently delete your account and all associated data.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(78, "button", 35);
-        \u0275\u0275text(79, " Delete ");
+        \u0275\u0275elementStart(79, "button", 36);
+        \u0275\u0275text(80, " Delete ");
         \u0275\u0275elementEnd()()()()()()()();
       }
-    }, encapsulation: 2 });
+      if (rf & 2) {
+        \u0275\u0275advance(66);
+        \u0275\u0275property("ngIf", ctx.configService.systemConfig$.apiMode === ctx.ApiMode.Test);
+      }
+    }, dependencies: [NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault], encapsulation: 2 });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 12 });
 })();
 
 // projects/fasten-connect-vault/src/app/components/account-export-modal/account-export-modal.component.ts
@@ -61852,7 +62292,7 @@ var DashboardRoutingModule = class _DashboardRoutingModule {
 };
 
 // projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts
-function IdentityVerificationComponent_div_23_Template(rf, ctx) {
+function IdentityVerificationComponent_div_22_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 17);
     \u0275\u0275text(1, " Please complete the identity verification process in the new window. ");
@@ -61867,17 +62307,33 @@ var IdentityVerificationComponent = class _IdentityVerificationComponent {
     this.logger = logger;
     this.loading = false;
     this.errorMessage = "";
+    this.idmeLogoSrc = "https://s3.amazonaws.com/idme-design/brand-assets/Primary-IDme-Logo-RGB.svg";
+    this.idmeButtonLogoSrc = "data:image/svg+xml,%3Csvg%20%20%20%20role%3D%22img%22%20%20%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%20%20%20viewBox%3D%220%200%2030%2012%22%20%20%20%20fill%3D%22none%22%20%20%20%20aria-labelledby%3D%22idme-title%22%3E%3Ctitle%20id%3D%22idme-title%22%3EID.me%3C%2Ftitle%3E%3Cg%20fillRule%3D%22nonzero%22%20fill%3D%22none%22%3E%3Cpath%20%20%20%20%20%20%20%20%20%20%20%20d%3D%22M1.48515.0384H.96978C.32628.0384%200%20.24588%200%20.6551v10.12096c0%20.40922.32627.6167.96978.6167h.51537c.64332%200%20.96977-.20748.96977-.6167V.6551c0-.40922-.32645-.6167-.96977-.6167M7.67332%209.10802H6.14794V2.31206h1.52538c1.90854%200%202.30924%201.84782%202.30924%203.39798s-.4007%203.39798-2.30924%203.39798zm2.901%201.04522c0-1.20723.73212-2.22915%201.74336-2.58106.11573-.56263.17475-1.18411.17475-1.86214%200-3.65857-1.71147-5.67336-4.81911-5.67336h-3.3127c-.4629%200-.67823.23232-.67823.73114v9.88444c0%20.49882.21532.73114.67824.73114h3.31269c1.18475%200%202.16587-.29364%202.92723-.85876-.01542-.1217-.02623-.24512-.02623-.3714z%22%20%20%20%20%20%20%20%20%20%20%20%20fill%3D%22%23FFF%22%20%20%20%20%20%20%20%20%2F%3E%3Cpath%20%20%20%20%20%20%20%20%20%20%20%20d%3D%22M14.24058%2010.15324c0%20.68452-.51484%201.23952-1.14984%201.23952-.63518%200-1.14984-.555-1.14984-1.23952%200-.68453.51466-1.23952%201.14984-1.23952.635%200%201.14984.555%201.14984%201.23952%22%20%20%20%20%20%20%20%20%20%20%20%20fill%3D%22%23FFF%22%20%20%20%20%20%20%20%20%2F%3E%3Cpath%20%20%20%20%20%20%20%20%20%20%20%20d%3D%22M27.26344%205.99604c.00248.0298.00478.05941.00514.0896%200%20.04337-.0016.08769-.0062.13488-.01525.15857-.04236.30625-.08047.43922-.2536.88646-.96747%201.0435-1.58492%201.06604.08383-.38496.20718-.76209.35906-1.09489.30057-.66007.67788-1.07006.98466-1.07025.028%200%20.05547.0044.08347.013.01188.00362.02233.00973.04112.01967l.01276.0063c.00514.0023.01028.00459.01506.00803.01312.00898.02464.02082.0374.03343l.01046.0105c.0039.00383.00797.00765.0117.01204.0085.01032.01559.02236.02268.03401l.00921.0151c.00638.00993.01259.02005.01826.03209.00336.00707.0062.0149.01418.03553.00815.0216.01648.04337.02268.06706l.00567.02751c.00656.02847.01223.0575.01577.08789l.0023.03324zm2.17934%202.4177a.2772.2772%200%2000-.10652-.0256c-.15702-.00553-.26406.06095-.3587.22564-.056.09877-.11112.19926-.1657.29975-.2086.38305-.4241.77871-.73726%201.06223-.42534.38496-1.04102.56512-1.56898.46061-.31404-.06209-.53823-.30701-.67115-.5015-.24386-.35726-.36242-.83832-.34328-1.39274.77713-.0705%203.11951-.4438%203.30578-2.35791.03597-.37102-.06203-.70745-.28356-.97263-.2809-.33624-.72928-.52156-1.26238-.52156-1.56224%200-3.1041%201.76147-3.29958%203.76957-.05334.5508.01028%201.05974.18963%201.5129-.13362.13336-.2598.22946-.3851.29327-.1308.06725-.24422.08081-.32734.03973-.10297-.05158-.14462-.1811-.1611-.28045-.0615-.36777.0179-.79037.11183-1.22691.05547-.256.12477-.5229.18591-.75827.18874-.72618.38422-1.47718.319-2.23584-.05936-.69465-.51164-1.12603-1.18031-1.12603-.93753%200-1.5548.7212-1.95462%201.33943-.0085-.4608-.11041-.79533-.30997-1.01885-.1898-.21283-.46876-.32058-.82888-.32058-.91962%200-1.52928.69274-1.92803%201.29912.00531-.05578.01063-.11271.0163-.16946.02517-.26001.03651-.63256-.15578-.86239-.11466-.13717-.28693-.20652-.51218-.20652-.19885%200-.24847.00115-.46203.03917-.00212.00019-.20877.04394-.28728.1217-.1377.13621-.09393.32401-.06876.43138.00319.01356.00602.02598.00762.03649.01506.10374.01967.22142.01435.35917-.0287.72942-.15436%201.45827-.27363%202.07516-.06433.33243-.137.67058-.2086%201.00434-.15914.7405-.3236%201.50603-.40797%202.27595-.00904.08158.01259.15915.06079.21818.04838.05923.11661.0919.19211.09209l.04963.00038c.50526.00726%201.00185-.01529%201.11882-.32574.1292-.34274.20062-.7596.26389-1.12833l.02782-.16334c.14993-.84787.2809-1.4554.5448-2.23641.13592-.40254.3844-.76515.58537-1.03643.24333-.32822.50562-.64957.80176-.6576.12264-.00687.2024.03249.26265.11865.28764.41362-.07054%201.74866-.2233%202.31875-.03314.12322-.06115.22734-.07887.30376l-.10527.44037c-.15507.64211-.31528%201.306-.39752%201.97754a7.70047%207.70047%200%2000-.0225.20747l-.00692.09362.0647.05368c.13043.10909%201.06192-.04356%201.06955-.04604.34346-.12514.41825-.4736.44288-.58805.06398-.29631.12051-.59893.17492-.89123l.0039-.02178c.10261-.5508.2086-1.1207.36739-1.67053.30961-1.06987.72255-1.79986%201.22728-2.16973.21586-.15857.4374-.17614.53806-.04222.17439.23117.0638.85704.01648%201.12432-.06522.37063-.1487.74814-.2295%201.11285l-.00408.01872c-.05175.2325-.10315.46482-.151.6979-.14763.72235-.26885%201.6178.10846%202.13458.19194.26345.48897.3968.88294.3968.41754%200%20.81045-.15016%201.23632-.47265.11733-.0896.23571-.19372.3743-.3179.4794.58747%201.02401.83908%201.80965.83908%201.77721%200%202.61265-1.27295%203.08655-2.23048.05973-.12132.12654-.26136.16642-.38019.0592-.17652-.01134-.3691-.16021-.43845z%22%20%20%20%20%20%20%20%20%20%20%20%20fill%3D%22%23FFF%22%20%20%20%20%20%20%20%20%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E";
+    this.CspType = CspType;
   }
-  ngOnInit() {
+  ngOnDestroy() {
+    if (this.identityVerificationSubscription) {
+      this.identityVerificationSubscription.unsubscribe();
+    }
   }
-  verifyIdentity() {
+  verifyIdentity(cspType) {
     this.loading = true;
-    this.vaultService.verificationWithPopup().subscribe((result) => {
+    let identityVerificationObservable;
+    if (this.configService.systemConfig$.connectMode == ConnectMode.Websocket) {
+      identityVerificationObservable = this.vaultService.verificationWithWebsocket(cspType);
+    } else {
+      identityVerificationObservable = this.vaultService.verificationWithPopup(cspType);
+    }
+    this.identityVerificationSubscription = identityVerificationObservable.subscribe((result) => {
       this.loading = false;
       if (result?.vault_auth_finish_response?.has_verified_identity && result?.vault_auth_finish_response?.verified_identity_csp_type) {
         this.configService.vaultProfileConfig = {
           verifiedIdentityCspType: result.vault_auth_finish_response.verified_identity_csp_type,
           verifiedIdentityPatientDemographics: result.vault_auth_finish_response.verified_identity_patient_demographics
+        };
+      } else {
+        this.configService.vaultProfileConfig = {
+          verifiedIdentityCspType: cspType
         };
       }
       this.logger.info("verification result", result);
@@ -61906,47 +62362,55 @@ var IdentityVerificationComponent = class _IdentityVerificationComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IdentityVerificationComponent, selectors: [["app-identity-verification"]], standalone: false, decls: 24, vars: 2, consts: [[1, "vault-page-shell"], [1, "mx-auto", "max-w-3xl", "space-y-6"], [1, "vault-divider"], [1, "vault-panel", "px-6", "py-8", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "mx-auto", "max-w-2xl", "space-y-4"], [1, "vault-page-kicker"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900", "sm:text-4xl"], ["id", "verification-hint", 1, "text-sm", "leading-7", "text-slate-500"], ["src", "data:image/svg+xml,%3Csvg fill='none' height='129' viewBox='0 0 477 129' width='477' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23041a55'%3E%3Cpath d='m43.6629 11.002c.8485.6349 1.9184.971 2.9513.971.2952 0 .5903-.0373.8485-.0747 2.8038-.4855 4.6483-3.17438 4.2056-5.97532-.2213-1.34445-.9591-2.57686-2.0659-3.36113-2.2503-1.755252-5.4599-1.3071-7.1938.97099-1.7338 2.2781-1.2911 5.52719.9592 7.28246.1107.0747.1845.112.2951.1867z'/%3E%3Cpath d='m81.3643 11.4122c.7009.3735 1.5126.5602 2.2873.5602.5533 0 1.1067-.112 1.6232-.2987 2.7299-.9337 4.1687-3.92135 3.2464-6.6476-.4427-1.3071-1.365-2.39013-2.5824-2.98766-2.5455-1.307108-5.6812-.22408-6.9355 2.35279-1.2543 2.57686-.1845 5.71387 2.361 7.02097z'/%3E%3Cpath d='m115.228 23.811c-2.73-.859-5.644.6722-6.493 3.4358-.848 2.7636.664 5.7139 3.394 6.5729.517.1494 1.033.2241 1.55.2241.848 0 1.66-.2241 2.398-.5976 2.545-1.3444 3.504-4.4815 2.213-7.0584-.664-1.2324-1.734-2.166-3.062-2.5768z'/%3E%3Cpath d='m129.284 61.271c-1.697-2.3155-4.943-2.801-7.267-1.0457-2.325 1.7552-2.767 5.0043-1.033 7.3571 1.697 2.3155 4.943 2.801 7.267 1.0457 1.107-.8216 1.808-2.054 2.029-3.4358.185-1.3818-.184-2.8009-.996-3.9213z'/%3E%3Cpath d='m113.642 94.7637h-.073c-2.952.1494-5.239 2.6515-5.091 5.6393.11 2.801 2.361 5.079 5.164 5.154h.111c2.951-.15 5.239-2.652 5.091-5.6396-.111-2.8009-2.361-5.079-5.165-5.1537z'/%3E%3Cpath d='m86.6756 117.959c-2.3242-1.681-5.5706-1.121-7.2307 1.232s-1.1067 5.639 1.2174 7.32c2.3242 1.68 5.5706 1.12 7.2307-1.233.8116-1.12 1.1067-2.539.8854-3.921-.2214-1.382-.9961-2.577-2.1028-3.398z'/%3E%3Cpath d='m44.9511 117.36c-2.6562.934-4.095 3.847-3.1727 6.536.7009 2.091 2.6193 3.473 4.7959 3.473.5533 0 1.0698-.112 1.6232-.262 2.693-.784 4.2794-3.622 3.5046-6.348-.7747-2.727-3.5784-4.333-6.2715-3.548-.1475.037-.332.112-.4795.149z'/%3E%3Cpath d='m18.1691 95.1782c-2.73-.859-5.6444.6722-6.4929 3.4358-.8485 2.764.6641 5.714 3.394 6.573.5165.149 1.033.224 1.5495.224 2.8775 0 5.2016-2.39 5.1647-5.266 0-2.2779-1.4756-4.2946-3.6153-4.9668z'/%3E%3Cpath d='m2.08517 60.1841c-2.287253 1.7179-2.766839 5.0043-1.06984 7.3198 1.69699 2.3154 4.94342 2.8009 7.23068 1.083 2.28729-1.7179 2.76679-5.0043 1.06984-7.3198-1.69699-2.3154-4.94342-2.8009-7.23068-1.083z'/%3E%3Cpath d='m16.6203 34.0467h.0738c2.8406-.1121 5.0541-2.5769 4.9434-5.4525-.1106-2.7263-2.2872-4.9297-5.0172-5.0044h-.0369c-2.8775.1121-5.0909 2.5769-4.9434 5.4899.1107 2.6889 2.2873 4.8923 4.9803 4.967z'/%3E%3Cpath d='m33.2966 28.8178c.8854.6349 1.9183.971 2.9882.971.2951 0 .5902-.0373.8854-.0747 2.8037-.4854 4.722-3.2117 4.2425-6.05-.4796-2.8383-3.1727-4.7802-5.9764-4.2947-1.365.224-2.5455 1.0083-3.3571 2.1287-1.6601 2.3528-1.1068 5.6392 1.2174 7.3197z'/%3E%3Cpath d='m62.7334 19.4403c.7009.3735 1.4756.5602 2.2873.5602.5533 0 1.1067-.112 1.6232-.2988 2.7299-.8963 4.1687-3.8839 3.2833-6.6102-.8854-2.7636-3.8367-4.22008-6.5298-3.32378-2.7299.89628-4.1687 3.88398-3.2833 6.61018v.0374c.4427 1.3071 1.4019 2.3901 2.6193 3.025z'/%3E%3Cpath d='m91.9153 29.3014c.5165.1493 1.033.224 1.5495.224 2.8775 0 5.1648-2.3528 5.2017-5.2284 0-2.913-2.3242-5.2284-5.1648-5.2658-2.8776 0-5.1648 2.3528-5.2017 5.2285-.0369 2.3154 1.4388 4.3694 3.6153 5.0417z'/%3E%3Cpath d='m110.584 54.1341c.258.0373.516.0747.775.0747 2.877 0 5.164-2.3528 5.164-5.2284 0-2.913-2.324-5.2284-5.164-5.2284-2.878 0-5.165 2.3527-5.165 5.2284 0 2.5395 1.881 4.7429 4.39 5.1537z'/%3E%3Cpath d='m111.431 85.0958c2.878-.1121 5.091-2.5769 4.943-5.4899-.11-2.7262-2.287-4.9296-5.017-5.0043h-.074c-2.877.112-5.091 2.5768-4.943 5.4898.111 2.7263 2.287 4.9297 5.017 5.0044z'/%3E%3Cpath d='m96.4542 100.41c-2.3242-1.6807-5.5706-1.1205-7.2307 1.232-1.6601 2.353-1.1068 5.639 1.2174 7.32 2.3241 1.681 5.5706 1.12 7.2307-1.232 1.6601-2.39 1.1067-5.677-1.2174-7.32z'/%3E%3Cpath d='m63.5095 109.035c-2.7299.934-4.2056 3.959-3.2464 6.723.7009 2.128 2.6931 3.547 4.9065 3.585.5534 0 1.1068-.112 1.6601-.262 2.6931-1.083 4.0212-4.145 2.9513-6.871-.996-2.54-3.6891-3.884-6.3084-3.137z'/%3E%3Cpath d='m41.3006 102.46c-.6271-1.232-1.7339-2.166-3.0251-2.5768-2.7299-.8589-5.6443.6718-6.4928 3.4358s.664 5.714 3.394 6.573c.4796.149 1.0329.224 1.5494.224 2.2504 0 4.2794-1.494 4.9434-3.697.4058-1.27.2583-2.726-.3689-3.959z'/%3E%3Cpath d='m19.7189 74.7486c-2.7668-.4854-5.423 1.3818-5.9394 4.1828-.4796 2.8009 1.3649 5.4898 4.1318 6.0127.1106 0 .1844.0373.2951.0373.2582.0374.5165.0374.7378.0747 1.1068 0 2.1766-.3735 3.0251-1.0457 2.2504-1.7179 2.7299-4.967 1.033-7.2451-.7379-1.083-1.9553-1.8299-3.2834-2.0167z'/%3E%3Cpath d='m18.9065 43.6758h-.0738c-2.8775.112-5.091 2.5768-4.9434 5.4898.1107 2.7263 2.2872 4.9297 5.0172 5.0044h.0738c2.8775-.1121 5.091-2.5769 4.9434-5.4899-.1476-2.7262-2.3241-4.8923-5.0172-5.0043z'/%3E%3Cpath d='m49.601 25.4901c-1.6601 2.3528-1.0698 5.6392 1.2543 7.3197 2.3241 1.6806 5.5706 1.0831 7.2307-1.2697s1.0698-5.6392-1.2543-7.3198c-1.1068-.7843-2.5086-1.1204-3.8367-.8963-1.4019.2614-2.6193 1.0083-3.394 2.1661z'/%3E%3Cpath d='m71.2566 30.0466c.7379 2.2034 2.7669 3.6972 5.091 3.6972.5903 0 1.1437-.112 1.697-.2988 2.8038-.9336 4.3163-3.996 3.394-6.8343-1.1436-2.7636-4.2794-4.108-7.0093-2.9503-2.5086 1.0457-3.8367 3.772-3.1727 6.3862z'/%3E%3Cpath d='m99.5521 44.0186c.8489-2.7636-.6641-5.7139-3.394-6.5729-2.73-.8589-5.6444.6723-6.4929 3.4359-.8484 2.7635.6641 5.7139 3.394 6.5728.5165.1494 1.033.2614 1.5495.2614 2.2503-.0373 4.2424-1.5311 4.9434-3.6972z'/%3E%3Cpath d='m98.8491 60.2993c-2.2873 1.7179-2.7669 4.967-1.0699 7.2451.8117 1.1204 2.0291 1.83 3.3938 2.0541.258.0373.517.0747.775.0747 1.107 0 2.177-.3735 3.025-1.0084 2.324-1.6432 2.914-4.8549 1.291-7.2077s-4.796-2.9504-7.1198-1.3071c-.1107 0-.1844.0746-.2951.1493z'/%3E%3Cpath d='m90.9561 82.8168c-2.0659 2.1287-2.029 5.5646.0738 7.6559.996 1.0084 2.361 1.5312 3.726 1.5312h.0738c2.9513-.2241 5.1647-2.8009 4.9434-5.7886-.1845-2.6889-2.3242-4.8176-4.9803-5.0044h-.0738c-1.4019 0-2.7668.5976-3.7629 1.6059z'/%3E%3Cpath d='m80.59 103.394c1.6601-2.353 1.1068-5.6395-1.2174-7.3201-2.3241-1.6806-5.5706-1.1204-7.2307 1.2324s-1.1067 5.6397 1.2543 7.3197c.8854.635 1.9184.971 2.9882.971.2952 0 .5903-.037.8854-.075 1.3281-.224 2.5455-.971 3.3202-2.128z'/%3E%3Cpath d='m58.7517 98.5022c-.9223-2.7636-3.8367-4.2201-6.5666-3.2864-2.73.9336-4.1687 3.884-3.2464 6.6472.7009 2.129 2.693 3.586 4.9065 3.586.5534 0 1.1067-.075 1.6232-.262 2.6931-.971 4.1687-3.921 3.2833-6.6848z'/%3E%3Cpath d='m37.1682 81.5446c-1.2912-.4109-2.7299-.2988-3.9473.3734-2.5455 1.3445-3.5047 4.5189-2.1766 7.0957.6271 1.2324 1.7339 2.1287 3.0251 2.5769.5164.1494 1.0329.2241 1.5494.2241 2.8406 0 5.1648-2.3155 5.2017-5.1911 0-2.3528-1.4757-4.3695-3.6523-5.079z'/%3E%3Cpath d='m33.5524 65.154c.4058-2.8756-1.5494-5.5271-4.39-5.9379-2.8406-.4109-5.4599 1.5685-5.8657 4.4441-.1845 1.3818.1476 2.7636.9592 3.884 1.697 2.3154 4.9434 2.8009 7.2306 1.083 1.1437-.8216 1.8815-2.0914 2.0659-3.4732z'/%3E%3Cpath d='m35.7285 36.8438h-.0737c-2.8776 0-5.1648 2.3901-5.1648 5.2657s2.361 5.2284 5.2016 5.2284h.0738c2.8407-.112 5.0541-2.5768 4.9434-5.4525-.0737-2.7636-2.2503-4.9296-4.9803-5.0416z'/%3E%3C/g%3E%3Cpath d='m181.378 64.1812c0-14.9383 11.251-26.3288 25.971-26.3288 9.186-.0747 17.745 4.7429 22.504 12.735l-8.596 5.4898c-2.582-5.3405-7.968-8.6642-13.834-8.5149-9.297 0-16.122 7.3572-16.122 16.6189 0 9.0377 6.752 16.5443 15.974 16.5443 6.235.112 11.953-3.6226 14.388-9.4859l8.964 4.855c-4.353 8.9256-13.391 14.5275-23.241 14.4155-15.31-.0374-26.008-11.8013-26.008-26.3289z' fill='%23000'/%3E%3Cpath d='m248.742 38.5605v51.2012h33.239v-9.5979h-23.389v-41.6033z' fill='%23000'/%3E%3Cpath d='m301.241 38.5605v51.2012h34.087v-9.3738h-24.274v-11.6519h19.773v-9.3365h-19.773v-11.5025h24.274v-9.3365z' fill='%23000'/%3E%3Cpath d='m372.478 38.5605-19.147 51.2386h10.072l3.32-9.3365h21.175l3.321 9.3365h10.071l-19.147-51.2386zm4.87 12.5482 7.304 20.3909h-14.646z' fill='%23000'/%3E%3Cpath d='m429.398 47.6729v16.9177h9.997c6.456 0 9.444-4.0707 9.444-8.6269 0-5.0043-3.209-8.2908-9.444-8.2908zm-9.813-9.1124h20.548c11.658 0 18.593 7.5813 18.593 17.3285.148 6.3488-3.32 12.2121-8.89 15.1624l9.997 18.7477h-10.957l-8.116-16.1335h-11.362v16.1335h-9.776v-51.2386z' fill='%23000'/%3E%3Cpath d='m465.516 43.305c0-2.5769 2.029-4.6683 4.575-4.6683 2.545 0 4.611 2.054 4.611 4.6309s-2.029 4.6682-4.537 4.6682c-2.472.0747-4.538-1.9046-4.649-4.4068 0-.0747 0-.1494 0-.224zm8.264 0c-.074-2.0167-1.734-3.6226-3.726-3.5479s-3.578 1.7552-3.505 3.7719c.074 1.9794 1.66 3.5479 3.616 3.5479 1.992 0 3.578-1.6432 3.578-3.6599 0-.0374 0-.0747 0-.112zm-2.619.4108 1.143 1.9793h-1.07l-1.069-1.8673h-.738v1.8673h-.922v-4.855h1.807c.812 0 1.734.2988 1.734 1.4565.037.6349-.332 1.2324-.922 1.4565zm-.923-2.0541h-.774v1.3818h.811c.591 0 .812-.2987.812-.7095s-.332-.6723-.922-.6723z' fill='%23000'/%3E%3C/svg%3E", 2, "height", "1.25rem", "display", "inline", "vertical-align", "bottom"], ["routerLink", "/auth/identity/verification/error"], [1, "flex", "flex-col", "items-center", "space-y-4"], ["type", "button", 1, "clear-button", "flex", "items-center", "justify-center", "px-5", "py-3", "text-white", 3, "click", "disabled"], ["src", "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 353.2 337.6' style='enable-background:new 0 0 353.2 337.6;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bdisplay:none;%7D .st1%7Bdisplay:inline;fill:%23192958;%7D .st2%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cg id='BKGD' class='st0'%3E%3Crect class='st1' width='353.2' height='337.6'/%3E%3C/g%3E%3Cg id='Layer_2'%3E%3Cg%3E%3Cg%3E%3Ccircle class='st2' cx='14' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='77.1' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='227.8' r='14'/%3E%3Ccircle class='st2' cx='99.4' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='45.5' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='108.7' r='14'/%3E%3Ccircle class='st2' cx='98.4' cy='61.7' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='61.1' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='109.7' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='227.9' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='45.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='301.5' r='14'/%3E%3Ccircle class='st2' cx='226.7' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='126.6' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='276.5' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='339.2' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='35.5' r='14'/%3E%3Ccircle class='st2' cx='126.2' cy='14' r='14'/%3E%3Ccircle class='st2' cx='226.8' cy='14' r='14'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E", 1, "px-[8px]", 2, "height", "24px", "display", "inline", "vertical-align", "bottom"], ["class", "w-full rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "w-full", "rounded-lg", "bg-yellow-50", "px-4", "py-3", "text-sm", "text-yellow-800"]], template: function IdentityVerificationComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IdentityVerificationComponent, selectors: [["app-identity-verification"]], standalone: false, decls: 23, vars: 5, consts: [[1, "vault-page-shell"], [1, "mx-auto", "max-w-3xl", "space-y-6"], [1, "vault-panel", "px-6", "py-8", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "mx-auto", "max-w-2xl", "space-y-4"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900", "sm:text-4xl"], ["id", "verification-hint", 1, "text-sm", "leading-7", "text-slate-500"], ["alt", "ID.me", 1, "inline", "h-3.5", "align-middle", 3, "src"], [1, "flex", "flex-col", "items-center", "space-y-4"], ["type", "button", 1, "clear-button", "flex", "items-center", "justify-center", "px-5", "py-3", "text-white", 3, "click", "disabled"], ["src", "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 353.2 337.6' style='enable-background:new 0 0 353.2 337.6;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bdisplay:none;%7D .st1%7Bdisplay:inline;fill:%23192958;%7D .st2%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cg id='BKGD' class='st0'%3E%3Crect class='st1' width='353.2' height='337.6'/%3E%3C/g%3E%3Cg id='Layer_2'%3E%3Cg%3E%3Cg%3E%3Ccircle class='st2' cx='14' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='77.1' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='227.8' r='14'/%3E%3Ccircle class='st2' cx='99.4' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='45.5' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='108.7' r='14'/%3E%3Ccircle class='st2' cx='98.4' cy='61.7' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='61.1' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='109.7' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='227.9' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='45.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='301.5' r='14'/%3E%3Ccircle class='st2' cx='226.7' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='126.6' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='276.5' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='339.2' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='35.5' r='14'/%3E%3Ccircle class='st2' cx='126.2' cy='14' r='14'/%3E%3Ccircle class='st2' cx='226.8' cy='14' r='14'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E", 1, "px-[8px]", 2, "height", "24px", "display", "inline", "vertical-align", "bottom"], ["data-testid", "idme-button", "type", "button", 1, "clear-button", "idme-button", "flex", "items-center", "justify-center", "gap-2", "px-5", "py-3", "text-white", 3, "click", "disabled"], [1, "text-base", "font-semibold"], ["alt", "ID.me", 1, "h-5", "align-middle", 3, "src"], ["class", "w-full rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "w-full", "rounded-lg", "bg-yellow-50", "px-4", "py-3", "text-sm", "text-yellow-800"]], template: function IdentityVerificationComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
-        \u0275\u0275element(2, "div", 2);
-        \u0275\u0275elementStart(3, "section", 3)(4, "div", 4)(5, "div", 5)(6, "h1", 6);
-        \u0275\u0275text(7, "fasten");
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "section", 2)(3, "div", 3)(4, "div", 4)(5, "h1", 5);
+        \u0275\u0275text(6, "fasten");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(8, "div", 7)(9, "p", 8);
-        \u0275\u0275text(10, "Identity check");
+        \u0275\u0275elementStart(7, "div", 6)(8, "h2", 7);
+        \u0275\u0275text(9, " Verify your identity just once ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(11, "h2", 9);
-        \u0275\u0275text(12, " Verify your identity just once ");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "p", 10);
-        \u0275\u0275text(14, " You\u2019re leaving Acme Labs to verify your identity with our partner, ");
-        \u0275\u0275element(15, "img", 11);
-        \u0275\u0275text(16, ". This one-time step will bring you right back after your ID has been verified");
-        \u0275\u0275elementStart(17, "a", 12);
-        \u0275\u0275text(18, ".");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(19, "div", 13)(20, "button", 14);
-        \u0275\u0275listener("click", function IdentityVerificationComponent_Template_button_click_20_listener() {
-          return ctx.verifyIdentity();
+        \u0275\u0275elementStart(10, "p", 8);
+        \u0275\u0275text(11, " You\u2019re leaving Fasten to verify your identity with our partners CLEAR or ");
+        \u0275\u0275element(12, "img", 9);
+        \u0275\u0275text(13, ". This one-time step will bring you right back after your ID has been verified. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(14, "div", 10)(15, "button", 11);
+        \u0275\u0275listener("click", function IdentityVerificationComponent_Template_button_click_15_listener() {
+          return ctx.verifyIdentity(ctx.CspType.ClearCsp);
         });
-        \u0275\u0275element(21, "img", 15);
-        \u0275\u0275text(22, " Verify with CLEAR ");
+        \u0275\u0275element(16, "img", 12);
+        \u0275\u0275text(17, " Verify with CLEAR ");
         \u0275\u0275elementEnd();
-        \u0275\u0275template(23, IdentityVerificationComponent_div_23_Template, 2, 0, "div", 16);
+        \u0275\u0275elementStart(18, "button", 13);
+        \u0275\u0275listener("click", function IdentityVerificationComponent_Template_button_click_18_listener() {
+          return ctx.verifyIdentity(ctx.CspType.IdmeCsp);
+        });
+        \u0275\u0275elementStart(19, "span", 14);
+        \u0275\u0275text(20, "Verify with");
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(21, "img", 15);
+        \u0275\u0275elementEnd();
+        \u0275\u0275template(22, IdentityVerificationComponent_div_22_Template, 2, 0, "div", 16);
         \u0275\u0275elementEnd()()()()();
       }
       if (rf & 2) {
-        \u0275\u0275advance(20);
+        \u0275\u0275advance(12);
+        \u0275\u0275property("src", ctx.idmeLogoSrc, \u0275\u0275sanitizeUrl);
+        \u0275\u0275advance(3);
         \u0275\u0275property("disabled", ctx.loading);
         \u0275\u0275advance(3);
+        \u0275\u0275property("disabled", ctx.loading);
+        \u0275\u0275advance(3);
+        \u0275\u0275property("src", ctx.idmeButtonLogoSrc, \u0275\u0275sanitizeUrl);
+        \u0275\u0275advance();
         \u0275\u0275property("ngIf", ctx.loading);
       }
-    }, dependencies: [NgIf, RouterLink], styles: ['\n\n.clear-button[_ngcontent-%COMP%] {\n  border-radius: 32px;\n  background-color: #041A55;\n  font-family: "Inter", serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n  height: 56px;\n  width: min(100%, 328px);\n}\n/*# sourceMappingURL=identity-verification.component.css.map */'] });
+    }, dependencies: [NgIf], styles: ['\n\n.clear-button[_ngcontent-%COMP%] {\n  border-radius: 32px;\n  background-color: #041A55;\n  font-family: "Inter", sans-serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n  height: 56px;\n  width: min(100%, 328px);\n}\n.idme-button[_ngcontent-%COMP%] {\n  background-color: #08833D;\n  font-family: "Open Sans Light", sans-serif;\n}\n.tools-button-icon[_ngcontent-%COMP%] {\n  transition: transform 0.25s ease, opacity 0.25s ease;\n}\n.tools-button-icon-pop[_ngcontent-%COMP%] {\n  animation: _ngcontent-%COMP%_tools-button-pop 0.45s ease;\n}\n@keyframes _ngcontent-%COMP%_tools-button-pop {\n  0% {\n    transform: scale(0.6);\n    opacity: 0;\n  }\n  60% {\n    transform: scale(1.1);\n    opacity: 1;\n  }\n  100% {\n    transform: scale(1);\n    opacity: 1;\n  }\n}\n/*# sourceMappingURL=identity-verification.component.css.map */'] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationComponent, { className: "IdentityVerificationComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts", lineNumber: 13 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(IdentityVerificationComponent, { className: "IdentityVerificationComponent", filePath: "projects/fasten-connect-vault/src/app/pages/identity-verification/identity-verification.component.ts", lineNumber: 14 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/identity-verification-error/identity-verification-error.component.ts
@@ -61973,41 +62437,39 @@ var IdentityVerificationErrorComponent = class _IdentityVerificationErrorCompone
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IdentityVerificationErrorComponent, selectors: [["app-identity-verification-error"]], inputs: { error: "error", error_description: "error_description" }, standalone: false, decls: 29, vars: 3, consts: [[1, "vault-page-shell"], [1, "mx-auto", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "px-6", "py-8", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-red-600"], ["id", "error-message", 1, "mx-auto", "max-w-lg", "text-sm", "leading-7", "text-slate-500"], ["id", "error-details", 1, "rounded-lg", "bg-slate-100", "p-5", "text-left"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.16em]", "text-slate-500"], [1, "mt-3", "text-sm", "text-slate-800"], [1, "font-semibold"], [1, "mt-2", "text-sm", "text-slate-800"], [1, "flex", "justify-center"], ["type", "button", 1, "vault-primary-button", 3, "routerLink"]], template: function IdentityVerificationErrorComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _IdentityVerificationErrorComponent, selectors: [["app-identity-verification-error"]], inputs: { error: "error", error_description: "error_description" }, standalone: false, decls: 28, vars: 3, consts: [[1, "vault-page-shell"], [1, "mx-auto", "max-w-2xl"], [1, "vault-panel", "px-6", "py-8", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-6"], [1, "flex", "justify-center", "items-center"], [1, "az-logo"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-red-600"], ["id", "error-message", 1, "mx-auto", "max-w-lg", "text-sm", "leading-7", "text-slate-500"], ["id", "error-details", 1, "rounded-lg", "bg-slate-100", "p-5", "text-left"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.16em]", "text-slate-500"], [1, "mt-3", "text-sm", "text-slate-800"], [1, "font-semibold"], [1, "mt-2", "text-sm", "text-slate-800"], [1, "flex", "justify-center"], ["type", "button", 1, "vault-primary-button", 3, "routerLink"]], template: function IdentityVerificationErrorComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1);
-        \u0275\u0275element(2, "div", 2);
-        \u0275\u0275elementStart(3, "section", 3)(4, "div", 4)(5, "div", 5)(6, "h1", 6);
-        \u0275\u0275text(7, "fasten");
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "section", 2)(3, "div", 3)(4, "div", 4)(5, "h1", 5);
+        \u0275\u0275text(6, "fasten");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(8, "div", 7)(9, "p", 8);
-        \u0275\u0275text(10, "Verification error");
+        \u0275\u0275elementStart(7, "div", 6)(8, "p", 7);
+        \u0275\u0275text(9, "Verification error");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(11, "h2", 9);
-        \u0275\u0275text(12, "Something went wrong");
+        \u0275\u0275elementStart(10, "h2", 8);
+        \u0275\u0275text(11, "Something went wrong");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "p", 10);
-        \u0275\u0275text(14, "We hit an error while verifying your identity. Review the details below and try again when you\u2019re ready.");
+        \u0275\u0275elementStart(12, "p", 9);
+        \u0275\u0275text(13, "We hit an error while verifying your identity. Review the details below and try again when you\u2019re ready.");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(15, "div", 11)(16, "h3", 12);
-        \u0275\u0275text(17, "Error details");
+        \u0275\u0275elementStart(14, "div", 10)(15, "h3", 11);
+        \u0275\u0275text(16, "Error details");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(18, "p", 13);
-        \u0275\u0275text(19, "Error Type: ");
-        \u0275\u0275elementStart(20, "span", 14);
-        \u0275\u0275text(21);
+        \u0275\u0275elementStart(17, "p", 12);
+        \u0275\u0275text(18, "Error Type: ");
+        \u0275\u0275elementStart(19, "span", 13);
+        \u0275\u0275text(20);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(22, "p", 15);
-        \u0275\u0275text(23, "Description: ");
-        \u0275\u0275elementStart(24, "span");
-        \u0275\u0275text(25);
+        \u0275\u0275elementStart(21, "p", 14);
+        \u0275\u0275text(22, "Description: ");
+        \u0275\u0275elementStart(23, "span");
+        \u0275\u0275text(24);
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(26, "div", 16)(27, "button", 17);
-        \u0275\u0275text(28, " Try Again ");
+        \u0275\u0275elementStart(25, "div", 15)(26, "button", 16);
+        \u0275\u0275text(27, " Try Again ");
         \u0275\u0275elementEnd()()()()()();
       }
       if (rf & 2) {
-        \u0275\u0275advance(21);
+        \u0275\u0275advance(20);
         \u0275\u0275textInterpolate(ctx.error);
         \u0275\u0275advance(4);
         \u0275\u0275textInterpolate(ctx.error_description);
