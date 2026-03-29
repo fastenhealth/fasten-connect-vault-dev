@@ -58439,7 +58439,7 @@ function createRemoteJWKSet(url, options) {
 }
 
 // projects/fasten-connect-vault/src/app/app.constants.ts
-var ORG_CREDENTIAL_PUBLIC_ID = environment.org_credential_live_public_id || environment.org_credential_test_public_id;
+var ORG_CREDENTIAL_PUBLIC_ID = environment.org_credential_test_public_id;
 
 // projects/fasten-connect-vault/src/app/services/auth.service.ts
 var FASTEN_AUTH_VAULT_COOKIE_NAME = "fasten_connect_auth_vault";
