@@ -60690,8 +60690,7 @@ function ConnectedAccountsTabComponent_section_15_div_3_a_1_Template(rf, ctx) {
   }
   if (rf & 2) {
     const account_r3 = ctx.$implicit;
-    const ctx_r1 = \u0275\u0275nextContext(3);
-    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(6, _c1, ctx_r1.getAccountRouteId(account_r3)));
+    \u0275\u0275property("routerLink", \u0275\u0275pureFunction1(6, _c1, account_r3.org_connection_id));
     \u0275\u0275attribute("aria-label", "View details for " + ((account_r3.portal == null ? null : account_r3.portal.name) || (account_r3.brand == null ? null : account_r3.brand.name)));
     \u0275\u0275advance(2);
     \u0275\u0275property("src", "https://cdn.fastenhealth.com/logos/sources/" + (account_r3.brand == null ? null : account_r3.brand.id) + ".png", \u0275\u0275sanitizeUrl)("alt", (account_r3.portal == null ? null : account_r3.portal.name) || (account_r3.brand == null ? null : account_r3.brand.name));
@@ -60788,9 +60787,6 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
         this.loading = false;
       }
     });
-  }
-  getAccountRouteId(account) {
-    return account.vault_profile_connection_id || account.org_connection_id;
   }
   static {
     this.\u0275fac = function ConnectedAccountsTabComponent_Factory(__ngFactoryType__) {
@@ -62147,7 +62143,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
   }
   findSelectedAccount() {
     const connectedAccounts = this.configService.vaultProfileConfig$.connectedPatientAccounts || [];
-    const matchingAccount = connectedAccounts.find((candidate) => candidate.vault_profile_connection_id === this.accountId || candidate.org_connection_id === this.accountId);
+    const matchingAccount = connectedAccounts.find((candidate) => candidate.org_connection_id === this.accountId);
     if (matchingAccount) {
       return matchingAccount;
     }
