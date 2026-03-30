@@ -60644,6 +60644,36 @@ var AuthService = class _AuthService {
   }
 };
 
+// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
+var SpinnerComponent = class _SpinnerComponent {
+  constructor() {
+    this.sizePx = 20;
+    this.strokeWidthPx = 3;
+    this.accentColor = "#5b47fb";
+    this.trackColor = "#e5e7eb";
+  }
+  ngOnInit() {
+  }
+  static {
+    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SpinnerComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], inputs: { sizePx: "sizePx", strokeWidthPx: "strokeWidthPx", accentColor: "accentColor", trackColor: "trackColor" }, standalone: false, decls: 1, vars: 10, consts: [["aria-hidden", "true", 1, "vault-spinner"]], template: function SpinnerComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275element(0, "span", 0);
+      }
+      if (rf & 2) {
+        \u0275\u0275styleProp("width", ctx.sizePx, "px")("height", ctx.sizePx, "px")("border-width", ctx.strokeWidthPx, "px")("border-color", ctx.trackColor)("border-top-color", ctx.accentColor);
+      }
+    }, styles: ["\n\n[_nghost-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  line-height: 0;\n}\n.vault-spinner[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n  border-style: solid;\n  border-radius: 999px;\n  animation: _ngcontent-%COMP%_vault-spinner-rotate 1s linear infinite;\n  box-sizing: border-box;\n}\n@keyframes _ngcontent-%COMP%_vault-spinner-rotate {\n  to {\n    transform: rotate(360deg);\n  }\n}\n/*# sourceMappingURL=spinner.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
+})();
+
 // projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts
 function VaultSigninComponent_p_44_span_3_Template(rf, ctx) {
   if (rf & 1) {
@@ -60668,7 +60698,7 @@ function VaultSigninComponent_p_44_span_5_Template(rf, ctx) {
 }
 function VaultSigninComponent_p_44_span_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 67)(1, "strong");
+    \u0275\u0275elementStart(0, "span", 69)(1, "strong");
     \u0275\u0275text(2, "Error");
     \u0275\u0275elementEnd();
     \u0275\u0275text(3);
@@ -60682,12 +60712,12 @@ function VaultSigninComponent_p_44_span_6_Template(rf, ctx) {
 }
 function VaultSigninComponent_p_44_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 62);
+    \u0275\u0275elementStart(0, "p", 64);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(1, "svg", 63);
-    \u0275\u0275element(2, "path", 64);
+    \u0275\u0275elementStart(1, "svg", 65);
+    \u0275\u0275element(2, "path", 66);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(3, VaultSigninComponent_p_44_span_3_Template, 2, 0, "span", 65)(4, VaultSigninComponent_p_44_span_4_Template, 2, 0, "span", 65)(5, VaultSigninComponent_p_44_span_5_Template, 2, 0, "span", 65)(6, VaultSigninComponent_p_44_span_6_Template, 4, 1, "span", 66);
+    \u0275\u0275template(3, VaultSigninComponent_p_44_span_3_Template, 2, 0, "span", 67)(4, VaultSigninComponent_p_44_span_4_Template, 2, 0, "span", 67)(5, VaultSigninComponent_p_44_span_5_Template, 2, 0, "span", 67)(6, VaultSigninComponent_p_44_span_6_Template, 4, 1, "span", 68);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
@@ -60701,6 +60731,23 @@ function VaultSigninComponent_p_44_Template(rf, ctx) {
     \u0275\u0275property("ngIf", email_r3.errors == null ? null : email_r3.errors["email"]);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r1.errorMsg);
+  }
+}
+function VaultSigninComponent_span_46_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 70);
+    \u0275\u0275element(1, "app-spinner", 71);
+    \u0275\u0275text(2, " Sending code... ");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275property("sizePx", 20)("strokeWidthPx", 2.5);
+  }
+}
+function VaultSigninComponent_ng_template_47_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275text(0, "Get Started");
   }
 }
 var VaultSigninComponent = class _VaultSigninComponent {
@@ -60760,117 +60807,121 @@ var VaultSigninComponent = class _VaultSigninComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninComponent, selectors: [["app-vault-signin"]], standalone: false, decls: 86, vars: 3, consts: [["vaultProfileForm", "ngForm"], ["email", "ngModel"], [1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "space-y-6", 3, "ngSubmit"], [1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["type", "email", "autocomplete", "email", "name", "email", "required", "", "email", "", "minlength", "4", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200", 3, "ngModelChange", "ngModel"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", "class", "mt-2 text-sm text-red-500 flex items-center gap-2", 4, "ngIf"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", 3, "disabled"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], [4, "ngIf"], ["class", "alert alert-danger mt-3", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-3"]], template: function VaultSigninComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninComponent, selectors: [["app-vault-signin"]], standalone: false, decls: 88, vars: 6, consts: [["vaultProfileForm", "ngForm"], ["email", "ngModel"], ["getStartedLabel", ""], [1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "space-y-6", 3, "ngSubmit"], [1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["type", "email", "autocomplete", "email", "name", "email", "required", "", "email", "", "minlength", "4", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200", 3, "ngModelChange", "ngModel"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", "class", "mt-2 text-sm text-red-500 flex items-center gap-2", 4, "ngIf"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", "disabled:cursor-not-allowed", "disabled:opacity-70", "disabled:hover:scale-100", 3, "disabled"], ["class", "inline-flex items-center justify-center gap-3", 4, "ngIf", "ngIfElse"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], [4, "ngIf"], ["class", "alert alert-danger mt-3", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-3"], [1, "inline-flex", "items-center", "justify-center", "gap-3"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx"]], template: function VaultSigninComponent_Template(rf, ctx) {
       if (rf & 1) {
         const _r1 = \u0275\u0275getCurrentView();
-        \u0275\u0275elementStart(0, "div", 2)(1, "div", 3)(2, "div", 4)(3, "h1", 5);
+        \u0275\u0275elementStart(0, "div", 3)(1, "div", 4)(2, "div", 5)(3, "h1", 6);
         \u0275\u0275text(4, "fasten");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "span", 6);
+        \u0275\u0275elementStart(5, "span", 7);
         \u0275\u0275text(6, "BETA");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(7, "div", 7)(8, "h2", 8);
+        \u0275\u0275elementStart(7, "div", 8)(8, "h2", 9);
         \u0275\u0275text(9, "Your health data, ");
-        \u0275\u0275elementStart(10, "span", 9);
+        \u0275\u0275elementStart(10, "span", 10);
         \u0275\u0275text(11, "unified");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(12, "div", 7)(13, "div", 10)(14, "div", 11);
+        \u0275\u0275elementStart(12, "div", 8)(13, "div", 11)(14, "div", 12);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(15, "svg", 12);
-        \u0275\u0275element(16, "path", 13);
+        \u0275\u0275elementStart(15, "svg", 13);
+        \u0275\u0275element(16, "path", 14);
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(17, "div")(18, "h3", 14);
+        \u0275\u0275elementStart(17, "div")(18, "h3", 15);
         \u0275\u0275text(19, "Secure Access");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(20, "p", 15);
+        \u0275\u0275elementStart(20, "p", 16);
         \u0275\u0275text(21, "Safely connect your health records to trusted apps and services");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(22, "div", 10)(23, "div", 11);
+        \u0275\u0275elementStart(22, "div", 11)(23, "div", 12);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(24, "svg", 12);
-        \u0275\u0275element(25, "path", 16)(26, "path", 17);
+        \u0275\u0275elementStart(24, "svg", 13);
+        \u0275\u0275element(25, "path", 17)(26, "path", 18);
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(27, "div")(28, "h3", 14);
+        \u0275\u0275elementStart(27, "div")(28, "h3", 15);
         \u0275\u0275text(29, "Full Control");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(30, "p", 15);
+        \u0275\u0275elementStart(30, "p", 16);
         \u0275\u0275text(31, "Control your data sharing preferences with a simple tap");
         \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(32, "div", 18)(33, "form", 19, 0);
+        \u0275\u0275elementStart(32, "div", 19)(33, "form", 20, 0);
         \u0275\u0275listener("ngSubmit", function VaultSigninComponent_Template_form_ngSubmit_33_listener() {
           \u0275\u0275restoreView(_r1);
           return \u0275\u0275resetView(ctx.signinSubmit());
         });
-        \u0275\u0275elementStart(35, "div")(36, "label", 20);
+        \u0275\u0275elementStart(35, "div")(36, "label", 21);
         \u0275\u0275text(37, "Email address");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(38, "div", 21)(39, "input", 22, 1);
+        \u0275\u0275elementStart(38, "div", 22)(39, "input", 23, 1);
         \u0275\u0275twoWayListener("ngModelChange", function VaultSigninComponent_Template_input_ngModelChange_39_listener($event) {
           \u0275\u0275restoreView(_r1);
           \u0275\u0275twoWayBindingSet(ctx.existingVaultProfile.email, $event) || (ctx.existingVaultProfile.email = $event);
           return \u0275\u0275resetView($event);
         });
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(41, "div", 23);
+        \u0275\u0275elementStart(41, "div", 24);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(42, "svg", 24);
-        \u0275\u0275element(43, "path", 25);
+        \u0275\u0275elementStart(42, "svg", 25);
+        \u0275\u0275element(43, "path", 26);
         \u0275\u0275elementEnd()()();
-        \u0275\u0275template(44, VaultSigninComponent_p_44_Template, 7, 4, "p", 26);
+        \u0275\u0275template(44, VaultSigninComponent_p_44_Template, 7, 4, "p", 27);
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(45, "button", 27);
-        \u0275\u0275text(46, " Get Started ");
+        \u0275\u0275elementStart(45, "button", 28);
+        \u0275\u0275template(46, VaultSigninComponent_span_46_Template, 3, 2, "span", 29)(47, VaultSigninComponent_ng_template_47_Template, 1, 0, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(47, "div", 28);
+        \u0275\u0275elementStart(49, "div", 30);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(48, "svg", 29);
-        \u0275\u0275element(49, "path", 30);
+        \u0275\u0275elementStart(50, "svg", 31);
+        \u0275\u0275element(51, "path", 32);
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(50, "span");
-        \u0275\u0275text(51, "Need help? ");
-        \u0275\u0275elementStart(52, "a", 31);
-        \u0275\u0275text(53, "Learn more");
+        \u0275\u0275elementStart(52, "span");
+        \u0275\u0275text(53, "Need help? ");
+        \u0275\u0275elementStart(54, "a", 33);
+        \u0275\u0275text(55, "Learn more");
         \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(54, "div", 32);
+        \u0275\u0275elementStart(56, "div", 34);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(55, "svg", 33);
-        \u0275\u0275element(56, "circle", 34);
-        \u0275\u0275elementStart(57, "g", 35);
-        \u0275\u0275element(58, "rect", 36)(59, "rect", 37);
-        \u0275\u0275elementStart(60, "g");
-        \u0275\u0275element(61, "rect", 38)(62, "rect", 39)(63, "circle", 40);
+        \u0275\u0275elementStart(57, "svg", 35);
+        \u0275\u0275element(58, "circle", 36);
+        \u0275\u0275elementStart(59, "g", 37);
+        \u0275\u0275element(60, "rect", 38)(61, "rect", 39);
+        \u0275\u0275elementStart(62, "g");
+        \u0275\u0275element(63, "rect", 40)(64, "rect", 41)(65, "circle", 42);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(64, "g")(65, "g", 41);
-        \u0275\u0275element(66, "rect", 42)(67, "path", 43)(68, "path", 44);
+        \u0275\u0275elementStart(66, "g")(67, "g", 43);
+        \u0275\u0275element(68, "rect", 44)(69, "path", 45)(70, "path", 46);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(69, "g", 45);
-        \u0275\u0275element(70, "rect", 46)(71, "path", 47)(72, "path", 48);
+        \u0275\u0275elementStart(71, "g", 47);
+        \u0275\u0275element(72, "rect", 48)(73, "path", 49)(74, "path", 50);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(73, "g", 49);
-        \u0275\u0275element(74, "rect", 50)(75, "path", 51)(76, "path", 52);
+        \u0275\u0275elementStart(75, "g", 51);
+        \u0275\u0275element(76, "rect", 52)(77, "path", 53)(78, "path", 54);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(77, "g", 53);
-        \u0275\u0275element(78, "rect", 54)(79, "path", 55)(80, "path", 56);
+        \u0275\u0275elementStart(79, "g", 55);
+        \u0275\u0275element(80, "rect", 56)(81, "path", 57)(82, "path", 58);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(81, "g", 57);
-        \u0275\u0275element(82, "circle", 58)(83, "circle", 59)(84, "circle", 60)(85, "circle", 61);
+        \u0275\u0275elementStart(83, "g", 59);
+        \u0275\u0275element(84, "circle", 60)(85, "circle", 61)(86, "circle", 62)(87, "circle", 63);
         \u0275\u0275elementEnd()()()();
       }
       if (rf & 2) {
         const vaultProfileForm_r4 = \u0275\u0275reference(34);
         const email_r3 = \u0275\u0275reference(40);
+        const getStartedLabel_r5 = \u0275\u0275reference(48);
         \u0275\u0275advance(39);
         \u0275\u0275twoWayProperty("ngModel", ctx.existingVaultProfile.email);
         \u0275\u0275advance(5);
         \u0275\u0275property("ngIf", email_r3.invalid && (email_r3.dirty || email_r3.touched));
         \u0275\u0275advance();
         \u0275\u0275property("disabled", !vaultProfileForm_r4.form.valid || ctx.loading);
+        \u0275\u0275attribute("aria-busy", ctx.loading);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", ctx.loading)("ngIfElse", getStartedLabel_r5);
       }
-    }, dependencies: [\u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinLengthValidator, EmailValidator, NgModel, NgForm, NgIf], encapsulation: 2 });
+    }, dependencies: [\u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinLengthValidator, EmailValidator, NgModel, NgForm, NgIf, SpinnerComponent], encapsulation: 2 });
   }
 };
 (() => {
@@ -62761,36 +62812,6 @@ var FastenService = class _FastenService {
     this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _FastenService, factory: _FastenService.\u0275fac, providedIn: "root" });
   }
 };
-
-// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
-var SpinnerComponent = class _SpinnerComponent {
-  constructor() {
-    this.sizePx = 20;
-    this.strokeWidthPx = 3;
-    this.accentColor = "#5b47fb";
-    this.trackColor = "#e5e7eb";
-  }
-  ngOnInit() {
-  }
-  static {
-    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _SpinnerComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], inputs: { sizePx: "sizePx", strokeWidthPx: "strokeWidthPx", accentColor: "accentColor", trackColor: "trackColor" }, standalone: false, decls: 1, vars: 10, consts: [["aria-hidden", "true", 1, "vault-spinner"]], template: function SpinnerComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275element(0, "span", 0);
-      }
-      if (rf & 2) {
-        \u0275\u0275styleProp("width", ctx.sizePx, "px")("height", ctx.sizePx, "px")("border-width", ctx.strokeWidthPx, "px")("border-color", ctx.trackColor)("border-top-color", ctx.accentColor);
-      }
-    }, styles: ["\n\n[_nghost-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  line-height: 0;\n}\n.vault-spinner[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n  border-style: solid;\n  border-radius: 999px;\n  animation: _ngcontent-%COMP%_vault-spinner-rotate 1s linear infinite;\n  box-sizing: border-box;\n}\n@keyframes _ngcontent-%COMP%_vault-spinner-rotate {\n  to {\n    transform: rotate(360deg);\n  }\n}\n/*# sourceMappingURL=spinner.component.css.map */"] });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
-})();
 
 // projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
 var _c02 = () => [];
