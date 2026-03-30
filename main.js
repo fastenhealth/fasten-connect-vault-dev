@@ -64061,7 +64061,7 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
           this.handleExportPollingFailure("Unable to generate QR code. Please try again.");
           return;
         }
-        this.resultDocumentUrl = this.smartHealthLinkUrl;
+        this.resultDocumentUrl = "https://viewer.tcpdev.org/#" + this.smartHealthLinkUrl;
         this.exportModalState = "complete";
       } catch (error) {
         console.error("Failed to create shlink manifest", error);
