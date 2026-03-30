@@ -65788,12 +65788,12 @@ var TestModeRedirectComponent = class _TestModeRedirectComponent {
 })();
 
 // projects/fasten-connect-vault/src/app/pages/form-support-request/form-support-request.component.ts
-function FormSupportRequestComponent_div_1_div_23_Template(rf, ctx) {
+function FormSupportRequestComponent_div_1_div_24_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 32)(1, "p", 33);
+    \u0275\u0275elementStart(0, "div", 40)(1, "p", 41);
     \u0275\u0275text(2, "We couldn\u2019t submit your request.");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "p", 19);
+    \u0275\u0275elementStart(3, "p", 42);
     \u0275\u0275text(4);
     \u0275\u0275elementEnd()();
   }
@@ -65803,9 +65803,17 @@ function FormSupportRequestComponent_div_1_div_23_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r1.errorMsg);
   }
 }
-function FormSupportRequestComponent_div_1_div_24_p_4_Template(rf, ctx) {
+function FormSupportRequestComponent_div_1_app_spinner_46_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p")(1, "span", 38);
+    \u0275\u0275element(0, "app-spinner", 43);
+  }
+  if (rf & 2) {
+    \u0275\u0275property("sizePx", 18)("strokeWidthPx", 2.5);
+  }
+}
+function FormSupportRequestComponent_div_1_div_57_p_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p")(1, "span", 50);
     \u0275\u0275text(2, "Type:");
     \u0275\u0275elementEnd();
     \u0275\u0275text(3);
@@ -65817,9 +65825,9 @@ function FormSupportRequestComponent_div_1_div_24_p_4_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", ctx_r1.error, "");
   }
 }
-function FormSupportRequestComponent_div_1_div_24_p_5_Template(rf, ctx) {
+function FormSupportRequestComponent_div_1_div_57_p_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p")(1, "span", 38);
+    \u0275\u0275elementStart(0, "p")(1, "span", 50);
     \u0275\u0275text(2, "Description:");
     \u0275\u0275elementEnd();
     \u0275\u0275text(3);
@@ -65831,29 +65839,24 @@ function FormSupportRequestComponent_div_1_div_24_p_5_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", ctx_r1.error_description, "");
   }
 }
-function FormSupportRequestComponent_div_1_div_24_Template(rf, ctx) {
+function FormSupportRequestComponent_div_1_div_57_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 34)(1, "p", 35);
-    \u0275\u0275text(2, "Connection details detected");
+    \u0275\u0275elementStart(0, "div", 44)(1, "div", 9)(2, "div", 45)(3, "h3", 46);
+    \u0275\u0275text(4, "Connection details detected");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "div", 36);
-    \u0275\u0275template(4, FormSupportRequestComponent_div_1_div_24_p_4_Template, 4, 1, "p", 37)(5, FormSupportRequestComponent_div_1_div_24_p_5_Template, 4, 1, "p", 37);
+    \u0275\u0275elementStart(5, "p", 47);
+    \u0275\u0275text(6, "We\u2019ll include this technical context with your request.");
     \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(7, "div", 48);
+    \u0275\u0275template(8, FormSupportRequestComponent_div_1_div_57_p_8_Template, 4, 1, "p", 49)(9, FormSupportRequestComponent_div_1_div_57_p_9_Template, 4, 1, "p", 49);
+    \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance(4);
+    \u0275\u0275advance(8);
     \u0275\u0275property("ngIf", ctx_r1.error);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r1.error_description);
-  }
-}
-function FormSupportRequestComponent_div_1_app_spinner_45_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275element(0, "app-spinner", 39);
-  }
-  if (rf & 2) {
-    \u0275\u0275property("sizePx", 18)("strokeWidthPx", 2.5);
   }
 }
 function FormSupportRequestComponent_div_1_Template(rf, ctx) {
@@ -65877,25 +65880,25 @@ function FormSupportRequestComponent_div_1_Template(rf, ctx) {
     \u0275\u0275text(13, " Share what happened while adding a provider through TEFCA and our team will investigate the connection flow. ");
     \u0275\u0275elementEnd()()()();
     \u0275\u0275element(14, "div", 14);
-    \u0275\u0275elementStart(15, "section", 15)(16, "form", 16, 1);
-    \u0275\u0275listener("ngSubmit", function FormSupportRequestComponent_div_1_Template_form_ngSubmit_16_listener() {
+    \u0275\u0275elementStart(15, "div", 15)(16, "section", 16)(17, "form", 17, 1);
+    \u0275\u0275listener("ngSubmit", function FormSupportRequestComponent_div_1_Template_form_ngSubmit_17_listener() {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r1.submitForm());
     });
-    \u0275\u0275elementStart(18, "div", 17)(19, "p", 18);
-    \u0275\u0275text(20, "Support context helps");
+    \u0275\u0275elementStart(19, "div", 11)(20, "h2", 18);
+    \u0275\u0275text(21, "Issue details");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(21, "p", 19);
-    \u0275\u0275text(22, " Include the provider name and what step failed so we can trace the TEFCA handoff faster. ");
+    \u0275\u0275elementStart(22, "p", 19);
+    \u0275\u0275text(23, " Tell us what happened while adding a provider so we can investigate the TEFCA connection flow and follow up with next steps. ");
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(23, FormSupportRequestComponent_div_1_div_23_Template, 5, 1, "div", 20)(24, FormSupportRequestComponent_div_1_div_24_Template, 6, 2, "div", 21);
-    \u0275\u0275elementStart(25, "div", 22)(26, "div")(27, "label", 23);
+    \u0275\u0275template(24, FormSupportRequestComponent_div_1_div_24_Template, 5, 1, "div", 20);
+    \u0275\u0275elementStart(25, "div", 21)(26, "div")(27, "label", 22);
     \u0275\u0275text(28, " Your email address ");
-    \u0275\u0275elementStart(29, "span", 24);
+    \u0275\u0275elementStart(29, "span", 23);
     \u0275\u0275text(30, "*");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(31, "input", 25);
+    \u0275\u0275elementStart(31, "input", 24);
     \u0275\u0275twoWayListener("ngModelChange", function FormSupportRequestComponent_div_1_Template_input_ngModelChange_31_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
@@ -65903,77 +65906,99 @@ function FormSupportRequestComponent_div_1_Template(rf, ctx) {
       return \u0275\u0275resetView($event);
     });
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(32, "div")(33, "label", 26);
+    \u0275\u0275elementStart(32, "div")(33, "label", 25);
     \u0275\u0275text(34, " Health system name ");
-    \u0275\u0275elementStart(35, "span", 24);
+    \u0275\u0275elementStart(35, "span", 23);
     \u0275\u0275text(36, "*");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(37, "input", 27);
+    \u0275\u0275elementStart(37, "input", 26);
     \u0275\u0275twoWayListener("ngModelChange", function FormSupportRequestComponent_div_1_Template_input_ngModelChange_37_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.formSupportRequest.healthsystem_name, $event) || (ctx_r1.formSupportRequest.healthsystem_name = $event);
       return \u0275\u0275resetView($event);
     });
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(38, "div")(39, "label", 28);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(38, "div")(39, "label", 27);
     \u0275\u0275text(40, " Describe your issue ");
-    \u0275\u0275elementStart(41, "span", 24);
+    \u0275\u0275elementStart(41, "span", 23);
     \u0275\u0275text(42, "*");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(43, "textarea", 29);
+    \u0275\u0275elementStart(43, "textarea", 28);
     \u0275\u0275twoWayListener("ngModelChange", function FormSupportRequestComponent_div_1_Template_textarea_ngModelChange_43_listener($event) {
       \u0275\u0275restoreView(_r1);
       const ctx_r1 = \u0275\u0275nextContext();
       \u0275\u0275twoWayBindingSet(ctx_r1.formSupportRequest.request_content, $event) || (ctx_r1.formSupportRequest.request_content = $event);
       return \u0275\u0275resetView($event);
     });
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(44, "button", 30);
-    \u0275\u0275template(45, FormSupportRequestComponent_div_1_app_spinner_45_Template, 1, 2, "app-spinner", 31);
-    \u0275\u0275text(46, " Submit request ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(44, "div", 29)(45, "button", 30);
+    \u0275\u0275template(46, FormSupportRequestComponent_div_1_app_spinner_46_Template, 1, 2, "app-spinner", 31);
+    \u0275\u0275text(47, " Submit request ");
     \u0275\u0275elementEnd()()()();
+    \u0275\u0275elementStart(48, "aside", 16)(49, "div", 4)(50, "div", 32)(51, "p", 33);
+    \u0275\u0275text(52, "Support");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(53, "h2", 34);
+    \u0275\u0275text(54, "Helpful context speeds things up");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(55, "p", 35);
+    \u0275\u0275text(56, " Include the provider name, what step failed, and what you expected to happen so we can trace the TEFCA handoff faster. ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(57, FormSupportRequestComponent_div_1_div_57_Template, 10, 2, "div", 36);
+    \u0275\u0275elementStart(58, "div", 37)(59, "div", 9)(60, "h3", 38);
+    \u0275\u0275text(61, "What to include");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(62, "div", 39)(63, "p");
+    \u0275\u0275text(64, "The provider or portal you were trying to connect.");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(65, "p");
+    \u0275\u0275text(66, "The step where the flow stopped or redirected unexpectedly.");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(67, "p");
+    \u0275\u0275text(68, "Any error message, code, or unusual behavior you noticed.");
+    \u0275\u0275elementEnd()()()()()()()();
   }
   if (rf & 2) {
-    const supportRequestForm_r3 = \u0275\u0275reference(17);
+    const supportRequestForm_r3 = \u0275\u0275reference(18);
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance();
     \u0275\u0275property("routerLink", "/dashboard/accounts");
-    \u0275\u0275advance(22);
+    \u0275\u0275advance(23);
     \u0275\u0275property("ngIf", ctx_r1.errorMsg);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.error || ctx_r1.error_description);
     \u0275\u0275advance(7);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.formSupportRequest.email);
     \u0275\u0275advance(6);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.formSupportRequest.healthsystem_name);
     \u0275\u0275advance(6);
     \u0275\u0275twoWayProperty("ngModel", ctx_r1.formSupportRequest.request_content);
-    \u0275\u0275advance();
+    \u0275\u0275advance(2);
     \u0275\u0275property("disabled", !supportRequestForm_r3.form.valid || ctx_r1.loading);
     \u0275\u0275advance();
     \u0275\u0275property("ngIf", ctx_r1.loading);
+    \u0275\u0275advance(11);
+    \u0275\u0275property("ngIf", ctx_r1.error || ctx_r1.error_description);
   }
 }
 function FormSupportRequestComponent_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 40)(1, "section", 41)(2, "div", 42)(3, "div", 43);
+    \u0275\u0275elementStart(0, "div", 51)(1, "section", 52)(2, "div", 4)(3, "div", 53);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(4, "svg", 44);
-    \u0275\u0275element(5, "path", 45);
+    \u0275\u0275elementStart(4, "svg", 54);
+    \u0275\u0275element(5, "path", 55);
     \u0275\u0275elementEnd()();
     \u0275\u0275namespaceHTML();
     \u0275\u0275elementStart(6, "div", 9)(7, "p", 10);
     \u0275\u0275text(8, "Request submitted");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(9, "h2", 46);
+    \u0275\u0275elementStart(9, "h2", 56);
     \u0275\u0275text(10, "Thanks, we\u2019ve got it");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(11, "p", 47);
+    \u0275\u0275elementStart(11, "p", 57);
     \u0275\u0275text(12, " Your support request has been recorded. We\u2019ll review the issue and follow up when we have an update. ");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(13, "div", 48)(14, "button", 49);
+    \u0275\u0275elementStart(13, "div", 58)(14, "button", 59);
     \u0275\u0275listener("click", function FormSupportRequestComponent_ng_template_2_Template_button_click_14_listener() {
       \u0275\u0275restoreView(_r4);
       const ctx_r1 = \u0275\u0275nextContext();
@@ -66056,10 +66081,10 @@ var FormSupportRequestComponent = class _FormSupportRequestComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _FormSupportRequestComponent, selectors: [["app-form-support-request"]], inputs: { error: "error", error_description: "error_description", brand_id: "brand_id", portal_id: "portal_id", endpoint_id: "endpoint_id", org_connection_id: "org_connection_id", vault_profile_connection_id: "vault_profile_connection_id", external_id: "external_id", external_state: "external_state", request_id: "request_id" }, standalone: false, decls: 4, vars: 2, consts: [["requestSuccess", ""], ["supportRequestForm", "ngForm"], [1, "vault-page-shell"], ["class", "mx-auto max-w-3xl space-y-6", 4, "ngIf", "ngIfElse"], [1, "mx-auto", "max-w-3xl", "space-y-6"], [1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-6", 3, "ngSubmit"], [1, "rounded-2xl", "border", "border-blue-200", "bg-blue-50", "px-4", "py-4", "text-sm", "text-slate-700"], [1, "font-semibold", "text-slate-900"], [1, "mt-1"], ["class", "rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700", 4, "ngIf"], ["class", "rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900", 4, "ngIf"], [1, "grid", "gap-5"], ["for", "support-email", 1, "vault-field-label"], [1, "text-red-500"], ["id", "support-email", "name", "email", "placeholder", "you@example.com", "required", "", "type", "email", 1, "vault-input", 3, "ngModelChange", "ngModel"], ["for", "support-health-system", 1, "vault-field-label"], ["id", "support-health-system", "name", "healthsystem_name", "placeholder", "Mayo Clinic, Cleveland Clinic, Kaiser Permanente", "required", "", "type", "text", 1, "vault-input", 3, "ngModelChange", "ngModel"], ["for", "support-description", 1, "vault-field-label"], ["id", "support-description", "name", "request_content", "placeholder", "Please share the provider, what you clicked, and the error or behavior you saw.", "required", "", 1, "vault-input", "min-h-[160px]", 3, "ngModelChange", "ngModel"], ["type", "submit", 1, "vault-primary-button", "w-full", "justify-center", "px-4", "py-3", "disabled:cursor-not-allowed", "disabled:opacity-60", 3, "disabled"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx", 4, "ngIf"], [1, "rounded-2xl", "border", "border-red-200", "bg-red-50", "px-4", "py-4", "text-sm", "text-red-700"], [1, "font-semibold", "text-red-800"], [1, "rounded-2xl", "border", "border-amber-200", "bg-amber-50", "px-4", "py-4", "text-sm", "text-amber-900"], [1, "font-semibold"], [1, "mt-2", "space-y-1", "text-amber-800"], [4, "ngIf"], [1, "font-medium"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx"], [1, "mx-auto", "max-w-2xl"], [1, "vault-panel", "px-6", "py-10", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-6"], [1, "mx-auto", "flex", "h-16", "w-16", "items-center", "justify-center", "rounded-full", "bg-[#5B47FB]/10"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2.5", "viewBox", "0 0 24 24", 1, "h-8", "w-8", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 13l4 4L19 7"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900"], [1, "mx-auto", "max-w-lg", "text-sm", "leading-7", "text-slate-500"], [1, "flex", "justify-center"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click"]], template: function FormSupportRequestComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _FormSupportRequestComponent, selectors: [["app-form-support-request"]], inputs: { error: "error", error_description: "error_description", brand_id: "brand_id", portal_id: "portal_id", endpoint_id: "endpoint_id", org_connection_id: "org_connection_id", vault_profile_connection_id: "vault_profile_connection_id", external_id: "external_id", external_state: "external_state", request_id: "request_id" }, standalone: false, decls: 4, vars: 2, consts: [["requestSuccess", ""], ["supportRequestForm", "ngForm"], [1, "vault-page-shell"], ["class", "space-y-6", 4, "ngIf", "ngIfElse"], [1, "space-y-6"], [1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-8", 3, "ngSubmit"], [1, "vault-card-title"], [1, "vault-card-copy"], ["class", "rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700", 4, "ngIf"], [1, "grid", "gap-5", "md:grid-cols-2"], ["for", "support-email", 1, "vault-field-label"], [1, "text-red-500"], ["id", "support-email", "name", "email", "placeholder", "you@example.com", "required", "", "type", "email", 1, "vault-input", 3, "ngModelChange", "ngModel"], ["for", "support-health-system", 1, "vault-field-label"], ["id", "support-health-system", "name", "healthsystem_name", "placeholder", "Mayo Clinic, Cleveland Clinic, Kaiser Permanente", "required", "", "type", "text", 1, "vault-input", 3, "ngModelChange", "ngModel"], ["for", "support-description", 1, "vault-field-label"], ["id", "support-description", "name", "request_content", "placeholder", "Please share the provider, what you clicked, what page you were on, and the error or behavior you saw.", "required", "", 1, "vault-input", "min-h-[220px]", 3, "ngModelChange", "ngModel"], [1, "flex", "justify-end"], ["type", "submit", 1, "vault-primary-button", "min-w-[220px]", "justify-center", "px-5", "py-3", "disabled:cursor-not-allowed", "disabled:opacity-60", 3, "disabled"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx", 4, "ngIf"], [1, "rounded-lg", "bg-[#EEF2FF]", "p-5"], [1, "text-sm", "font-semibold", "uppercase", "tracking-[0.18em]", "text-[#5B47FB]"], [1, "vault-card-title", "mt-3"], [1, "vault-card-copy", "mt-2"], ["class", "rounded-lg border border-amber-200 bg-amber-50 p-5", 4, "ngIf"], [1, "rounded-lg", "bg-slate-50", "p-5"], [1, "font-semibold", "text-slate-900"], [1, "space-y-2", "text-sm", "text-slate-600"], [1, "rounded-2xl", "border", "border-red-200", "bg-red-50", "px-4", "py-4", "text-sm", "text-red-700"], [1, "font-semibold", "text-red-800"], [1, "mt-1"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx"], [1, "rounded-lg", "border", "border-amber-200", "bg-amber-50", "p-5"], [1, "space-y-1"], [1, "font-semibold", "text-amber-900"], [1, "text-sm", "text-amber-800"], [1, "space-y-1", "text-sm", "text-amber-800"], [4, "ngIf"], [1, "font-medium"], [1, "mx-auto", "max-w-2xl"], [1, "vault-panel", "px-6", "py-10", "text-center", "sm:px-10", "sm:py-12"], [1, "mx-auto", "flex", "h-16", "w-16", "items-center", "justify-center", "rounded-full", "bg-[#5B47FB]/10"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2.5", "viewBox", "0 0 24 24", 1, "h-8", "w-8", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 13l4 4L19 7"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900"], [1, "mx-auto", "max-w-lg", "text-sm", "leading-7", "text-slate-500"], [1, "flex", "justify-center"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click"]], template: function FormSupportRequestComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 2);
-        \u0275\u0275template(1, FormSupportRequestComponent_div_1_Template, 47, 8, "div", 3);
+        \u0275\u0275template(1, FormSupportRequestComponent_div_1_Template, 69, 8, "div", 3);
         \u0275\u0275elementEnd();
         \u0275\u0275template(2, FormSupportRequestComponent_ng_template_2_Template, 16, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
       }
@@ -66242,7 +66267,7 @@ var AppComponent = class _AppComponent {
     return this.currentPath.startsWith("/dashboard") || this.currentPath.startsWith("/search") || this.currentPath.startsWith("/brand/");
   }
   get isWideSurfaceRoute() {
-    return this.isDashboardChromeRoute || this.currentPath.startsWith("/auth/identity/verification");
+    return this.isDashboardChromeRoute || this.currentPath.startsWith("/auth/identity/verification") || this.currentPath.startsWith("/form");
   }
   get activeDashboardSection() {
     if (this.currentPath.startsWith("/dashboard/settings")) {
