@@ -4765,7 +4765,7 @@ var require_lodash = __commonJS({
           }
           return result2 + omission;
         }
-        function unescape(string) {
+        function unescape2(string) {
           string = toString(string);
           return string && reHasEscapedHtml.test(string) ? string.replace(reEscapedHtml, unescapeHtmlChar) : string;
         }
@@ -5283,7 +5283,7 @@ var require_lodash = __commonJS({
         lodash.trimEnd = trimEnd;
         lodash.trimStart = trimStart;
         lodash.truncate = truncate;
-        lodash.unescape = unescape;
+        lodash.unescape = unescape2;
         lodash.uniqueId = uniqueId;
         lodash.upperCase = upperCase;
         lodash.upperFirst = upperFirst;
@@ -5481,6 +5481,2080 @@ var require_lodash = __commonJS({
         root._ = _;
       }
     }).call(exports);
+  }
+});
+
+// node_modules/qrcode/lib/can-promise.js
+var require_can_promise = __commonJS({
+  "node_modules/qrcode/lib/can-promise.js"(exports, module) {
+    "use strict";
+    module.exports = function() {
+      return typeof Promise === "function" && Promise.prototype && Promise.prototype.then;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/utils.js
+var require_utils = __commonJS({
+  "node_modules/qrcode/lib/core/utils.js"(exports) {
+    "use strict";
+    var toSJISFunction;
+    var CODEWORDS_COUNT = [
+      0,
+      // Not used
+      26,
+      44,
+      70,
+      100,
+      134,
+      172,
+      196,
+      242,
+      292,
+      346,
+      404,
+      466,
+      532,
+      581,
+      655,
+      733,
+      815,
+      901,
+      991,
+      1085,
+      1156,
+      1258,
+      1364,
+      1474,
+      1588,
+      1706,
+      1828,
+      1921,
+      2051,
+      2185,
+      2323,
+      2465,
+      2611,
+      2761,
+      2876,
+      3034,
+      3196,
+      3362,
+      3532,
+      3706
+    ];
+    exports.getSymbolSize = function getSymbolSize(version) {
+      if (!version) throw new Error('"version" cannot be null or undefined');
+      if (version < 1 || version > 40) throw new Error('"version" should be in range from 1 to 40');
+      return version * 4 + 17;
+    };
+    exports.getSymbolTotalCodewords = function getSymbolTotalCodewords(version) {
+      return CODEWORDS_COUNT[version];
+    };
+    exports.getBCHDigit = function(data) {
+      let digit = 0;
+      while (data !== 0) {
+        digit++;
+        data >>>= 1;
+      }
+      return digit;
+    };
+    exports.setToSJISFunction = function setToSJISFunction(f) {
+      if (typeof f !== "function") {
+        throw new Error('"toSJISFunc" is not a valid function.');
+      }
+      toSJISFunction = f;
+    };
+    exports.isKanjiModeEnabled = function() {
+      return typeof toSJISFunction !== "undefined";
+    };
+    exports.toSJIS = function toSJIS(kanji) {
+      return toSJISFunction(kanji);
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/error-correction-level.js
+var require_error_correction_level = __commonJS({
+  "node_modules/qrcode/lib/core/error-correction-level.js"(exports) {
+    "use strict";
+    exports.L = {
+      bit: 1
+    };
+    exports.M = {
+      bit: 0
+    };
+    exports.Q = {
+      bit: 3
+    };
+    exports.H = {
+      bit: 2
+    };
+    function fromString(string) {
+      if (typeof string !== "string") {
+        throw new Error("Param is not a string");
+      }
+      const lcStr = string.toLowerCase();
+      switch (lcStr) {
+        case "l":
+        case "low":
+          return exports.L;
+        case "m":
+        case "medium":
+          return exports.M;
+        case "q":
+        case "quartile":
+          return exports.Q;
+        case "h":
+        case "high":
+          return exports.H;
+        default:
+          throw new Error("Unknown EC Level: " + string);
+      }
+    }
+    exports.isValid = function isValid(level) {
+      return level && typeof level.bit !== "undefined" && level.bit >= 0 && level.bit < 4;
+    };
+    exports.from = function from2(value, defaultValue) {
+      if (exports.isValid(value)) {
+        return value;
+      }
+      try {
+        return fromString(value);
+      } catch (e) {
+        return defaultValue;
+      }
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/bit-buffer.js
+var require_bit_buffer = __commonJS({
+  "node_modules/qrcode/lib/core/bit-buffer.js"(exports, module) {
+    "use strict";
+    function BitBuffer() {
+      this.buffer = [];
+      this.length = 0;
+    }
+    BitBuffer.prototype = {
+      get: function(index) {
+        const bufIndex = Math.floor(index / 8);
+        return (this.buffer[bufIndex] >>> 7 - index % 8 & 1) === 1;
+      },
+      put: function(num, length) {
+        for (let i = 0; i < length; i++) {
+          this.putBit((num >>> length - i - 1 & 1) === 1);
+        }
+      },
+      getLengthInBits: function() {
+        return this.length;
+      },
+      putBit: function(bit) {
+        const bufIndex = Math.floor(this.length / 8);
+        if (this.buffer.length <= bufIndex) {
+          this.buffer.push(0);
+        }
+        if (bit) {
+          this.buffer[bufIndex] |= 128 >>> this.length % 8;
+        }
+        this.length++;
+      }
+    };
+    module.exports = BitBuffer;
+  }
+});
+
+// node_modules/qrcode/lib/core/bit-matrix.js
+var require_bit_matrix = __commonJS({
+  "node_modules/qrcode/lib/core/bit-matrix.js"(exports, module) {
+    "use strict";
+    function BitMatrix(size) {
+      if (!size || size < 1) {
+        throw new Error("BitMatrix size must be defined and greater than 0");
+      }
+      this.size = size;
+      this.data = new Uint8Array(size * size);
+      this.reservedBit = new Uint8Array(size * size);
+    }
+    BitMatrix.prototype.set = function(row, col, value, reserved) {
+      const index = row * this.size + col;
+      this.data[index] = value;
+      if (reserved) this.reservedBit[index] = true;
+    };
+    BitMatrix.prototype.get = function(row, col) {
+      return this.data[row * this.size + col];
+    };
+    BitMatrix.prototype.xor = function(row, col, value) {
+      this.data[row * this.size + col] ^= value;
+    };
+    BitMatrix.prototype.isReserved = function(row, col) {
+      return this.reservedBit[row * this.size + col];
+    };
+    module.exports = BitMatrix;
+  }
+});
+
+// node_modules/qrcode/lib/core/alignment-pattern.js
+var require_alignment_pattern = __commonJS({
+  "node_modules/qrcode/lib/core/alignment-pattern.js"(exports) {
+    "use strict";
+    var getSymbolSize = require_utils().getSymbolSize;
+    exports.getRowColCoords = function getRowColCoords(version) {
+      if (version === 1) return [];
+      const posCount = Math.floor(version / 7) + 2;
+      const size = getSymbolSize(version);
+      const intervals = size === 145 ? 26 : Math.ceil((size - 13) / (2 * posCount - 2)) * 2;
+      const positions = [size - 7];
+      for (let i = 1; i < posCount - 1; i++) {
+        positions[i] = positions[i - 1] - intervals;
+      }
+      positions.push(6);
+      return positions.reverse();
+    };
+    exports.getPositions = function getPositions(version) {
+      const coords = [];
+      const pos = exports.getRowColCoords(version);
+      const posLength = pos.length;
+      for (let i = 0; i < posLength; i++) {
+        for (let j = 0; j < posLength; j++) {
+          if (i === 0 && j === 0 || // top-left
+          i === 0 && j === posLength - 1 || // bottom-left
+          i === posLength - 1 && j === 0) {
+            continue;
+          }
+          coords.push([pos[i], pos[j]]);
+        }
+      }
+      return coords;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/finder-pattern.js
+var require_finder_pattern = __commonJS({
+  "node_modules/qrcode/lib/core/finder-pattern.js"(exports) {
+    "use strict";
+    var getSymbolSize = require_utils().getSymbolSize;
+    var FINDER_PATTERN_SIZE = 7;
+    exports.getPositions = function getPositions(version) {
+      const size = getSymbolSize(version);
+      return [
+        // top-left
+        [0, 0],
+        // top-right
+        [size - FINDER_PATTERN_SIZE, 0],
+        // bottom-left
+        [0, size - FINDER_PATTERN_SIZE]
+      ];
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/mask-pattern.js
+var require_mask_pattern = __commonJS({
+  "node_modules/qrcode/lib/core/mask-pattern.js"(exports) {
+    "use strict";
+    exports.Patterns = {
+      PATTERN000: 0,
+      PATTERN001: 1,
+      PATTERN010: 2,
+      PATTERN011: 3,
+      PATTERN100: 4,
+      PATTERN101: 5,
+      PATTERN110: 6,
+      PATTERN111: 7
+    };
+    var PenaltyScores = {
+      N1: 3,
+      N2: 3,
+      N3: 40,
+      N4: 10
+    };
+    exports.isValid = function isValid(mask) {
+      return mask != null && mask !== "" && !isNaN(mask) && mask >= 0 && mask <= 7;
+    };
+    exports.from = function from2(value) {
+      return exports.isValid(value) ? parseInt(value, 10) : void 0;
+    };
+    exports.getPenaltyN1 = function getPenaltyN1(data) {
+      const size = data.size;
+      let points = 0;
+      let sameCountCol = 0;
+      let sameCountRow = 0;
+      let lastCol = null;
+      let lastRow = null;
+      for (let row = 0; row < size; row++) {
+        sameCountCol = sameCountRow = 0;
+        lastCol = lastRow = null;
+        for (let col = 0; col < size; col++) {
+          let module2 = data.get(row, col);
+          if (module2 === lastCol) {
+            sameCountCol++;
+          } else {
+            if (sameCountCol >= 5) points += PenaltyScores.N1 + (sameCountCol - 5);
+            lastCol = module2;
+            sameCountCol = 1;
+          }
+          module2 = data.get(col, row);
+          if (module2 === lastRow) {
+            sameCountRow++;
+          } else {
+            if (sameCountRow >= 5) points += PenaltyScores.N1 + (sameCountRow - 5);
+            lastRow = module2;
+            sameCountRow = 1;
+          }
+        }
+        if (sameCountCol >= 5) points += PenaltyScores.N1 + (sameCountCol - 5);
+        if (sameCountRow >= 5) points += PenaltyScores.N1 + (sameCountRow - 5);
+      }
+      return points;
+    };
+    exports.getPenaltyN2 = function getPenaltyN2(data) {
+      const size = data.size;
+      let points = 0;
+      for (let row = 0; row < size - 1; row++) {
+        for (let col = 0; col < size - 1; col++) {
+          const last4 = data.get(row, col) + data.get(row, col + 1) + data.get(row + 1, col) + data.get(row + 1, col + 1);
+          if (last4 === 4 || last4 === 0) points++;
+        }
+      }
+      return points * PenaltyScores.N2;
+    };
+    exports.getPenaltyN3 = function getPenaltyN3(data) {
+      const size = data.size;
+      let points = 0;
+      let bitsCol = 0;
+      let bitsRow = 0;
+      for (let row = 0; row < size; row++) {
+        bitsCol = bitsRow = 0;
+        for (let col = 0; col < size; col++) {
+          bitsCol = bitsCol << 1 & 2047 | data.get(row, col);
+          if (col >= 10 && (bitsCol === 1488 || bitsCol === 93)) points++;
+          bitsRow = bitsRow << 1 & 2047 | data.get(col, row);
+          if (col >= 10 && (bitsRow === 1488 || bitsRow === 93)) points++;
+        }
+      }
+      return points * PenaltyScores.N3;
+    };
+    exports.getPenaltyN4 = function getPenaltyN4(data) {
+      let darkCount = 0;
+      const modulesCount = data.data.length;
+      for (let i = 0; i < modulesCount; i++) darkCount += data.data[i];
+      const k = Math.abs(Math.ceil(darkCount * 100 / modulesCount / 5) - 10);
+      return k * PenaltyScores.N4;
+    };
+    function getMaskAt(maskPattern, i, j) {
+      switch (maskPattern) {
+        case exports.Patterns.PATTERN000:
+          return (i + j) % 2 === 0;
+        case exports.Patterns.PATTERN001:
+          return i % 2 === 0;
+        case exports.Patterns.PATTERN010:
+          return j % 3 === 0;
+        case exports.Patterns.PATTERN011:
+          return (i + j) % 3 === 0;
+        case exports.Patterns.PATTERN100:
+          return (Math.floor(i / 2) + Math.floor(j / 3)) % 2 === 0;
+        case exports.Patterns.PATTERN101:
+          return i * j % 2 + i * j % 3 === 0;
+        case exports.Patterns.PATTERN110:
+          return (i * j % 2 + i * j % 3) % 2 === 0;
+        case exports.Patterns.PATTERN111:
+          return (i * j % 3 + (i + j) % 2) % 2 === 0;
+        default:
+          throw new Error("bad maskPattern:" + maskPattern);
+      }
+    }
+    exports.applyMask = function applyMask(pattern, data) {
+      const size = data.size;
+      for (let col = 0; col < size; col++) {
+        for (let row = 0; row < size; row++) {
+          if (data.isReserved(row, col)) continue;
+          data.xor(row, col, getMaskAt(pattern, row, col));
+        }
+      }
+    };
+    exports.getBestMask = function getBestMask(data, setupFormatFunc) {
+      const numPatterns = Object.keys(exports.Patterns).length;
+      let bestPattern = 0;
+      let lowerPenalty = Infinity;
+      for (let p2 = 0; p2 < numPatterns; p2++) {
+        setupFormatFunc(p2);
+        exports.applyMask(p2, data);
+        const penalty = exports.getPenaltyN1(data) + exports.getPenaltyN2(data) + exports.getPenaltyN3(data) + exports.getPenaltyN4(data);
+        exports.applyMask(p2, data);
+        if (penalty < lowerPenalty) {
+          lowerPenalty = penalty;
+          bestPattern = p2;
+        }
+      }
+      return bestPattern;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/error-correction-code.js
+var require_error_correction_code = __commonJS({
+  "node_modules/qrcode/lib/core/error-correction-code.js"(exports) {
+    "use strict";
+    var ECLevel = require_error_correction_level();
+    var EC_BLOCKS_TABLE = [
+      // L  M  Q  H
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      2,
+      1,
+      2,
+      2,
+      4,
+      1,
+      2,
+      4,
+      4,
+      2,
+      4,
+      4,
+      4,
+      2,
+      4,
+      6,
+      5,
+      2,
+      4,
+      6,
+      6,
+      2,
+      5,
+      8,
+      8,
+      4,
+      5,
+      8,
+      8,
+      4,
+      5,
+      8,
+      11,
+      4,
+      8,
+      10,
+      11,
+      4,
+      9,
+      12,
+      16,
+      4,
+      9,
+      16,
+      16,
+      6,
+      10,
+      12,
+      18,
+      6,
+      10,
+      17,
+      16,
+      6,
+      11,
+      16,
+      19,
+      6,
+      13,
+      18,
+      21,
+      7,
+      14,
+      21,
+      25,
+      8,
+      16,
+      20,
+      25,
+      8,
+      17,
+      23,
+      25,
+      9,
+      17,
+      23,
+      34,
+      9,
+      18,
+      25,
+      30,
+      10,
+      20,
+      27,
+      32,
+      12,
+      21,
+      29,
+      35,
+      12,
+      23,
+      34,
+      37,
+      12,
+      25,
+      34,
+      40,
+      13,
+      26,
+      35,
+      42,
+      14,
+      28,
+      38,
+      45,
+      15,
+      29,
+      40,
+      48,
+      16,
+      31,
+      43,
+      51,
+      17,
+      33,
+      45,
+      54,
+      18,
+      35,
+      48,
+      57,
+      19,
+      37,
+      51,
+      60,
+      19,
+      38,
+      53,
+      63,
+      20,
+      40,
+      56,
+      66,
+      21,
+      43,
+      59,
+      70,
+      22,
+      45,
+      62,
+      74,
+      24,
+      47,
+      65,
+      77,
+      25,
+      49,
+      68,
+      81
+    ];
+    var EC_CODEWORDS_TABLE = [
+      // L  M  Q  H
+      7,
+      10,
+      13,
+      17,
+      10,
+      16,
+      22,
+      28,
+      15,
+      26,
+      36,
+      44,
+      20,
+      36,
+      52,
+      64,
+      26,
+      48,
+      72,
+      88,
+      36,
+      64,
+      96,
+      112,
+      40,
+      72,
+      108,
+      130,
+      48,
+      88,
+      132,
+      156,
+      60,
+      110,
+      160,
+      192,
+      72,
+      130,
+      192,
+      224,
+      80,
+      150,
+      224,
+      264,
+      96,
+      176,
+      260,
+      308,
+      104,
+      198,
+      288,
+      352,
+      120,
+      216,
+      320,
+      384,
+      132,
+      240,
+      360,
+      432,
+      144,
+      280,
+      408,
+      480,
+      168,
+      308,
+      448,
+      532,
+      180,
+      338,
+      504,
+      588,
+      196,
+      364,
+      546,
+      650,
+      224,
+      416,
+      600,
+      700,
+      224,
+      442,
+      644,
+      750,
+      252,
+      476,
+      690,
+      816,
+      270,
+      504,
+      750,
+      900,
+      300,
+      560,
+      810,
+      960,
+      312,
+      588,
+      870,
+      1050,
+      336,
+      644,
+      952,
+      1110,
+      360,
+      700,
+      1020,
+      1200,
+      390,
+      728,
+      1050,
+      1260,
+      420,
+      784,
+      1140,
+      1350,
+      450,
+      812,
+      1200,
+      1440,
+      480,
+      868,
+      1290,
+      1530,
+      510,
+      924,
+      1350,
+      1620,
+      540,
+      980,
+      1440,
+      1710,
+      570,
+      1036,
+      1530,
+      1800,
+      570,
+      1064,
+      1590,
+      1890,
+      600,
+      1120,
+      1680,
+      1980,
+      630,
+      1204,
+      1770,
+      2100,
+      660,
+      1260,
+      1860,
+      2220,
+      720,
+      1316,
+      1950,
+      2310,
+      750,
+      1372,
+      2040,
+      2430
+    ];
+    exports.getBlocksCount = function getBlocksCount(version, errorCorrectionLevel) {
+      switch (errorCorrectionLevel) {
+        case ECLevel.L:
+          return EC_BLOCKS_TABLE[(version - 1) * 4 + 0];
+        case ECLevel.M:
+          return EC_BLOCKS_TABLE[(version - 1) * 4 + 1];
+        case ECLevel.Q:
+          return EC_BLOCKS_TABLE[(version - 1) * 4 + 2];
+        case ECLevel.H:
+          return EC_BLOCKS_TABLE[(version - 1) * 4 + 3];
+        default:
+          return void 0;
+      }
+    };
+    exports.getTotalCodewordsCount = function getTotalCodewordsCount(version, errorCorrectionLevel) {
+      switch (errorCorrectionLevel) {
+        case ECLevel.L:
+          return EC_CODEWORDS_TABLE[(version - 1) * 4 + 0];
+        case ECLevel.M:
+          return EC_CODEWORDS_TABLE[(version - 1) * 4 + 1];
+        case ECLevel.Q:
+          return EC_CODEWORDS_TABLE[(version - 1) * 4 + 2];
+        case ECLevel.H:
+          return EC_CODEWORDS_TABLE[(version - 1) * 4 + 3];
+        default:
+          return void 0;
+      }
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/galois-field.js
+var require_galois_field = __commonJS({
+  "node_modules/qrcode/lib/core/galois-field.js"(exports) {
+    "use strict";
+    var EXP_TABLE = new Uint8Array(512);
+    var LOG_TABLE = new Uint8Array(256);
+    (function initTables() {
+      let x2 = 1;
+      for (let i = 0; i < 255; i++) {
+        EXP_TABLE[i] = x2;
+        LOG_TABLE[x2] = i;
+        x2 <<= 1;
+        if (x2 & 256) {
+          x2 ^= 285;
+        }
+      }
+      for (let i = 255; i < 512; i++) {
+        EXP_TABLE[i] = EXP_TABLE[i - 255];
+      }
+    })();
+    exports.log = function log(n) {
+      if (n < 1) throw new Error("log(" + n + ")");
+      return LOG_TABLE[n];
+    };
+    exports.exp = function exp(n) {
+      return EXP_TABLE[n];
+    };
+    exports.mul = function mul(x2, y) {
+      if (x2 === 0 || y === 0) return 0;
+      return EXP_TABLE[LOG_TABLE[x2] + LOG_TABLE[y]];
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/polynomial.js
+var require_polynomial = __commonJS({
+  "node_modules/qrcode/lib/core/polynomial.js"(exports) {
+    "use strict";
+    var GF = require_galois_field();
+    exports.mul = function mul(p1, p2) {
+      const coeff = new Uint8Array(p1.length + p2.length - 1);
+      for (let i = 0; i < p1.length; i++) {
+        for (let j = 0; j < p2.length; j++) {
+          coeff[i + j] ^= GF.mul(p1[i], p2[j]);
+        }
+      }
+      return coeff;
+    };
+    exports.mod = function mod(divident, divisor) {
+      let result = new Uint8Array(divident);
+      while (result.length - divisor.length >= 0) {
+        const coeff = result[0];
+        for (let i = 0; i < divisor.length; i++) {
+          result[i] ^= GF.mul(divisor[i], coeff);
+        }
+        let offset = 0;
+        while (offset < result.length && result[offset] === 0) offset++;
+        result = result.slice(offset);
+      }
+      return result;
+    };
+    exports.generateECPolynomial = function generateECPolynomial(degree) {
+      let poly = new Uint8Array([1]);
+      for (let i = 0; i < degree; i++) {
+        poly = exports.mul(poly, new Uint8Array([1, GF.exp(i)]));
+      }
+      return poly;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/reed-solomon-encoder.js
+var require_reed_solomon_encoder = __commonJS({
+  "node_modules/qrcode/lib/core/reed-solomon-encoder.js"(exports, module) {
+    "use strict";
+    var Polynomial = require_polynomial();
+    function ReedSolomonEncoder(degree) {
+      this.genPoly = void 0;
+      this.degree = degree;
+      if (this.degree) this.initialize(this.degree);
+    }
+    ReedSolomonEncoder.prototype.initialize = function initialize(degree) {
+      this.degree = degree;
+      this.genPoly = Polynomial.generateECPolynomial(this.degree);
+    };
+    ReedSolomonEncoder.prototype.encode = function encode(data) {
+      if (!this.genPoly) {
+        throw new Error("Encoder not initialized");
+      }
+      const paddedData = new Uint8Array(data.length + this.degree);
+      paddedData.set(data);
+      const remainder = Polynomial.mod(paddedData, this.genPoly);
+      const start = this.degree - remainder.length;
+      if (start > 0) {
+        const buff = new Uint8Array(this.degree);
+        buff.set(remainder, start);
+        return buff;
+      }
+      return remainder;
+    };
+    module.exports = ReedSolomonEncoder;
+  }
+});
+
+// node_modules/qrcode/lib/core/version-check.js
+var require_version_check = __commonJS({
+  "node_modules/qrcode/lib/core/version-check.js"(exports) {
+    "use strict";
+    exports.isValid = function isValid(version) {
+      return !isNaN(version) && version >= 1 && version <= 40;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/regex.js
+var require_regex = __commonJS({
+  "node_modules/qrcode/lib/core/regex.js"(exports) {
+    "use strict";
+    var numeric = "[0-9]+";
+    var alphanumeric = "[A-Z $%*+\\-./:]+";
+    var kanji = "(?:[u3000-u303F]|[u3040-u309F]|[u30A0-u30FF]|[uFF00-uFFEF]|[u4E00-u9FAF]|[u2605-u2606]|[u2190-u2195]|u203B|[u2010u2015u2018u2019u2025u2026u201Cu201Du2225u2260]|[u0391-u0451]|[u00A7u00A8u00B1u00B4u00D7u00F7])+";
+    kanji = kanji.replace(/u/g, "\\u");
+    var byte = "(?:(?![A-Z0-9 $%*+\\-./:]|" + kanji + ")(?:.|[\r\n]))+";
+    exports.KANJI = new RegExp(kanji, "g");
+    exports.BYTE_KANJI = new RegExp("[^A-Z0-9 $%*+\\-./:]+", "g");
+    exports.BYTE = new RegExp(byte, "g");
+    exports.NUMERIC = new RegExp(numeric, "g");
+    exports.ALPHANUMERIC = new RegExp(alphanumeric, "g");
+    var TEST_KANJI = new RegExp("^" + kanji + "$");
+    var TEST_NUMERIC = new RegExp("^" + numeric + "$");
+    var TEST_ALPHANUMERIC = new RegExp("^[A-Z0-9 $%*+\\-./:]+$");
+    exports.testKanji = function testKanji(str) {
+      return TEST_KANJI.test(str);
+    };
+    exports.testNumeric = function testNumeric(str) {
+      return TEST_NUMERIC.test(str);
+    };
+    exports.testAlphanumeric = function testAlphanumeric(str) {
+      return TEST_ALPHANUMERIC.test(str);
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/mode.js
+var require_mode = __commonJS({
+  "node_modules/qrcode/lib/core/mode.js"(exports) {
+    "use strict";
+    var VersionCheck = require_version_check();
+    var Regex = require_regex();
+    exports.NUMERIC = {
+      id: "Numeric",
+      bit: 1 << 0,
+      ccBits: [10, 12, 14]
+    };
+    exports.ALPHANUMERIC = {
+      id: "Alphanumeric",
+      bit: 1 << 1,
+      ccBits: [9, 11, 13]
+    };
+    exports.BYTE = {
+      id: "Byte",
+      bit: 1 << 2,
+      ccBits: [8, 16, 16]
+    };
+    exports.KANJI = {
+      id: "Kanji",
+      bit: 1 << 3,
+      ccBits: [8, 10, 12]
+    };
+    exports.MIXED = {
+      bit: -1
+    };
+    exports.getCharCountIndicator = function getCharCountIndicator(mode, version) {
+      if (!mode.ccBits) throw new Error("Invalid mode: " + mode);
+      if (!VersionCheck.isValid(version)) {
+        throw new Error("Invalid version: " + version);
+      }
+      if (version >= 1 && version < 10) return mode.ccBits[0];
+      else if (version < 27) return mode.ccBits[1];
+      return mode.ccBits[2];
+    };
+    exports.getBestModeForData = function getBestModeForData(dataStr) {
+      if (Regex.testNumeric(dataStr)) return exports.NUMERIC;
+      else if (Regex.testAlphanumeric(dataStr)) return exports.ALPHANUMERIC;
+      else if (Regex.testKanji(dataStr)) return exports.KANJI;
+      else return exports.BYTE;
+    };
+    exports.toString = function toString(mode) {
+      if (mode && mode.id) return mode.id;
+      throw new Error("Invalid mode");
+    };
+    exports.isValid = function isValid(mode) {
+      return mode && mode.bit && mode.ccBits;
+    };
+    function fromString(string) {
+      if (typeof string !== "string") {
+        throw new Error("Param is not a string");
+      }
+      const lcStr = string.toLowerCase();
+      switch (lcStr) {
+        case "numeric":
+          return exports.NUMERIC;
+        case "alphanumeric":
+          return exports.ALPHANUMERIC;
+        case "kanji":
+          return exports.KANJI;
+        case "byte":
+          return exports.BYTE;
+        default:
+          throw new Error("Unknown mode: " + string);
+      }
+    }
+    exports.from = function from2(value, defaultValue) {
+      if (exports.isValid(value)) {
+        return value;
+      }
+      try {
+        return fromString(value);
+      } catch (e) {
+        return defaultValue;
+      }
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/version.js
+var require_version = __commonJS({
+  "node_modules/qrcode/lib/core/version.js"(exports) {
+    "use strict";
+    var Utils = require_utils();
+    var ECCode = require_error_correction_code();
+    var ECLevel = require_error_correction_level();
+    var Mode = require_mode();
+    var VersionCheck = require_version_check();
+    var G18 = 1 << 12 | 1 << 11 | 1 << 10 | 1 << 9 | 1 << 8 | 1 << 5 | 1 << 2 | 1 << 0;
+    var G18_BCH = Utils.getBCHDigit(G18);
+    function getBestVersionForDataLength(mode, length, errorCorrectionLevel) {
+      for (let currentVersion = 1; currentVersion <= 40; currentVersion++) {
+        if (length <= exports.getCapacity(currentVersion, errorCorrectionLevel, mode)) {
+          return currentVersion;
+        }
+      }
+      return void 0;
+    }
+    function getReservedBitsCount(mode, version) {
+      return Mode.getCharCountIndicator(mode, version) + 4;
+    }
+    function getTotalBitsFromDataArray(segments, version) {
+      let totalBits = 0;
+      segments.forEach(function(data) {
+        const reservedBits = getReservedBitsCount(data.mode, version);
+        totalBits += reservedBits + data.getBitsLength();
+      });
+      return totalBits;
+    }
+    function getBestVersionForMixedData(segments, errorCorrectionLevel) {
+      for (let currentVersion = 1; currentVersion <= 40; currentVersion++) {
+        const length = getTotalBitsFromDataArray(segments, currentVersion);
+        if (length <= exports.getCapacity(currentVersion, errorCorrectionLevel, Mode.MIXED)) {
+          return currentVersion;
+        }
+      }
+      return void 0;
+    }
+    exports.from = function from2(value, defaultValue) {
+      if (VersionCheck.isValid(value)) {
+        return parseInt(value, 10);
+      }
+      return defaultValue;
+    };
+    exports.getCapacity = function getCapacity(version, errorCorrectionLevel, mode) {
+      if (!VersionCheck.isValid(version)) {
+        throw new Error("Invalid QR Code version");
+      }
+      if (typeof mode === "undefined") mode = Mode.BYTE;
+      const totalCodewords = Utils.getSymbolTotalCodewords(version);
+      const ecTotalCodewords = ECCode.getTotalCodewordsCount(version, errorCorrectionLevel);
+      const dataTotalCodewordsBits = (totalCodewords - ecTotalCodewords) * 8;
+      if (mode === Mode.MIXED) return dataTotalCodewordsBits;
+      const usableBits = dataTotalCodewordsBits - getReservedBitsCount(mode, version);
+      switch (mode) {
+        case Mode.NUMERIC:
+          return Math.floor(usableBits / 10 * 3);
+        case Mode.ALPHANUMERIC:
+          return Math.floor(usableBits / 11 * 2);
+        case Mode.KANJI:
+          return Math.floor(usableBits / 13);
+        case Mode.BYTE:
+        default:
+          return Math.floor(usableBits / 8);
+      }
+    };
+    exports.getBestVersionForData = function getBestVersionForData(data, errorCorrectionLevel) {
+      let seg;
+      const ecl = ECLevel.from(errorCorrectionLevel, ECLevel.M);
+      if (Array.isArray(data)) {
+        if (data.length > 1) {
+          return getBestVersionForMixedData(data, ecl);
+        }
+        if (data.length === 0) {
+          return 1;
+        }
+        seg = data[0];
+      } else {
+        seg = data;
+      }
+      return getBestVersionForDataLength(seg.mode, seg.getLength(), ecl);
+    };
+    exports.getEncodedBits = function getEncodedBits(version) {
+      if (!VersionCheck.isValid(version) || version < 7) {
+        throw new Error("Invalid QR Code version");
+      }
+      let d = version << 12;
+      while (Utils.getBCHDigit(d) - G18_BCH >= 0) {
+        d ^= G18 << Utils.getBCHDigit(d) - G18_BCH;
+      }
+      return version << 12 | d;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/format-info.js
+var require_format_info = __commonJS({
+  "node_modules/qrcode/lib/core/format-info.js"(exports) {
+    "use strict";
+    var Utils = require_utils();
+    var G15 = 1 << 10 | 1 << 8 | 1 << 5 | 1 << 4 | 1 << 2 | 1 << 1 | 1 << 0;
+    var G15_MASK = 1 << 14 | 1 << 12 | 1 << 10 | 1 << 4 | 1 << 1;
+    var G15_BCH = Utils.getBCHDigit(G15);
+    exports.getEncodedBits = function getEncodedBits(errorCorrectionLevel, mask) {
+      const data = errorCorrectionLevel.bit << 3 | mask;
+      let d = data << 10;
+      while (Utils.getBCHDigit(d) - G15_BCH >= 0) {
+        d ^= G15 << Utils.getBCHDigit(d) - G15_BCH;
+      }
+      return (data << 10 | d) ^ G15_MASK;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/numeric-data.js
+var require_numeric_data = __commonJS({
+  "node_modules/qrcode/lib/core/numeric-data.js"(exports, module) {
+    "use strict";
+    var Mode = require_mode();
+    function NumericData(data) {
+      this.mode = Mode.NUMERIC;
+      this.data = data.toString();
+    }
+    NumericData.getBitsLength = function getBitsLength(length) {
+      return 10 * Math.floor(length / 3) + (length % 3 ? length % 3 * 3 + 1 : 0);
+    };
+    NumericData.prototype.getLength = function getLength() {
+      return this.data.length;
+    };
+    NumericData.prototype.getBitsLength = function getBitsLength() {
+      return NumericData.getBitsLength(this.data.length);
+    };
+    NumericData.prototype.write = function write(bitBuffer) {
+      let i, group, value;
+      for (i = 0; i + 3 <= this.data.length; i += 3) {
+        group = this.data.substr(i, 3);
+        value = parseInt(group, 10);
+        bitBuffer.put(value, 10);
+      }
+      const remainingNum = this.data.length - i;
+      if (remainingNum > 0) {
+        group = this.data.substr(i);
+        value = parseInt(group, 10);
+        bitBuffer.put(value, remainingNum * 3 + 1);
+      }
+    };
+    module.exports = NumericData;
+  }
+});
+
+// node_modules/qrcode/lib/core/alphanumeric-data.js
+var require_alphanumeric_data = __commonJS({
+  "node_modules/qrcode/lib/core/alphanumeric-data.js"(exports, module) {
+    "use strict";
+    var Mode = require_mode();
+    var ALPHA_NUM_CHARS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " ", "$", "%", "*", "+", "-", ".", "/", ":"];
+    function AlphanumericData(data) {
+      this.mode = Mode.ALPHANUMERIC;
+      this.data = data;
+    }
+    AlphanumericData.getBitsLength = function getBitsLength(length) {
+      return 11 * Math.floor(length / 2) + 6 * (length % 2);
+    };
+    AlphanumericData.prototype.getLength = function getLength() {
+      return this.data.length;
+    };
+    AlphanumericData.prototype.getBitsLength = function getBitsLength() {
+      return AlphanumericData.getBitsLength(this.data.length);
+    };
+    AlphanumericData.prototype.write = function write(bitBuffer) {
+      let i;
+      for (i = 0; i + 2 <= this.data.length; i += 2) {
+        let value = ALPHA_NUM_CHARS.indexOf(this.data[i]) * 45;
+        value += ALPHA_NUM_CHARS.indexOf(this.data[i + 1]);
+        bitBuffer.put(value, 11);
+      }
+      if (this.data.length % 2) {
+        bitBuffer.put(ALPHA_NUM_CHARS.indexOf(this.data[i]), 6);
+      }
+    };
+    module.exports = AlphanumericData;
+  }
+});
+
+// node_modules/qrcode/lib/core/byte-data.js
+var require_byte_data = __commonJS({
+  "node_modules/qrcode/lib/core/byte-data.js"(exports, module) {
+    "use strict";
+    var Mode = require_mode();
+    function ByteData(data) {
+      this.mode = Mode.BYTE;
+      if (typeof data === "string") {
+        this.data = new TextEncoder().encode(data);
+      } else {
+        this.data = new Uint8Array(data);
+      }
+    }
+    ByteData.getBitsLength = function getBitsLength(length) {
+      return length * 8;
+    };
+    ByteData.prototype.getLength = function getLength() {
+      return this.data.length;
+    };
+    ByteData.prototype.getBitsLength = function getBitsLength() {
+      return ByteData.getBitsLength(this.data.length);
+    };
+    ByteData.prototype.write = function(bitBuffer) {
+      for (let i = 0, l = this.data.length; i < l; i++) {
+        bitBuffer.put(this.data[i], 8);
+      }
+    };
+    module.exports = ByteData;
+  }
+});
+
+// node_modules/qrcode/lib/core/kanji-data.js
+var require_kanji_data = __commonJS({
+  "node_modules/qrcode/lib/core/kanji-data.js"(exports, module) {
+    "use strict";
+    var Mode = require_mode();
+    var Utils = require_utils();
+    function KanjiData(data) {
+      this.mode = Mode.KANJI;
+      this.data = data;
+    }
+    KanjiData.getBitsLength = function getBitsLength(length) {
+      return length * 13;
+    };
+    KanjiData.prototype.getLength = function getLength() {
+      return this.data.length;
+    };
+    KanjiData.prototype.getBitsLength = function getBitsLength() {
+      return KanjiData.getBitsLength(this.data.length);
+    };
+    KanjiData.prototype.write = function(bitBuffer) {
+      let i;
+      for (i = 0; i < this.data.length; i++) {
+        let value = Utils.toSJIS(this.data[i]);
+        if (value >= 33088 && value <= 40956) {
+          value -= 33088;
+        } else if (value >= 57408 && value <= 60351) {
+          value -= 49472;
+        } else {
+          throw new Error("Invalid SJIS character: " + this.data[i] + "\nMake sure your charset is UTF-8");
+        }
+        value = (value >>> 8 & 255) * 192 + (value & 255);
+        bitBuffer.put(value, 13);
+      }
+    };
+    module.exports = KanjiData;
+  }
+});
+
+// node_modules/dijkstrajs/dijkstra.js
+var require_dijkstra = __commonJS({
+  "node_modules/dijkstrajs/dijkstra.js"(exports, module) {
+    "use strict";
+    var dijkstra = {
+      single_source_shortest_paths: function(graph, s2, d) {
+        var predecessors = {};
+        var costs = {};
+        costs[s2] = 0;
+        var open = dijkstra.PriorityQueue.make();
+        open.push(s2, 0);
+        var closest, u2, v, cost_of_s_to_u, adjacent_nodes, cost_of_e, cost_of_s_to_u_plus_cost_of_e, cost_of_s_to_v, first_visit;
+        while (!open.empty()) {
+          closest = open.pop();
+          u2 = closest.value;
+          cost_of_s_to_u = closest.cost;
+          adjacent_nodes = graph[u2] || {};
+          for (v in adjacent_nodes) {
+            if (adjacent_nodes.hasOwnProperty(v)) {
+              cost_of_e = adjacent_nodes[v];
+              cost_of_s_to_u_plus_cost_of_e = cost_of_s_to_u + cost_of_e;
+              cost_of_s_to_v = costs[v];
+              first_visit = typeof costs[v] === "undefined";
+              if (first_visit || cost_of_s_to_v > cost_of_s_to_u_plus_cost_of_e) {
+                costs[v] = cost_of_s_to_u_plus_cost_of_e;
+                open.push(v, cost_of_s_to_u_plus_cost_of_e);
+                predecessors[v] = u2;
+              }
+            }
+          }
+        }
+        if (typeof d !== "undefined" && typeof costs[d] === "undefined") {
+          var msg = ["Could not find a path from ", s2, " to ", d, "."].join("");
+          throw new Error(msg);
+        }
+        return predecessors;
+      },
+      extract_shortest_path_from_predecessor_list: function(predecessors, d) {
+        var nodes = [];
+        var u2 = d;
+        var predecessor;
+        while (u2) {
+          nodes.push(u2);
+          predecessor = predecessors[u2];
+          u2 = predecessors[u2];
+        }
+        nodes.reverse();
+        return nodes;
+      },
+      find_path: function(graph, s2, d) {
+        var predecessors = dijkstra.single_source_shortest_paths(graph, s2, d);
+        return dijkstra.extract_shortest_path_from_predecessor_list(predecessors, d);
+      },
+      /**
+       * A very naive priority queue implementation.
+       */
+      PriorityQueue: {
+        make: function(opts) {
+          var T = dijkstra.PriorityQueue, t2 = {}, key;
+          opts = opts || {};
+          for (key in T) {
+            if (T.hasOwnProperty(key)) {
+              t2[key] = T[key];
+            }
+          }
+          t2.queue = [];
+          t2.sorter = opts.sorter || T.default_sorter;
+          return t2;
+        },
+        default_sorter: function(a, b) {
+          return a.cost - b.cost;
+        },
+        /**
+         * Add a new item to the queue and ensure the highest priority element
+         * is at the front of the queue.
+         */
+        push: function(value, cost) {
+          var item = {
+            value,
+            cost
+          };
+          this.queue.push(item);
+          this.queue.sort(this.sorter);
+        },
+        /**
+         * Return the highest priority element in the queue.
+         */
+        pop: function() {
+          return this.queue.shift();
+        },
+        empty: function() {
+          return this.queue.length === 0;
+        }
+      }
+    };
+    if (typeof module !== "undefined") {
+      module.exports = dijkstra;
+    }
+  }
+});
+
+// node_modules/qrcode/lib/core/segments.js
+var require_segments = __commonJS({
+  "node_modules/qrcode/lib/core/segments.js"(exports) {
+    "use strict";
+    var Mode = require_mode();
+    var NumericData = require_numeric_data();
+    var AlphanumericData = require_alphanumeric_data();
+    var ByteData = require_byte_data();
+    var KanjiData = require_kanji_data();
+    var Regex = require_regex();
+    var Utils = require_utils();
+    var dijkstra = require_dijkstra();
+    function getStringByteLength(str) {
+      return unescape(encodeURIComponent(str)).length;
+    }
+    function getSegments(regex, mode, str) {
+      const segments = [];
+      let result;
+      while ((result = regex.exec(str)) !== null) {
+        segments.push({
+          data: result[0],
+          index: result.index,
+          mode,
+          length: result[0].length
+        });
+      }
+      return segments;
+    }
+    function getSegmentsFromString(dataStr) {
+      const numSegs = getSegments(Regex.NUMERIC, Mode.NUMERIC, dataStr);
+      const alphaNumSegs = getSegments(Regex.ALPHANUMERIC, Mode.ALPHANUMERIC, dataStr);
+      let byteSegs;
+      let kanjiSegs;
+      if (Utils.isKanjiModeEnabled()) {
+        byteSegs = getSegments(Regex.BYTE, Mode.BYTE, dataStr);
+        kanjiSegs = getSegments(Regex.KANJI, Mode.KANJI, dataStr);
+      } else {
+        byteSegs = getSegments(Regex.BYTE_KANJI, Mode.BYTE, dataStr);
+        kanjiSegs = [];
+      }
+      const segs = numSegs.concat(alphaNumSegs, byteSegs, kanjiSegs);
+      return segs.sort(function(s1, s2) {
+        return s1.index - s2.index;
+      }).map(function(obj) {
+        return {
+          data: obj.data,
+          mode: obj.mode,
+          length: obj.length
+        };
+      });
+    }
+    function getSegmentBitsLength(length, mode) {
+      switch (mode) {
+        case Mode.NUMERIC:
+          return NumericData.getBitsLength(length);
+        case Mode.ALPHANUMERIC:
+          return AlphanumericData.getBitsLength(length);
+        case Mode.KANJI:
+          return KanjiData.getBitsLength(length);
+        case Mode.BYTE:
+          return ByteData.getBitsLength(length);
+      }
+    }
+    function mergeSegments(segs) {
+      return segs.reduce(function(acc, curr) {
+        const prevSeg = acc.length - 1 >= 0 ? acc[acc.length - 1] : null;
+        if (prevSeg && prevSeg.mode === curr.mode) {
+          acc[acc.length - 1].data += curr.data;
+          return acc;
+        }
+        acc.push(curr);
+        return acc;
+      }, []);
+    }
+    function buildNodes(segs) {
+      const nodes = [];
+      for (let i = 0; i < segs.length; i++) {
+        const seg = segs[i];
+        switch (seg.mode) {
+          case Mode.NUMERIC:
+            nodes.push([seg, {
+              data: seg.data,
+              mode: Mode.ALPHANUMERIC,
+              length: seg.length
+            }, {
+              data: seg.data,
+              mode: Mode.BYTE,
+              length: seg.length
+            }]);
+            break;
+          case Mode.ALPHANUMERIC:
+            nodes.push([seg, {
+              data: seg.data,
+              mode: Mode.BYTE,
+              length: seg.length
+            }]);
+            break;
+          case Mode.KANJI:
+            nodes.push([seg, {
+              data: seg.data,
+              mode: Mode.BYTE,
+              length: getStringByteLength(seg.data)
+            }]);
+            break;
+          case Mode.BYTE:
+            nodes.push([{
+              data: seg.data,
+              mode: Mode.BYTE,
+              length: getStringByteLength(seg.data)
+            }]);
+        }
+      }
+      return nodes;
+    }
+    function buildGraph(nodes, version) {
+      const table = {};
+      const graph = {
+        start: {}
+      };
+      let prevNodeIds = ["start"];
+      for (let i = 0; i < nodes.length; i++) {
+        const nodeGroup = nodes[i];
+        const currentNodeIds = [];
+        for (let j = 0; j < nodeGroup.length; j++) {
+          const node = nodeGroup[j];
+          const key = "" + i + j;
+          currentNodeIds.push(key);
+          table[key] = {
+            node,
+            lastCount: 0
+          };
+          graph[key] = {};
+          for (let n = 0; n < prevNodeIds.length; n++) {
+            const prevNodeId = prevNodeIds[n];
+            if (table[prevNodeId] && table[prevNodeId].node.mode === node.mode) {
+              graph[prevNodeId][key] = getSegmentBitsLength(table[prevNodeId].lastCount + node.length, node.mode) - getSegmentBitsLength(table[prevNodeId].lastCount, node.mode);
+              table[prevNodeId].lastCount += node.length;
+            } else {
+              if (table[prevNodeId]) table[prevNodeId].lastCount = node.length;
+              graph[prevNodeId][key] = getSegmentBitsLength(node.length, node.mode) + 4 + Mode.getCharCountIndicator(node.mode, version);
+            }
+          }
+        }
+        prevNodeIds = currentNodeIds;
+      }
+      for (let n = 0; n < prevNodeIds.length; n++) {
+        graph[prevNodeIds[n]].end = 0;
+      }
+      return {
+        map: graph,
+        table
+      };
+    }
+    function buildSingleSegment(data, modesHint) {
+      let mode;
+      const bestMode = Mode.getBestModeForData(data);
+      mode = Mode.from(modesHint, bestMode);
+      if (mode !== Mode.BYTE && mode.bit < bestMode.bit) {
+        throw new Error('"' + data + '" cannot be encoded with mode ' + Mode.toString(mode) + ".\n Suggested mode is: " + Mode.toString(bestMode));
+      }
+      if (mode === Mode.KANJI && !Utils.isKanjiModeEnabled()) {
+        mode = Mode.BYTE;
+      }
+      switch (mode) {
+        case Mode.NUMERIC:
+          return new NumericData(data);
+        case Mode.ALPHANUMERIC:
+          return new AlphanumericData(data);
+        case Mode.KANJI:
+          return new KanjiData(data);
+        case Mode.BYTE:
+          return new ByteData(data);
+      }
+    }
+    exports.fromArray = function fromArray(array) {
+      return array.reduce(function(acc, seg) {
+        if (typeof seg === "string") {
+          acc.push(buildSingleSegment(seg, null));
+        } else if (seg.data) {
+          acc.push(buildSingleSegment(seg.data, seg.mode));
+        }
+        return acc;
+      }, []);
+    };
+    exports.fromString = function fromString(data, version) {
+      const segs = getSegmentsFromString(data, Utils.isKanjiModeEnabled());
+      const nodes = buildNodes(segs);
+      const graph = buildGraph(nodes, version);
+      const path = dijkstra.find_path(graph.map, "start", "end");
+      const optimizedSegs = [];
+      for (let i = 1; i < path.length - 1; i++) {
+        optimizedSegs.push(graph.table[path[i]].node);
+      }
+      return exports.fromArray(mergeSegments(optimizedSegs));
+    };
+    exports.rawSplit = function rawSplit(data) {
+      return exports.fromArray(getSegmentsFromString(data, Utils.isKanjiModeEnabled()));
+    };
+  }
+});
+
+// node_modules/qrcode/lib/core/qrcode.js
+var require_qrcode = __commonJS({
+  "node_modules/qrcode/lib/core/qrcode.js"(exports) {
+    "use strict";
+    var Utils = require_utils();
+    var ECLevel = require_error_correction_level();
+    var BitBuffer = require_bit_buffer();
+    var BitMatrix = require_bit_matrix();
+    var AlignmentPattern = require_alignment_pattern();
+    var FinderPattern = require_finder_pattern();
+    var MaskPattern = require_mask_pattern();
+    var ECCode = require_error_correction_code();
+    var ReedSolomonEncoder = require_reed_solomon_encoder();
+    var Version2 = require_version();
+    var FormatInfo = require_format_info();
+    var Mode = require_mode();
+    var Segments = require_segments();
+    function setupFinderPattern(matrix, version) {
+      const size = matrix.size;
+      const pos = FinderPattern.getPositions(version);
+      for (let i = 0; i < pos.length; i++) {
+        const row = pos[i][0];
+        const col = pos[i][1];
+        for (let r2 = -1; r2 <= 7; r2++) {
+          if (row + r2 <= -1 || size <= row + r2) continue;
+          for (let c = -1; c <= 7; c++) {
+            if (col + c <= -1 || size <= col + c) continue;
+            if (r2 >= 0 && r2 <= 6 && (c === 0 || c === 6) || c >= 0 && c <= 6 && (r2 === 0 || r2 === 6) || r2 >= 2 && r2 <= 4 && c >= 2 && c <= 4) {
+              matrix.set(row + r2, col + c, true, true);
+            } else {
+              matrix.set(row + r2, col + c, false, true);
+            }
+          }
+        }
+      }
+    }
+    function setupTimingPattern(matrix) {
+      const size = matrix.size;
+      for (let r2 = 8; r2 < size - 8; r2++) {
+        const value = r2 % 2 === 0;
+        matrix.set(r2, 6, value, true);
+        matrix.set(6, r2, value, true);
+      }
+    }
+    function setupAlignmentPattern(matrix, version) {
+      const pos = AlignmentPattern.getPositions(version);
+      for (let i = 0; i < pos.length; i++) {
+        const row = pos[i][0];
+        const col = pos[i][1];
+        for (let r2 = -2; r2 <= 2; r2++) {
+          for (let c = -2; c <= 2; c++) {
+            if (r2 === -2 || r2 === 2 || c === -2 || c === 2 || r2 === 0 && c === 0) {
+              matrix.set(row + r2, col + c, true, true);
+            } else {
+              matrix.set(row + r2, col + c, false, true);
+            }
+          }
+        }
+      }
+    }
+    function setupVersionInfo(matrix, version) {
+      const size = matrix.size;
+      const bits = Version2.getEncodedBits(version);
+      let row, col, mod;
+      for (let i = 0; i < 18; i++) {
+        row = Math.floor(i / 3);
+        col = i % 3 + size - 8 - 3;
+        mod = (bits >> i & 1) === 1;
+        matrix.set(row, col, mod, true);
+        matrix.set(col, row, mod, true);
+      }
+    }
+    function setupFormatInfo(matrix, errorCorrectionLevel, maskPattern) {
+      const size = matrix.size;
+      const bits = FormatInfo.getEncodedBits(errorCorrectionLevel, maskPattern);
+      let i, mod;
+      for (i = 0; i < 15; i++) {
+        mod = (bits >> i & 1) === 1;
+        if (i < 6) {
+          matrix.set(i, 8, mod, true);
+        } else if (i < 8) {
+          matrix.set(i + 1, 8, mod, true);
+        } else {
+          matrix.set(size - 15 + i, 8, mod, true);
+        }
+        if (i < 8) {
+          matrix.set(8, size - i - 1, mod, true);
+        } else if (i < 9) {
+          matrix.set(8, 15 - i - 1 + 1, mod, true);
+        } else {
+          matrix.set(8, 15 - i - 1, mod, true);
+        }
+      }
+      matrix.set(size - 8, 8, 1, true);
+    }
+    function setupData(matrix, data) {
+      const size = matrix.size;
+      let inc = -1;
+      let row = size - 1;
+      let bitIndex = 7;
+      let byteIndex = 0;
+      for (let col = size - 1; col > 0; col -= 2) {
+        if (col === 6) col--;
+        while (true) {
+          for (let c = 0; c < 2; c++) {
+            if (!matrix.isReserved(row, col - c)) {
+              let dark = false;
+              if (byteIndex < data.length) {
+                dark = (data[byteIndex] >>> bitIndex & 1) === 1;
+              }
+              matrix.set(row, col - c, dark);
+              bitIndex--;
+              if (bitIndex === -1) {
+                byteIndex++;
+                bitIndex = 7;
+              }
+            }
+          }
+          row += inc;
+          if (row < 0 || size <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    }
+    function createData(version, errorCorrectionLevel, segments) {
+      const buffer = new BitBuffer();
+      segments.forEach(function(data) {
+        buffer.put(data.mode.bit, 4);
+        buffer.put(data.getLength(), Mode.getCharCountIndicator(data.mode, version));
+        data.write(buffer);
+      });
+      const totalCodewords = Utils.getSymbolTotalCodewords(version);
+      const ecTotalCodewords = ECCode.getTotalCodewordsCount(version, errorCorrectionLevel);
+      const dataTotalCodewordsBits = (totalCodewords - ecTotalCodewords) * 8;
+      if (buffer.getLengthInBits() + 4 <= dataTotalCodewordsBits) {
+        buffer.put(0, 4);
+      }
+      while (buffer.getLengthInBits() % 8 !== 0) {
+        buffer.putBit(0);
+      }
+      const remainingByte = (dataTotalCodewordsBits - buffer.getLengthInBits()) / 8;
+      for (let i = 0; i < remainingByte; i++) {
+        buffer.put(i % 2 ? 17 : 236, 8);
+      }
+      return createCodewords(buffer, version, errorCorrectionLevel);
+    }
+    function createCodewords(bitBuffer, version, errorCorrectionLevel) {
+      const totalCodewords = Utils.getSymbolTotalCodewords(version);
+      const ecTotalCodewords = ECCode.getTotalCodewordsCount(version, errorCorrectionLevel);
+      const dataTotalCodewords = totalCodewords - ecTotalCodewords;
+      const ecTotalBlocks = ECCode.getBlocksCount(version, errorCorrectionLevel);
+      const blocksInGroup2 = totalCodewords % ecTotalBlocks;
+      const blocksInGroup1 = ecTotalBlocks - blocksInGroup2;
+      const totalCodewordsInGroup1 = Math.floor(totalCodewords / ecTotalBlocks);
+      const dataCodewordsInGroup1 = Math.floor(dataTotalCodewords / ecTotalBlocks);
+      const dataCodewordsInGroup2 = dataCodewordsInGroup1 + 1;
+      const ecCount = totalCodewordsInGroup1 - dataCodewordsInGroup1;
+      const rs = new ReedSolomonEncoder(ecCount);
+      let offset = 0;
+      const dcData = new Array(ecTotalBlocks);
+      const ecData = new Array(ecTotalBlocks);
+      let maxDataSize = 0;
+      const buffer = new Uint8Array(bitBuffer.buffer);
+      for (let b = 0; b < ecTotalBlocks; b++) {
+        const dataSize = b < blocksInGroup1 ? dataCodewordsInGroup1 : dataCodewordsInGroup2;
+        dcData[b] = buffer.slice(offset, offset + dataSize);
+        ecData[b] = rs.encode(dcData[b]);
+        offset += dataSize;
+        maxDataSize = Math.max(maxDataSize, dataSize);
+      }
+      const data = new Uint8Array(totalCodewords);
+      let index = 0;
+      let i, r2;
+      for (i = 0; i < maxDataSize; i++) {
+        for (r2 = 0; r2 < ecTotalBlocks; r2++) {
+          if (i < dcData[r2].length) {
+            data[index++] = dcData[r2][i];
+          }
+        }
+      }
+      for (i = 0; i < ecCount; i++) {
+        for (r2 = 0; r2 < ecTotalBlocks; r2++) {
+          data[index++] = ecData[r2][i];
+        }
+      }
+      return data;
+    }
+    function createSymbol(data, version, errorCorrectionLevel, maskPattern) {
+      let segments;
+      if (Array.isArray(data)) {
+        segments = Segments.fromArray(data);
+      } else if (typeof data === "string") {
+        let estimatedVersion = version;
+        if (!estimatedVersion) {
+          const rawSegments = Segments.rawSplit(data);
+          estimatedVersion = Version2.getBestVersionForData(rawSegments, errorCorrectionLevel);
+        }
+        segments = Segments.fromString(data, estimatedVersion || 40);
+      } else {
+        throw new Error("Invalid data");
+      }
+      const bestVersion = Version2.getBestVersionForData(segments, errorCorrectionLevel);
+      if (!bestVersion) {
+        throw new Error("The amount of data is too big to be stored in a QR Code");
+      }
+      if (!version) {
+        version = bestVersion;
+      } else if (version < bestVersion) {
+        throw new Error("\nThe chosen QR Code version cannot contain this amount of data.\nMinimum version required to store current data is: " + bestVersion + ".\n");
+      }
+      const dataBits = createData(version, errorCorrectionLevel, segments);
+      const moduleCount = Utils.getSymbolSize(version);
+      const modules2 = new BitMatrix(moduleCount);
+      setupFinderPattern(modules2, version);
+      setupTimingPattern(modules2);
+      setupAlignmentPattern(modules2, version);
+      setupFormatInfo(modules2, errorCorrectionLevel, 0);
+      if (version >= 7) {
+        setupVersionInfo(modules2, version);
+      }
+      setupData(modules2, dataBits);
+      if (isNaN(maskPattern)) {
+        maskPattern = MaskPattern.getBestMask(modules2, setupFormatInfo.bind(null, modules2, errorCorrectionLevel));
+      }
+      MaskPattern.applyMask(maskPattern, modules2);
+      setupFormatInfo(modules2, errorCorrectionLevel, maskPattern);
+      return {
+        modules: modules2,
+        version,
+        errorCorrectionLevel,
+        maskPattern,
+        segments
+      };
+    }
+    exports.create = function create(data, options) {
+      if (typeof data === "undefined" || data === "") {
+        throw new Error("No input text");
+      }
+      let errorCorrectionLevel = ECLevel.M;
+      let version;
+      let mask;
+      if (typeof options !== "undefined") {
+        errorCorrectionLevel = ECLevel.from(options.errorCorrectionLevel, ECLevel.M);
+        version = Version2.from(options.version);
+        mask = MaskPattern.from(options.maskPattern);
+        if (options.toSJISFunc) {
+          Utils.setToSJISFunction(options.toSJISFunc);
+        }
+      }
+      return createSymbol(data, version, errorCorrectionLevel, mask);
+    };
+  }
+});
+
+// node_modules/qrcode/lib/renderer/utils.js
+var require_utils2 = __commonJS({
+  "node_modules/qrcode/lib/renderer/utils.js"(exports) {
+    "use strict";
+    function hex2rgba(hex) {
+      if (typeof hex === "number") {
+        hex = hex.toString();
+      }
+      if (typeof hex !== "string") {
+        throw new Error("Color should be defined as hex string");
+      }
+      let hexCode = hex.slice().replace("#", "").split("");
+      if (hexCode.length < 3 || hexCode.length === 5 || hexCode.length > 8) {
+        throw new Error("Invalid hex color: " + hex);
+      }
+      if (hexCode.length === 3 || hexCode.length === 4) {
+        hexCode = Array.prototype.concat.apply([], hexCode.map(function(c) {
+          return [c, c];
+        }));
+      }
+      if (hexCode.length === 6) hexCode.push("F", "F");
+      const hexValue = parseInt(hexCode.join(""), 16);
+      return {
+        r: hexValue >> 24 & 255,
+        g: hexValue >> 16 & 255,
+        b: hexValue >> 8 & 255,
+        a: hexValue & 255,
+        hex: "#" + hexCode.slice(0, 6).join("")
+      };
+    }
+    exports.getOptions = function getOptions(options) {
+      if (!options) options = {};
+      if (!options.color) options.color = {};
+      const margin = typeof options.margin === "undefined" || options.margin === null || options.margin < 0 ? 4 : options.margin;
+      const width = options.width && options.width >= 21 ? options.width : void 0;
+      const scale = options.scale || 4;
+      return {
+        width,
+        scale: width ? 4 : scale,
+        margin,
+        color: {
+          dark: hex2rgba(options.color.dark || "#000000ff"),
+          light: hex2rgba(options.color.light || "#ffffffff")
+        },
+        type: options.type,
+        rendererOpts: options.rendererOpts || {}
+      };
+    };
+    exports.getScale = function getScale(qrSize, opts) {
+      return opts.width && opts.width >= qrSize + opts.margin * 2 ? opts.width / (qrSize + opts.margin * 2) : opts.scale;
+    };
+    exports.getImageWidth = function getImageWidth(qrSize, opts) {
+      const scale = exports.getScale(qrSize, opts);
+      return Math.floor((qrSize + opts.margin * 2) * scale);
+    };
+    exports.qrToImageData = function qrToImageData(imgData, qr, opts) {
+      const size = qr.modules.size;
+      const data = qr.modules.data;
+      const scale = exports.getScale(size, opts);
+      const symbolSize = Math.floor((size + opts.margin * 2) * scale);
+      const scaledMargin = opts.margin * scale;
+      const palette = [opts.color.light, opts.color.dark];
+      for (let i = 0; i < symbolSize; i++) {
+        for (let j = 0; j < symbolSize; j++) {
+          let posDst = (i * symbolSize + j) * 4;
+          let pxColor = opts.color.light;
+          if (i >= scaledMargin && j >= scaledMargin && i < symbolSize - scaledMargin && j < symbolSize - scaledMargin) {
+            const iSrc = Math.floor((i - scaledMargin) / scale);
+            const jSrc = Math.floor((j - scaledMargin) / scale);
+            pxColor = palette[data[iSrc * size + jSrc] ? 1 : 0];
+          }
+          imgData[posDst++] = pxColor.r;
+          imgData[posDst++] = pxColor.g;
+          imgData[posDst++] = pxColor.b;
+          imgData[posDst] = pxColor.a;
+        }
+      }
+    };
+  }
+});
+
+// node_modules/qrcode/lib/renderer/canvas.js
+var require_canvas = __commonJS({
+  "node_modules/qrcode/lib/renderer/canvas.js"(exports) {
+    "use strict";
+    var Utils = require_utils2();
+    function clearCanvas(ctx, canvas, size) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!canvas.style) canvas.style = {};
+      canvas.height = size;
+      canvas.width = size;
+      canvas.style.height = size + "px";
+      canvas.style.width = size + "px";
+    }
+    function getCanvasElement() {
+      try {
+        return document.createElement("canvas");
+      } catch (e) {
+        throw new Error("You need to specify a canvas element");
+      }
+    }
+    exports.render = function render2(qrData, canvas, options) {
+      let opts = options;
+      let canvasEl = canvas;
+      if (typeof opts === "undefined" && (!canvas || !canvas.getContext)) {
+        opts = canvas;
+        canvas = void 0;
+      }
+      if (!canvas) {
+        canvasEl = getCanvasElement();
+      }
+      opts = Utils.getOptions(opts);
+      const size = Utils.getImageWidth(qrData.modules.size, opts);
+      const ctx = canvasEl.getContext("2d");
+      const image = ctx.createImageData(size, size);
+      Utils.qrToImageData(image.data, qrData, opts);
+      clearCanvas(ctx, canvasEl, size);
+      ctx.putImageData(image, 0, 0);
+      return canvasEl;
+    };
+    exports.renderToDataURL = function renderToDataURL(qrData, canvas, options) {
+      let opts = options;
+      if (typeof opts === "undefined" && (!canvas || !canvas.getContext)) {
+        opts = canvas;
+        canvas = void 0;
+      }
+      if (!opts) opts = {};
+      const canvasEl = exports.render(qrData, canvas, opts);
+      const type = opts.type || "image/png";
+      const rendererOpts = opts.rendererOpts || {};
+      return canvasEl.toDataURL(type, rendererOpts.quality);
+    };
+  }
+});
+
+// node_modules/qrcode/lib/renderer/svg-tag.js
+var require_svg_tag = __commonJS({
+  "node_modules/qrcode/lib/renderer/svg-tag.js"(exports) {
+    "use strict";
+    var Utils = require_utils2();
+    function getColorAttrib(color, attrib) {
+      const alpha = color.a / 255;
+      const str = attrib + '="' + color.hex + '"';
+      return alpha < 1 ? str + " " + attrib + '-opacity="' + alpha.toFixed(2).slice(1) + '"' : str;
+    }
+    function svgCmd(cmd, x2, y) {
+      let str = cmd + x2;
+      if (typeof y !== "undefined") str += " " + y;
+      return str;
+    }
+    function qrToPath(data, size, margin) {
+      let path = "";
+      let moveBy = 0;
+      let newRow = false;
+      let lineLength = 0;
+      for (let i = 0; i < data.length; i++) {
+        const col = Math.floor(i % size);
+        const row = Math.floor(i / size);
+        if (!col && !newRow) newRow = true;
+        if (data[i]) {
+          lineLength++;
+          if (!(i > 0 && col > 0 && data[i - 1])) {
+            path += newRow ? svgCmd("M", col + margin, 0.5 + row + margin) : svgCmd("m", moveBy, 0);
+            moveBy = 0;
+            newRow = false;
+          }
+          if (!(col + 1 < size && data[i + 1])) {
+            path += svgCmd("h", lineLength);
+            lineLength = 0;
+          }
+        } else {
+          moveBy++;
+        }
+      }
+      return path;
+    }
+    exports.render = function render2(qrData, options, cb) {
+      const opts = Utils.getOptions(options);
+      const size = qrData.modules.size;
+      const data = qrData.modules.data;
+      const qrcodesize = size + opts.margin * 2;
+      const bg = !opts.color.light.a ? "" : "<path " + getColorAttrib(opts.color.light, "fill") + ' d="M0 0h' + qrcodesize + "v" + qrcodesize + 'H0z"/>';
+      const path = "<path " + getColorAttrib(opts.color.dark, "stroke") + ' d="' + qrToPath(data, size, opts.margin) + '"/>';
+      const viewBox = 'viewBox="0 0 ' + qrcodesize + " " + qrcodesize + '"';
+      const width = !opts.width ? "" : 'width="' + opts.width + '" height="' + opts.width + '" ';
+      const svgTag = '<svg xmlns="http://www.w3.org/2000/svg" ' + width + viewBox + ' shape-rendering="crispEdges">' + bg + path + "</svg>\n";
+      if (typeof cb === "function") {
+        cb(null, svgTag);
+      }
+      return svgTag;
+    };
+  }
+});
+
+// node_modules/qrcode/lib/browser.js
+var require_browser = __commonJS({
+  "node_modules/qrcode/lib/browser.js"(exports) {
+    "use strict";
+    var canPromise = require_can_promise();
+    var QRCode2 = require_qrcode();
+    var CanvasRenderer = require_canvas();
+    var SvgRenderer = require_svg_tag();
+    function renderCanvas(renderFunc, canvas, text2, opts, cb) {
+      const args = [].slice.call(arguments, 1);
+      const argsNum = args.length;
+      const isLastArgCb = typeof args[argsNum - 1] === "function";
+      if (!isLastArgCb && !canPromise()) {
+        throw new Error("Callback required as last argument");
+      }
+      if (isLastArgCb) {
+        if (argsNum < 2) {
+          throw new Error("Too few arguments provided");
+        }
+        if (argsNum === 2) {
+          cb = text2;
+          text2 = canvas;
+          canvas = opts = void 0;
+        } else if (argsNum === 3) {
+          if (canvas.getContext && typeof cb === "undefined") {
+            cb = opts;
+            opts = void 0;
+          } else {
+            cb = opts;
+            opts = text2;
+            text2 = canvas;
+            canvas = void 0;
+          }
+        }
+      } else {
+        if (argsNum < 1) {
+          throw new Error("Too few arguments provided");
+        }
+        if (argsNum === 1) {
+          text2 = canvas;
+          canvas = opts = void 0;
+        } else if (argsNum === 2 && !canvas.getContext) {
+          opts = text2;
+          text2 = canvas;
+          canvas = void 0;
+        }
+        return new Promise(function(resolve, reject) {
+          try {
+            const data = QRCode2.create(text2, opts);
+            resolve(renderFunc(data, canvas, opts));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+      try {
+        const data = QRCode2.create(text2, opts);
+        cb(null, renderFunc(data, canvas, opts));
+      } catch (e) {
+        cb(e);
+      }
+    }
+    exports.create = QRCode2.create;
+    exports.toCanvas = renderCanvas.bind(null, CanvasRenderer.render);
+    exports.toDataURL = renderCanvas.bind(null, CanvasRenderer.renderToDataURL);
+    exports.toString = renderCanvas.bind(null, function(data, _, opts) {
+      return SvgRenderer.render(data, opts);
+    });
   }
 });
 
@@ -60556,6 +62630,14 @@ var FastenService = class _FastenService {
       }
     }).pipe(map((resp) => resp.data));
   }
+  createShlinkManifest(payload) {
+    const url = `${environment.connect_api_endpoint_base}/shlink/manifest/create`;
+    return this._httpClient.post(url, payload, {
+      params: {
+        public_id: this.configService.systemConfig$.publicId
+      }
+    }).pipe(map((resp) => resp.data));
+  }
   openWindowInPopup(redirectUrlParts) {
     const isDesktop = this.deviceService.isDesktop();
     let features = "";
@@ -61050,6 +63132,9 @@ var SettingsTabComponent = class _SettingsTabComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SettingsTabComponent, { className: "SettingsTabComponent", filePath: "projects/fasten-connect-vault/src/app/components/settings-tab/settings-tab.component.ts", lineNumber: 12 });
 })();
 
+// projects/fasten-connect-vault/src/app/components/account-export-modal/account-export-modal.component.ts
+var import_qrcode = __toESM(require_browser());
+
 // projects/fasten-connect-vault/src/app/services/recaptcha.service.ts
 var RecaptchaService = class _RecaptchaService {
   constructor(document2) {
@@ -61341,75 +63426,140 @@ function AccountExportModalComponent_div_0_div_12_div_7_Template(rf, ctx) {
     \u0275\u0275property("href", ctx_r1.downloadUrl, \u0275\u0275sanitizeUrl);
   }
 }
-function AccountExportModalComponent_div_0_div_12_div_8__svg_rect_14_Template(rf, ctx) {
+function AccountExportModalComponent_div_0_div_12_div_8_img_2_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275element(0, "rect", 82);
+    \u0275\u0275element(0, "img", 71);
   }
   if (rf & 2) {
-    const cell_r10 = ctx.$implicit;
-    \u0275\u0275attribute("x", cell_r10.x)("y", cell_r10.y);
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275property("src", ctx_r1.qrCodeDataUrl, \u0275\u0275sanitizeUrl)("alt", ctx_r1.cardTitle);
+  }
+}
+function AccountExportModalComponent_div_0_div_12_div_8_div_19_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 61)(1, "dt");
+    \u0275\u0275text(2, "Link type");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "dd");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx_r1.cardTitle);
+  }
+}
+function AccountExportModalComponent_div_0_div_12_div_8_div_20_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 61)(1, "dt");
+    \u0275\u0275text(2, "Patient");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "dd");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx_r1.patientName);
+  }
+}
+function AccountExportModalComponent_div_0_div_12_div_8_div_21_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 61)(1, "dt");
+    \u0275\u0275text(2, "Date of birth");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "dd");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx_r1.patientDob);
+  }
+}
+function AccountExportModalComponent_div_0_div_12_div_8_div_22_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 61)(1, "dt");
+    \u0275\u0275text(2, "Verified");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "dd");
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(4);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx_r1.verifiedDate);
   }
 }
 function AccountExportModalComponent_div_0_div_12_div_8_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = \u0275\u0275getCurrentView();
     \u0275\u0275elementStart(0, "div", 64)(1, "div", 65);
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(2, "svg", 66);
-    \u0275\u0275element(3, "rect", 67);
-    \u0275\u0275elementStart(4, "g", 68);
-    \u0275\u0275element(5, "rect", 69)(6, "rect", 70)(7, "rect", 71)(8, "rect", 72)(9, "rect", 73)(10, "rect", 74)(11, "rect", 75)(12, "rect", 76)(13, "rect", 77);
-    \u0275\u0275template(14, AccountExportModalComponent_div_0_div_12_div_8__svg_rect_14_Template, 1, 2, "rect", 78);
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(15, "div", 60)(16, "div", 61)(17, "dt");
-    \u0275\u0275text(18, "Export type");
+    \u0275\u0275template(2, AccountExportModalComponent_div_0_div_12_div_8_img_2_Template, 1, 2, "img", 66);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(19, "dd");
-    \u0275\u0275text(20);
+    \u0275\u0275elementStart(3, "div", 60)(4, "div", 61)(5, "dt");
+    \u0275\u0275text(6, "Export type");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "dd");
+    \u0275\u0275text(8);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(21, "div", 61)(22, "dt");
-    \u0275\u0275text(23, "Institution");
+    \u0275\u0275elementStart(9, "div", 61)(10, "dt");
+    \u0275\u0275text(11, "Institution");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(24, "dd");
-    \u0275\u0275text(25);
+    \u0275\u0275elementStart(12, "dd");
+    \u0275\u0275text(13);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(26, "div", 61)(27, "dt");
-    \u0275\u0275text(28, "Access duration");
+    \u0275\u0275elementStart(14, "div", 61)(15, "dt");
+    \u0275\u0275text(16, "Access duration");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(29, "dd");
-    \u0275\u0275text(30);
-    \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(31, "p", 79);
-    \u0275\u0275text(32);
+    \u0275\u0275elementStart(17, "dd");
+    \u0275\u0275text(18);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(19, AccountExportModalComponent_div_0_div_12_div_8_div_19_Template, 5, 1, "div", 67)(20, AccountExportModalComponent_div_0_div_12_div_8_div_20_Template, 5, 1, "div", 67)(21, AccountExportModalComponent_div_0_div_12_div_8_div_21_Template, 5, 1, "div", 67)(22, AccountExportModalComponent_div_0_div_12_div_8_div_22_Template, 5, 1, "div", 67);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(33, "div", 80)(34, "a", 81);
-    \u0275\u0275text(35, " Open Document ");
+    \u0275\u0275elementStart(23, "p", 68);
+    \u0275\u0275text(24);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(36, "button", 63);
-    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_12_div_8_Template_button_click_36_listener() {
+    \u0275\u0275elementStart(25, "div", 69)(26, "a", 70);
+    \u0275\u0275text(27);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(28, "button", 63);
+    \u0275\u0275listener("click", function AccountExportModalComponent_div_0_div_12_div_8_Template_button_click_28_listener() {
       \u0275\u0275restoreView(_r9);
       const ctx_r1 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r1.requestClose());
     });
-    \u0275\u0275text(37, " Done ");
+    \u0275\u0275text(29, " Done ");
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(3);
-    \u0275\u0275advance(14);
-    \u0275\u0275property("ngForOf", ctx_r1.mockQrCells)("ngForTrackBy", ctx_r1.trackByQrCell);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngIf", ctx_r1.qrCodeDataUrl);
     \u0275\u0275advance(6);
     \u0275\u0275textInterpolate(ctx_r1.exportModalTitle);
     \u0275\u0275advance(5);
     \u0275\u0275textInterpolate(ctx_r1.accountDisplayName);
     \u0275\u0275advance(5);
     \u0275\u0275textInterpolate(ctx_r1.selectedDurationLabel);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.smartHealthLinkUrl);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.patientName);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.patientDob);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.verifiedDate);
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate1(" Scan this mock QR code to open the shared export. Access remains active for ", ctx_r1.selectedDurationLabel.toLowerCase(), ". ");
+    \u0275\u0275textInterpolate1(" ", ctx_r1.exportQrCodeDescription, " ");
     \u0275\u0275advance(2);
     \u0275\u0275property("href", ctx_r1.resultDocumentUrl, \u0275\u0275sanitizeUrl);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx_r1.exportResultPrimaryActionLabel, " ");
   }
 }
 function AccountExportModalComponent_div_0_div_12_Template(rf, ctx) {
@@ -61420,7 +63570,7 @@ function AccountExportModalComponent_div_0_div_12_Template(rf, ctx) {
     \u0275\u0275elementStart(5, "p", 56);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
-    \u0275\u0275template(7, AccountExportModalComponent_div_0_div_12_div_7_Template, 21, 4, "div", 57)(8, AccountExportModalComponent_div_0_div_12_div_8_Template, 38, 7, "div", 58);
+    \u0275\u0275template(7, AccountExportModalComponent_div_0_div_12_div_7_Template, 21, 4, "div", 57)(8, AccountExportModalComponent_div_0_div_12_div_8_Template, 30, 11, "div", 58);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -61437,7 +63587,7 @@ function AccountExportModalComponent_div_0_div_12_Template(rf, ctx) {
 }
 function AccountExportModalComponent_div_0_footer_13_p_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 88);
+    \u0275\u0275elementStart(0, "p", 77);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -61449,22 +63599,22 @@ function AccountExportModalComponent_div_0_footer_13_p_3_Template(rf, ctx) {
 }
 function AccountExportModalComponent_div_0_footer_13_Template(rf, ctx) {
   if (rf & 1) {
-    const _r11 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "footer", 83)(1, "p", 51);
+    const _r10 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "footer", 72)(1, "p", 51);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(3, AccountExportModalComponent_div_0_footer_13_p_3_Template, 2, 1, "p", 84);
-    \u0275\u0275elementStart(4, "div", 85)(5, "button", 86);
+    \u0275\u0275template(3, AccountExportModalComponent_div_0_footer_13_p_3_Template, 2, 1, "p", 73);
+    \u0275\u0275elementStart(4, "div", 74)(5, "button", 75);
     \u0275\u0275listener("click", function AccountExportModalComponent_div_0_footer_13_Template_button_click_5_listener() {
-      \u0275\u0275restoreView(_r11);
+      \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r1.requestClose());
     });
     \u0275\u0275text(6, " Cancel ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "button", 87);
+    \u0275\u0275elementStart(7, "button", 76);
     \u0275\u0275listener("click", function AccountExportModalComponent_div_0_footer_13_Template_button_click_7_listener() {
-      \u0275\u0275restoreView(_r11);
+      \u0275\u0275restoreView(_r10);
       const ctx_r1 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r1.confirmExportConfiguration());
     });
@@ -61551,14 +63701,18 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.retrievalCheckCount = 0;
     this.downloadUrl = "";
     this.resultDocumentUrl = "";
-    this.mockQrCells = [];
+    this.qrCodeDataUrl = "";
+    this.smartHealthLinkUrl = null;
+    this.cardTitle = "SMART Health Link";
+    this.patientName = "";
+    this.patientDob = "";
+    this.verifiedDate = null;
     this.recaptchaState = "pending";
     this.recaptchaErrorMessage = "";
     this.recaptchaToken = "";
     this.exportRequestErrorMessage = "";
     this.retrievalPollingSubscription = null;
     this.resetExportConfiguration();
-    this.mockQrCells = this.buildMockQrCells();
   }
   ngOnChanges(changes) {
     if (changes["isOpen"] || changes["exportType"]) {
@@ -61632,6 +63786,18 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
       return `Your PDF export includes ${this.selectedResourceListLabel}.`;
     }
     return `Your share package includes ${this.selectedResourceCount} selected record categories and will stay active for ${this.getSelectedDurationLabel().toLowerCase()}.`;
+  }
+  get exportResultPrimaryActionLabel() {
+    if (this.exportType === "fhir_bundle") {
+      return "Open SMART Health Link";
+    }
+    return "Open Document";
+  }
+  get exportQrCodeDescription() {
+    if (this.exportType === "fhir_bundle") {
+      return `Scan this QR code to open ${this.cardTitle}. Access remains active for ${this.selectedDurationLabel.toLowerCase()}.`;
+    }
+    return `Scan this QR code to open the shared export. Access remains active for ${this.selectedDurationLabel.toLowerCase()}.`;
   }
   get selectedDurationLabel() {
     return this.getSelectedDurationLabel();
@@ -61751,9 +63917,6 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
   trackByDurationId(_, option) {
     return option.id;
   }
-  trackByQrCell(_, cell) {
-    return `${cell.x}-${cell.y}`;
-  }
   // Closed -> config transition: opening always resets transient progress so each export starts cleanly.
   prepareForOpen() {
     this.clearExportTimers();
@@ -61763,6 +63926,12 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.retrievalCheckCount = 0;
     this.downloadUrl = "";
     this.resultDocumentUrl = "";
+    this.qrCodeDataUrl = "";
+    this.smartHealthLinkUrl = null;
+    this.cardTitle = "SMART Health Link";
+    this.patientName = "";
+    this.patientDob = "";
+    this.verifiedDate = null;
     this.recaptchaState = "pending";
     this.recaptchaErrorMessage = "";
     this.recaptchaToken = "";
@@ -61778,6 +63947,12 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.retrievalCheckCount = 0;
     this.downloadUrl = "";
     this.resultDocumentUrl = "";
+    this.qrCodeDataUrl = "";
+    this.smartHealthLinkUrl = null;
+    this.cardTitle = "SMART Health Link";
+    this.patientName = "";
+    this.patientDob = "";
+    this.verifiedDate = null;
     this.recaptchaState = "pending";
     this.recaptchaErrorMessage = "";
     this.recaptchaToken = "";
@@ -61807,6 +63982,12 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.lastStatusCheckLabel = this.formatStatusCheckLabel(/* @__PURE__ */ new Date());
     this.downloadUrl = "";
     this.resultDocumentUrl = "";
+    this.qrCodeDataUrl = "";
+    this.smartHealthLinkUrl = null;
+    this.cardTitle = "SMART Health Link";
+    this.patientName = "";
+    this.patientDob = "";
+    this.verifiedDate = null;
     if (!exportResponse.task_id) {
       this.handleExportPollingFailure("We could not start this export. Please try again.");
       return;
@@ -61823,7 +64004,7 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     })).subscribe({
       next: (response) => {
         if (response.status === "success") {
-          this.completeExportFlow(response);
+          void this.completeExportFlow(taskId, response);
           return;
         }
         if (response.status === "failed") {
@@ -61836,11 +64017,57 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     });
   }
   // Loading -> complete transition: PDF exports expose a download URL, while link-based exports render the QR result.
-  completeExportFlow(exportResponse) {
-    this.clearExportTimers();
-    this.exportModalState = "complete";
-    this.downloadUrl = this.exportType === "pdf" ? this.resolveExportResultUrl(exportResponse) : "";
-    this.resultDocumentUrl = this.exportType === "pdf" ? "" : this.resolveExportResultUrl(exportResponse);
+  completeExportFlow(taskId, exportResponse) {
+    return __async(this, null, function* () {
+      this.clearExportTimers();
+      if (this.exportType === "pdf") {
+        this.exportModalState = "complete";
+        this.downloadUrl = this.resolveExportResultUrl(exportResponse);
+        this.resultDocumentUrl = "";
+        return;
+      }
+      if (!this.exportType) {
+        this.handleExportPollingFailure("We could not determine which export to finish. Please try again.");
+        return;
+      }
+      this.exportLoadingPhase = "qr-generation";
+      try {
+        const payload = yield firstValueFrom(this.fastenService.createShlinkManifest({
+          task_id: taskId,
+          export_type: this.exportType,
+          duration: this.selectedExportDurationId
+        }));
+        if (payload.status === "failed") {
+          this.handleExportPollingFailure(this.getManifestFailureMessage(payload) || "We could not create the SMART Health Link. Please try again.");
+          return;
+        }
+        this.smartHealthLinkUrl = payload.shlink || null;
+        this.cardTitle = payload.card_title || "SMART Health Link";
+        this.patientName = payload.patient_name || "";
+        this.patientDob = payload.patient_dob || "";
+        this.verifiedDate = payload.verified_at || null;
+        if (!this.smartHealthLinkUrl) {
+          this.handleExportPollingFailure("No link was returned from the server.");
+          return;
+        }
+        try {
+          this.qrCodeDataUrl = yield import_qrcode.default.toDataURL(this.smartHealthLinkUrl, {
+            errorCorrectionLevel: "M",
+            margin: 2,
+            width: 260
+          });
+        } catch (error) {
+          console.error("Failed to generate QR code", error);
+          this.handleExportPollingFailure("Unable to generate QR code. Please try again.");
+          return;
+        }
+        this.resultDocumentUrl = this.smartHealthLinkUrl;
+        this.exportModalState = "complete";
+      } catch (error) {
+        console.error("Failed to create shlink manifest", error);
+        this.handleExportPollingFailure("We could not create the SMART Health Link. Please try again.");
+      }
+    });
   }
   // Shared timer cleanup: both close/reset paths and loading transitions reuse the same teardown.
   clearExportTimers() {
@@ -61904,6 +64131,12 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.exportLoadingPhase = "retrieving";
     this.downloadUrl = "";
     this.resultDocumentUrl = "";
+    this.qrCodeDataUrl = "";
+    this.smartHealthLinkUrl = null;
+    this.cardTitle = "SMART Health Link";
+    this.patientName = "";
+    this.patientDob = "";
+    this.verifiedDate = null;
     this.exportRequestErrorMessage = message2;
   }
   getExportFailureMessage(exportResponse) {
@@ -61913,30 +64146,12 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     ].filter((value) => typeof value === "string" && value.length > 0);
     return messageParts.join(" ");
   }
-  buildMockQrCells() {
-    const cells = [];
-    const gridSize = 29;
-    const cellSize = 8;
-    for (let row = 0; row < gridSize; row += 1) {
-      for (let column = 0; column < gridSize; column += 1) {
-        if (this.isFinderPatternCell(row, column, gridSize)) {
-          continue;
-        }
-        if ((row * 7 + column * 11 + row + column) % 5 < 2) {
-          cells.push({
-            x: column * cellSize,
-            y: row * cellSize
-          });
-        }
-      }
-    }
-    return cells;
-  }
-  isFinderPatternCell(row, column, gridSize) {
-    const isTopLeft = row < 8 && column < 8;
-    const isTopRight = row < 8 && column >= gridSize - 8;
-    const isBottomLeft = row >= gridSize - 8 && column < 8;
-    return isTopLeft || isTopRight || isBottomLeft;
+  getManifestFailureMessage(response) {
+    const messageParts = [
+      response.error_description,
+      response.error
+    ].filter((value) => typeof value === "string" && value.length > 0);
+    return messageParts.join(" ");
   }
   static {
     this.\u0275fac = function AccountExportModalComponent_Factory(__ngFactoryType__) {
@@ -61944,18 +64159,18 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountExportModalComponent, selectors: [["app-account-export-modal"]], inputs: { isOpen: "isOpen", exportType: "exportType", accountDisplayName: "accountDisplayName", orgConnectionId: "orgConnectionId" }, outputs: { closed: "closed" }, standalone: false, features: [\u0275\u0275NgOnChangesFeature], decls: 1, vars: 1, consts: [["class", "export-modal-backdrop", 3, "click", 4, "ngIf"], [1, "export-modal-backdrop", 3, "click"], [1, "export-modal-panel", 3, "click"], [1, "export-modal-header"], [1, "export-modal-title"], ["type", "button", "aria-label", "Close export modal", 1, "export-modal-close", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5"], ["d", "M18 6 6 18"], ["d", "m6 6 12 12"], ["class", "export-modal-body", 4, "ngIf"], ["class", "export-modal-body export-modal-body--centered", 4, "ngIf"], ["class", "export-modal-footer", 4, "ngIf"], [1, "export-modal-body"], [1, "export-modal-section"], [1, "export-section-header"], [1, "export-config-section-heading"], [1, "export-section-title", "export-config-section-title"], [1, "vault-page-copy", "export-config-section-copy"], [1, "export-section-actions"], [1, "vault-status-pill", "is-active"], ["type", "button", 1, "vault-secondary-button", "export-select-all-button", 3, "click", "disabled"], [1, "export-resource-checklist"], ["class", "export-resource-card", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["class", "export-modal-section", 4, "ngIf"], [1, "export-resource-card"], [1, "export-resource-toggle"], ["type", "checkbox", 3, "change", "checked"], [1, "export-resource-checkmark"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", 1, "h-4", "w-4"], ["d", "M5 13l4 4L19 7"], [1, "export-resource-copy"], [1, "export-resource-label"], [1, "export-duration-options"], ["type", "button", "class", "export-duration-button", 3, "is-selected", "click", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["type", "button", 1, "export-duration-button", 3, "click"], [1, "export-recaptcha-card"], [1, "space-y-1"], [1, "export-recaptcha-title"], [1, "vault-status-pill", 3, "ngClass"], ["class", "export-recaptcha-error", 4, "ngIf"], [1, "export-recaptcha-error"], [1, "export-modal-body", "export-modal-body--centered"], [1, "export-loading-status"], [3, "sizePx", "strokeWidthPx"], [1, "space-y-2"], [1, "export-section-title"], [1, "vault-page-copy", "export-loading-copy"], [1, "export-modal-section", "export-loading-section"], [1, "export-loading-steps"], [1, "export-loading-step"], [1, "export-step-title"], [1, "vault-page-copy"], [1, "export-step-meta"], ["class", "export-loading-step", 3, "is-active", 4, "ngIf"], [1, "export-modal-section", "export-result-section"], [1, "space-y-2", "text-center"], [1, "vault-page-copy", "export-result-copy"], ["class", "export-result-download", 4, "ngIf"], ["class", "export-result-qr", 4, "ngIf"], [1, "export-result-download"], [1, "export-result-summary-grid"], [1, "export-result-summary-row"], ["download", "fasten-health-export.pdf", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "click"], [1, "export-result-qr"], [1, "mock-qr-frame"], ["viewBox", "0 0 232 232", "role", "img", "aria-label", "Mock QR code", 1, "mock-qr-code"], ["width", "232", "height", "232", "fill", "white"], ["fill", "#111827"], ["x", "0", "y", "0", "width", "64", "height", "64"], ["x", "8", "y", "8", "width", "48", "height", "48", "fill", "white"], ["x", "16", "y", "16", "width", "32", "height", "32"], ["x", "168", "y", "0", "width", "64", "height", "64"], ["x", "176", "y", "8", "width", "48", "height", "48", "fill", "white"], ["x", "184", "y", "16", "width", "32", "height", "32"], ["x", "0", "y", "168", "width", "64", "height", "64"], ["x", "8", "y", "176", "width", "48", "height", "48", "fill", "white"], ["x", "16", "y", "184", "width", "32", "height", "32"], ["width", "8", "height", "8", 4, "ngFor", "ngForOf", "ngForTrackBy"], [1, "export-result-copy"], [1, "flex", "w-full", "flex-col", "gap-3", "sm:flex-row"], ["target", "_blank", "rel", "noreferrer", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["width", "8", "height", "8"], [1, "export-modal-footer"], ["class", "export-recaptcha-error export-footer-error", 4, "ngIf"], [1, "export-footer-actions"], ["type", "button", 1, "vault-secondary-button", "px-5", "py-3", 3, "click"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click", "disabled"], [1, "export-recaptcha-error", "export-footer-error"]], template: function AccountExportModalComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountExportModalComponent, selectors: [["app-account-export-modal"]], inputs: { isOpen: "isOpen", exportType: "exportType", accountDisplayName: "accountDisplayName", orgConnectionId: "orgConnectionId" }, outputs: { closed: "closed" }, standalone: false, features: [\u0275\u0275NgOnChangesFeature], decls: 1, vars: 1, consts: [["class", "export-modal-backdrop", 3, "click", 4, "ngIf"], [1, "export-modal-backdrop", 3, "click"], [1, "export-modal-panel", 3, "click"], [1, "export-modal-header"], [1, "export-modal-title"], ["type", "button", "aria-label", "Close export modal", 1, "export-modal-close", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5"], ["d", "M18 6 6 18"], ["d", "m6 6 12 12"], ["class", "export-modal-body", 4, "ngIf"], ["class", "export-modal-body export-modal-body--centered", 4, "ngIf"], ["class", "export-modal-footer", 4, "ngIf"], [1, "export-modal-body"], [1, "export-modal-section"], [1, "export-section-header"], [1, "export-config-section-heading"], [1, "export-section-title", "export-config-section-title"], [1, "vault-page-copy", "export-config-section-copy"], [1, "export-section-actions"], [1, "vault-status-pill", "is-active"], ["type", "button", 1, "vault-secondary-button", "export-select-all-button", 3, "click", "disabled"], [1, "export-resource-checklist"], ["class", "export-resource-card", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["class", "export-modal-section", 4, "ngIf"], [1, "export-resource-card"], [1, "export-resource-toggle"], ["type", "checkbox", 3, "change", "checked"], [1, "export-resource-checkmark"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", 1, "h-4", "w-4"], ["d", "M5 13l4 4L19 7"], [1, "export-resource-copy"], [1, "export-resource-label"], [1, "export-duration-options"], ["type", "button", "class", "export-duration-button", 3, "is-selected", "click", 4, "ngFor", "ngForOf", "ngForTrackBy"], ["type", "button", 1, "export-duration-button", 3, "click"], [1, "export-recaptcha-card"], [1, "space-y-1"], [1, "export-recaptcha-title"], [1, "vault-status-pill", 3, "ngClass"], ["class", "export-recaptcha-error", 4, "ngIf"], [1, "export-recaptcha-error"], [1, "export-modal-body", "export-modal-body--centered"], [1, "export-loading-status"], [3, "sizePx", "strokeWidthPx"], [1, "space-y-2"], [1, "export-section-title"], [1, "vault-page-copy", "export-loading-copy"], [1, "export-modal-section", "export-loading-section"], [1, "export-loading-steps"], [1, "export-loading-step"], [1, "export-step-title"], [1, "vault-page-copy"], [1, "export-step-meta"], ["class", "export-loading-step", 3, "is-active", 4, "ngIf"], [1, "export-modal-section", "export-result-section"], [1, "space-y-2", "text-center"], [1, "vault-page-copy", "export-result-copy"], ["class", "export-result-download", 4, "ngIf"], ["class", "export-result-qr", 4, "ngIf"], [1, "export-result-download"], [1, "export-result-summary-grid"], [1, "export-result-summary-row"], ["download", "fasten-health-export.pdf", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "click"], [1, "export-result-qr"], [1, "mock-qr-frame"], ["class", "generated-qr-code", 3, "src", "alt", 4, "ngIf"], ["class", "export-result-summary-row", 4, "ngIf"], [1, "export-result-copy"], [1, "flex", "w-full", "flex-col", "gap-3", "sm:flex-row"], ["target", "_blank", "rel", "noreferrer", 1, "vault-primary-button", "w-full", "justify-center", "px-5", "py-4", "text-base", 3, "href"], [1, "generated-qr-code", 3, "src", "alt"], [1, "export-modal-footer"], ["class", "export-recaptcha-error export-footer-error", 4, "ngIf"], [1, "export-footer-actions"], ["type", "button", 1, "vault-secondary-button", "px-5", "py-3", 3, "click"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click", "disabled"], [1, "export-recaptcha-error", "export-footer-error"]], template: function AccountExportModalComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275template(0, AccountExportModalComponent_div_0_Template, 14, 5, "div", 0);
       }
       if (rf & 2) {
         \u0275\u0275property("ngIf", ctx.isOpen && ctx.exportType);
       }
-    }, dependencies: [NgClass, NgForOf, NgIf, SpinnerComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.export-modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1.5rem;\n  background: rgba(15, 23, 42, 0.52);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.export-modal-panel[_ngcontent-%COMP%] {\n  width: min(100%, 980px);\n  max-height: calc(100vh - 3rem);\n  overflow: auto;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);\n}\n.export-modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 1.1rem 1.25rem;\n  border-bottom: 1px solid #e5e7eb;\n}\n.export-modal-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 1.5rem;\n  font-weight: 600;\n  letter-spacing: -0.025em;\n  line-height: 1.25;\n}\n.export-modal-close[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.5rem;\n  height: 2.5rem;\n  flex-shrink: 0;\n  border: 1px solid #d1d5db;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  color: #6b7280;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-modal-close[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n  border-color: #cbd5e1;\n  color: #111827;\n}\n.export-modal-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  padding: 1.5rem;\n}\n.export-modal-body--centered[_ngcontent-%COMP%] {\n  justify-content: center;\n  min-height: 460px;\n}\n.export-modal-section[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  padding: 1.25rem;\n  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);\n}\n.export-section-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.export-section-actions[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.export-config-section-heading[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n}\n.export-config-section-kicker[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  line-height: 1.1;\n}\n.export-select-all-button[_ngcontent-%COMP%] {\n  min-height: 2rem;\n  padding: 0.5rem 0.75rem;\n}\n.export-config-section-title[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1.25;\n}\n.export-config-section-copy[_ngcontent-%COMP%] {\n  font-size: 0.8125rem;\n  line-height: 1.4;\n}\n.export-section-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #4338ca;\n  font-size: 1.25rem;\n  font-weight: 600;\n  line-height: 1.35;\n}\n.export-resource-checklist[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 0.75rem;\n}\n.export-resource-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.75rem;\n  min-width: 0;\n  padding: 0.9rem 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.export-resource-card[_ngcontent-%COMP%]:hover {\n  border-color: #cbd5e1;\n  background: #f8fafc;\n}\n.export-resource-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  margin-top: 0.1rem;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  position: absolute;\n  opacity: 0;\n  pointer-events: none;\n}\n.export-resource-checkmark[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 1.25rem;\n  height: 1.25rem;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 0.3rem;\n  background: #ffffff;\n  color: transparent;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .export-resource-checkmark[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #5b47fb;\n  color: #ffffff;\n}\n.export-resource-copy[_ngcontent-%COMP%] {\n  display: flex;\n  min-width: 0;\n  flex-direction: column;\n}\n.export-resource-label[_ngcontent-%COMP%] {\n  color: #0f172a;\n  font-size: 0.9rem;\n  font-weight: 600;\n  line-height: 1.45;\n}\n.export-duration-options[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.export-duration-button[_ngcontent-%COMP%] {\n  border: 1px solid #d1d5db;\n  border-radius: 999px;\n  background: #ffffff;\n  color: #111827;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 0.45rem 0.7rem;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-duration-button[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n}\n.export-duration-button.is-selected[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #eef2ff;\n  color: #5b47fb;\n}\n.export-recaptcha-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 0.95rem 1rem;\n  border: 1px dashed #cbd5e1;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n}\n.export-recaptcha-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.9rem;\n  font-weight: 600;\n  line-height: 1.4;\n}\n.export-recaptcha-error[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #b91c1c;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1.4;\n}\n.export-loading-status[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n  text-align: center;\n}\n.export-loading-copy[_ngcontent-%COMP%], \n.export-result-copy[_ngcontent-%COMP%] {\n  margin: 0 auto;\n  max-width: 42rem;\n  text-align: center;\n}\n.export-loading-section[_ngcontent-%COMP%], \n.export-result-section[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n}\n.export-loading-steps[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.export-loading-step[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  gap: 1rem;\n  align-items: center;\n  padding: 1rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-loading-steps[_ngcontent-%COMP%]   .export-loading-step[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%], \n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #5b47fb;\n}\n.export-loading-step.is-complete[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-step-title[_ngcontent-%COMP%] {\n  margin: 0 0 0.2rem;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.export-step-meta[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #64748b;\n  font-size: 0.875rem;\n  font-weight: 500;\n  text-align: right;\n}\n.export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-result-download[_ngcontent-%COMP%], \n.export-result-qr[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n}\n.export-result-summary-grid[_ngcontent-%COMP%] {\n  width: 100%;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);\n  gap: 1rem;\n  align-items: start;\n  padding: 0.95rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-grid[_ngcontent-%COMP%]   .export-result-summary-row[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dt[_ngcontent-%COMP%] {\n  color: #64748b;\n  font-size: 0.75rem;\n  font-weight: 600;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dd[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n  line-height: 1.55;\n}\n.mock-qr-frame[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  padding: 1.5rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n}\n.mock-qr-code[_ngcontent-%COMP%] {\n  width: min(100%, 240px);\n  height: auto;\n  aspect-ratio: 1;\n}\n.export-modal-footer[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 0 1.5rem 1.5rem;\n  border-top: 1px solid #e5e7eb;\n}\n.export-footer-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  padding-top: 1rem;\n}\n.export-footer-error[_ngcontent-%COMP%] {\n  width: 100%;\n}\n@media (max-width: 767px) {\n  .export-modal-header[_ngcontent-%COMP%], \n   .export-modal-body[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n  .export-modal-title[_ngcontent-%COMP%] {\n    font-size: 1.25rem;\n  }\n  .export-section-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: space-between;\n  }\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .export-loading-step[_ngcontent-%COMP%], \n   .export-result-summary-row[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    grid-template-columns: minmax(0, 1fr);\n    flex-direction: column;\n    align-items: stretch;\n  }\n  .export-recaptcha-card[_ngcontent-%COMP%] {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .export-step-meta[_ngcontent-%COMP%] {\n    text-align: left;\n  }\n  .export-footer-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    flex-direction: column-reverse;\n  }\n  .export-footer-actions[_ngcontent-%COMP%]   .vault-primary-button[_ngcontent-%COMP%], \n   .export-footer-actions[_ngcontent-%COMP%]   .vault-secondary-button[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: center;\n  }\n}\n@media (min-width: 1024px) {\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n}\n/*# sourceMappingURL=account-export-modal.component.css.map */"] });
+    }, dependencies: [NgClass, NgForOf, NgIf, SpinnerComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.export-modal-backdrop[_ngcontent-%COMP%] {\n  position: fixed;\n  inset: 0;\n  z-index: 80;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 1.5rem;\n  background: rgba(15, 23, 42, 0.52);\n  -webkit-backdrop-filter: blur(8px);\n  backdrop-filter: blur(8px);\n}\n.export-modal-panel[_ngcontent-%COMP%] {\n  width: min(100%, 980px);\n  max-height: calc(100vh - 3rem);\n  overflow: auto;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);\n}\n.export-modal-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 1.1rem 1.25rem;\n  border-bottom: 1px solid #e5e7eb;\n}\n.export-modal-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 1.5rem;\n  font-weight: 600;\n  letter-spacing: -0.025em;\n  line-height: 1.25;\n}\n.export-modal-close[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 2.5rem;\n  height: 2.5rem;\n  flex-shrink: 0;\n  border: 1px solid #d1d5db;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  color: #6b7280;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-modal-close[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n  border-color: #cbd5e1;\n  color: #111827;\n}\n.export-modal-body[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  padding: 1.5rem;\n}\n.export-modal-body--centered[_ngcontent-%COMP%] {\n  justify-content: center;\n  min-height: 460px;\n}\n.export-modal-section[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  padding: 1.25rem;\n  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);\n}\n.export-section-header[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 1rem;\n  flex-wrap: wrap;\n}\n.export-section-actions[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.75rem;\n  flex-wrap: wrap;\n}\n.export-config-section-heading[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.35rem;\n}\n.export-config-section-kicker[_ngcontent-%COMP%] {\n  font-size: 0.75rem;\n  line-height: 1.1;\n}\n.export-select-all-button[_ngcontent-%COMP%] {\n  min-height: 2rem;\n  padding: 0.5rem 0.75rem;\n}\n.export-config-section-title[_ngcontent-%COMP%] {\n  font-size: 1.05rem;\n  line-height: 1.25;\n}\n.export-config-section-copy[_ngcontent-%COMP%] {\n  font-size: 0.8125rem;\n  line-height: 1.4;\n}\n.export-section-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #4338ca;\n  font-size: 1.25rem;\n  font-weight: 600;\n  line-height: 1.35;\n}\n.export-resource-checklist[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 0.75rem;\n}\n.export-resource-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: flex-start;\n  gap: 0.75rem;\n  min-width: 0;\n  padding: 0.9rem 1rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  cursor: pointer;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.export-resource-card[_ngcontent-%COMP%]:hover {\n  border-color: #cbd5e1;\n  background: #f8fafc;\n}\n.export-resource-toggle[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  margin-top: 0.1rem;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  position: absolute;\n  opacity: 0;\n  pointer-events: none;\n}\n.export-resource-checkmark[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 1.25rem;\n  height: 1.25rem;\n  border: 1.5px solid #cbd5e1;\n  border-radius: 0.3rem;\n  background: #ffffff;\n  color: transparent;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-resource-toggle[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .export-resource-checkmark[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #5b47fb;\n  color: #ffffff;\n}\n.export-resource-copy[_ngcontent-%COMP%] {\n  display: flex;\n  min-width: 0;\n  flex-direction: column;\n}\n.export-resource-label[_ngcontent-%COMP%] {\n  color: #0f172a;\n  font-size: 0.9rem;\n  font-weight: 600;\n  line-height: 1.45;\n}\n.export-duration-options[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.export-duration-button[_ngcontent-%COMP%] {\n  border: 1px solid #d1d5db;\n  border-radius: 999px;\n  background: #ffffff;\n  color: #111827;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1;\n  padding: 0.45rem 0.7rem;\n  transition:\n    background-color 0.15s ease,\n    border-color 0.15s ease,\n    color 0.15s ease;\n}\n.export-duration-button[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n}\n.export-duration-button.is-selected[_ngcontent-%COMP%] {\n  border-color: #5b47fb;\n  background: #eef2ff;\n  color: #5b47fb;\n}\n.export-recaptcha-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 0.95rem 1rem;\n  border: 1px dashed #cbd5e1;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n}\n.export-recaptcha-title[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.9rem;\n  font-weight: 600;\n  line-height: 1.4;\n}\n.export-recaptcha-error[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #b91c1c;\n  font-size: 0.8125rem;\n  font-weight: 500;\n  line-height: 1.4;\n}\n.export-loading-status[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n  text-align: center;\n}\n.export-loading-copy[_ngcontent-%COMP%], \n.export-result-copy[_ngcontent-%COMP%] {\n  margin: 0 auto;\n  max-width: 42rem;\n  text-align: center;\n}\n.export-loading-section[_ngcontent-%COMP%], \n.export-result-section[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 44rem;\n  margin: 0 auto;\n}\n.export-loading-steps[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.export-loading-step[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  gap: 1rem;\n  align-items: center;\n  padding: 1rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-loading-steps[_ngcontent-%COMP%]   .export-loading-step[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%], \n.export-loading-step.is-active[_ngcontent-%COMP%]   .export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #5b47fb;\n}\n.export-loading-step.is-complete[_ngcontent-%COMP%]   .export-step-title[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-step-title[_ngcontent-%COMP%] {\n  margin: 0 0 0.2rem;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.export-step-meta[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #64748b;\n  font-size: 0.875rem;\n  font-weight: 500;\n  text-align: right;\n}\n.export-step-meta[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #0f172a;\n}\n.export-result-download[_ngcontent-%COMP%], \n.export-result-qr[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  gap: 1rem;\n  width: 100%;\n}\n.export-result-summary-grid[_ngcontent-%COMP%] {\n  width: 100%;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);\n  gap: 1rem;\n  align-items: start;\n  padding: 0.95rem 0;\n  border-top: 1px solid #e5e7eb;\n}\n.export-result-summary-grid[_ngcontent-%COMP%]   .export-result-summary-row[_ngcontent-%COMP%]:first-child {\n  border-top: 0;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dt[_ngcontent-%COMP%] {\n  color: #64748b;\n  font-size: 0.75rem;\n  font-weight: 600;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n.export-result-summary-row[_ngcontent-%COMP%]   dd[_ngcontent-%COMP%] {\n  margin: 0;\n  color: #0f172a;\n  font-size: 0.95rem;\n  font-weight: 600;\n  line-height: 1.55;\n}\n.mock-qr-frame[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  padding: 1.5rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n}\n.generated-qr-code[_ngcontent-%COMP%] {\n  width: min(100%, 240px);\n  height: auto;\n  aspect-ratio: 1;\n}\n.export-modal-footer[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 1rem;\n  padding: 0 1.5rem 1.5rem;\n  border-top: 1px solid #e5e7eb;\n}\n.export-footer-actions[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.75rem;\n  padding-top: 1rem;\n}\n.export-footer-error[_ngcontent-%COMP%] {\n  width: 100%;\n}\n@media (max-width: 767px) {\n  .export-modal-header[_ngcontent-%COMP%], \n   .export-modal-body[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    padding-left: 1rem;\n    padding-right: 1rem;\n  }\n  .export-modal-title[_ngcontent-%COMP%] {\n    font-size: 1.25rem;\n  }\n  .export-section-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: space-between;\n  }\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: 1fr;\n  }\n  .export-loading-step[_ngcontent-%COMP%], \n   .export-result-summary-row[_ngcontent-%COMP%], \n   .export-modal-footer[_ngcontent-%COMP%] {\n    grid-template-columns: minmax(0, 1fr);\n    flex-direction: column;\n    align-items: stretch;\n  }\n  .export-recaptcha-card[_ngcontent-%COMP%] {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .export-step-meta[_ngcontent-%COMP%] {\n    text-align: left;\n  }\n  .export-footer-actions[_ngcontent-%COMP%] {\n    width: 100%;\n    flex-direction: column-reverse;\n  }\n  .export-footer-actions[_ngcontent-%COMP%]   .vault-primary-button[_ngcontent-%COMP%], \n   .export-footer-actions[_ngcontent-%COMP%]   .vault-secondary-button[_ngcontent-%COMP%] {\n    width: 100%;\n    justify-content: center;\n  }\n}\n@media (min-width: 1024px) {\n  .export-resource-checklist[_ngcontent-%COMP%] {\n    grid-template-columns: repeat(3, minmax(0, 1fr));\n  }\n}\n/*# sourceMappingURL=account-export-modal.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AccountExportModalComponent, { className: "AccountExportModalComponent", filePath: "projects/fasten-connect-vault/src/app/components/account-export-modal/account-export-modal.component.ts", lineNumber: 28 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AccountExportModalComponent, { className: "AccountExportModalComponent", filePath: "projects/fasten-connect-vault/src/app/components/account-export-modal/account-export-modal.component.ts", lineNumber: 29 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/account-details/account-details.component.ts
