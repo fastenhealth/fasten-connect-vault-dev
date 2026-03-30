@@ -59013,6 +59013,38 @@ function toCleanString(value) {
   return String(value).trim();
 }
 
+// projects/shared-library/src/lib/utils/support-request.ts
+function buildSupportRequestZendeskTicket(request, context2) {
+  const body = `${request.request_content}
+
+
+\`\`\`${JSON.stringify({
+    healthsystem_name: request.healthsystem_name,
+    version: request.version,
+    arch: request.arch,
+    os: request.os,
+    error: request.error,
+    error_description: request.error_description,
+    brand_id: request.brand_id,
+    portal_id: request.portal_id,
+    endpoint_id: request.endpoint_id,
+    org_connection_id: request.org_connection_id,
+    vault_profile_connection_id: request.vault_profile_connection_id,
+    external_id: request.external_id,
+    external_state: request.external_state,
+    request_id: request.request_id
+  })}\`\`\``;
+  return {
+    name: request.email,
+    email: request.email,
+    body,
+    subject: `Support Request from ${request.healthsystem_name}`,
+    organization_id: context2.organizationId,
+    organization_name: context2.organizationName,
+    api_mode: context2.apiMode
+  };
+}
+
 // projects/shared-library/src/lib/shared-library.service.ts
 var SharedLibraryService = class _SharedLibraryService {
   constructor() {
@@ -62636,6 +62668,19 @@ var FastenService = class _FastenService {
       params: { public_id: this.configService.systemConfig$.publicId }
     }).pipe(map((resp) => resp.data));
   }
+  requestSupport(request) {
+    const endpointUrl = new URL(`${environment.connect_api_endpoint_base}/support/request`);
+    const zendeskTicket = buildSupportRequestZendeskTicket(request, {
+      organizationId: this.configService.systemConfig$.org?.id || "",
+      organizationName: this.configService.systemConfig$.org?.name || "",
+      apiMode: this.configService.systemConfig$.apiMode || "test"
+    });
+    return this._httpClient.post(endpointUrl.toString(), zendeskTicket, {
+      params: { public_id: this.configService.systemConfig$.publicId }
+    }).pipe(map((response) => {
+      return {};
+    }));
+  }
   registerVaultEhiExport(payload, recaptchaResponseToken) {
     const url = `${environment.connect_api_endpoint_base}/bridge/vault/ehi-export`;
     return this._httpClient.post(url, payload, {
@@ -65721,6 +65766,294 @@ var TestModeRedirectComponent = class _TestModeRedirectComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TestModeRedirectComponent, { className: "TestModeRedirectComponent", filePath: "projects/fasten-connect-vault/src/app/pages/test-mode-redirect/test-mode-redirect.component.ts", lineNumber: 12 });
 })();
 
+// projects/fasten-connect-vault/src/app/pages/form-support-request/form-support-request.component.ts
+function FormSupportRequestComponent_div_1_div_23_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 32)(1, "p", 33);
+    \u0275\u0275text(2, "We couldn\u2019t submit your request.");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "p", 19);
+    \u0275\u0275text(4);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx_r1.errorMsg);
+  }
+}
+function FormSupportRequestComponent_div_1_div_24_p_4_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p")(1, "span", 38);
+    \u0275\u0275text(2, "Type:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", ctx_r1.error, "");
+  }
+}
+function FormSupportRequestComponent_div_1_div_24_p_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p")(1, "span", 38);
+    \u0275\u0275text(2, "Description:");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(3);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(3);
+    \u0275\u0275advance(3);
+    \u0275\u0275textInterpolate1(" ", ctx_r1.error_description, "");
+  }
+}
+function FormSupportRequestComponent_div_1_div_24_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 34)(1, "p", 35);
+    \u0275\u0275text(2, "Connection details detected");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "div", 36);
+    \u0275\u0275template(4, FormSupportRequestComponent_div_1_div_24_p_4_Template, 4, 1, "p", 37)(5, FormSupportRequestComponent_div_1_div_24_p_5_Template, 4, 1, "p", 37);
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("ngIf", ctx_r1.error);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.error_description);
+  }
+}
+function FormSupportRequestComponent_div_1_app_spinner_45_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "app-spinner", 39);
+  }
+  if (rf & 2) {
+    \u0275\u0275property("sizePx", 18)("strokeWidthPx", 2.5);
+  }
+}
+function FormSupportRequestComponent_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 4)(1, "a", 5);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(2, "svg", 6);
+    \u0275\u0275element(3, "path", 7);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(4, " Back to accounts ");
+    \u0275\u0275elementEnd();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(5, "div", 8)(6, "div", 9)(7, "p", 10);
+    \u0275\u0275text(8, "Support");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "div", 11)(10, "h1", 12);
+    \u0275\u0275text(11, "Report an issue");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(12, "p", 13);
+    \u0275\u0275text(13, " Share what happened while adding a provider through TEFCA and our team will investigate the connection flow. ");
+    \u0275\u0275elementEnd()()()();
+    \u0275\u0275element(14, "div", 14);
+    \u0275\u0275elementStart(15, "section", 15)(16, "form", 16, 1);
+    \u0275\u0275listener("ngSubmit", function FormSupportRequestComponent_div_1_Template_form_ngSubmit_16_listener() {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.submitForm());
+    });
+    \u0275\u0275elementStart(18, "div", 17)(19, "p", 18);
+    \u0275\u0275text(20, "Support context helps");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(21, "p", 19);
+    \u0275\u0275text(22, " Include the provider name and what step failed so we can trace the TEFCA handoff faster. ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(23, FormSupportRequestComponent_div_1_div_23_Template, 5, 1, "div", 20)(24, FormSupportRequestComponent_div_1_div_24_Template, 6, 2, "div", 21);
+    \u0275\u0275elementStart(25, "div", 22)(26, "div")(27, "label", 23);
+    \u0275\u0275text(28, " Your email address ");
+    \u0275\u0275elementStart(29, "span", 24);
+    \u0275\u0275text(30, "*");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(31, "input", 25);
+    \u0275\u0275twoWayListener("ngModelChange", function FormSupportRequestComponent_div_1_Template_input_ngModelChange_31_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.formSupportRequest.email, $event) || (ctx_r1.formSupportRequest.email = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(32, "div")(33, "label", 26);
+    \u0275\u0275text(34, " Health system name ");
+    \u0275\u0275elementStart(35, "span", 24);
+    \u0275\u0275text(36, "*");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(37, "input", 27);
+    \u0275\u0275twoWayListener("ngModelChange", function FormSupportRequestComponent_div_1_Template_input_ngModelChange_37_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.formSupportRequest.healthsystem_name, $event) || (ctx_r1.formSupportRequest.healthsystem_name = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(38, "div")(39, "label", 28);
+    \u0275\u0275text(40, " Describe your issue ");
+    \u0275\u0275elementStart(41, "span", 24);
+    \u0275\u0275text(42, "*");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(43, "textarea", 29);
+    \u0275\u0275twoWayListener("ngModelChange", function FormSupportRequestComponent_div_1_Template_textarea_ngModelChange_43_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      const ctx_r1 = \u0275\u0275nextContext();
+      \u0275\u0275twoWayBindingSet(ctx_r1.formSupportRequest.request_content, $event) || (ctx_r1.formSupportRequest.request_content = $event);
+      return \u0275\u0275resetView($event);
+    });
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(44, "button", 30);
+    \u0275\u0275template(45, FormSupportRequestComponent_div_1_app_spinner_45_Template, 1, 2, "app-spinner", 31);
+    \u0275\u0275text(46, " Submit request ");
+    \u0275\u0275elementEnd()()()();
+  }
+  if (rf & 2) {
+    const supportRequestForm_r3 = \u0275\u0275reference(17);
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275property("routerLink", "/dashboard/accounts");
+    \u0275\u0275advance(22);
+    \u0275\u0275property("ngIf", ctx_r1.errorMsg);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.error || ctx_r1.error_description);
+    \u0275\u0275advance(7);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.formSupportRequest.email);
+    \u0275\u0275advance(6);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.formSupportRequest.healthsystem_name);
+    \u0275\u0275advance(6);
+    \u0275\u0275twoWayProperty("ngModel", ctx_r1.formSupportRequest.request_content);
+    \u0275\u0275advance();
+    \u0275\u0275property("disabled", !supportRequestForm_r3.form.valid || ctx_r1.loading);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r1.loading);
+  }
+}
+function FormSupportRequestComponent_ng_template_2_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r4 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div", 40)(1, "section", 41)(2, "div", 42)(3, "div", 43);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(4, "svg", 44);
+    \u0275\u0275element(5, "path", 45);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(6, "div", 9)(7, "p", 10);
+    \u0275\u0275text(8, "Request submitted");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "h2", 46);
+    \u0275\u0275text(10, "Thanks, we\u2019ve got it");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(11, "p", 47);
+    \u0275\u0275text(12, " Your support request has been recorded. We\u2019ll review the issue and follow up when we have an update. ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(13, "div", 48)(14, "button", 49);
+    \u0275\u0275listener("click", function FormSupportRequestComponent_ng_template_2_Template_button_click_14_listener() {
+      \u0275\u0275restoreView(_r4);
+      const ctx_r1 = \u0275\u0275nextContext();
+      return \u0275\u0275resetView(ctx_r1.dismiss());
+    });
+    \u0275\u0275text(15, " Back to accounts ");
+    \u0275\u0275elementEnd()()()()();
+  }
+}
+var FormSupportRequestComponent = class _FormSupportRequestComponent {
+  constructor(router, fastenService) {
+    this.router = router;
+    this.fastenService = fastenService;
+    this.formSupportRequest = {};
+    this.loading = false;
+    this.submitSuccess = false;
+    this.errorMsg = "";
+  }
+  ngOnInit() {
+    this.resetForm();
+  }
+  resetForm() {
+    this.submitSuccess = false;
+    this.errorMsg = "";
+    this.formSupportRequest = {
+      email: "",
+      healthsystem_name: "",
+      request_content: ""
+    };
+  }
+  submitForm() {
+    if (this.loading) {
+      return;
+    }
+    this.loading = true;
+    this.errorMsg = "";
+    this.formSupportRequest.error = this.error;
+    this.formSupportRequest.error_description = this.error_description;
+    this.formSupportRequest.brand_id = this.brand_id;
+    this.formSupportRequest.portal_id = this.portal_id;
+    this.formSupportRequest.endpoint_id = this.endpoint_id;
+    this.formSupportRequest.org_connection_id = this.org_connection_id;
+    this.formSupportRequest.vault_profile_connection_id = this.vault_profile_connection_id;
+    this.formSupportRequest.external_id = this.external_id;
+    this.formSupportRequest.external_state = this.external_state;
+    this.formSupportRequest.request_id = this.request_id;
+    this.fastenService.requestSupport(this.formSupportRequest).subscribe({
+      next: () => {
+        this.loading = false;
+        this.submitSuccess = true;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = this.getErrorMessage(err);
+      }
+    });
+  }
+  dismiss() {
+    this.router.navigateByUrl("dashboard/accounts");
+  }
+  getErrorMessage(err) {
+    const fallbackMessage = "An error occurred while submitting your issue. Please try again later.";
+    if (!err) {
+      return fallbackMessage;
+    }
+    if (typeof err?.error === "string" && err.error.length > 0) {
+      return err.error;
+    }
+    if (typeof err?.error?.message === "string" && err.error.message.length > 0) {
+      return err.error.message;
+    }
+    if (typeof err?.message === "string" && err.message.length > 0) {
+      return err.message;
+    }
+    return fallbackMessage;
+  }
+  static {
+    this.\u0275fac = function FormSupportRequestComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _FormSupportRequestComponent)(\u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(FastenService));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _FormSupportRequestComponent, selectors: [["app-form-support-request"]], inputs: { error: "error", error_description: "error_description", brand_id: "brand_id", portal_id: "portal_id", endpoint_id: "endpoint_id", org_connection_id: "org_connection_id", vault_profile_connection_id: "vault_profile_connection_id", external_id: "external_id", external_state: "external_state", request_id: "request_id" }, standalone: false, decls: 4, vars: 2, consts: [["requestSuccess", ""], ["supportRequestForm", "ngForm"], [1, "vault-page-shell"], ["class", "mx-auto max-w-3xl space-y-6", 4, "ngIf", "ngIfElse"], [1, "mx-auto", "max-w-3xl", "space-y-6"], [1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-6", 3, "ngSubmit"], [1, "rounded-2xl", "border", "border-blue-200", "bg-blue-50", "px-4", "py-4", "text-sm", "text-slate-700"], [1, "font-semibold", "text-slate-900"], [1, "mt-1"], ["class", "rounded-2xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700", 4, "ngIf"], ["class", "rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900", 4, "ngIf"], [1, "grid", "gap-5"], ["for", "support-email", 1, "vault-field-label"], [1, "text-red-500"], ["id", "support-email", "name", "email", "placeholder", "you@example.com", "required", "", "type", "email", 1, "vault-input", 3, "ngModelChange", "ngModel"], ["for", "support-health-system", 1, "vault-field-label"], ["id", "support-health-system", "name", "healthsystem_name", "placeholder", "Mayo Clinic, Cleveland Clinic, Kaiser Permanente", "required", "", "type", "text", 1, "vault-input", 3, "ngModelChange", "ngModel"], ["for", "support-description", 1, "vault-field-label"], ["id", "support-description", "name", "request_content", "placeholder", "Please share the provider, what you clicked, and the error or behavior you saw.", "required", "", 1, "vault-input", "min-h-[160px]", 3, "ngModelChange", "ngModel"], ["type", "submit", 1, "vault-primary-button", "w-full", "justify-center", "px-4", "py-3", "disabled:cursor-not-allowed", "disabled:opacity-60", 3, "disabled"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx", 4, "ngIf"], [1, "rounded-2xl", "border", "border-red-200", "bg-red-50", "px-4", "py-4", "text-sm", "text-red-700"], [1, "font-semibold", "text-red-800"], [1, "rounded-2xl", "border", "border-amber-200", "bg-amber-50", "px-4", "py-4", "text-sm", "text-amber-900"], [1, "font-semibold"], [1, "mt-2", "space-y-1", "text-amber-800"], [4, "ngIf"], [1, "font-medium"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx"], [1, "mx-auto", "max-w-2xl"], [1, "vault-panel", "px-6", "py-10", "text-center", "sm:px-10", "sm:py-12"], [1, "space-y-6"], [1, "mx-auto", "flex", "h-16", "w-16", "items-center", "justify-center", "rounded-full", "bg-[#5B47FB]/10"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2.5", "viewBox", "0 0 24 24", 1, "h-8", "w-8", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M5 13l4 4L19 7"], [1, "text-3xl", "font-semibold", "tracking-tight", "text-slate-900"], [1, "mx-auto", "max-w-lg", "text-sm", "leading-7", "text-slate-500"], [1, "flex", "justify-center"], ["type", "button", 1, "vault-primary-button", "px-5", "py-3", 3, "click"]], template: function FormSupportRequestComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 2);
+        \u0275\u0275template(1, FormSupportRequestComponent_div_1_Template, 47, 8, "div", 3);
+        \u0275\u0275elementEnd();
+        \u0275\u0275template(2, FormSupportRequestComponent_ng_template_2_Template, 16, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+      }
+      if (rf & 2) {
+        const requestSuccess_r5 = \u0275\u0275reference(3);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", !ctx.submitSuccess)("ngIfElse", requestSuccess_r5);
+      }
+    }, dependencies: [\u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, NgModel, NgForm, NgIf, RouterLink, SpinnerComponent], encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(FormSupportRequestComponent, { className: "FormSupportRequestComponent", filePath: "projects/fasten-connect-vault/src/app/pages/form-support-request/form-support-request.component.ts", lineNumber: 12 });
+})();
+
 // projects/fasten-connect-vault/src/app/app-routing.module.ts
 var routes = [
   // @Input routing
@@ -65737,7 +66070,7 @@ var routes = [
   { path: "brand/details", component: HealthSystemBrandDetailsComponent, canActivate: [IsAuthenticatedAuthGuard] },
   { path: "brand/connecting", component: HealthSystemConnectingComponent, canActivate: [IsAuthenticatedAuthGuard] },
   // { path: 'form/healthsystem', component: FormHealthSystemRequestComponent, canActivate: [IsAuthenticatedAuthGuard] },
-  // { path: 'form/support', component: FormSupportRequestComponent, canActivate: [IsAuthenticatedAuthGuard] },
+  { path: "form/support", component: FormSupportRequestComponent, canActivate: [IsAuthenticatedAuthGuard] },
   { path: "", redirectTo: "/auth/signin", pathMatch: "full" },
   //must be at bottom of list
   { path: "**", redirectTo: "auth/signin" }
