@@ -65768,29 +65768,29 @@ function AppComponent_ng_template_3_ng_container_0_Template(rf, ctx) {
     \u0275\u0275elementStart(7, "nav", 15)(8, "a", 16);
     \u0275\u0275text(9, " Apps ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "a", 16);
+    \u0275\u0275elementStart(10, "a", 17);
     \u0275\u0275text(11, " Accounts ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "a", 16);
+    \u0275\u0275elementStart(12, "a", 17);
     \u0275\u0275text(13, " Settings ");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(14, "details", 17)(15, "summary", 18);
-    \u0275\u0275element(16, "img", 19);
-    \u0275\u0275elementStart(17, "span", 20);
+    \u0275\u0275elementStart(14, "details", 18)(15, "summary", 19);
+    \u0275\u0275element(16, "img", 20);
+    \u0275\u0275elementStart(17, "span", 21);
     \u0275\u0275text(18, "Profile");
     \u0275\u0275elementEnd();
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(19, "svg", 21);
-    \u0275\u0275element(20, "polyline", 22);
+    \u0275\u0275elementStart(19, "svg", 22);
+    \u0275\u0275element(20, "polyline", 23);
     \u0275\u0275elementEnd()();
     \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(21, "div", 23)(22, "a", 24);
+    \u0275\u0275elementStart(21, "div", 24)(22, "a", 25);
     \u0275\u0275text(23, "Settings");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(24, "a", 24);
+    \u0275\u0275elementStart(24, "a", 25);
     \u0275\u0275text(25, "Sign out");
     \u0275\u0275elementEnd()()()()();
-    \u0275\u0275elementStart(26, "main", 25);
+    \u0275\u0275elementStart(26, "main", 26);
     \u0275\u0275element(27, "router-outlet");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementContainerEnd();
@@ -65814,7 +65814,7 @@ function AppComponent_ng_template_3_ng_container_0_Template(rf, ctx) {
 }
 function AppComponent_ng_template_3_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 26);
+    \u0275\u0275elementStart(0, "div", 27);
     \u0275\u0275element(1, "router-outlet");
     \u0275\u0275elementEnd();
   }
@@ -65892,7 +65892,7 @@ var AppComponent = class _AppComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 5, vars: 5, consts: [["appShell", ""], ["secondaryShell", ""], ["id", "test-mode-banner", 3, "class", 4, "ngIf"], [4, "ngIf", "ngIfElse"], ["id", "test-mode-banner"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [1, "marketing-container"], [1, "vault-app-shell"], [1, "vault-shell-header"], [1, "vault-shell-header-row"], [1, "vault-shell-logo"], [1, "az-logo", "text-2xl"], ["aria-label", "Vault sections", 1, "vault-shell-nav"], [1, "vault-shell-nav-link", 3, "routerLink"], [1, "vault-shell-profile"], [1, "vault-profile-trigger"], ["src", "assets/images/profile-image.svg", "alt", "", 1, "vault-profile-avatar"], [1, "vault-profile-label"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4", "text-slate-500"], ["points", "6 9 12 15 18 9"], [1, "vault-profile-menu"], [1, "vault-profile-menu-item", 3, "routerLink"], [1, "vault-shell-main"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 5, vars: 5, consts: [["appShell", ""], ["secondaryShell", ""], ["id", "test-mode-banner", 3, "class", 4, "ngIf"], [4, "ngIf", "ngIfElse"], ["id", "test-mode-banner"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [1, "marketing-container"], [1, "vault-app-shell"], [1, "vault-shell-header"], [1, "vault-shell-header-row"], [1, "vault-shell-logo"], [1, "az-logo", "text-2xl"], ["aria-label", "Vault sections", 1, "vault-shell-nav"], [1, "vault-shell-nav-link", 2, "display", "none", 3, "routerLink"], [1, "vault-shell-nav-link", 3, "routerLink"], [1, "vault-shell-profile"], [1, "vault-profile-trigger"], ["src", "assets/images/profile-image.svg", "alt", "", 1, "vault-profile-avatar"], [1, "vault-profile-label"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4", "text-slate-500"], ["points", "6 9 12 15 18 9"], [1, "vault-profile-menu"], [1, "vault-profile-menu-item", 3, "routerLink"], [1, "vault-shell-main"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275template(0, AppComponent_div_0_Template, 6, 2, "div", 2);
         \u0275\u0275pipe(1, "async");
