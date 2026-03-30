@@ -60512,15 +60512,12 @@ function createRemoteJWKSet(url, options) {
   return remoteJWKSet;
 }
 
-// projects/fasten-connect-vault/src/app/app.constants.ts
-var ORG_CREDENTIAL_PUBLIC_ID = environment.org_credential_test_public_id;
-
 // projects/fasten-connect-vault/src/app/services/auth.service.ts
 var FASTEN_AUTH_VAULT_COOKIE_NAME = "fasten_connect_auth_vault";
 var AuthService = class _AuthService {
-  constructor(_httpClient, vaultConfigService) {
+  constructor(_httpClient, configService) {
     this._httpClient = _httpClient;
-    this.vaultConfigService = vaultConfigService;
+    this.configService = configService;
     this.IsAuthenticatedSubject = new BehaviorSubject(false);
   }
   VaultAuthBegin(email, cspPromptForce) {
@@ -60528,7 +60525,7 @@ var AuthService = class _AuthService {
       let resp = yield this._httpClient.post(`${environment.connect_api_endpoint_base}/bridge/vault_auth_begin`, {
         "email": email,
         "csp_prompt_force": cspPromptForce
-      }, { withCredentials: true, params: { "public_id": ORG_CREDENTIAL_PUBLIC_ID } }).toPromise();
+      }, { withCredentials: true, params: { "public_id": this.configService.systemConfig$.publicId } }).toPromise();
       return resp;
     });
   }
@@ -60537,7 +60534,7 @@ var AuthService = class _AuthService {
       let resp = yield this._httpClient.post(`${environment.connect_api_endpoint_base}/bridge/vault_auth_finish`, {
         "email": email,
         "code": code
-      }, { withCredentials: true, params: { "public_id": ORG_CREDENTIAL_PUBLIC_ID } }).toPromise();
+      }, { withCredentials: true, params: { "public_id": this.configService.systemConfig$.publicId } }).toPromise();
       return resp;
     });
   }
@@ -60560,7 +60557,7 @@ var AuthService = class _AuthService {
           issuer: issuerHost,
           audience: issuerHost
         });
-        this.vaultConfigService.systemConfig = { user: payload };
+        this.configService.systemConfig = { user: payload };
         return payload;
       } catch (e) {
         console.error("failed to verify jwt:", e, issuerHost);
@@ -65678,47 +65675,62 @@ var AppRoutingModule = class _AppRoutingModule {
 };
 
 // projects/fasten-connect-vault/src/app/app.component.ts
-function AppComponent_ng_container_6_Template(rf, ctx) {
+function AppComponent_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 4);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(1, "svg", 5);
+    \u0275\u0275element(2, "path", 6)(3, "path", 7)(4, "path", 8);
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(5, " You are using Fasten in test mode\n");
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275classMap(ctx_r0.bannerClasses);
+  }
+}
+function AppComponent_ng_container_2_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 8);
+    \u0275\u0275elementStart(1, "div", 9);
     \u0275\u0275element(2, "router-outlet");
     \u0275\u0275elementEnd();
     \u0275\u0275elementContainerEnd();
   }
 }
-function AppComponent_ng_template_7_ng_container_0_Template(rf, ctx) {
+function AppComponent_ng_template_3_ng_container_0_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275elementStart(1, "div", 9)(2, "header", 10)(3, "div", 11)(4, "div", 12)(5, "span", 13);
+    \u0275\u0275elementStart(1, "div", 10)(2, "header", 11)(3, "div", 12)(4, "div", 13)(5, "span", 14);
     \u0275\u0275text(6, "fasten");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "nav", 14)(8, "a", 15);
+    \u0275\u0275elementStart(7, "nav", 15)(8, "a", 16);
     \u0275\u0275text(9, " Apps ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(10, "a", 15);
+    \u0275\u0275elementStart(10, "a", 16);
     \u0275\u0275text(11, " Accounts ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "a", 15);
+    \u0275\u0275elementStart(12, "a", 16);
     \u0275\u0275text(13, " Settings ");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(14, "details", 16)(15, "summary", 17);
-    \u0275\u0275element(16, "img", 18);
-    \u0275\u0275elementStart(17, "span", 19);
+    \u0275\u0275elementStart(14, "details", 17)(15, "summary", 18);
+    \u0275\u0275element(16, "img", 19);
+    \u0275\u0275elementStart(17, "span", 20);
     \u0275\u0275text(18, "Profile");
     \u0275\u0275elementEnd();
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(19, "svg", 20);
-    \u0275\u0275element(20, "polyline", 21);
+    \u0275\u0275elementStart(19, "svg", 21);
+    \u0275\u0275element(20, "polyline", 22);
     \u0275\u0275elementEnd()();
     \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(21, "div", 22)(22, "a", 23);
+    \u0275\u0275elementStart(21, "div", 23)(22, "a", 24);
     \u0275\u0275text(23, "Settings");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(24, "a", 23);
+    \u0275\u0275elementStart(24, "a", 24);
     \u0275\u0275text(25, "Sign out");
     \u0275\u0275elementEnd()()()()();
-    \u0275\u0275elementStart(26, "main", 24);
+    \u0275\u0275elementStart(26, "main", 25);
     \u0275\u0275element(27, "router-outlet");
     \u0275\u0275elementEnd()();
     \u0275\u0275elementContainerEnd();
@@ -65740,9 +65752,9 @@ function AppComponent_ng_template_7_ng_container_0_Template(rf, ctx) {
     \u0275\u0275property("routerLink", "/auth/signin");
   }
 }
-function AppComponent_ng_template_7_ng_template_1_Template(rf, ctx) {
+function AppComponent_ng_template_3_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 25);
+    \u0275\u0275elementStart(0, "div", 26);
     \u0275\u0275element(1, "router-outlet");
     \u0275\u0275elementEnd();
   }
@@ -65751,9 +65763,9 @@ function AppComponent_ng_template_7_ng_template_1_Template(rf, ctx) {
     \u0275\u0275property("ngClass", ctx_r0.isWideSurfaceRoute ? "vault-wide-surface" : "mx-auto w-full max-w-[440px] bg-white rounded-[28px] shadow-[0_24px_80px_rgba(15,23,42,0.12)] border border-white/70");
   }
 }
-function AppComponent_ng_template_7_Template(rf, ctx) {
+function AppComponent_ng_template_3_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275template(0, AppComponent_ng_template_7_ng_container_0_Template, 28, 11, "ng-container", 7)(1, AppComponent_ng_template_7_ng_template_1_Template, 2, 1, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
+    \u0275\u0275template(0, AppComponent_ng_template_3_ng_container_0_Template, 28, 11, "ng-container", 3)(1, AppComponent_ng_template_3_ng_template_1_Template, 2, 1, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
   }
   if (rf & 2) {
     const secondaryShell_r2 = \u0275\u0275reference(2);
@@ -65773,8 +65785,8 @@ var AppComponent = class _AppComponent {
     document.querySelector("body")?.appendChild(navbarBackdrop);
     const urlParams = new URLSearchParams(window.location.search);
     this.configService.systemConfig = {
-      apiMode: this.getApiModeFromPublicId(ORG_CREDENTIAL_PUBLIC_ID),
-      publicId: ORG_CREDENTIAL_PUBLIC_ID,
+      apiMode: this.getApiModeFromPublicId(this.configService.systemConfig$.publicId || environment.org_credential_live_public_id),
+      publicId: this.configService.systemConfig$.publicId || environment.org_credential_live_public_id,
       externalId: urlParams.get("external-id") || "",
       tefcaMode: true,
       connectMode: ConnectMode.Popup
@@ -65820,24 +65832,20 @@ var AppComponent = class _AppComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 9, vars: 4, consts: [["appShell", ""], ["secondaryShell", ""], ["id", "test-mode-banner"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [4, "ngIf", "ngIfElse"], [1, "marketing-container"], [1, "vault-app-shell"], [1, "vault-shell-header"], [1, "vault-shell-header-row"], [1, "vault-shell-logo"], [1, "az-logo", "text-2xl"], ["aria-label", "Vault sections", 1, "vault-shell-nav"], [1, "vault-shell-nav-link", 3, "routerLink"], [1, "vault-shell-profile"], [1, "vault-profile-trigger"], ["src", "assets/images/profile-image.svg", "alt", "", 1, "vault-profile-avatar"], [1, "vault-profile-label"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4", "text-slate-500"], ["points", "6 9 12 15 18 9"], [1, "vault-profile-menu"], [1, "vault-profile-menu-item", 3, "routerLink"], [1, "vault-shell-main"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], standalone: false, decls: 5, vars: 5, consts: [["appShell", ""], ["secondaryShell", ""], ["id", "test-mode-banner", 3, "class", 4, "ngIf"], [4, "ngIf", "ngIfElse"], ["id", "test-mode-banner"], ["xmlns", "http://www.w3.org/2000/svg", "width", "24", "height", "24", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "w-5", "h-5"], ["d", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"], ["d", "M6.453 15h11.094"], ["d", "M8.5 2h7"], [1, "marketing-container"], [1, "vault-app-shell"], [1, "vault-shell-header"], [1, "vault-shell-header-row"], [1, "vault-shell-logo"], [1, "az-logo", "text-2xl"], ["aria-label", "Vault sections", 1, "vault-shell-nav"], [1, "vault-shell-nav-link", 3, "routerLink"], [1, "vault-shell-profile"], [1, "vault-profile-trigger"], ["src", "assets/images/profile-image.svg", "alt", "", 1, "vault-profile-avatar"], [1, "vault-profile-label"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4", "text-slate-500"], ["points", "6 9 12 15 18 9"], [1, "vault-profile-menu"], [1, "vault-profile-menu-item", 3, "routerLink"], [1, "vault-shell-main"], [3, "ngClass"]], template: function AppComponent_Template(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 2);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(1, "svg", 3);
-        \u0275\u0275element(2, "path", 4)(3, "path", 5)(4, "path", 6);
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(5, " You are using Fasten in test mode\n");
-        \u0275\u0275elementEnd();
-        \u0275\u0275template(6, AppComponent_ng_container_6_Template, 3, 0, "ng-container", 7)(7, AppComponent_ng_template_7_Template, 3, 2, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+        \u0275\u0275template(0, AppComponent_div_0_Template, 6, 2, "div", 2);
+        \u0275\u0275pipe(1, "async");
+        \u0275\u0275template(2, AppComponent_ng_container_2_Template, 3, 0, "ng-container", 3)(3, AppComponent_ng_template_3_Template, 3, 2, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
       }
       if (rf & 2) {
-        const appShell_r3 = \u0275\u0275reference(8);
-        \u0275\u0275classMap(ctx.bannerClasses);
-        \u0275\u0275advance(6);
+        let tmp_1_0;
+        const appShell_r3 = \u0275\u0275reference(4);
+        \u0275\u0275property("ngIf", ((tmp_1_0 = \u0275\u0275pipeBind1(1, 3, ctx.configService.systemConfigSubject)) == null ? null : tmp_1_0.apiMode) == "test");
+        \u0275\u0275advance(2);
         \u0275\u0275property("ngIf", ctx.isSigninRoute)("ngIfElse", appShell_r3);
       }
-    }, dependencies: [NgClass, NgIf, RouterOutlet, RouterLink], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n#test-mode-banner[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  left: 50%;\n  z-index: 40;\n  width: 100vw;\n  margin-left: calc(50% - 50vw);\n  margin-right: calc(50% - 50vw);\n}\n.vault-app-shell[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.vault-shell-header[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 40px;\n  z-index: 20;\n  width: 100%;\n  background: #ffffff;\n  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);\n}\n.vault-shell-header-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);\n  align-items: center;\n  gap: 1.25rem;\n  width: 100%;\n  max-width: 1280px;\n  margin: 0 auto;\n  padding: 0.75rem 1rem;\n}\n.vault-shell-logo[_ngcontent-%COMP%] {\n  justify-self: start;\n}\n.vault-shell-nav[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow-x: auto;\n  justify-self: center;\n}\n.vault-shell-nav-link[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  white-space: nowrap;\n  border-bottom: 2px solid transparent;\n  color: #6b7280;\n  font-size: 0.875rem;\n  font-weight: 500;\n  padding: 0.15rem 0.75rem 0.35rem;\n  text-decoration: none;\n  transition: color 0.2s ease, border-color 0.2s ease;\n}\n.vault-shell-nav-link[_ngcontent-%COMP%]:hover {\n  color: #374151;\n  border-bottom-color: #d1d5db;\n}\n.vault-shell-nav-link.is-active[_ngcontent-%COMP%] {\n  border-bottom-color: #5b47fb;\n  color: #5b47fb;\n}\n.vault-shell-main[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.vault-shell-profile[_ngcontent-%COMP%] {\n  position: relative;\n  justify-self: end;\n}\n.vault-profile-trigger[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  cursor: pointer;\n  list-style: none;\n  border: 1px solid #d1d5db;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  padding: 0.375rem 0.625rem;\n}\n.vault-profile-trigger[_ngcontent-%COMP%]::-webkit-details-marker {\n  display: none;\n}\n.vault-profile-avatar[_ngcontent-%COMP%] {\n  width: 1.75rem;\n  height: 1.75rem;\n  border-radius: 999px;\n}\n.vault-profile-label[_ngcontent-%COMP%] {\n  color: #111827;\n  font-size: 0.875rem;\n  font-weight: 500;\n}\n.vault-profile-menu[_ngcontent-%COMP%] {\n  position: absolute;\n  top: calc(100% + 0.5rem);\n  right: 0;\n  min-width: 10rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);\n  padding: 0.375rem;\n}\n.vault-profile-menu-item[_ngcontent-%COMP%] {\n  display: block;\n  border-radius: 0.375rem;\n  color: #111827;\n  font-size: 0.875rem;\n  padding: 0.5rem 0.625rem;\n  text-decoration: none;\n}\n.vault-profile-menu-item[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n}\n.vault-wide-surface[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 1280px;\n  margin: 0 auto;\n}\n@media (max-width: 768px) {\n  .vault-shell-header-row[_ngcontent-%COMP%] {\n    grid-template-columns: auto 1fr auto;\n    gap: 0.75rem;\n    padding: 0.75rem 1rem;\n  }\n  .vault-shell-nav[_ngcontent-%COMP%] {\n    justify-content: center;\n    min-width: 0;\n  }\n  .vault-profile-label[_ngcontent-%COMP%] {\n    display: none;\n  }\n}\n/*# sourceMappingURL=app.component.css.map */"] });
+    }, dependencies: [NgClass, NgIf, RouterOutlet, RouterLink, AsyncPipe], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n#test-mode-banner[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 0;\n  left: 50%;\n  z-index: 40;\n  width: 100vw;\n  margin-left: calc(50% - 50vw);\n  margin-right: calc(50% - 50vw);\n}\n.vault-app-shell[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.vault-shell-header[_ngcontent-%COMP%] {\n  position: sticky;\n  top: 40px;\n  z-index: 20;\n  width: 100%;\n  background: #ffffff;\n  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);\n}\n.vault-shell-header-row[_ngcontent-%COMP%] {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);\n  align-items: center;\n  gap: 1.25rem;\n  width: 100%;\n  max-width: 1280px;\n  margin: 0 auto;\n  padding: 0.75rem 1rem;\n}\n.vault-shell-logo[_ngcontent-%COMP%] {\n  justify-self: start;\n}\n.vault-shell-nav[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow-x: auto;\n  justify-self: center;\n}\n.vault-shell-nav-link[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  white-space: nowrap;\n  border-bottom: 2px solid transparent;\n  color: #6b7280;\n  font-size: 0.875rem;\n  font-weight: 500;\n  padding: 0.15rem 0.75rem 0.35rem;\n  text-decoration: none;\n  transition: color 0.2s ease, border-color 0.2s ease;\n}\n.vault-shell-nav-link[_ngcontent-%COMP%]:hover {\n  color: #374151;\n  border-bottom-color: #d1d5db;\n}\n.vault-shell-nav-link.is-active[_ngcontent-%COMP%] {\n  border-bottom-color: #5b47fb;\n  color: #5b47fb;\n}\n.vault-shell-main[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.vault-shell-profile[_ngcontent-%COMP%] {\n  position: relative;\n  justify-self: end;\n}\n.vault-profile-trigger[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  gap: 0.5rem;\n  cursor: pointer;\n  list-style: none;\n  border: 1px solid #d1d5db;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  padding: 0.375rem 0.625rem;\n}\n.vault-profile-trigger[_ngcontent-%COMP%]::-webkit-details-marker {\n  display: none;\n}\n.vault-profile-avatar[_ngcontent-%COMP%] {\n  width: 1.75rem;\n  height: 1.75rem;\n  border-radius: 999px;\n}\n.vault-profile-label[_ngcontent-%COMP%] {\n  color: #111827;\n  font-size: 0.875rem;\n  font-weight: 500;\n}\n.vault-profile-menu[_ngcontent-%COMP%] {\n  position: absolute;\n  top: calc(100% + 0.5rem);\n  right: 0;\n  min-width: 10rem;\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #ffffff;\n  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);\n  padding: 0.375rem;\n}\n.vault-profile-menu-item[_ngcontent-%COMP%] {\n  display: block;\n  border-radius: 0.375rem;\n  color: #111827;\n  font-size: 0.875rem;\n  padding: 0.5rem 0.625rem;\n  text-decoration: none;\n}\n.vault-profile-menu-item[_ngcontent-%COMP%]:hover {\n  background: #f9fafb;\n}\n.vault-wide-surface[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 1280px;\n  margin: 0 auto;\n}\n@media (max-width: 768px) {\n  .vault-shell-header-row[_ngcontent-%COMP%] {\n    grid-template-columns: auto 1fr auto;\n    gap: 0.75rem;\n    padding: 0.75rem 1rem;\n  }\n  .vault-shell-nav[_ngcontent-%COMP%] {\n    justify-content: center;\n    min-width: 0;\n  }\n  .vault-profile-label[_ngcontent-%COMP%] {\n    display: none;\n  }\n}\n/*# sourceMappingURL=app.component.css.map */"] });
   }
 };
 (() => {
