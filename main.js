@@ -61414,12 +61414,28 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
     this.authService = authService;
     this.configService = configService;
     this.loading = false;
+    this.resendingCode = false;
     this.errorMsg = "";
     this.currentEmail = "test@example.com";
     this.codeExpirySeconds = 300;
-    this.timeRemaining$ = timer(0, 1e3).pipe(map((n) => (this.codeExpirySeconds - n) * 1e3), takeWhile((n) => n >= 0));
+    this.timeRemaining$ = this.createCountdown();
   }
   ngOnInit() {
+  }
+  onResendCode() {
+    if (!this.currentEmail) {
+      this.errorMsg = "email is required to resend the code";
+      return;
+    }
+    this.resendingCode = true;
+    this.errorMsg = "";
+    this.authService.VaultAuthBegin(this.currentEmail, environment.csp_prompt_force).then(() => {
+      this.resendingCode = false;
+      this.timeRemaining$ = this.createCountdown();
+    }).catch(() => {
+      this.resendingCode = false;
+      this.errorMsg = "unable to resend code";
+    });
   }
   onCodeCompleted(code) {
     this.loading = true;
@@ -61444,13 +61460,16 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
       }
     });
   }
+  createCountdown() {
+    return timer(0, 1e3).pipe(map((n) => (this.codeExpirySeconds - n) * 1e3), takeWhile((n) => n >= 0));
+  }
   static {
     this.\u0275fac = function VaultSigninCodeComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _VaultSigninCodeComponent)(\u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(ConfigService));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninCodeComponent, selectors: [["app-vault-signin-code"]], inputs: { currentEmail: "currentEmail" }, standalone: false, decls: 28, vars: 10, consts: [["id", "step-verification", 1, "step-view", "p-8", "space-y-6"], [1, "text-center", "space-y-2"], [1, "text-2xl", "font-semibold", "text-gray-900"], ["id", "verification-hint", 1, "text-gray-600"], [1, "space-y-6"], ["id", "verification-inputs", 1, "flex", "justify-between", "gap-2"], [3, "codeCompleted", "isCodeHidden", "codeLength"], ["id", "verification-error", "class", "text-sm text-red-500 text-center", 4, "ngIf"], [1, "text-center", "space-y-4"], [1, "text-sm", "text-gray-600"], ["id", "verification-countdown", 1, "font-semibold", "text-gray-900"], [1, "space-x-2"], ["id", "resend-code", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium"], [1, "text-gray-300", 2, "display", "none"], ["id", "use-other-method", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", 2, "display", "none"], ["id", "verification-error", 1, "text-sm", "text-red-500", "text-center"]], template: function VaultSigninCodeComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninCodeComponent, selectors: [["app-vault-signin-code"]], inputs: { currentEmail: "currentEmail" }, standalone: false, decls: 28, vars: 12, consts: [["id", "step-verification", 1, "step-view", "p-8", "space-y-6"], [1, "text-center", "space-y-2"], [1, "text-2xl", "font-semibold", "text-gray-900"], ["id", "verification-hint", 1, "text-gray-600"], [1, "space-y-6"], ["id", "verification-inputs", 1, "flex", "justify-between", "gap-2"], [3, "codeCompleted", "isCodeHidden", "codeLength"], ["id", "verification-error", "class", "text-sm text-red-500 text-center", 4, "ngIf"], [1, "text-center", "space-y-4"], [1, "text-sm", "text-gray-600"], ["id", "verification-countdown", 1, "font-semibold", "text-gray-900"], [1, "space-x-2"], ["id", "resend-code", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", "disabled:cursor-not-allowed", "disabled:opacity-60", 3, "click", "disabled"], [1, "text-gray-300", 2, "display", "none"], ["id", "use-other-method", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "text-sm", "font-medium", 2, "display", "none"], ["id", "verification-error", 1, "text-sm", "text-red-500", "text-center"]], template: function VaultSigninCodeComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "h2", 2);
         \u0275\u0275text(3, " Enter authentication code");
@@ -61477,7 +61496,10 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
         \u0275\u0275pipe(20, "date");
         \u0275\u0275elementEnd()();
         \u0275\u0275elementStart(21, "div", 11)(22, "button", 12);
-        \u0275\u0275text(23, " Resend code ");
+        \u0275\u0275listener("click", function VaultSigninCodeComponent_Template_button_click_22_listener() {
+          return ctx.onResendCode();
+        });
+        \u0275\u0275text(23);
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(24, "span", 13);
         \u0275\u0275text(25, "|");
@@ -61494,13 +61516,17 @@ var VaultSigninCodeComponent = class _VaultSigninCodeComponent {
         \u0275\u0275advance();
         \u0275\u0275property("ngIf", ctx.errorMsg);
         \u0275\u0275advance(5);
-        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(20, 7, \u0275\u0275pipeBind1(19, 5, ctx.timeRemaining$), "mm:ss"));
+        \u0275\u0275textInterpolate(\u0275\u0275pipeBind2(20, 9, \u0275\u0275pipeBind1(19, 7, ctx.timeRemaining$), "mm:ss"));
+        \u0275\u0275advance(4);
+        \u0275\u0275property("disabled", ctx.loading || ctx.resendingCode);
+        \u0275\u0275advance();
+        \u0275\u0275textInterpolate1(" ", ctx.resendingCode ? "Resending..." : "Resend code", " ");
       }
     }, dependencies: [NgIf, CodeInputComponent, AsyncPipe, DatePipe], styles: ["\n\ncode-input[_ngcontent-%COMP%] {\n  --item-width: 2.5rem;\n  --item-height: 2.5rem;\n  --item-border: 1px solid #d1d5db;\n  --item-border-radius: 0.5rem;\n  --item-font-size: 1.25rem;\n  --item-font-weight: 600;\n  --item-color: #111827;\n  //--item-border-bottom: none;\n  //--item-border-has-value: none;\n  //--item-border-bottom-has-value: 2px solid #888888;\n  //--item-border-focused: none;\n  //--item-border-bottom-focused: 2px solid #809070;\n  //--item-shadow-focused: none;\n}\n/*# sourceMappingURL=vault-signin-code.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninCodeComponent, { className: "VaultSigninCodeComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin-code/vault-signin-code.component.ts", lineNumber: 13 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninCodeComponent, { className: "VaultSigninCodeComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin-code/vault-signin-code.component.ts", lineNumber: 14 });
 })();
 
 // projects/fasten-connect-vault/src/app/pages/dashboard/dashboard.component.ts
