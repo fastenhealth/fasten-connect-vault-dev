@@ -63960,13 +63960,13 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
       { label: "Allergies", resourceType: "AllergyIntolerance", selected: true },
       { label: "Conditions", resourceType: "Condition", selected: true },
       { label: "Immunizations", resourceType: "Immunization", selected: true },
-      { label: "Vital Signs", resourceType: "Observation", selected: false },
-      { label: "Care Plans", resourceType: "CarePlan", selected: false },
+      { label: "Vital Signs", resourceType: "Observation", selected: true },
+      { label: "Care Plans", resourceType: "CarePlan", selected: true },
       { label: "Medications", resourceType: "MedicationRequest", selected: true },
-      { label: "Procedures", resourceType: "Procedure", selected: false },
+      { label: "Procedures", resourceType: "Procedure", selected: true },
       { label: "Lab Results", resourceType: "DiagnosticReport", selected: true },
       { label: "Encounters", resourceType: "Encounter", selected: true },
-      { label: "Clinical Notes", resourceType: "DocumentReference", selected: false }
+      { label: "Clinical Notes", resourceType: "DocumentReference", selected: true }
     ];
     this.selectedExportDurationId = "1-week";
   }
