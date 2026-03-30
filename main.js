@@ -65636,6 +65636,53 @@ var HealthSystemConnectingComponent = class _HealthSystemConnectingComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(HealthSystemConnectingComponent, { className: "HealthSystemConnectingComponent", filePath: "projects/fasten-connect-vault/src/app/pages/health-system-connecting/health-system-connecting.component.ts", lineNumber: 13 });
 })();
 
+// projects/fasten-connect-vault/src/app/pages/test-mode-redirect/test-mode-redirect.component.ts
+var TestModeRedirectComponent = class _TestModeRedirectComponent {
+  constructor(configService, authService, router) {
+    this.configService = configService;
+    this.authService = authService;
+    this.router = router;
+  }
+  ngOnInit() {
+    return __async(this, null, function* () {
+      const publicId = environment.org_credential_test_public_id;
+      const currentSystemConfig = __spreadValues({}, this.configService.systemConfig$);
+      const nextSystemConfig = __spreadProps(__spreadValues({}, currentSystemConfig), {
+        publicId,
+        apiMode: this.getApiModeFromPublicId(publicId),
+        org: void 0
+      });
+      this.configService.systemConfigSubject.next(nextSystemConfig);
+      yield this.authService.Signout();
+      yield this.router.navigateByUrl("/auth/signin", { replaceUrl: true });
+    });
+  }
+  getApiModeFromPublicId(publicId) {
+    const publicIdParts = publicId.split("_");
+    if (publicIdParts.length === 3 && publicIdParts[1] === ApiMode.Live) {
+      return ApiMode.Live;
+    }
+    return ApiMode.Test;
+  }
+  static {
+    this.\u0275fac = function TestModeRedirectComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _TestModeRedirectComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(Router));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TestModeRedirectComponent, selectors: [["app-test-mode-redirect"]], standalone: false, decls: 3, vars: 0, consts: [[1, "flex", "min-h-screen", "items-center", "justify-center", "px-6", "py-12", "text-center"], [1, "text-base", "font-medium", "text-gray-700"]], template: function TestModeRedirectComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 0)(1, "p", 1);
+        \u0275\u0275text(2, "Switching to test mode...");
+        \u0275\u0275elementEnd()();
+      }
+    }, encapsulation: 2 });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TestModeRedirectComponent, { className: "TestModeRedirectComponent", filePath: "projects/fasten-connect-vault/src/app/pages/test-mode-redirect/test-mode-redirect.component.ts", lineNumber: 12 });
+})();
+
 // projects/fasten-connect-vault/src/app/app-routing.module.ts
 var routes = [
   // @Input routing
@@ -65643,6 +65690,7 @@ var routes = [
   // https://angular.love/router-data-as-components-inputs-in-angular-v16
   { path: "auth/signin", component: VaultSigninComponent },
   { path: "auth/signin/code", component: VaultSigninCodeComponent },
+  { path: "test", component: TestModeRedirectComponent },
   { path: "auth/identity/verification", component: IdentityVerificationComponent },
   //canActivate: [IsAuthenticatedAuthGuard] },
   { path: "auth/identity/verification/error", component: IdentityVerificationErrorComponent },
