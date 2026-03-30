@@ -61515,15 +61515,15 @@ var DashboardComponent = class _DashboardComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DashboardComponent, selectors: [["app-dashboard"]], standalone: false, decls: 8, vars: 3, consts: [["aria-label", "Dashboard tabs", 1, "sr-only"], ["type", "button", 3, "routerLink"]], template: function DashboardComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DashboardComponent, selectors: [["app-dashboard"]], standalone: false, decls: 8, vars: 3, consts: [["aria-label", "Dashboard tabs", 1, "sr-only"], ["type", "button", 2, "display", "none", 3, "routerLink"], ["type", "button", 3, "routerLink"]], template: function DashboardComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "nav", 0)(1, "button", 1);
         \u0275\u0275text(2, "Overview");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(3, "button", 1);
+        \u0275\u0275elementStart(3, "button", 2);
         \u0275\u0275text(4, "Accounts");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "button", 1);
+        \u0275\u0275elementStart(5, "button", 2);
         \u0275\u0275text(6, "Settings");
         \u0275\u0275elementEnd()();
         \u0275\u0275element(7, "router-outlet");
@@ -64722,7 +64722,7 @@ var dashboardRoutes = [
     path: "dashboard",
     component: DashboardComponent,
     children: [
-      { path: "", redirectTo: "apps", pathMatch: "full" },
+      { path: "", redirectTo: "accounts", pathMatch: "full" },
       { path: "apps", pathMatch: "full", component: ConnectedAppsTabComponent },
       { path: "accounts/:accountId", component: AccountDetailsComponent },
       { path: "accounts", pathMatch: "full", component: ConnectedAccountsTabComponent },
