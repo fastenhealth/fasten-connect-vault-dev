@@ -62891,6 +62891,19 @@ function ConnectedAccountsTabComponent_section_15_div_3_Template(rf, ctx) {
     \u0275\u0275property("ngForOf", vaultProfile_r4.connectedPatientAccounts || \u0275\u0275pureFunction0(1, _c02));
   }
 }
+function ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_p_5_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "p", 37);
+    \u0275\u0275text(1);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const vaultProfile_r4 = \u0275\u0275nextContext(3).ngIf;
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate2(" ", ctx_r1.getAvailableProviderCount(vaultProfile_r4), " ", ctx_r1.getAvailableProviderCount(vaultProfile_r4) === 1 ? "provider is" : "providers are", " available to connect right now. ");
+  }
+}
 function ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "div", 35)(1, "h2", 36);
@@ -62899,14 +62912,21 @@ function ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template(r
     \u0275\u0275elementStart(3, "p", 37);
     \u0275\u0275text(4, " Add an account to review the healthcare providers we discovered for you through TEFCA. ");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "a", 38);
-    \u0275\u0275text(6, " Add account ");
+    \u0275\u0275template(5, ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_p_5_Template, 2, 2, "p", 38);
+    \u0275\u0275elementStart(6, "a", 39);
+    \u0275\u0275text(7, " Add account ");
     \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const vaultProfile_r4 = \u0275\u0275nextContext(2).ngIf;
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance(5);
+    \u0275\u0275property("ngIf", ctx_r1.getAvailableProviderCount(vaultProfile_r4) > 0);
   }
 }
 function ConnectedAccountsTabComponent_section_15_ng_template_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275template(0, ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template, 7, 0, "div", 34);
+    \u0275\u0275template(0, ConnectedAccountsTabComponent_section_15_ng_template_4_div_0_Template, 8, 1, "div", 34);
   }
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext(2);
@@ -62967,13 +62987,16 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
       }
     });
   }
+  getAvailableProviderCount(vaultProfile) {
+    return Object.keys(vaultProfile.discoveredPatientAccounts || {}).length + Object.keys(vaultProfile.pendingPatientAccounts || {}).length;
+  }
   static {
     this.\u0275fac = function ConnectedAccountsTabComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _ConnectedAccountsTabComponent)(\u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(FastenService), \u0275\u0275directiveInject(NGXLogger));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "rounded-2xl border border-slate-200 bg-slate-50 px-6 py-10 text-center", 4, "ngIf"], ["class", "mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700", 4, "ngIf"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-10", "text-center"], [1, "inline-flex", "items-center", "gap-3", "text-sm", "font-medium", "text-slate-600"], [3, "sizePx", "strokeWidthPx"], [1, "mb-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-5", "py-4", "text-sm", "text-rose-700"], ["type", "button", 1, "vault-text-button", "mt-3", 3, "click"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 3, "routerLink", 4, "ngFor", "ngForOf"], [1, "vault-list-row", 3, "routerLink"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400", "transition-colors", "hover:text-slate-700"], ["d", "M9 18l6-6-6-6"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ConnectedAccountsTabComponent, selectors: [["connected-accounts-tab"]], standalone: false, decls: 17, vars: 3, consts: [["emptyState", ""], [1, "vault-page-shell"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], ["routerLink", "/search", 1, "vault-primary-button"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M12 5v14M5 12h14"], [1, "vault-divider"], ["class", "vault-panel p-3 sm:p-4", 4, "ngIf"], [1, "vault-panel", "p-3", "sm:p-4"], ["class", "rounded-2xl border border-slate-200 bg-slate-50 px-6 py-10 text-center", 4, "ngIf"], ["class", "mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-700", 4, "ngIf"], ["class", "divide-y divide-slate-100", 4, "ngIf", "ngIfElse"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-10", "text-center"], [1, "inline-flex", "items-center", "gap-3", "text-sm", "font-medium", "text-slate-600"], [3, "sizePx", "strokeWidthPx"], [1, "mb-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-5", "py-4", "text-sm", "text-rose-700"], ["type", "button", 1, "vault-text-button", "mt-3", 3, "click"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 3, "routerLink", 4, "ngFor", "ngForOf"], [1, "vault-list-row", 3, "routerLink"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "text-slate-500"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400", "transition-colors", "hover:text-slate-700"], ["d", "M9 18l6-6-6-6"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], ["class", "mt-2 text-sm leading-6 text-slate-500", 4, "ngIf"], ["routerLink", "/search", 1, "vault-primary-button", "mt-5", "inline-flex"]], template: function ConnectedAccountsTabComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "div", 3)(3, "p", 4);
         \u0275\u0275text(4, "Health systems");
@@ -65051,19 +65074,19 @@ function HealthSystemSearchComponent_div_0_div_33_Template(rf, ctx) {
     \u0275\u0275elementEnd();
   }
 }
-function HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template(rf, ctx) {
+function HealthSystemSearchComponent_div_0_ng_container_35_div_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r2 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 31)(1, "div", 32)(2, "div", 33);
-    \u0275\u0275element(3, "img", 34);
-    \u0275\u0275elementStart(4, "div", 35)(5, "p", 16);
+    \u0275\u0275elementStart(0, "div", 32)(1, "div", 33)(2, "div", 34);
+    \u0275\u0275element(3, "img", 35);
+    \u0275\u0275elementStart(4, "div", 36)(5, "p", 16);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 36);
+    \u0275\u0275elementStart(7, "p", 37);
     \u0275\u0275text(8, "Ready to connect now through TEFCA.");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(9, "button", 37);
-    \u0275\u0275listener("click", function HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template_button_click_9_listener() {
+    \u0275\u0275elementStart(9, "button", 38);
+    \u0275\u0275listener("click", function HealthSystemSearchComponent_div_0_ng_container_35_div_2_Template_button_click_9_listener() {
       const discoveredAccount_r3 = \u0275\u0275restoreView(_r2).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r0.connectDiscoveredAccount(discoveredAccount_r3.key, discoveredAccount_r3.value));
@@ -65084,19 +65107,19 @@ function HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template(rf, ct
     \u0275\u0275textInterpolate1(" ", ctx_r0.authorizingVaultConnectionId === discoveredAccount_r3.key ? "Connecting..." : "Connect now", " ");
   }
 }
-function HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template(rf, ctx) {
+function HealthSystemSearchComponent_div_0_ng_container_35_div_4_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 31)(1, "div", 32)(2, "div", 33);
-    \u0275\u0275element(3, "img", 34);
-    \u0275\u0275elementStart(4, "div", 35)(5, "p", 16);
+    \u0275\u0275elementStart(0, "div", 32)(1, "div", 33)(2, "div", 34);
+    \u0275\u0275element(3, "img", 35);
+    \u0275\u0275elementStart(4, "div", 36)(5, "p", 16);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 36);
+    \u0275\u0275elementStart(7, "p", 37);
     \u0275\u0275text(8, "A provider sign-in is still required before records can be added.");
     \u0275\u0275elementEnd()()();
-    \u0275\u0275elementStart(9, "button", 38);
-    \u0275\u0275listener("click", function HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template_button_click_9_listener() {
+    \u0275\u0275elementStart(9, "button", 39);
+    \u0275\u0275listener("click", function HealthSystemSearchComponent_div_0_ng_container_35_div_4_Template_button_click_9_listener() {
       const pendingAccount_r5 = \u0275\u0275restoreView(_r4).$implicit;
       const ctx_r0 = \u0275\u0275nextContext(3);
       return \u0275\u0275resetView(ctx_r0.connectPendingAccount(pendingAccount_r5.key, pendingAccount_r5.value));
@@ -65115,12 +65138,12 @@ function HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template(rf, ct
     \u0275\u0275property("disabled", !!ctx_r0.authorizingVaultConnectionId);
   }
 }
-function HealthSystemSearchComponent_div_0_ng_container_35_div_5_Template(rf, ctx) {
+function HealthSystemSearchComponent_div_0_ng_container_35_div_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 39)(1, "h3", 22);
+    \u0275\u0275elementStart(0, "div", 40)(1, "h3", 22);
     \u0275\u0275text(2, "No TEFCA providers found");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "p", 40);
+    \u0275\u0275elementStart(3, "p", 41);
     \u0275\u0275text(4, " We couldn\u2019t find any providers to add right now. You can refresh this page and try again later. ");
     \u0275\u0275elementEnd()();
   }
@@ -65128,27 +65151,29 @@ function HealthSystemSearchComponent_div_0_ng_container_35_div_5_Template(rf, ct
 function HealthSystemSearchComponent_div_0_ng_container_35_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementContainerStart(0);
-    \u0275\u0275template(1, HealthSystemSearchComponent_div_0_ng_container_35_div_1_Template, 11, 5, "div", 29);
-    \u0275\u0275pipe(2, "keyvalue");
-    \u0275\u0275template(3, HealthSystemSearchComponent_div_0_ng_container_35_div_3_Template, 11, 4, "div", 29);
-    \u0275\u0275pipe(4, "keyvalue");
-    \u0275\u0275template(5, HealthSystemSearchComponent_div_0_ng_container_35_div_5_Template, 5, 0, "div", 30);
+    \u0275\u0275elementStart(1, "div", 29);
+    \u0275\u0275template(2, HealthSystemSearchComponent_div_0_ng_container_35_div_2_Template, 11, 5, "div", 30);
+    \u0275\u0275pipe(3, "keyvalue");
+    \u0275\u0275template(4, HealthSystemSearchComponent_div_0_ng_container_35_div_4_Template, 11, 4, "div", 30);
+    \u0275\u0275pipe(5, "keyvalue");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(6, HealthSystemSearchComponent_div_0_ng_container_35_div_6_Template, 5, 0, "div", 31);
     \u0275\u0275elementContainerEnd();
   }
   if (rf & 2) {
     const vaultProfile_r6 = \u0275\u0275nextContext().ngIf;
     const ctx_r0 = \u0275\u0275nextContext();
-    \u0275\u0275advance();
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(2, 3, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(7, _c12)));
     \u0275\u0275advance(2);
-    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(4, 5, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(8, _c12)));
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(3, 3, vaultProfile_r6.discoveredPatientAccounts || \u0275\u0275pureFunction0(7, _c12)));
+    \u0275\u0275advance(2);
+    \u0275\u0275property("ngForOf", \u0275\u0275pipeBind1(5, 5, vaultProfile_r6.pendingPatientAccounts || \u0275\u0275pureFunction0(8, _c12)));
     \u0275\u0275advance(2);
     \u0275\u0275property("ngIf", ctx_r0.emptyTefcaResults);
   }
 }
 function HealthSystemSearchComponent_div_0_ng_template_36_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 41);
+    \u0275\u0275elementStart(0, "div", 42);
     \u0275\u0275text(1, " Finding providers from TEFCA for your account... ");
     \u0275\u0275elementEnd();
   }
@@ -65192,7 +65217,7 @@ function HealthSystemSearchComponent_div_0_Template(rf, ctx) {
     \u0275\u0275template(33, HealthSystemSearchComponent_div_0_div_33_Template, 2, 0, "div", 24);
     \u0275\u0275elementEnd()();
     \u0275\u0275elementStart(34, "div", 25);
-    \u0275\u0275template(35, HealthSystemSearchComponent_div_0_ng_container_35_Template, 6, 9, "ng-container", 26)(36, HealthSystemSearchComponent_div_0_ng_template_36_Template, 2, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275template(35, HealthSystemSearchComponent_div_0_ng_container_35_Template, 7, 9, "ng-container", 26)(36, HealthSystemSearchComponent_div_0_ng_template_36_Template, 2, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
     \u0275\u0275elementEnd()()()();
   }
   if (rf & 2) {
@@ -65312,7 +65337,7 @@ var HealthSystemSearchComponent = class _HealthSystemSearchComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemSearchComponent, selectors: [["app-health-system-search"]], standalone: false, decls: 2, vars: 3, consts: [["loadingState", ""], ["class", "vault-page-shell", 4, "ngIf"], [1, "vault-page-shell"], [1, "space-y-6"], ["id", "search-back", 1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "p-5", "sm:p-6"], [1, "rounded-2xl", "border", "border-blue-200", "bg-blue-50", "px-4", "py-4", "text-sm", "text-slate-700"], [1, "font-semibold", "text-slate-900"], [1, "mt-1"], ["class", "mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700", 4, "ngIf"], [1, "vault-panel", "overflow-hidden"], [1, "border-b", "border-slate-100", "px-4", "py-4", "sm:px-5"], [1, "flex", "items-center", "justify-between", "gap-4"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["class", "text-sm font-medium text-[#5B47FB]", 4, "ngIf"], [1, "space-y-3", "p-3", "sm:p-4"], [4, "ngIf", "ngIfElse"], [1, "mt-4", "rounded-2xl", "border", "border-red-200", "bg-red-50", "px-4", "py-3", "text-sm", "text-red-700"], [1, "text-sm", "font-medium", "text-[#5B47FB]"], ["class", "rounded-2xl border border-slate-200 bg-white p-4", 4, "ngFor", "ngForOf"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "rounded-2xl", "border", "border-slate-200", "bg-white", "p-4"], [1, "flex", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-primary-button", 3, "click", "disabled"], ["type", "button", 1, "vault-secondary-button", 3, "click", "disabled"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center", "text-sm", "text-slate-500"]], template: function HealthSystemSearchComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _HealthSystemSearchComponent, selectors: [["app-health-system-search"]], standalone: false, decls: 2, vars: 3, consts: [["loadingState", ""], ["class", "vault-page-shell", 4, "ngIf"], [1, "vault-page-shell"], [1, "space-y-6"], ["id", "search-back", 1, "vault-back-link", 3, "routerLink"], ["fill", "none", "stroke", "currentColor", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "d", "M15 19l-7-7 7-7"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "space-y-2"], [1, "vault-page-title"], [1, "vault-page-copy", "max-w-2xl"], [1, "vault-divider"], [1, "vault-panel", "p-5", "sm:p-6"], [1, "rounded-2xl", "border", "border-blue-200", "bg-blue-50", "px-4", "py-4", "text-sm", "text-slate-700"], [1, "font-semibold", "text-slate-900"], [1, "mt-1"], ["class", "mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700", 4, "ngIf"], [1, "vault-panel", "overflow-hidden"], [1, "border-b", "border-slate-100", "px-4", "py-4", "sm:px-5"], [1, "flex", "items-center", "justify-between", "gap-4"], [1, "text-lg", "font-semibold", "text-slate-900"], [1, "mt-1", "text-sm", "text-slate-500"], ["class", "text-sm font-medium text-[#5B47FB]", 4, "ngIf"], [1, "p-3", "sm:p-4"], [4, "ngIf", "ngIfElse"], [1, "mt-4", "rounded-2xl", "border", "border-red-200", "bg-red-50", "px-4", "py-3", "text-sm", "text-red-700"], [1, "text-sm", "font-medium", "text-[#5B47FB]"], [1, "divide-y", "divide-slate-100"], ["class", "vault-list-row", 4, "ngFor", "ngForOf"], ["class", "rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center", 4, "ngIf"], [1, "vault-list-row"], [1, "flex", "w-full", "flex-col", "gap-4", "sm:flex-row", "sm:items-center", "sm:justify-between"], [1, "flex", "items-center", "gap-4"], ["imageFallback", "", 1, "h-12", "w-12", "rounded-lg", "border", "border-slate-200", "bg-white", "object-contain", "p-2", 3, "src", "alt"], [1, "space-y-1"], [1, "text-sm", "text-slate-500"], ["type", "button", 1, "vault-primary-button", 3, "click", "disabled"], ["type", "button", 1, "vault-secondary-button", 3, "click", "disabled"], [1, "rounded-2xl", "border", "border-dashed", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center"], [1, "mt-2", "text-sm", "leading-6", "text-slate-500"], [1, "rounded-2xl", "border", "border-slate-200", "bg-slate-50", "px-6", "py-8", "text-center", "text-sm", "text-slate-500"]], template: function HealthSystemSearchComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275template(0, HealthSystemSearchComponent_div_0_Template, 38, 14, "div", 1);
         \u0275\u0275pipe(1, "async");
