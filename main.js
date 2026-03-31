@@ -64289,21 +64289,21 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
 function AccountDetailsComponent_button_65_Template(rf, ctx) {
   if (rf & 1) {
     const _r1 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "button", 33);
+    \u0275\u0275elementStart(0, "button", 36);
     \u0275\u0275listener("click", function AccountDetailsComponent_button_65_Template_button_click_0_listener() {
       const action_r2 = \u0275\u0275restoreView(_r1).$implicit;
       const ctx_r2 = \u0275\u0275nextContext();
       return \u0275\u0275resetView(ctx_r2.openExportModal(action_r2.type));
     });
-    \u0275\u0275elementStart(1, "span", 34)(2, "span", 35);
+    \u0275\u0275elementStart(1, "span", 37)(2, "span", 38);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "span", 36);
+    \u0275\u0275elementStart(4, "span", 39);
     \u0275\u0275text(5);
     \u0275\u0275elementEnd()();
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(6, "svg", 37);
-    \u0275\u0275element(7, "path", 38)(8, "path", 39);
+    \u0275\u0275elementStart(6, "svg", 40);
+    \u0275\u0275element(7, "path", 41)(8, "path", 42);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -64314,102 +64314,54 @@ function AccountDetailsComponent_button_65_Template(rf, ctx) {
     \u0275\u0275textInterpolate(action_r2.description);
   }
 }
-function AccountDetailsComponent_section_66_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "section", 40)(1, "div", 6)(2, "p", 7);
-    \u0275\u0275text(3, "Matched Demographics");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(4, "h2", 26);
-    \u0275\u0275text(5, "Patient Profile");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "p", 27);
-    \u0275\u0275text(7, " These demographics reflect the TEFCA-mode identity verification details used to match you to this institution. ");
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(8, "dl", 41)(9, "div", 22)(10, "dt");
-    \u0275\u0275text(11, "Name");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "dd");
-    \u0275\u0275text(13);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(14, "div", 22)(15, "dt");
-    \u0275\u0275text(16, "Birthdate");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(17, "dd");
-    \u0275\u0275text(18);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(19, "div", 22)(20, "dt");
-    \u0275\u0275text(21, "Gender");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(22, "dd", 42);
-    \u0275\u0275text(23);
-    \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(24, "div", 22)(25, "dt");
-    \u0275\u0275text(26, "Address");
-    \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(27, "dd", 43);
-    \u0275\u0275text(28);
-    \u0275\u0275elementEnd()()()();
-  }
-  if (rf & 2) {
-    const ctx_r2 = \u0275\u0275nextContext();
-    \u0275\u0275advance(13);
-    \u0275\u0275textInterpolate(ctx_r2.formattedPatientName);
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate(ctx_r2.formattedPatientBirthdate);
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate((ctx_r2.patientDemographics == null ? null : ctx_r2.patientDemographics.gender) || "Not available");
-    \u0275\u0275advance(5);
-    \u0275\u0275textInterpolate(ctx_r2.formattedPatientAddress);
-  }
-}
-function AccountDetailsComponent_div_67_div_10_Template(rf, ctx) {
+function AccountDetailsComponent_div_95_div_10_Template(rf, ctx) {
   if (rf & 1) {
     const _r4 = \u0275\u0275getCurrentView();
-    \u0275\u0275elementStart(0, "div", 51)(1, "div", 52)(2, "div", 53);
+    \u0275\u0275elementStart(0, "div", 50)(1, "div", 51)(2, "div", 52);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(3, "svg", 54);
-    \u0275\u0275element(4, "path", 55)(5, "polygon", 56);
+    \u0275\u0275elementStart(3, "svg", 53);
+    \u0275\u0275element(4, "path", 54)(5, "polygon", 55);
     \u0275\u0275elementEnd()();
     \u0275\u0275namespaceHTML();
-    \u0275\u0275elementStart(6, "div", 18)(7, "p", 35);
+    \u0275\u0275elementStart(6, "div", 18)(7, "p", 38);
     \u0275\u0275text(8);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(9, "div", 57)(10, "a", 58);
+    \u0275\u0275elementStart(9, "div", 56)(10, "a", 57);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(11, "svg", 59);
-    \u0275\u0275element(12, "circle", 60)(13, "path", 61)(14, "path", 62);
+    \u0275\u0275elementStart(11, "svg", 58);
+    \u0275\u0275element(12, "circle", 59)(13, "path", 60)(14, "path", 61);
     \u0275\u0275elementEnd();
     \u0275\u0275namespaceHTML();
     \u0275\u0275elementStart(15, "span");
     \u0275\u0275text(16, "Website");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(17, "a", 58);
+    \u0275\u0275elementStart(17, "a", 57);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(18, "svg", 59);
-    \u0275\u0275element(19, "path", 63);
+    \u0275\u0275elementStart(18, "svg", 58);
+    \u0275\u0275element(19, "path", 62);
     \u0275\u0275elementEnd();
     \u0275\u0275namespaceHTML();
     \u0275\u0275elementStart(20, "span");
     \u0275\u0275text(21, "Privacy");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(22, "a", 58);
+    \u0275\u0275elementStart(22, "a", 57);
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(23, "svg", 59);
-    \u0275\u0275element(24, "path", 64)(25, "path", 65)(26, "path", 66)(27, "path", 67);
+    \u0275\u0275elementStart(23, "svg", 58);
+    \u0275\u0275element(24, "path", 63)(25, "path", 64)(26, "path", 65)(27, "path", 66);
     \u0275\u0275elementEnd();
     \u0275\u0275namespaceHTML();
     \u0275\u0275elementStart(28, "span");
     \u0275\u0275text(29, "Terms");
     \u0275\u0275elementEnd()()()()();
-    \u0275\u0275elementStart(30, "button", 68);
-    \u0275\u0275listener("click", function AccountDetailsComponent_div_67_div_10_Template_button_click_30_listener() {
+    \u0275\u0275elementStart(30, "button", 67);
+    \u0275\u0275listener("click", function AccountDetailsComponent_div_95_div_10_Template_button_click_30_listener() {
       const app_r5 = \u0275\u0275restoreView(_r4).$implicit;
       const ctx_r2 = \u0275\u0275nextContext(2);
       return \u0275\u0275resetView(ctx_r2.disconnectMockApp(app_r5.name));
     });
     \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(31, "svg", 69);
-    \u0275\u0275element(32, "path", 70)(33, "path", 71)(34, "path", 72)(35, "path", 73)(36, "path", 74);
+    \u0275\u0275elementStart(31, "svg", 68);
+    \u0275\u0275element(32, "path", 69)(33, "path", 70)(34, "path", 71)(35, "path", 72)(36, "path", 73);
     \u0275\u0275elementEnd();
     \u0275\u0275namespaceHTML();
     \u0275\u0275elementStart(37, "span");
@@ -64432,9 +64384,9 @@ function AccountDetailsComponent_div_67_div_10_Template(rf, ctx) {
     \u0275\u0275attribute("aria-label", "Disconnect " + app_r5.name)("title", "Disconnect " + app_r5.name);
   }
 }
-function AccountDetailsComponent_div_67_div_11_Template(rf, ctx) {
+function AccountDetailsComponent_div_95_div_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 75);
+    \u0275\u0275elementStart(0, "div", 74);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -64444,18 +64396,18 @@ function AccountDetailsComponent_div_67_div_11_Template(rf, ctx) {
     \u0275\u0275textInterpolate1(" ", ctx_r2.appActionFeedback, " ");
   }
 }
-function AccountDetailsComponent_div_67_div_21_Template(rf, ctx) {
+function AccountDetailsComponent_div_95_div_21_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 51)(1, "div", 76)(2, "div", 77)(3, "p", 35);
+    \u0275\u0275elementStart(0, "div", 50)(1, "div", 75)(2, "div", 76)(3, "p", 38);
     \u0275\u0275text(4);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(5, "span", 78);
+    \u0275\u0275elementStart(5, "span", 77);
     \u0275\u0275text(6);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(7, "p", 79);
+    \u0275\u0275elementStart(7, "p", 78);
     \u0275\u0275text(8);
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "p", 80);
+    \u0275\u0275elementStart(9, "p", 79);
     \u0275\u0275text(10);
     \u0275\u0275elementEnd()();
   }
@@ -64471,33 +64423,33 @@ function AccountDetailsComponent_div_67_div_21_Template(rf, ctx) {
     \u0275\u0275textInterpolate(activity_r6.timestamp);
   }
 }
-function AccountDetailsComponent_div_67_Template(rf, ctx) {
+function AccountDetailsComponent_div_95_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 44)(1, "section", 45)(2, "div", 46)(3, "p", 7);
+    \u0275\u0275elementStart(0, "div", 43)(1, "section", 44)(2, "div", 45)(3, "p", 7);
     \u0275\u0275text(4, "Connected apps");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(5, "h2", 26);
     \u0275\u0275text(6, "Apps using this connection");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(7, "p", 47);
+    \u0275\u0275elementStart(7, "p", 46);
     \u0275\u0275text(8, "Apps below are mocked examples of clients currently reading from this institution connection.");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(9, "div", 48);
-    \u0275\u0275template(10, AccountDetailsComponent_div_67_div_10_Template, 39, 7, "div", 49);
+    \u0275\u0275elementStart(9, "div", 47);
+    \u0275\u0275template(10, AccountDetailsComponent_div_95_div_10_Template, 39, 7, "div", 48);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(11, AccountDetailsComponent_div_67_div_11_Template, 2, 1, "div", 50);
+    \u0275\u0275template(11, AccountDetailsComponent_div_95_div_11_Template, 2, 1, "div", 49);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(12, "section", 45)(13, "div", 46)(14, "p", 7);
+    \u0275\u0275elementStart(12, "section", 44)(13, "div", 45)(14, "p", 7);
     \u0275\u0275text(15, "Activity history");
     \u0275\u0275elementEnd();
     \u0275\u0275elementStart(16, "h2", 26);
     \u0275\u0275text(17, "Recent access on this connection");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(18, "p", 47);
+    \u0275\u0275elementStart(18, "p", 46);
     \u0275\u0275text(19, "Recent app requests are mocked so we can validate the page structure before service integrations exist.");
     \u0275\u0275elementEnd()();
-    \u0275\u0275elementStart(20, "div", 48);
-    \u0275\u0275template(21, AccountDetailsComponent_div_67_div_21_Template, 11, 4, "div", 49);
+    \u0275\u0275elementStart(20, "div", 47);
+    \u0275\u0275template(21, AccountDetailsComponent_div_95_div_21_Template, 11, 4, "div", 48);
     \u0275\u0275elementEnd()()();
   }
   if (rf & 2) {
@@ -64709,7 +64661,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountDetailsComponent, selectors: [["app-account-details"]], standalone: false, decls: 70, vars: 21, consts: [[1, "vault-page-shell"], [1, "space-y-6"], ["routerLink", "/dashboard/accounts", 1, "vault-back-link"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M15 18l-6-6 6-6"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "vault-page-title"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "vault-status-pill", 3, "ngClass"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "flex", "flex-col", "gap-6"], [1, "flex", "items-center", "gap-5"], ["imageFallback", "", 1, "h-20", "w-20", "rounded-2xl", "border", "border-slate-200", "bg-white", "object-contain", "p-3", 3, "src", "alt"], [1, "space-y-2"], [1, "text-sm", "font-medium", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "text-slate-950"], [1, "account-details-grid"], [1, "account-details-item"], ["target", "_blank", "rel", "noreferrer", 1, "text-[#5B47FB]", "hover:text-[#4338ca]", 3, "href"], [1, "break-all"], [1, "account-details-item", "account-details-item--full"], [1, "vault-card-title", "text-xl"], [1, "vault-card-copy"], [1, "mt-6", "space-y-3"], ["type", "button", "class", "vault-secondary-button w-full justify-between px-4 py-4 text-left", 3, "click", 4, "ngFor", "ngForOf"], ["class", "vault-panel mt-6 p-6 sm:p-8", 4, "ngIf"], ["class", "mt-6 grid gap-6 xl:grid-cols-2", 4, "ngIf"], [3, "closed", "isOpen", "exportType", "accountDisplayName", "orgConnectionId"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-between", "px-4", "py-4", "text-left", 3, "click"], [1, "flex", "flex-col", "items-start", "gap-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "font-normal", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "M5 12h14"], ["d", "m12 5 7 7-7 7"], [1, "vault-panel", "mt-6", "p-6", "sm:p-8"], [1, "account-details-grid", "mt-6"], [1, "capitalize"], [1, "whitespace-pre-line"], [1, "mt-6", "grid", "gap-6", "xl:grid-cols-2"], [1, "vault-panel", "p-3", "sm:p-4"], [1, "px-3", "pt-3", "sm:px-4", "sm:pt-4"], [1, "vault-card-copy", "mt-2"], [1, "mt-3", "divide-y", "divide-slate-100"], ["class", "vault-list-row items-start", 4, "ngFor", "ngForOf"], ["class", "mx-3 mb-3 mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-700 sm:mx-4", 4, "ngIf"], [1, "vault-list-row", "items-start"], [1, "flex", "items-start", "gap-4"], [1, "vault-icon-tile", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "flex", "flex-wrap", "gap-x-3", "gap-y-2", "text-xs"], ["target", "_blank", "rel", "noreferrer", 1, "inline-flex", "items-center", "gap-1.5", "rounded-full", "border", "border-slate-200", "px-2.5", "py-1", "text-slate-500", "transition-colors", "hover:border-slate-300", "hover:bg-slate-50", "hover:text-slate-700", 3, "href"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-3", "w-3"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M2 12h20"], ["d", "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"], ["d", "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"], ["d", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"], ["d", "M14 2v6h6"], ["d", "M8 13h8"], ["d", "M8 17h5"], ["type", "button", 1, "vault-secondary-button", "self-center", "border-rose-200", "px-3", "py-2", "text-xs", "text-rose-600", "hover:border-rose-300", "hover:bg-rose-50", "hover:text-rose-700", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-4", "w-4"], ["d", "M3 6h18"], ["d", "M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"], ["d", "M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"], ["d", "M10 11v6"], ["d", "M14 11v6"], [1, "mx-3", "mb-3", "mt-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-4", "py-4", "text-sm", "text-rose-700", "sm:mx-4"], [1, "space-y-1"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "vault-status-pill", "activity-status-pill", "is-warning"], [1, "text-sm", "text-slate-500"], [1, "text-sm", "font-medium", "text-slate-400"]], template: function AccountDetailsComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AccountDetailsComponent, selectors: [["app-account-details"]], standalone: false, decls: 98, vars: 24, consts: [[1, "vault-page-shell"], [1, "space-y-6"], ["routerLink", "/dashboard/accounts", 1, "vault-back-link"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-4", "w-4"], ["d", "M15 18l-6-6 6-6"], [1, "vault-page-header"], [1, "space-y-3"], [1, "vault-page-kicker"], [1, "vault-page-title"], [1, "flex", "items-center", "gap-3"], [1, "vault-status-pill", "is-active"], [1, "vault-status-pill", 3, "ngClass"], [1, "vault-divider"], [1, "grid", "gap-6", "xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "flex", "flex-col", "gap-6"], [1, "flex", "items-center", "gap-5"], ["imageFallback", "", 1, "h-20", "w-20", "rounded-2xl", "border", "border-slate-200", "bg-white", "object-contain", "p-3", 3, "src", "alt"], [1, "space-y-2"], [1, "text-sm", "font-medium", "uppercase", "tracking-[0.24em]", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "text-slate-950"], [1, "account-details-grid"], [1, "account-details-item"], ["target", "_blank", "rel", "noreferrer", 1, "text-[#5B47FB]", "hover:text-[#4338ca]", 3, "href"], [1, "break-all"], [1, "account-details-item", "account-details-item--full"], [1, "vault-card-title", "text-xl"], [1, "vault-card-copy"], [1, "mt-6", "space-y-3"], ["type", "button", "class", "vault-secondary-button w-full justify-between px-4 py-4 text-left", 3, "click", 4, "ngFor", "ngForOf"], [1, "vault-panel", "mt-6", "p-6", "sm:p-8", 2, "display", "none"], [1, "account-details-grid", "mt-6"], [1, "capitalize"], [1, "whitespace-pre-line"], ["class", "mt-6 grid gap-6 xl:grid-cols-2", 4, "ngIf"], [3, "closed", "isOpen", "exportType", "accountDisplayName", "orgConnectionId"], ["type", "button", 1, "vault-secondary-button", "w-full", "justify-between", "px-4", "py-4", "text-left", 3, "click"], [1, "flex", "flex-col", "items-start", "gap-1"], [1, "font-semibold", "text-slate-900"], [1, "text-sm", "font-normal", "text-slate-500"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-5", "w-5", "text-slate-400"], ["d", "M5 12h14"], ["d", "m12 5 7 7-7 7"], [1, "mt-6", "grid", "gap-6", "xl:grid-cols-2"], [1, "vault-panel", "p-3", "sm:p-4"], [1, "px-3", "pt-3", "sm:px-4", "sm:pt-4"], [1, "vault-card-copy", "mt-2"], [1, "mt-3", "divide-y", "divide-slate-100"], ["class", "vault-list-row items-start", 4, "ngFor", "ngForOf"], ["class", "mx-3 mb-3 mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-sm text-rose-700 sm:mx-4", 4, "ngIf"], [1, "vault-list-row", "items-start"], [1, "flex", "items-start", "gap-4"], [1, "vault-icon-tile", 3, "ngClass"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", 1, "h-6", "w-6"], ["d", "M20 14.66V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"], ["points", "18 2 22 6 12 16 8 16 8 12 18 2"], [1, "flex", "flex-wrap", "gap-x-3", "gap-y-2", "text-xs"], ["target", "_blank", "rel", "noreferrer", 1, "inline-flex", "items-center", "gap-1.5", "rounded-full", "border", "border-slate-200", "px-2.5", "py-1", "text-slate-500", "transition-colors", "hover:border-slate-300", "hover:bg-slate-50", "hover:text-slate-700", 3, "href"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-3", "w-3"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M2 12h20"], ["d", "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"], ["d", "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"], ["d", "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"], ["d", "M14 2v6h6"], ["d", "M8 13h8"], ["d", "M8 17h5"], ["type", "button", 1, "vault-secondary-button", "self-center", "border-rose-200", "px-3", "py-2", "text-xs", "text-rose-600", "hover:border-rose-300", "hover:bg-rose-50", "hover:text-rose-700", 3, "click"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "aria-hidden", "true", 1, "h-4", "w-4"], ["d", "M3 6h18"], ["d", "M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"], ["d", "M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"], ["d", "M10 11v6"], ["d", "M14 11v6"], [1, "mx-3", "mb-3", "mt-4", "rounded-2xl", "border", "border-rose-200", "bg-rose-50", "px-4", "py-4", "text-sm", "text-rose-700", "sm:mx-4"], [1, "space-y-1"], [1, "flex", "flex-wrap", "items-center", "gap-2"], [1, "vault-status-pill", "activity-status-pill", "is-warning"], [1, "text-sm", "text-slate-500"], [1, "text-sm", "font-medium", "text-slate-400"]], template: function AccountDetailsComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "a", 2);
         \u0275\u0275namespaceSVG();
@@ -64782,17 +64734,50 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
         \u0275\u0275elementStart(64, "div", 28);
         \u0275\u0275template(65, AccountDetailsComponent_button_65_Template, 9, 2, "button", 29);
         \u0275\u0275elementEnd()()();
-        \u0275\u0275template(66, AccountDetailsComponent_section_66_Template, 29, 4, "section", 30)(67, AccountDetailsComponent_div_67_Template, 22, 3, "div", 31);
-        \u0275\u0275pipe(68, "async");
+        \u0275\u0275elementStart(66, "section", 30)(67, "div", 6)(68, "p", 7);
+        \u0275\u0275text(69, "Matched Demographics");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(69, "app-account-export-modal", 32);
-        \u0275\u0275listener("closed", function AccountDetailsComponent_Template_app_account_export_modal_closed_69_listener() {
+        \u0275\u0275elementStart(70, "h2", 26);
+        \u0275\u0275text(71, "Patient Profile");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(72, "p", 27);
+        \u0275\u0275text(73, " These demographics reflect the TEFCA-mode identity verification details used to match you to this institution. ");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(74, "dl", 31)(75, "div", 22)(76, "dt");
+        \u0275\u0275text(77, "Name");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(78, "dd");
+        \u0275\u0275text(79);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(80, "div", 22)(81, "dt");
+        \u0275\u0275text(82, "Birthdate");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(83, "dd");
+        \u0275\u0275text(84);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(85, "div", 22)(86, "dt");
+        \u0275\u0275text(87, "Gender");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(88, "dd", 32);
+        \u0275\u0275text(89);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(90, "div", 22)(91, "dt");
+        \u0275\u0275text(92, "Address");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(93, "dd", 33);
+        \u0275\u0275text(94);
+        \u0275\u0275elementEnd()()()();
+        \u0275\u0275template(95, AccountDetailsComponent_div_95_Template, 22, 3, "div", 34);
+        \u0275\u0275pipe(96, "async");
+        \u0275\u0275elementEnd();
+        \u0275\u0275elementStart(97, "app-account-export-modal", 35);
+        \u0275\u0275listener("closed", function AccountDetailsComponent_Template_app_account_export_modal_closed_97_listener() {
           return ctx.closeExportModal();
         });
         \u0275\u0275elementEnd();
       }
       if (rf & 2) {
-        let tmp_14_0;
+        let tmp_17_0;
         \u0275\u0275advance(11);
         \u0275\u0275textInterpolate(ctx.accountDisplayName);
         \u0275\u0275advance(4);
@@ -64817,10 +64802,16 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
         \u0275\u0275textInterpolate((ctx.account == null ? null : ctx.account.patient_auth_type) || "Unknown");
         \u0275\u0275advance(10);
         \u0275\u0275property("ngForOf", ctx.exportActions);
+        \u0275\u0275advance(14);
+        \u0275\u0275textInterpolate(ctx.formattedPatientName);
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate(ctx.formattedPatientBirthdate);
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate((ctx.patientDemographics == null ? null : ctx.patientDemographics.gender) || "Not available");
+        \u0275\u0275advance(5);
+        \u0275\u0275textInterpolate(ctx.formattedPatientAddress);
         \u0275\u0275advance();
-        \u0275\u0275property("ngIf", ctx.shouldDisplayPatientDemographicsSection);
-        \u0275\u0275advance();
-        \u0275\u0275property("ngIf", ((tmp_14_0 = \u0275\u0275pipeBind1(68, 19, ctx.configService.systemConfigSubject)) == null ? null : tmp_14_0.apiMode) == "test");
+        \u0275\u0275property("ngIf", ((tmp_17_0 = \u0275\u0275pipeBind1(96, 22, ctx.configService.systemConfigSubject)) == null ? null : tmp_17_0.apiMode) == "test");
         \u0275\u0275advance(2);
         \u0275\u0275property("isOpen", ctx.isExportModalOpen)("exportType", ctx.selectedExportType)("accountDisplayName", ctx.accountDisplayName)("orgConnectionId", ctx.account == null ? null : ctx.account.org_connection_id);
       }
