@@ -62749,6 +62749,14 @@ var FastenService = class _FastenService {
       }
     }).pipe(map((resp) => resp.data));
   }
+  getVaultProfileConnectionInfo(vaultProfileConnectionId) {
+    const url = `${environment.connect_api_endpoint_base}/bridge/vault_connection/info/${vaultProfileConnectionId}`;
+    return this._httpClient.get(url, {
+      params: {
+        public_id: this.configService.systemConfig$.publicId
+      }
+    }).pipe(map((resp) => resp.data));
+  }
   createShlinkManifest(payload) {
     const url = `${environment.connect_api_endpoint_base}/shlink/manifest/create`;
     return this._httpClient.post(url, payload, {
@@ -64519,9 +64527,10 @@ function AccountDetailsComponent_div_67_Template(rf, ctx) {
   }
 }
 var AccountDetailsComponent = class _AccountDetailsComponent {
-  constructor(route, configService) {
+  constructor(route, configService, fastenService) {
     this.route = route;
     this.configService = configService;
+    this.fastenService = fastenService;
     this.accountId = "";
     this.institutionWebsite = "";
     this.consentExpiresLabel = "";
@@ -64558,6 +64567,9 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
         description: "Prepare a mock CMS-compatible patient document package."
       }
     ];
+    this.fastenService.getVaultProfileConnectionInfo(this.account?.vault_profile_connection_id).subscribe((info) => {
+      console.log("Fetched connection info for account details view:", info);
+    });
   }
   get accountDisplayName() {
     return this.account?.portal?.name || this.account?.brand?.name || "Connected institution";
@@ -64714,7 +64726,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
   }
   static {
     this.\u0275fac = function AccountDetailsComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AccountDetailsComponent)(\u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(ConfigService));
+      return new (__ngFactoryType__ || _AccountDetailsComponent)(\u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(FastenService));
     };
   }
   static {
@@ -64837,7 +64849,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AccountDetailsComponent, { className: "AccountDetailsComponent", filePath: "projects/fasten-connect-vault/src/app/pages/account-details/account-details.component.ts", lineNumber: 40 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AccountDetailsComponent, { className: "AccountDetailsComponent", filePath: "projects/fasten-connect-vault/src/app/pages/account-details/account-details.component.ts", lineNumber: 41 });
 })();
 
 // projects/fasten-connect-vault/src/app/dashboard-routing.module.ts
