@@ -63015,7 +63015,7 @@ var ConnectedAccountsTabComponent = class _ConnectedAccountsTabComponent {
         \u0275\u0275text(7, "Connected accounts");
         \u0275\u0275elementEnd();
         \u0275\u0275elementStart(8, "p", 7);
-        \u0275\u0275text(9, "Keep track of the health systems currently linked to your vault and add another account whenever you need more records in one place.");
+        \u0275\u0275text(9, "Keep track of the health systems currently linked to your vault and manage permissions and sharing with other Applications.");
         \u0275\u0275elementEnd()()();
         \u0275\u0275elementStart(10, "a", 8);
         \u0275\u0275namespaceSVG();
