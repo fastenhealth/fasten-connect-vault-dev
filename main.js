@@ -60565,7 +60565,9 @@ var AuthService = class _AuthService {
     return __async(this, null, function* () {
       let resp = yield this._httpClient.post(`${environment.connect_api_endpoint_base}/bridge/vault_auth_finish`, {
         "email": email,
-        "code": code
+        "code": code,
+        "csp_prompt_force": this.configService.systemConfig$.apiMode == ApiMode.Live
+        //always force CSP verification in live mode
       }, { withCredentials: true, params: { "public_id": this.configService.systemConfig$.publicId } }).toPromise();
       return resp;
     });
