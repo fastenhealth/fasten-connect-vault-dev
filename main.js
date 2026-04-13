@@ -58584,7 +58584,7 @@ function waitForPostMessageOrgConnectionOrTimeout(logger, openedWindow, sdkMode)
           logger.debug(`ignoring postMessage event from unknown source window`, event.source);
           return false;
         }
-        if (event.origin != "https://api.connect-dev.fastenhealth.com" && event.origin != "https://api.connect.fastenhealth.com" && event.origin != "https://embed.connect-dev.fastenhealth.com" && event.origin != "https://embed.connect.fastenhealth.com") {
+        if (event.origin != "https://api.connect.fastenlabs.com" && event.origin != "https://api.connect.fastenhealth.com" && event.origin != "https://embed.connect.fastenlabs.com" && event.origin != "https://embed.connect.fastenhealth.com") {
           logger.debug(`ignoring postMessage event from unknown origin`, event.origin);
           return false;
         }
@@ -59107,12 +59107,12 @@ var environment = {
   recaptcha_site_key: "6LeDiZwsAAAAAJArjonR8JSj1J8UVDdSNgyJNqGK",
   //specify the lighthouse base that we're going to use to authenticate against all our source/providers. Must not have trailing slash
   lighthouse_api_endpoint_base: "https://lighthouse.fastenhealth.com",
-  connect_base_domain: "connect-dev.fastenhealth.com",
+  connect_base_domain: "connect.fastenlabs.com",
   //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash
-  // connect_api_endpoint_base: 'https://api.connect-dev.fastenhealth.com/v1',
+  // connect_api_endpoint_base: 'https://api.connect.fastenlabs.com/v1',
   // if relative, must start with /
-  connect_api_endpoint_base: "https://api.connect-dev.fastenhealth.com/v1",
-  connect_api_jwt_issuer_host: "https://api.connect-dev.fastenhealth.com/v1",
+  connect_api_endpoint_base: "https://api.connect.fastenlabs.com/v1",
+  connect_api_jwt_issuer_host: "https://api.connect.fastenlabs.com/v1",
   jwks_uri: "https://cdn.fastenhealth.com/jwks/fasten-connect/dev.json",
   org_credential_test_public_id: "public_test_eer7vp076phxhg7e0257qkvofdc2eitx591lnjak311sy",
   org_credential_live_public_id: "public_live_0qoo3vib5xqxnadke7i8fzvkeurcivxonqnj8jrsnji6a"
