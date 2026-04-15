@@ -58869,7 +58869,7 @@ function waitForWebsocketOrgConnectionOrTimeout(logger, websocketUrl, openedWind
       return throwError(() => new Error('{"error":"timeout","error_description":"The connection timed out waiting for user to complete authentication."}'));
     } else {
       logger.error("websocket connection error", err);
-      return throwError(() => err);
+      return throwError(() => new Error(`{"error": "websocket_connection", "error_description": "An error occurred while communicating with Fasten server (code: '${err?.code}', reason: '${err?.reason}' )"})`));
     }
   }));
 }
