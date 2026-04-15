@@ -58847,13 +58847,19 @@ function webSocket(urlConfigOrSource) {
 }
 
 // projects/shared-library/src/lib/utils/websocket.ts
+var FastenConnectionError = class extends Error {
+  constructor(message2) {
+    super(message2);
+    this.name = "FastenConnectionError";
+  }
+};
 function waitForWebsocketOrgConnectionOrTimeout(logger, websocketUrl, openedWindow, sdkMode) {
   logger.info(`waiting for websocket notification from popup window`);
   const subject = webSocket(websocketUrl.toString());
   return subject.pipe(timeout(ConnectWindowTimeout), map((message2) => {
     logger.debug("websocket message received", message2);
     if (message2.error) {
-      throw new Error(JSON.stringify(message2));
+      throw new FastenConnectionError(JSON.stringify(message2));
     }
     return message2;
   }), catchError((err) => {
@@ -58867,6 +58873,9 @@ function waitForWebsocketOrgConnectionOrTimeout(logger, websocketUrl, openedWind
         }
       }
       return throwError(() => new Error('{"error":"timeout","error_description":"The connection timed out waiting for user to complete authentication."}'));
+    } else if (err instanceof FastenConnectionError) {
+      logger.error("fasten connection error", err);
+      return throwError(() => err);
     } else {
       logger.error("websocket connection error", err);
       return throwError(() => new Error(`{"error": "websocket_connection", "error_description": "An error occurred while communicating with Fasten server (code: '${err?.code}', reason: '${err?.reason}' )"}`));
