@@ -59122,7 +59122,7 @@ var environment = {
   // if relative, must start with /
   connect_api_endpoint_base: "https://api.my.fastenlabs.com/v1",
   connect_api_jwt_issuer_host: "https://api.my.fastenlabs.com/v1",
-  identity_api_endpoint_base: "https://identity.fastenlabs.com",
+  identity_api_endpoint_base: "https://identity.fastenlabs.com/v1",
   jwks_uri: "https://cdn.fastenhealth.com/jwks/fasten-connect/dev.json",
   org_credential_test_public_id: "public_test_eer7vp076phxhg7e0257qkvofdc2eitx591lnjak311sy",
   org_credential_live_public_id: "public_live_0qoo3vib5xqxnadke7i8fzvkeurcivxonqnj8jrsnji6a"
@@ -60711,7 +60711,7 @@ var VaultSigninComponent = class _VaultSigninComponent {
       const systemConfig = this.configService.systemConfig$;
       const clientId = systemConfig?.publicId || environment.org_credential_live_public_id;
       const apiMode = systemConfig?.apiMode || this.getApiModeFromPublicId(clientId);
-      const authorizeUrl = new URL("/v1/oauth2/authorize", environment.identity_api_endpoint_base);
+      const authorizeUrl = new URL(`${environment.identity_api_endpoint_base}/oauth2/authorize`);
       sessionStorage.setItem(`fasten_oauth_context:${state}`, JSON.stringify({
         codeVerifier,
         publicId: clientId,
@@ -66297,7 +66297,7 @@ var AuthCallbackComponent = class _AuthCallbackComponent {
     formBody.set("code_verifier", oauthContext.codeVerifier);
     formBody.set("redirect_uri", this.getCallbackUrl());
     formBody.set("response_mode", "cookie");
-    this.httpClient.post(new URL("/oauth2/token", environment.identity_api_endpoint_base).toString(), formBody.toString(), {
+    this.httpClient.post(`${environment.identity_api_endpoint_base}/oauth2/token`, formBody.toString(), {
       headers: new HttpHeaders({ "Content-Type": "application/x-www-form-urlencoded" }),
       withCredentials: true
     }).subscribe({
