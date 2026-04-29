@@ -59122,6 +59122,7 @@ var environment = {
   // if relative, must start with /
   connect_api_endpoint_base: "https://api.my.fastenlabs.com/v1",
   connect_api_jwt_issuer_host: "https://api.my.fastenlabs.com/v1",
+  identity_api_endpoint_base: "https://identity.fastenlabs.com",
   jwks_uri: "https://cdn.fastenhealth.com/jwks/fasten-connect/dev.json",
   org_credential_test_public_id: "public_test_eer7vp076phxhg7e0257qkvofdc2eitx591lnjak311sy",
   org_credential_live_public_id: "public_live_0qoo3vib5xqxnadke7i8fzvkeurcivxonqnj8jrsnji6a"
@@ -60656,110 +60657,17 @@ var AuthService = class _AuthService {
   }
 };
 
-// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
-var SpinnerComponent = class _SpinnerComponent {
-  constructor() {
-    this.sizePx = 20;
-    this.strokeWidthPx = 3;
-    this.accentColor = "#5b47fb";
-    this.trackColor = "#e5e7eb";
-  }
-  ngOnInit() {
-  }
-  static {
-    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _SpinnerComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], inputs: { sizePx: "sizePx", strokeWidthPx: "strokeWidthPx", accentColor: "accentColor", trackColor: "trackColor" }, standalone: false, decls: 1, vars: 10, consts: [["aria-hidden", "true", 1, "vault-spinner"]], template: function SpinnerComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275element(0, "span", 0);
-      }
-      if (rf & 2) {
-        \u0275\u0275styleProp("width", ctx.sizePx, "px")("height", ctx.sizePx, "px")("border-width", ctx.strokeWidthPx, "px")("border-color", ctx.trackColor)("border-top-color", ctx.accentColor);
-      }
-    }, styles: ["\n\n[_nghost-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  line-height: 0;\n}\n.vault-spinner[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n  border-style: solid;\n  border-radius: 999px;\n  animation: _ngcontent-%COMP%_vault-spinner-rotate 1s linear infinite;\n  box-sizing: border-box;\n}\n@keyframes _ngcontent-%COMP%_vault-spinner-rotate {\n  to {\n    transform: rotate(360deg);\n  }\n}\n/*# sourceMappingURL=spinner.component.css.map */"] });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
-})();
-
 // projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts
-function VaultSigninComponent_p_44_span_3_Template(rf, ctx) {
+function VaultSigninComponent_div_41_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1, " Email is required. ");
-    \u0275\u0275elementEnd();
-  }
-}
-function VaultSigninComponent_p_44_span_4_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1, " Email must be at least 4 characters long. ");
-    \u0275\u0275elementEnd();
-  }
-}
-function VaultSigninComponent_p_44_span_5_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span");
-    \u0275\u0275text(1, " Email must be a valid email address. ");
-    \u0275\u0275elementEnd();
-  }
-}
-function VaultSigninComponent_p_44_span_6_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 69)(1, "strong");
-    \u0275\u0275text(2, "Error");
-    \u0275\u0275elementEnd();
-    \u0275\u0275text(3);
+    \u0275\u0275elementStart(0, "div", 58);
+    \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
   if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext(2);
-    \u0275\u0275advance(3);
-    \u0275\u0275textInterpolate1(" ", ctx_r1.errorMsg, " ");
-  }
-}
-function VaultSigninComponent_p_44_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "p", 64);
-    \u0275\u0275namespaceSVG();
-    \u0275\u0275elementStart(1, "svg", 65);
-    \u0275\u0275element(2, "path", 66);
-    \u0275\u0275elementEnd();
-    \u0275\u0275template(3, VaultSigninComponent_p_44_span_3_Template, 2, 0, "span", 67)(4, VaultSigninComponent_p_44_span_4_Template, 2, 0, "span", 67)(5, VaultSigninComponent_p_44_span_5_Template, 2, 0, "span", 67)(6, VaultSigninComponent_p_44_span_6_Template, 4, 1, "span", 68);
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = \u0275\u0275nextContext();
-    const email_r3 = \u0275\u0275reference(40);
-    \u0275\u0275advance(3);
-    \u0275\u0275property("ngIf", email_r3.errors == null ? null : email_r3.errors["required"]);
+    const ctx_r0 = \u0275\u0275nextContext();
     \u0275\u0275advance();
-    \u0275\u0275property("ngIf", email_r3.errors == null ? null : email_r3.errors["minlength"]);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", email_r3.errors == null ? null : email_r3.errors["email"]);
-    \u0275\u0275advance();
-    \u0275\u0275property("ngIf", ctx_r1.errorMsg);
-  }
-}
-function VaultSigninComponent_span_46_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 70);
-    \u0275\u0275element(1, "app-spinner", 71);
-    \u0275\u0275text(2, " Sending code... ");
-    \u0275\u0275elementEnd();
-  }
-  if (rf & 2) {
-    \u0275\u0275advance();
-    \u0275\u0275property("sizePx", 20)("strokeWidthPx", 2.5);
-  }
-}
-function VaultSigninComponent_ng_template_47_Template(rf, ctx) {
-  if (rf & 1) {
-    \u0275\u0275text(0, "Get Started");
+    \u0275\u0275textInterpolate1(" ", ctx_r0.errorMsg, " ");
   }
 }
 var VaultSigninComponent = class _VaultSigninComponent {
@@ -60768,6 +60676,8 @@ var VaultSigninComponent = class _VaultSigninComponent {
     this.authService = authService;
     this.routerService = routerService;
     this.logger = logger;
+    this.CspType = CspType;
+    this.idmeButtonLogoSrc = "data:image/svg+xml,%3Csvg%20%20%20%20role%3D%22img%22%20%20%20%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20%20%20%20viewBox%3D%220%200%2030%2012%22%20%20%20%20fill%3D%22none%22%20%20%20%20aria-labelledby%3D%22idme-title%22%3E%3Ctitle%20id%3D%22idme-title%22%3EID.me%3C%2Ftitle%3E%3Cg%20fillRule%3D%22nonzero%22%20fill%3D%22none%22%3E%3Cpath%20%20%20%20%20%20%20%20%20%20%20%20d%3D%22M1.48515.0384H.96978C.32628.0384%200%20.24588%200%20.6551v10.12096c0%20.40922.32627.6167.96978.6167h.51537c.64332%200%20.96977-.20748.96977-.6167V.6551c0-.40922-.32645-.6167-.96977-.6167M7.67332%209.10802H6.14794V2.31206h1.52538c1.90854%200%202.30924%201.84782%202.30924%203.39798s-.4007%203.39798-2.30924%203.39798zm2.901%201.04522c0-1.20723.73212-2.22915%201.74336-2.58106.11573-.56263.17475-1.18411.17475-1.86214%200-3.65857-1.71147-5.67336-4.81911-5.67336h-3.3127c-.4629%200-.67823.23232-.67823.73114v9.88444c0%20.49882.21532.73114.67824.73114h3.31269c1.18475%200%202.16587-.29364%202.92723-.85876-.01542-.1217-.02623-.24512-.02623-.3714z%22%20%20%20%20%20%20%20%20%20%20%20%20fill%3D%22%23FFF%22%20%20%20%20%20%20%20%20%2F%3E%3Cpath%20%20%20%20%20%20%20%20%20%20%20%20d%3D%22M14.24058%2010.15324c0%20.68452-.51484%201.23952-1.14984%201.23952-.63518%200-1.14984-.555-1.14984-1.23952%200-.68453.51466-1.23952%201.14984-1.23952.635%200%201.14984.555%201.14984%201.23952%22%20%20%20%20%20%20%20%20%20%20%20%20fill%3D%22%23FFF%22%20%20%20%20%20%20%20%20%2F%3E%3Cpath%20%20%20%20%20%20%20%20%20%20%20%20d%3D%22M27.26344%205.99604c.00248.0298.00478.05941.00514.0896%200%20.04337-.0016.08769-.0062.13488-.01525.15857-.04236.30625-.08047.43922-.2536.88646-.96747%201.0435-1.58492%201.06604.08383-.38496.20718-.76209.35906-1.09489.30057-.66007.67788-1.07006.98466-1.07025.028%200%20.05547.0044.08347.013.01188.00362.02233.00973.04112.01967l.01276.0063c.00514.0023.01028.00459.01506.00803.01312.00898.02464.02082.0374.03343l.01046.0105c.0039.00383.00797.00765.0117.01204.0085.01032.01559.02236.02268.03401l.00921.0151c.00638.00993.01259.02005.01826.03209.00336.00707.0062.0149.01418.03553.00815.0216.01648.04337.02268.06706l.00567.02751c.00656.02847.01223.0575.01577.08789l.0023.03324zm2.17934%202.4177a.2772.2772%200%2000-.10652-.0256c-.15702-.00553-.26406.06095-.3587.22564-.056.09877-.11112.19926-.1657.29975-.2086.38305-.4241.77871-.73726%201.06223-.42534.38496-1.04102.56512-1.56898.46061-.31404-.06209-.53823-.30701-.67115-.5015-.24386-.35726-.36242-.83832-.34328-1.39274.77713-.0705%203.11951-.4438%203.30578-2.35791.03597-.37102-.06203-.70745-.28356-.97263-.2809-.33624-.72928-.52156-1.26238-.52156-1.56224%200-3.1041%201.76147-3.29958%203.76957-.05334.5508.01028%201.05974.18963%201.5129-.13362.13336-.2598.22946-.3851.29327-.1308.06725-.24422.08081-.32734.03973-.10297-.05158-.14462-.1811-.1611-.28045-.0615-.36777.0179-.79037.11183-1.22691.05547-.256.12477-.5229.18591-.75827.18874-.72618.38422-1.47718.319-2.23584-.05936-.69465-.51164-1.12603-1.18031-1.12603-.93753%200-1.5548.7212-1.95462%201.33943-.0085-.4608-.11041-.79533-.30997-1.01885-.1898-.21283-.46876-.32058-.82888-.32058-.91962%200-1.52928.69274-1.92803%201.29912.00531-.05578.01063-.11271.0163-.16946.02517-.26001.03651-.63256-.15578-.86239-.11466-.13717-.28693-.20652-.51218-.20652-.19885%200-.24847.00115-.46203.03917-.00212.00019-.20877.04394-.28728.1217-.1377.13621-.09393.32401-.06876.43138.00319.01356.00602.02598.00762.03649.01506.10374.01967.22142.01435.35917-.0287.72942-.15436%201.45827-.27363%202.07516-.06433.33243-.137.67058-.2086%201.00434-.15914.7405-.3236%201.50603-.40797%202.27595-.00904.08158.01259.15915.06079.21818.04838.05923.11661.0919.19211.09209l.04963.00038c.50526.00726%201.00185-.01529%201.11882-.32574.1292-.34274.20062-.7596.26389-1.12833l.02782-.16334c.14993-.84787.2809-1.4554.5448-2.23641.13592-.40254.3844-.76515.58537-1.03643.24333-.32822.50562-.64957.80176-.6576.12264-.00687.2024.03249.26265.11865.28764.41362-.07054%201.74866-.2233%202.31875-.03314.12322-.06115.22734-.07887.30376l-.10527.44037c-.15507.64211-.31528%201.306-.39752%201.97754a7.70047%207.70047%200%2000-.0225.20747l-.00692.09362.0647.05368c.13043.10909%201.06192-.04356%201.06955-.04604.34346-.12514.41825-.4736.44288-.58805.06398-.29631.12051-.59893.17492-.89123l.0039-.02178c.10261-.5508.2086-1.1207.36739-1.67053.30961-1.06987.72255-1.79986%201.22728-2.16973.21586-.15857.4374-.17614.53806-.04222.17439.23117.0638.85704.01648%201.12432-.06522.37063-.1487.74814-.2295%201.11285l-.00408.01872c-.05175.2325-.10315.46482-.151.6979-.14763.72235-.26885%201.6178.10846%202.13458.19194.26345.48897.3968.88294.3968.41754%200%20.81045-.15016%201.23632-.47265.11733-.0896.23571-.19372.3743-.3179.4794.58747%201.02401.83908%201.80965.83908%201.77721%200%202.61265-1.27295%203.08655-2.23048.05973-.12132.12654-.26136.16642-.38019.0592-.17652-.01134-.3691-.16021-.43845z%22%20%20%20%20%20%20%20%20%20%20%20%20fill%3D%22%23FFF%22%20%20%20%20%20%20%20%20%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E";
     this.loading = false;
     this.showMessage = false;
     this.submitted = false;
@@ -60777,6 +60687,77 @@ var VaultSigninComponent = class _VaultSigninComponent {
   }
   ngOnInit() {
     const urlParams = new URLSearchParams(window.location.search);
+  }
+  signinWithIdentityProvider(cspType) {
+    return __async(this, null, function* () {
+      this.loading = true;
+      this.errorMsg = "";
+      try {
+        const authorizeUrl = yield this.buildOAuthAuthorizeUrl(cspType);
+        window.location.assign(authorizeUrl);
+      } catch (err) {
+        this.loading = false;
+        this.logger.error("failed to start CSP signin", err);
+        this.errorMsg = "an unknown error occurred during sign-in";
+      }
+    });
+  }
+  buildOAuthAuthorizeUrl(cspType) {
+    return __async(this, null, function* () {
+      const state = v4_default();
+      const codeVerifier = this.generateCodeVerifier();
+      const codeChallenge = yield this.generateCodeChallenge(codeVerifier);
+      const redirectUri = this.getCallbackUrl();
+      const systemConfig = this.configService.systemConfig$;
+      const clientId = systemConfig?.publicId || environment.org_credential_live_public_id;
+      const apiMode = systemConfig?.apiMode || this.getApiModeFromPublicId(clientId);
+      const authorizeUrl = new URL("/v1/oauth2/authorize", environment.identity_api_endpoint_base);
+      sessionStorage.setItem(`fasten_oauth_context:${state}`, JSON.stringify({
+        codeVerifier,
+        publicId: clientId,
+        apiMode
+      }));
+      authorizeUrl.searchParams.set("response_type", "code");
+      authorizeUrl.searchParams.set("client_id", clientId);
+      authorizeUrl.searchParams.set("redirect_uri", redirectUri);
+      authorizeUrl.searchParams.set("scope", "udap offline_access openid profile email network/rls network/connection.cru");
+      authorizeUrl.searchParams.set("state", state);
+      authorizeUrl.searchParams.set("code_challenge", codeChallenge);
+      authorizeUrl.searchParams.set("code_challenge_method", "S256");
+      authorizeUrl.searchParams.set("idp", cspType);
+      authorizeUrl.searchParams.set("audience", redirectUri);
+      return authorizeUrl.toString();
+    });
+  }
+  getCallbackUrl() {
+    if (environment.connect_base_domain === "localhost") {
+      return `${window.location.origin}/auth/callback`;
+    }
+    return `https://${environment.connect_base_domain}/auth/callback`;
+  }
+  getApiModeFromPublicId(publicId) {
+    const publicIdParts = publicId.split("_");
+    if (publicIdParts.length === 3 && publicIdParts[1] === ApiMode.Live) {
+      return ApiMode.Live;
+    }
+    return ApiMode.Test;
+  }
+  generateCodeVerifier() {
+    const randomBytes = new Uint8Array(32);
+    window.crypto.getRandomValues(randomBytes);
+    return this.base64UrlEncode(randomBytes);
+  }
+  generateCodeChallenge(codeVerifier) {
+    return __async(this, null, function* () {
+      const encodedVerifier = new TextEncoder().encode(codeVerifier);
+      const digest = yield window.crypto.subtle.digest("SHA-256", encodedVerifier);
+      return this.base64UrlEncode(new Uint8Array(digest));
+    });
+  }
+  base64UrlEncode(bytes) {
+    let binary = "";
+    bytes.forEach((byte) => binary += String.fromCharCode(byte));
+    return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   }
   signinSubmit() {
     this.submitted = true;
@@ -60819,125 +60800,111 @@ var VaultSigninComponent = class _VaultSigninComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninComponent, selectors: [["app-vault-signin"]], standalone: false, decls: 88, vars: 6, consts: [["vaultProfileForm", "ngForm"], ["email", "ngModel"], ["getStartedLabel", ""], [1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "space-y-6", 3, "ngSubmit"], [1, "block", "text-sm", "font-medium", "text-gray-700"], [1, "mt-1.5", "relative"], ["type", "email", "autocomplete", "email", "name", "email", "required", "", "email", "", "minlength", "4", "placeholder", "you@example.com", 1, "block", "w-full", "px-4", "py-3.5", "text-lg", "rounded-lg", "border", "border-gray-300", "focus:outline-none", "focus:ring-2", "focus:ring-[#5B47FB]", "focus:border-[#5B47FB]", "focus:ring-opacity-20", "transition-all", "duration-200", 3, "ngModelChange", "ngModel"], [1, "absolute", "inset-y-0", "right-0", "flex", "items-center", "pr-3", "pointer-events-none"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"], ["id", "initial-error", "class", "mt-2 text-sm text-red-500 flex items-center gap-2", 4, "ngIf"], ["type", "submit", 1, "w-full", "bg-[#5B47FB]", "hover:bg-[#4936E8]", "text-white", "font-medium", "py-3.5", "px-6", "text-lg", "rounded-lg", "transition-all", "duration-200", "transform", "hover:scale-[1.02]", "active:scale-[0.98]", "shadow-lg", "hover:shadow-xl", "hover:shadow-indigo-100", "disabled:cursor-not-allowed", "disabled:opacity-70", "disabled:hover:scale-100", 3, "disabled"], ["class", "inline-flex items-center justify-center gap-3", 4, "ngIf", "ngIfElse"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "items-center", "justify-center", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["id", "initial-error", 1, "mt-2", "text-sm", "text-red-500", "flex", "items-center", "gap-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-4", "w-4"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], [4, "ngIf"], ["class", "alert alert-danger mt-3", "role", "alert", 4, "ngIf"], ["role", "alert", 1, "alert", "alert-danger", "mt-3"], [1, "inline-flex", "items-center", "justify-center", "gap-3"], ["accentColor", "#ffffff", "trackColor", "rgba(255,255,255,0.35)", 3, "sizePx", "strokeWidthPx"]], template: function VaultSigninComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _VaultSigninComponent, selectors: [["app-vault-signin"]], standalone: false, decls: 81, vars: 4, consts: [[1, "marketing-content", "py-12", "md:py-16", "max-w-7xl"], [1, "space-y-10", "max-w-xl"], [1, "flex", "items-center", "space-x-2"], [1, "az-logo", "text-5xl"], [1, "px-3", "py-1", "text-sm", "font-medium", "bg-indigo-50", "text-[#5B47FB]", "rounded-full"], [1, "space-y-6"], [1, "text-6xl", "font-bold", "text-gray-900", "leading-[1.1]", "tracking-tight"], [1, "text-[#5B47FB]"], [1, "flex", "items-start", "space-x-4"], [1, "mt-1", "flex-shrink-0", "bg-indigo-50", "rounded-full", "p-2"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-6", "w-6", "text-[#5B47FB]"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"], [1, "text-lg", "font-semibold", "text-gray-900"], [1, "text-gray-600"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M15 12a3 3 0 11-6 0 3 3 0 016 0z"], [1, "mt-12"], [1, "flex", "flex-col", "items-start", "space-y-4"], ["type", "button", 1, "clear-button", "flex", "items-center", "justify-center", "px-5", "py-3", "text-white", 3, "click", "disabled"], ["src", "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 26.3.1, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 353.2 337.6' style='enable-background:new 0 0 353.2 337.6;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bdisplay:none;%7D .st1%7Bdisplay:inline;fill:%23192958;%7D .st2%7Bfill:%23FFFFFF;%7D%0A%3C/style%3E%3Cg id='BKGD' class='st0'%3E%3Crect class='st1' width='353.2' height='337.6'/%3E%3C/g%3E%3Cg id='Layer_2'%3E%3Cg%3E%3Cg%3E%3Ccircle class='st2' cx='14' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='77.1' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='227.8' r='14'/%3E%3Ccircle class='st2' cx='99.4' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='51.3' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='45.5' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='96.6' cy='108.7' r='14'/%3E%3Ccircle class='st2' cx='98.4' cy='61.7' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='61.1' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='109.7' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='127.1' r='14'/%3E%3Ccircle class='st2' cx='301.9' cy='209.8' r='14'/%3E%3Ccircle class='st2' cx='256.5' cy='227.9' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='207.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='145.9' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='45.1' cy='264.2' r='14'/%3E%3Ccircle class='st2' cx='253.3' cy='276.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='301.5' r='14'/%3E%3Ccircle class='st2' cx='226.7' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='126.6' cy='323.6' r='14'/%3E%3Ccircle class='st2' cx='276.5' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='339.2' cy='168.5' r='14'/%3E%3Ccircle class='st2' cx='308.1' cy='72.8' r='14'/%3E%3Ccircle class='st2' cx='176.3' cy='35.5' r='14'/%3E%3Ccircle class='st2' cx='126.2' cy='14' r='14'/%3E%3Ccircle class='st2' cx='226.8' cy='14' r='14'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E", 1, "px-[8px]", 2, "height", "24px", "display", "inline", "vertical-align", "bottom"], ["data-testid", "idme-button", "type", "button", 1, "clear-button", "idme-button", "flex", "items-center", "justify-center", "gap-2", "px-5", "py-3", "text-white", 3, "click", "disabled"], [1, "text-base", "font-semibold"], ["alt", "ID.me", 1, "h-5", "align-middle", 3, "src"], ["class", "mt-4 w-full max-w-[328px] rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700", "role", "alert", 4, "ngIf"], [1, "text-sm", "text-gray-500", "mt-6", "flex", "gap-1"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "viewBox", "0 0 24 24", "stroke", "currentColor", 1, "h-5", "w-5", "text-gray-400"], ["stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "d", "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"], ["href", "#", 1, "text-[#5B47FB]", "hover:text-[#4936E8]", "font-medium"], [1, "hero-illustration", "max-w-2xl", "mx-auto", "md:mx-0", "px-8", "md:px-0"], ["viewBox", "0 0 500 400", "fill", "none", "xmlns", "http://www.w3.org/2000/svg", 1, "w-full", "h-full", "transform", "scale-110", "drop-shadow-2xl"], ["cx", "250", "cy", "200", "r", "150", "fill", "#F3F4F6", 1, "pulse-animation"], [1, "float-animation"], ["x", "200", "y", "120", "width", "100", "height", "160", "rx", "12", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["x", "210", "y", "130", "width", "80", "height", "120", "rx", "4", "fill", "#EEF2FF"], ["x", "220", "y", "140", "width", "60", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.6"], ["x", "220", "y", "156", "width", "40", "height", "8", "rx", "4", "fill", "#5B47FB", "opacity", "0.4"], ["cx", "240", "cy", "180", "r", "15", "fill", "#5B47FB", "opacity", "0.2"], [1, "float-animation", 2, "animation-delay", "-1s"], ["x", "120", "y", "40", "width", "60", "height", "80", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M135 80h30M135 60h30M135 100h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M150 120L200 120", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-2s"], ["x", "340", "y", "160", "width", "70", "height", "60", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M350 190h10l10-20l10 40l10-20h10", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M340 190L300 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-3s"], ["x", "90", "y", "160", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M110 180h30M110 195h30M110 210h30", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M160 195L200 200", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "float-animation", 2, "animation-delay", "-4s"], ["x", "320", "y", "280", "width", "70", "height", "70", "rx", "8", "fill", "white", "stroke", "#5B47FB", "stroke-width", "2"], ["d", "M355 295c0 20-10 25-17.5 27.5 7.5 2.5 17.5 7.5 17.5 27.5 0-20 10-25 17.5-27.5-7.5-2.5-17.5-7.5-17.5-27.5z", "stroke", "#5B47FB", "stroke-width", "2", "fill", "white"], ["d", "M320 315L300 280", "stroke", "#5B47FB", "stroke-width", "1", "stroke-dasharray", "4 4", 1, "connection-line"], [1, "pulse-animation"], ["cx", "140", "cy", "30", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "380", "cy", "150", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "360", "cy", "320", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["cx", "80", "cy", "180", "r", "3", "fill", "#5B47FB", "opacity", "0.6"], ["role", "alert", 1, "mt-4", "w-full", "max-w-[328px]", "rounded-lg", "bg-red-50", "px-4", "py-3", "text-sm", "text-red-700"]], template: function VaultSigninComponent_Template(rf, ctx) {
       if (rf & 1) {
-        const _r1 = \u0275\u0275getCurrentView();
-        \u0275\u0275elementStart(0, "div", 3)(1, "div", 4)(2, "div", 5)(3, "h1", 6);
+        \u0275\u0275elementStart(0, "div", 0)(1, "div", 1)(2, "div", 2)(3, "h1", 3);
         \u0275\u0275text(4, "fasten");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "span", 7);
+        \u0275\u0275elementStart(5, "span", 4);
         \u0275\u0275text(6, "BETA");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(7, "div", 8)(8, "h2", 9);
+        \u0275\u0275elementStart(7, "div", 5)(8, "h2", 6);
         \u0275\u0275text(9, "Your health data, ");
-        \u0275\u0275elementStart(10, "span", 10);
+        \u0275\u0275elementStart(10, "span", 7);
         \u0275\u0275text(11, "unified");
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(12, "div", 8)(13, "div", 11)(14, "div", 12);
+        \u0275\u0275elementStart(12, "div", 5)(13, "div", 8)(14, "div", 9);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(15, "svg", 13);
-        \u0275\u0275element(16, "path", 14);
+        \u0275\u0275elementStart(15, "svg", 10);
+        \u0275\u0275element(16, "path", 11);
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(17, "div")(18, "h3", 15);
+        \u0275\u0275elementStart(17, "div")(18, "h3", 12);
         \u0275\u0275text(19, "Secure Access");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(20, "p", 16);
+        \u0275\u0275elementStart(20, "p", 13);
         \u0275\u0275text(21, "Safely connect your health records to trusted apps and services");
         \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(22, "div", 11)(23, "div", 12);
+        \u0275\u0275elementStart(22, "div", 8)(23, "div", 9);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(24, "svg", 13);
-        \u0275\u0275element(25, "path", 17)(26, "path", 18);
+        \u0275\u0275elementStart(24, "svg", 10);
+        \u0275\u0275element(25, "path", 14)(26, "path", 15);
         \u0275\u0275elementEnd()();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(27, "div")(28, "h3", 15);
+        \u0275\u0275elementStart(27, "div")(28, "h3", 12);
         \u0275\u0275text(29, "Full Control");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(30, "p", 16);
+        \u0275\u0275elementStart(30, "p", 13);
         \u0275\u0275text(31, "Control your data sharing preferences with a simple tap");
         \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(32, "div", 19)(33, "form", 20, 0);
-        \u0275\u0275listener("ngSubmit", function VaultSigninComponent_Template_form_ngSubmit_33_listener() {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.signinSubmit());
+        \u0275\u0275elementStart(32, "div", 16)(33, "div", 17)(34, "button", 18);
+        \u0275\u0275listener("click", function VaultSigninComponent_Template_button_click_34_listener() {
+          return ctx.signinWithIdentityProvider(ctx.CspType.ClearCsp);
         });
-        \u0275\u0275elementStart(35, "div")(36, "label", 21);
-        \u0275\u0275text(37, "Email address");
+        \u0275\u0275element(35, "img", 19);
+        \u0275\u0275text(36, " Sign in with CLEAR ");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(38, "div", 22)(39, "input", 23, 1);
-        \u0275\u0275twoWayListener("ngModelChange", function VaultSigninComponent_Template_input_ngModelChange_39_listener($event) {
-          \u0275\u0275restoreView(_r1);
-          \u0275\u0275twoWayBindingSet(ctx.existingVaultProfile.email, $event) || (ctx.existingVaultProfile.email = $event);
-          return \u0275\u0275resetView($event);
+        \u0275\u0275elementStart(37, "button", 20);
+        \u0275\u0275listener("click", function VaultSigninComponent_Template_button_click_37_listener() {
+          return ctx.signinWithIdentityProvider(ctx.CspType.IdmeCsp);
         });
+        \u0275\u0275elementStart(38, "span", 21);
+        \u0275\u0275text(39, "Sign in with");
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(41, "div", 24);
-        \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(42, "svg", 25);
-        \u0275\u0275element(43, "path", 26);
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275template(44, VaultSigninComponent_p_44_Template, 7, 4, "p", 27);
-        \u0275\u0275elementEnd();
-        \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(45, "button", 28);
-        \u0275\u0275template(46, VaultSigninComponent_span_46_Template, 3, 2, "span", 29)(47, VaultSigninComponent_ng_template_47_Template, 1, 0, "ng-template", null, 2, \u0275\u0275templateRefExtractor);
+        \u0275\u0275element(40, "img", 22);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(49, "div", 30);
+        \u0275\u0275template(41, VaultSigninComponent_div_41_Template, 2, 1, "div", 23);
+        \u0275\u0275elementStart(42, "div", 24);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(50, "svg", 31);
-        \u0275\u0275element(51, "path", 32);
+        \u0275\u0275elementStart(43, "svg", 25);
+        \u0275\u0275element(44, "path", 26);
         \u0275\u0275elementEnd();
         \u0275\u0275namespaceHTML();
-        \u0275\u0275elementStart(52, "span");
-        \u0275\u0275text(53, "Need help? ");
-        \u0275\u0275elementStart(54, "a", 33);
-        \u0275\u0275text(55, "Learn more");
+        \u0275\u0275elementStart(45, "span");
+        \u0275\u0275text(46, "Need help? ");
+        \u0275\u0275elementStart(47, "a", 27);
+        \u0275\u0275text(48, "Learn more");
         \u0275\u0275elementEnd()()()()();
-        \u0275\u0275elementStart(56, "div", 34);
+        \u0275\u0275elementStart(49, "div", 28);
         \u0275\u0275namespaceSVG();
-        \u0275\u0275elementStart(57, "svg", 35);
-        \u0275\u0275element(58, "circle", 36);
-        \u0275\u0275elementStart(59, "g", 37);
-        \u0275\u0275element(60, "rect", 38)(61, "rect", 39);
-        \u0275\u0275elementStart(62, "g");
-        \u0275\u0275element(63, "rect", 40)(64, "rect", 41)(65, "circle", 42);
+        \u0275\u0275elementStart(50, "svg", 29);
+        \u0275\u0275element(51, "circle", 30);
+        \u0275\u0275elementStart(52, "g", 31);
+        \u0275\u0275element(53, "rect", 32)(54, "rect", 33);
+        \u0275\u0275elementStart(55, "g");
+        \u0275\u0275element(56, "rect", 34)(57, "rect", 35)(58, "circle", 36);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(66, "g")(67, "g", 43);
-        \u0275\u0275element(68, "rect", 44)(69, "path", 45)(70, "path", 46);
+        \u0275\u0275elementStart(59, "g")(60, "g", 37);
+        \u0275\u0275element(61, "rect", 38)(62, "path", 39)(63, "path", 40);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(71, "g", 47);
-        \u0275\u0275element(72, "rect", 48)(73, "path", 49)(74, "path", 50);
+        \u0275\u0275elementStart(64, "g", 41);
+        \u0275\u0275element(65, "rect", 42)(66, "path", 43)(67, "path", 44);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(75, "g", 51);
-        \u0275\u0275element(76, "rect", 52)(77, "path", 53)(78, "path", 54);
+        \u0275\u0275elementStart(68, "g", 45);
+        \u0275\u0275element(69, "rect", 46)(70, "path", 47)(71, "path", 48);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(79, "g", 55);
-        \u0275\u0275element(80, "rect", 56)(81, "path", 57)(82, "path", 58);
+        \u0275\u0275elementStart(72, "g", 49);
+        \u0275\u0275element(73, "rect", 50)(74, "path", 51)(75, "path", 52);
         \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(83, "g", 59);
-        \u0275\u0275element(84, "circle", 60)(85, "circle", 61)(86, "circle", 62)(87, "circle", 63);
+        \u0275\u0275elementStart(76, "g", 53);
+        \u0275\u0275element(77, "circle", 54)(78, "circle", 55)(79, "circle", 56)(80, "circle", 57);
         \u0275\u0275elementEnd()()()();
       }
       if (rf & 2) {
-        const vaultProfileForm_r4 = \u0275\u0275reference(34);
-        const email_r3 = \u0275\u0275reference(40);
-        const getStartedLabel_r5 = \u0275\u0275reference(48);
-        \u0275\u0275advance(39);
-        \u0275\u0275twoWayProperty("ngModel", ctx.existingVaultProfile.email);
-        \u0275\u0275advance(5);
-        \u0275\u0275property("ngIf", email_r3.invalid && (email_r3.dirty || email_r3.touched));
+        \u0275\u0275advance(34);
+        \u0275\u0275property("disabled", ctx.loading);
+        \u0275\u0275advance(3);
+        \u0275\u0275property("disabled", ctx.loading);
+        \u0275\u0275advance(3);
+        \u0275\u0275property("src", ctx.idmeButtonLogoSrc, \u0275\u0275sanitizeUrl);
         \u0275\u0275advance();
-        \u0275\u0275property("disabled", !vaultProfileForm_r4.form.valid || ctx.loading);
-        \u0275\u0275attribute("aria-busy", ctx.loading);
-        \u0275\u0275advance();
-        \u0275\u0275property("ngIf", ctx.loading)("ngIfElse", getStartedLabel_r5);
+        \u0275\u0275property("ngIf", ctx.errorMsg);
       }
-    }, dependencies: [\u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, RequiredValidator, MinLengthValidator, EmailValidator, NgModel, NgForm, NgIf, SpinnerComponent], encapsulation: 2 });
+    }, dependencies: [NgIf], styles: ['\n\n.clear-button[_ngcontent-%COMP%] {\n  border-radius: 32px;\n  background-color: #041A55;\n  font-family: "Inter", sans-serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n  height: 56px;\n  width: min(100%, 328px);\n}\n.idme-button[_ngcontent-%COMP%] {\n  background-color: #08833D;\n  font-family: "Open Sans Light", sans-serif;\n}\n.clear-button[_ngcontent-%COMP%]:disabled {\n  cursor: not-allowed;\n  opacity: 0.7;\n}\n/*# sourceMappingURL=vault-signin.component.css.map */'] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 15 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(VaultSigninComponent, { className: "VaultSigninComponent", filePath: "projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.ts", lineNumber: 16 });
 })();
 
 // projects/fasten-connect-vault/src/app/auth-guards/is-authenticated-auth-guard.ts
@@ -62832,6 +62799,36 @@ var FastenService = class _FastenService {
     this.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({ token: _FastenService, factory: _FastenService.\u0275fac, providedIn: "root" });
   }
 };
+
+// projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts
+var SpinnerComponent = class _SpinnerComponent {
+  constructor() {
+    this.sizePx = 20;
+    this.strokeWidthPx = 3;
+    this.accentColor = "#5b47fb";
+    this.trackColor = "#e5e7eb";
+  }
+  ngOnInit() {
+  }
+  static {
+    this.\u0275fac = function SpinnerComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _SpinnerComponent)();
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SpinnerComponent, selectors: [["app-spinner"]], inputs: { sizePx: "sizePx", strokeWidthPx: "strokeWidthPx", accentColor: "accentColor", trackColor: "trackColor" }, standalone: false, decls: 1, vars: 10, consts: [["aria-hidden", "true", 1, "vault-spinner"]], template: function SpinnerComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275element(0, "span", 0);
+      }
+      if (rf & 2) {
+        \u0275\u0275styleProp("width", ctx.sizePx, "px")("height", ctx.sizePx, "px")("border-width", ctx.strokeWidthPx, "px")("border-color", ctx.trackColor)("border-top-color", ctx.accentColor);
+      }
+    }, styles: ["\n\n[_nghost-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  line-height: 0;\n}\n.vault-spinner[_ngcontent-%COMP%] {\n  display: inline-flex;\n  flex-shrink: 0;\n  border-style: solid;\n  border-radius: 999px;\n  animation: _ngcontent-%COMP%_vault-spinner-rotate 1s linear infinite;\n  box-sizing: border-box;\n}\n@keyframes _ngcontent-%COMP%_vault-spinner-rotate {\n  to {\n    transform: rotate(360deg);\n  }\n}\n/*# sourceMappingURL=spinner.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SpinnerComponent, { className: "SpinnerComponent", filePath: "projects/fasten-connect-vault/src/app/components/spinner/spinner.component.ts", lineNumber: 9 });
+})();
 
 // projects/fasten-connect-vault/src/app/components/connected-accounts-tab/connected-accounts-tab.component.ts
 var _c02 = () => [];
@@ -66158,12 +66155,232 @@ var FormSupportRequestComponent = class _FormSupportRequestComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(FormSupportRequestComponent, { className: "FormSupportRequestComponent", filePath: "projects/fasten-connect-vault/src/app/pages/form-support-request/form-support-request.component.ts", lineNumber: 12 });
 })();
 
+// projects/fasten-connect-vault/src/app/pages/auth-callback/auth-callback.component.ts
+function AuthCallbackComponent_ng_container_7_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementContainerStart(0);
+    \u0275\u0275elementStart(1, "div", 8)(2, "h2", 9);
+    \u0275\u0275text(3, "Finishing sign-in");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(4, "div", 10);
+    \u0275\u0275element(5, "app-spinner", 11);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementContainerEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(5);
+    \u0275\u0275property("sizePx", 32)("strokeWidthPx", 3);
+  }
+}
+function AuthCallbackComponent_ng_template_8_div_25_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 23)(1, "dt", 24);
+    \u0275\u0275text(2, "More info");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "dd", 30)(4, "a", 31);
+    \u0275\u0275text(5);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext(2);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("href", ctx_r0.errorUri, \u0275\u0275sanitizeUrl);
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r0.errorUri);
+  }
+}
+function AuthCallbackComponent_ng_template_8_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 12)(1, "div", 13);
+    \u0275\u0275namespaceSVG();
+    \u0275\u0275elementStart(2, "svg", 14);
+    \u0275\u0275element(3, "circle", 15)(4, "path", 16)(5, "path", 17);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275namespaceHTML();
+    \u0275\u0275elementStart(6, "div", 18)(7, "p", 19);
+    \u0275\u0275text(8, "Sign-in error");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "h2", 9);
+    \u0275\u0275text(10, "We could not complete sign-in");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(11, "div", 20)(12, "h3", 21);
+    \u0275\u0275text(13, "Error details");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "dl", 22)(15, "div", 23)(16, "dt", 24);
+    \u0275\u0275text(17, "Error type");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(18, "dd", 25);
+    \u0275\u0275text(19);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(20, "div", 23)(21, "dt", 24);
+    \u0275\u0275text(22, "Description");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "dd", 26);
+    \u0275\u0275text(24);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275template(25, AuthCallbackComponent_ng_template_8_div_25_Template, 6, 2, "div", 27);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(26, "div", 28)(27, "button", 29);
+    \u0275\u0275text(28, " Back to Sign In ");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = \u0275\u0275nextContext();
+    \u0275\u0275advance(19);
+    \u0275\u0275textInterpolate(ctx_r0.error);
+    \u0275\u0275advance(5);
+    \u0275\u0275textInterpolate(ctx_r0.errorDescription);
+    \u0275\u0275advance();
+    \u0275\u0275property("ngIf", ctx_r0.errorUri);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("routerLink", "/auth/signin");
+  }
+}
+var AuthCallbackComponent = class _AuthCallbackComponent {
+  constructor(httpClient, configService, route, router, logger) {
+    this.httpClient = httpClient;
+    this.configService = configService;
+    this.route = route;
+    this.router = router;
+    this.logger = logger;
+    this.status = "processing";
+    this.error = "";
+    this.errorDescription = "";
+    this.errorUri = "";
+  }
+  ngOnInit() {
+    this.routeSubscription = this.route.queryParamMap.subscribe((queryParams) => {
+      this.handleCallbackParams({
+        code: queryParams.get("code") || "",
+        state: queryParams.get("state") || "",
+        error: queryParams.get("error") || "",
+        errorUri: queryParams.get("error_uri") || "",
+        errorDescription: queryParams.get("error_description") || ""
+      });
+    });
+  }
+  ngOnDestroy() {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+  handleCallbackParams(params) {
+    if (params.error) {
+      this.showError(params.error, params.errorDescription || "The identity provider returned an error before sign-in could finish.", params.errorUri);
+      return;
+    }
+    if (!params.code || !params.state) {
+      this.showError("missing_callback_parameters", "The sign-in callback was missing required parameters. Please try signing in again.");
+      return;
+    }
+    const oauthContext = this.getOAuthCallbackContext(params.state);
+    if (!oauthContext.codeVerifier) {
+      this.showError("missing_code_verifier", "Your secure sign-in session could not be found. Please return to sign in and try again.");
+      return;
+    }
+    this.configService.systemConfig = {
+      publicId: oauthContext.publicId,
+      apiMode: oauthContext.apiMode,
+      org: void 0
+    };
+    this.exchangeCodeForCookie(params.code, params.state, oauthContext);
+  }
+  exchangeCodeForCookie(code, state, oauthContext) {
+    this.status = "processing";
+    this.error = "";
+    this.errorDescription = "";
+    this.errorUri = "";
+    const formBody = new URLSearchParams();
+    formBody.set("grant_type", "authorization_code");
+    formBody.set("client_id", oauthContext.publicId);
+    formBody.set("code", code);
+    formBody.set("code_verifier", oauthContext.codeVerifier);
+    formBody.set("redirect_uri", this.getCallbackUrl());
+    formBody.set("response_mode", "cookie");
+    this.httpClient.post(new URL("/oauth2/token", environment.identity_api_endpoint_base).toString(), formBody.toString(), {
+      headers: new HttpHeaders({ "Content-Type": "application/x-www-form-urlencoded" }),
+      withCredentials: true
+    }).subscribe({
+      next: () => __async(this, null, function* () {
+        sessionStorage.removeItem(`fasten_oauth_context:${state}`);
+        yield this.router.navigateByUrl("/dashboard", { replaceUrl: true });
+      }),
+      error: (err) => {
+        this.logger.error("OAuth token exchange failed", err);
+        this.showError("token_exchange_failed", "We could not finish signing you in. Please return to sign in and try again.");
+      }
+    });
+  }
+  showError(error, errorDescription, errorUri = "") {
+    this.status = "error";
+    this.error = error;
+    this.errorDescription = errorDescription;
+    this.errorUri = errorUri;
+  }
+  getOAuthCallbackContext(state) {
+    const storedContext = sessionStorage.getItem(`fasten_oauth_context:${state}`);
+    if (storedContext) {
+      try {
+        const parsedContext = JSON.parse(storedContext);
+        if (parsedContext.codeVerifier && parsedContext.publicId) {
+          return {
+            codeVerifier: parsedContext.codeVerifier,
+            publicId: parsedContext.publicId,
+            apiMode: parsedContext.apiMode || this.getApiModeFromPublicId(parsedContext.publicId)
+          };
+        }
+      } catch (err) {
+        this.logger.warn("Failed to parse OAuth callback context", err);
+      }
+    }
+    return {};
+  }
+  getApiModeFromPublicId(publicId) {
+    const publicIdParts = publicId.split("_");
+    if (publicIdParts.length === 3 && publicIdParts[1] === ApiMode.Live) {
+      return ApiMode.Live;
+    }
+    return ApiMode.Test;
+  }
+  getCallbackUrl() {
+    if (environment.connect_base_domain === "localhost") {
+      return `${window.location.origin}/auth/callback`;
+    }
+    return `https://${environment.connect_base_domain}/auth/callback`;
+  }
+  static {
+    this.\u0275fac = function AuthCallbackComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || _AuthCallbackComponent)(\u0275\u0275directiveInject(HttpClient), \u0275\u0275directiveInject(ConfigService), \u0275\u0275directiveInject(ActivatedRoute), \u0275\u0275directiveInject(Router), \u0275\u0275directiveInject(NGXLogger));
+    };
+  }
+  static {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthCallbackComponent, selectors: [["app-auth-callback"]], standalone: false, decls: 10, vars: 2, consts: [["callbackError", ""], [1, "vault-page-shell"], [1, "mx-auto", "max-w-3xl"], [1, "vault-panel", "p-6", "sm:p-8"], [1, "space-y-6"], [1, "border-b", "border-slate-200", "pb-5"], [1, "az-logo", "text-3xl"], [4, "ngIf", "ngIfElse"], [1, "space-y-2", "text-center"], [1, "vault-page-title"], [1, "flex", "justify-center"], [3, "sizePx", "strokeWidthPx"], [1, "flex", "items-start", "gap-4"], ["aria-hidden", "true", 1, "auth-callback-error-icon"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "2", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "block", "h-5", "w-5"], ["cx", "12", "cy", "12", "r", "10"], ["d", "M12 8v4"], ["d", "M12 16h.01"], [1, "min-w-0", "space-y-2"], [1, "vault-page-kicker", "text-red-600"], [1, "auth-callback-error-details"], [1, "text-xs", "font-semibold", "uppercase", "tracking-[0.14em]", "text-slate-500"], [1, "mt-4", "divide-y", "divide-slate-200", "text-sm"], [1, "grid", "gap-1", "py-3", "sm:grid-cols-[9rem_1fr]", "sm:gap-4"], [1, "font-medium", "text-slate-500"], [1, "min-w-0", "break-words", "font-medium", "text-slate-900"], [1, "min-w-0", "break-words", "text-slate-900"], ["class", "grid gap-1 py-3 sm:grid-cols-[9rem_1fr] sm:gap-4", 4, "ngIf"], [1, "flex", "justify-end", "border-t", "border-slate-200", "pt-5"], ["type", "button", 1, "vault-primary-button", "px-4", "py-3", 3, "routerLink"], [1, "min-w-0", "break-words"], [1, "font-medium", "text-[#5B47FB]", "hover:text-[#4936E8]", 3, "href"]], template: function AuthCallbackComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        \u0275\u0275elementStart(0, "div", 1)(1, "div", 2)(2, "section", 3)(3, "div", 4)(4, "div", 5)(5, "h1", 6);
+        \u0275\u0275text(6, "fasten");
+        \u0275\u0275elementEnd()();
+        \u0275\u0275template(7, AuthCallbackComponent_ng_container_7_Template, 6, 2, "ng-container", 7)(8, AuthCallbackComponent_ng_template_8_Template, 29, 4, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+        \u0275\u0275elementEnd()()()();
+      }
+      if (rf & 2) {
+        const callbackError_r2 = \u0275\u0275reference(9);
+        \u0275\u0275advance(7);
+        \u0275\u0275property("ngIf", ctx.status === "processing")("ngIfElse", callbackError_r2);
+      }
+    }, dependencies: [NgIf, RouterLink, SpinnerComponent], styles: ["\n\n[_nghost-%COMP%] {\n  display: block;\n}\n.auth-callback-error-icon[_ngcontent-%COMP%] {\n  display: inline-flex;\n  width: 2.25rem;\n  height: 2.25rem;\n  flex: 0 0 auto;\n  align-items: center;\n  justify-content: center;\n  border-radius: 0.5rem;\n  border: 1px solid #fecaca;\n  background: #fef2f2;\n  color: #b91c1c;\n}\n.auth-callback-error-details[_ngcontent-%COMP%] {\n  border: 1px solid #e5e7eb;\n  border-radius: 0.5rem;\n  background: #f8fafc;\n  padding: 1rem;\n}\n@media (min-width: 640px) {\n  .auth-callback-error-details[_ngcontent-%COMP%] {\n    padding: 1.25rem;\n  }\n}\n/*# sourceMappingURL=auth-callback.component.css.map */"] });
+  }
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthCallbackComponent, { className: "AuthCallbackComponent", filePath: "projects/fasten-connect-vault/src/app/pages/auth-callback/auth-callback.component.ts", lineNumber: 22 });
+})();
+
 // projects/fasten-connect-vault/src/app/app-routing.module.ts
 var routes = [
   // @Input routing
   // https://www.freecodecamp.org/news/use-input-for-angular-route-parameters/
   // https://angular.love/router-data-as-components-inputs-in-angular-v16
   { path: "auth/signin", component: VaultSigninComponent },
+  { path: "auth/callback", component: AuthCallbackComponent },
   { path: "auth/signin/code", component: VaultSigninCodeComponent },
   { path: "test", component: TestModeRedirectComponent },
   { path: "auth/identity/verification", component: IdentityVerificationComponent },
@@ -66325,7 +66542,7 @@ var AppComponent = class _AppComponent {
     return this.currentPath.startsWith("/dashboard") || this.currentPath.startsWith("/search") || this.currentPath.startsWith("/brand/");
   }
   get isWideSurfaceRoute() {
-    return this.isDashboardChromeRoute || this.currentPath.startsWith("/auth/identity/verification") || this.currentPath.startsWith("/form");
+    return this.isDashboardChromeRoute || this.currentPath.startsWith("/auth/callback") || this.currentPath.startsWith("/auth/identity/verification") || this.currentPath.startsWith("/form");
   }
   get activeDashboardSection() {
     if (this.currentPath.startsWith("/dashboard/settings")) {
