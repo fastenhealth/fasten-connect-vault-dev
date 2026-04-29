@@ -8,7 +8,6 @@ var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __knownSymbol = (name, symbol) => (symbol = Symbol[name]) ? symbol : Symbol.for("Symbol." + name);
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __spreadValues = (a, b) => {
   for (var prop in b ||= {})
@@ -66,21 +65,6 @@ var __async = (__this, __arguments, generator) => {
     var step = (x2) => x2.done ? resolve(x2.value) : Promise.resolve(x2.value).then(fulfilled, rejected);
     step((generator = generator.apply(__this, __arguments)).next());
   });
-};
-var __await = function(promise, isYieldStar) {
-  this[0] = promise;
-  this[1] = isYieldStar;
-};
-var __asyncGenerator = (__this, __arguments, generator) => {
-  var resume = (k, v, yes, no) => {
-    try {
-      var x2 = generator[k](v), isAwait = (v = x2.value) instanceof __await, done = x2.done;
-      Promise.resolve(isAwait ? v[0] : v).then((y) => isAwait ? resume(k === "return" ? k : "next", v[1] ? { done: y.done, value: y.value } : y, yes, no) : yes({ value: y, done })).catch((e) => resume("throw", e, yes, no));
-    } catch (e) {
-      no(e);
-    }
-  }, method = (k) => it[k] = (x2) => new Promise((yes, no) => resume(k, x2, yes, no)), it = {};
-  return generator = generator.apply(__this, __arguments), it[__knownSymbol("asyncIterator")] = () => it, method("next"), method("throw"), method("return"), it;
 };
 
 // node_modules/lodash/lodash.js
@@ -370,9 +354,9 @@ var require_lodash = __commonJS({
       var freeProcess = moduleExports && freeGlobal.process;
       var nodeUtil = function() {
         try {
-          var types2 = freeModule && freeModule.require && freeModule.require("util").types;
-          if (types2) {
-            return types2;
+          var types = freeModule && freeModule.require && freeModule.require("util").types;
+          if (types) {
+            return types;
           }
           return freeProcess && freeProcess.binding && freeProcess.binding("util");
         } catch (e) {
@@ -756,7 +740,7 @@ var require_lodash = __commonJS({
         var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map2), promiseCtorString = toSource(Promise2), setCtorString = toSource(Set2), weakMapCtorString = toSource(WeakMap2);
         var symbolProto = Symbol2 ? Symbol2.prototype : undefined2, symbolValueOf = symbolProto ? symbolProto.valueOf : undefined2, symbolToString = symbolProto ? symbolProto.toString : undefined2;
         function lodash(value) {
-          if (isObjectLike2(value) && !isArray3(value) && !(value instanceof LazyWrapper)) {
+          if (isObjectLike(value) && !isArray3(value) && !(value instanceof LazyWrapper)) {
             if (value instanceof LodashWrapper) {
               return value;
             }
@@ -770,7 +754,7 @@ var require_lodash = __commonJS({
           function object() {
           }
           return function(proto) {
-            if (!isObject2(proto)) {
+            if (!isObject(proto)) {
               return {};
             }
             if (objectCreate) {
@@ -1171,7 +1155,7 @@ var require_lodash = __commonJS({
           if (result2 !== undefined2) {
             return result2;
           }
-          if (!isObject2(value)) {
+          if (!isObject(value)) {
             return value;
           }
           var isArr = isArray3(value);
@@ -1181,20 +1165,20 @@ var require_lodash = __commonJS({
               return copyArray(value, result2);
             }
           } else {
-            var tag2 = getTag(value), isFunc = tag2 == funcTag || tag2 == genTag;
+            var tag = getTag(value), isFunc = tag == funcTag || tag == genTag;
             if (isBuffer(value)) {
               return cloneBuffer(value, isDeep);
             }
-            if (tag2 == objectTag || tag2 == argsTag || isFunc && !object) {
+            if (tag == objectTag || tag == argsTag || isFunc && !object) {
               result2 = isFlat || isFunc ? {} : initCloneObject(value);
               if (!isDeep) {
                 return isFlat ? copySymbolsIn(value, baseAssignIn(result2, value)) : copySymbols(value, baseAssign(result2, value));
               }
             } else {
-              if (!cloneableTags[tag2]) {
+              if (!cloneableTags[tag]) {
                 return object ? value : {};
               }
-              result2 = initCloneByTag(value, tag2, isDeep);
+              result2 = initCloneByTag(value, tag, isDeep);
             }
           }
           stack || (stack = new Stack());
@@ -1434,19 +1418,19 @@ var require_lodash = __commonJS({
           return func == null ? undefined2 : apply(func, object, args);
         }
         function baseIsArguments(value) {
-          return isObjectLike2(value) && baseGetTag(value) == argsTag;
+          return isObjectLike(value) && baseGetTag(value) == argsTag;
         }
         function baseIsArrayBuffer(value) {
-          return isObjectLike2(value) && baseGetTag(value) == arrayBufferTag;
+          return isObjectLike(value) && baseGetTag(value) == arrayBufferTag;
         }
         function baseIsDate(value) {
-          return isObjectLike2(value) && baseGetTag(value) == dateTag;
+          return isObjectLike(value) && baseGetTag(value) == dateTag;
         }
         function baseIsEqual(value, other, bitmask, customizer, stack) {
           if (value === other) {
             return true;
           }
-          if (value == null || other == null || !isObjectLike2(value) && !isObjectLike2(other)) {
+          if (value == null || other == null || !isObjectLike(value) && !isObjectLike(other)) {
             return value !== value && other !== other;
           }
           return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
@@ -1482,7 +1466,7 @@ var require_lodash = __commonJS({
           return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
         }
         function baseIsMap(value) {
-          return isObjectLike2(value) && getTag(value) == mapTag;
+          return isObjectLike(value) && getTag(value) == mapTag;
         }
         function baseIsMatch(object, source, matchData, customizer) {
           var index = matchData.length, length = index, noCustomizer = !customizer;
@@ -1516,20 +1500,20 @@ var require_lodash = __commonJS({
           return true;
         }
         function baseIsNative(value) {
-          if (!isObject2(value) || isMasked(value)) {
+          if (!isObject(value) || isMasked(value)) {
             return false;
           }
           var pattern = isFunction3(value) ? reIsNative : reIsHostCtor;
           return pattern.test(toSource(value));
         }
         function baseIsRegExp(value) {
-          return isObjectLike2(value) && baseGetTag(value) == regexpTag;
+          return isObjectLike(value) && baseGetTag(value) == regexpTag;
         }
         function baseIsSet(value) {
-          return isObjectLike2(value) && getTag(value) == setTag;
+          return isObjectLike(value) && getTag(value) == setTag;
         }
         function baseIsTypedArray(value) {
-          return isObjectLike2(value) && isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
+          return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
         }
         function baseIteratee(value) {
           if (typeof value == "function") {
@@ -1556,7 +1540,7 @@ var require_lodash = __commonJS({
           return result2;
         }
         function baseKeysIn(object) {
-          if (!isObject2(object)) {
+          if (!isObject(object)) {
             return nativeKeysIn(object);
           }
           var isProto = isPrototype(object), result2 = [];
@@ -1601,7 +1585,7 @@ var require_lodash = __commonJS({
           }
           baseFor(source, function(srcValue, key) {
             stack || (stack = new Stack());
-            if (isObject2(srcValue)) {
+            if (isObject(srcValue)) {
               baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
             } else {
               var newValue = customizer ? customizer(safeGet(object, key), srcValue, key + "", object, source, stack) : undefined2;
@@ -1641,7 +1625,7 @@ var require_lodash = __commonJS({
               newValue = objValue;
               if (isArguments(objValue)) {
                 newValue = toPlainObject(objValue);
-              } else if (!isObject2(objValue) || isFunction3(objValue)) {
+              } else if (!isObject(objValue) || isFunction3(objValue)) {
                 newValue = initCloneObject(srcValue);
               }
             } else {
@@ -1784,7 +1768,7 @@ var require_lodash = __commonJS({
           return shuffleSelf(array, baseClamp(n, 0, array.length));
         }
         function baseSet(object, path, value, customizer) {
-          if (!isObject2(object)) {
+          if (!isObject(object)) {
             return object;
           }
           path = castPath(path, object);
@@ -1798,7 +1782,7 @@ var require_lodash = __commonJS({
               var objValue = nested[key];
               newValue = customizer ? customizer(objValue, key, nested) : undefined2;
               if (newValue === undefined2) {
-                newValue = isObject2(objValue) ? objValue : isIndex(path[index + 1]) ? [] : {};
+                newValue = isObject(objValue) ? objValue : isIndex(path[index + 1]) ? [] : {};
               }
             }
             assignValue(nested, key, newValue);
@@ -2247,7 +2231,7 @@ var require_lodash = __commonJS({
                 return new Ctor(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
             }
             var thisBinding = baseCreate(Ctor.prototype), result2 = Ctor.apply(thisBinding, args);
-            return isObject2(result2) ? result2 : thisBinding;
+            return isObject(result2) ? result2 : thisBinding;
           };
         }
         function createCurry(func, bitmask, arity) {
@@ -2479,11 +2463,11 @@ var require_lodash = __commonJS({
         };
         function createToPairs(keysFunc) {
           return function(object) {
-            var tag2 = getTag(object);
-            if (tag2 == mapTag) {
+            var tag = getTag(object);
+            if (tag == mapTag) {
               return mapToArray(object);
             }
-            if (tag2 == setTag) {
+            if (tag == setTag) {
               return setToPairs(object);
             }
             return baseToPairs(object, keysFunc(object));
@@ -2539,7 +2523,7 @@ var require_lodash = __commonJS({
           return objValue;
         }
         function customDefaultsMerge(objValue, srcValue, key, object, source, stack) {
-          if (isObject2(objValue) && isObject2(srcValue)) {
+          if (isObject(objValue) && isObject(srcValue)) {
             stack.set(srcValue, objValue);
             baseMerge(objValue, srcValue, undefined2, customDefaultsMerge, stack);
             stack["delete"](srcValue);
@@ -2592,8 +2576,8 @@ var require_lodash = __commonJS({
           stack["delete"](other);
           return result2;
         }
-        function equalByTag(object, other, tag2, bitmask, customizer, equalFunc, stack) {
-          switch (tag2) {
+        function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
+          switch (tag) {
             case dataViewTag:
               if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
                 return false;
@@ -2729,7 +2713,7 @@ var require_lodash = __commonJS({
           return baseIsNative(value) ? value : undefined2;
         }
         function getRawTag(value) {
-          var isOwn = hasOwnProperty.call(value, symToStringTag), tag2 = value[symToStringTag];
+          var isOwn = hasOwnProperty.call(value, symToStringTag), tag = value[symToStringTag];
           try {
             value[symToStringTag] = undefined2;
             var unmasked = true;
@@ -2738,7 +2722,7 @@ var require_lodash = __commonJS({
           var result2 = nativeObjectToString.call(value);
           if (unmasked) {
             if (isOwn) {
-              value[symToStringTag] = tag2;
+              value[symToStringTag] = tag;
             } else {
               delete value[symToStringTag];
             }
@@ -2838,9 +2822,9 @@ var require_lodash = __commonJS({
         function initCloneObject(object) {
           return typeof object.constructor == "function" && !isPrototype(object) ? baseCreate(getPrototype(object)) : {};
         }
-        function initCloneByTag(object, tag2, isDeep) {
+        function initCloneByTag(object, tag, isDeep) {
           var Ctor = object.constructor;
-          switch (tag2) {
+          switch (tag) {
             case arrayBufferTag:
               return cloneArrayBuffer(object);
             case boolTag:
@@ -2890,7 +2874,7 @@ var require_lodash = __commonJS({
           return !!length && (type == "number" || type != "symbol" && reIsUint.test(value)) && value > -1 && value % 1 == 0 && value < length;
         }
         function isIterateeCall(value, index, object) {
-          if (!isObject2(object)) {
+          if (!isObject(object)) {
             return false;
           }
           var type = typeof index;
@@ -2933,7 +2917,7 @@ var require_lodash = __commonJS({
           return value === proto;
         }
         function isStrictComparable(value) {
-          return value === value && !isObject2(value);
+          return value === value && !isObject(value);
         }
         function matchesStrictComparable(key, srcValue) {
           return function(object) {
@@ -3147,7 +3131,7 @@ var require_lodash = __commonJS({
           }
           return result2;
         }
-        function concat3() {
+        function concat2() {
           var length = arguments.length;
           if (!length) {
             return [];
@@ -3568,15 +3552,15 @@ var require_lodash = __commonJS({
         function wrapperPlant(value) {
           var result2, parent2 = this;
           while (parent2 instanceof baseLodash) {
-            var clone3 = wrapperClone(parent2);
-            clone3.__index__ = 0;
-            clone3.__values__ = undefined2;
+            var clone2 = wrapperClone(parent2);
+            clone2.__index__ = 0;
+            clone2.__values__ = undefined2;
             if (result2) {
-              previous.__wrapped__ = clone3;
+              previous.__wrapped__ = clone2;
             } else {
-              result2 = clone3;
+              result2 = clone2;
             }
-            var previous = clone3;
+            var previous = clone2;
             parent2 = parent2.__wrapped__;
           }
           previous.__wrapped__ = value;
@@ -3724,8 +3708,8 @@ var require_lodash = __commonJS({
           if (isArrayLike2(collection)) {
             return isString(collection) ? stringSize(collection) : collection.length;
           }
-          var tag2 = getTag(collection);
-          if (tag2 == mapTag || tag2 == setTag) {
+          var tag = getTag(collection);
+          if (tag == mapTag || tag == setTag) {
             return collection.size;
           }
           return baseKeys(collection).length;
@@ -3818,7 +3802,7 @@ var require_lodash = __commonJS({
             throw new TypeError2(FUNC_ERROR_TEXT);
           }
           wait = toNumber(wait) || 0;
-          if (isObject2(options)) {
+          if (isObject(options)) {
             leading = !!options.leading;
             maxing = "maxWait" in options;
             maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
@@ -3988,7 +3972,7 @@ var require_lodash = __commonJS({
           if (typeof func != "function") {
             throw new TypeError2(FUNC_ERROR_TEXT);
           }
-          if (isObject2(options)) {
+          if (isObject(options)) {
             leading = "leading" in options ? !!options.leading : leading;
             trailing = "trailing" in options ? !!options.trailing : trailing;
           }
@@ -4011,7 +3995,7 @@ var require_lodash = __commonJS({
           var value = arguments[0];
           return isArray3(value) ? value : [value];
         }
-        function clone2(value) {
+        function clone(value) {
           return baseClone(value, CLONE_SYMBOLS_FLAG);
         }
         function cloneWith(value, customizer) {
@@ -4038,7 +4022,7 @@ var require_lodash = __commonJS({
         var isArguments = baseIsArguments(/* @__PURE__ */ function() {
           return arguments;
         }()) ? baseIsArguments : function(value) {
-          return isObjectLike2(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
+          return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
         };
         var isArray3 = Array2.isArray;
         var isArrayBuffer2 = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
@@ -4046,15 +4030,15 @@ var require_lodash = __commonJS({
           return value != null && isLength(value.length) && !isFunction3(value);
         }
         function isArrayLikeObject(value) {
-          return isObjectLike2(value) && isArrayLike2(value);
+          return isObjectLike(value) && isArrayLike2(value);
         }
         function isBoolean2(value) {
-          return value === true || value === false || isObjectLike2(value) && baseGetTag(value) == boolTag;
+          return value === true || value === false || isObjectLike(value) && baseGetTag(value) == boolTag;
         }
         var isBuffer = nativeIsBuffer || stubFalse;
         var isDate2 = nodeIsDate ? baseUnary(nodeIsDate) : baseIsDate;
         function isElement(value) {
-          return isObjectLike2(value) && value.nodeType === 1 && !isPlainObject(value);
+          return isObjectLike(value) && value.nodeType === 1 && !isPlainObject(value);
         }
         function isEmpty(value) {
           if (value == null) {
@@ -4063,8 +4047,8 @@ var require_lodash = __commonJS({
           if (isArrayLike2(value) && (isArray3(value) || typeof value == "string" || typeof value.splice == "function" || isBuffer(value) || isTypedArray(value) || isArguments(value))) {
             return !value.length;
           }
-          var tag2 = getTag(value);
-          if (tag2 == mapTag || tag2 == setTag) {
+          var tag = getTag(value);
+          if (tag == mapTag || tag == setTag) {
             return !value.size;
           }
           if (isPrototype(value)) {
@@ -4086,21 +4070,21 @@ var require_lodash = __commonJS({
           return result2 === undefined2 ? baseIsEqual(value, other, undefined2, customizer) : !!result2;
         }
         function isError(value) {
-          if (!isObjectLike2(value)) {
+          if (!isObjectLike(value)) {
             return false;
           }
-          var tag2 = baseGetTag(value);
-          return tag2 == errorTag || tag2 == domExcTag || typeof value.message == "string" && typeof value.name == "string" && !isPlainObject(value);
+          var tag = baseGetTag(value);
+          return tag == errorTag || tag == domExcTag || typeof value.message == "string" && typeof value.name == "string" && !isPlainObject(value);
         }
         function isFinite2(value) {
           return typeof value == "number" && nativeIsFinite(value);
         }
         function isFunction3(value) {
-          if (!isObject2(value)) {
+          if (!isObject(value)) {
             return false;
           }
-          var tag2 = baseGetTag(value);
-          return tag2 == funcTag || tag2 == genTag || tag2 == asyncTag || tag2 == proxyTag;
+          var tag = baseGetTag(value);
+          return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
         }
         function isInteger(value) {
           return typeof value == "number" && value == toInteger2(value);
@@ -4108,11 +4092,11 @@ var require_lodash = __commonJS({
         function isLength(value) {
           return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
         }
-        function isObject2(value) {
+        function isObject(value) {
           var type = typeof value;
           return value != null && (type == "object" || type == "function");
         }
-        function isObjectLike2(value) {
+        function isObjectLike(value) {
           return value != null && typeof value == "object";
         }
         var isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
@@ -4139,10 +4123,10 @@ var require_lodash = __commonJS({
           return value == null;
         }
         function isNumber(value) {
-          return typeof value == "number" || isObjectLike2(value) && baseGetTag(value) == numberTag;
+          return typeof value == "number" || isObjectLike(value) && baseGetTag(value) == numberTag;
         }
         function isPlainObject(value) {
-          if (!isObjectLike2(value) || baseGetTag(value) != objectTag) {
+          if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
             return false;
           }
           var proto = getPrototype(value);
@@ -4158,20 +4142,20 @@ var require_lodash = __commonJS({
         }
         var isSet = nodeIsSet ? baseUnary(nodeIsSet) : baseIsSet;
         function isString(value) {
-          return typeof value == "string" || !isArray3(value) && isObjectLike2(value) && baseGetTag(value) == stringTag;
+          return typeof value == "string" || !isArray3(value) && isObjectLike(value) && baseGetTag(value) == stringTag;
         }
         function isSymbol(value) {
-          return typeof value == "symbol" || isObjectLike2(value) && baseGetTag(value) == symbolTag;
+          return typeof value == "symbol" || isObjectLike(value) && baseGetTag(value) == symbolTag;
         }
         var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
         function isUndefined(value) {
           return value === undefined2;
         }
         function isWeakMap(value) {
-          return isObjectLike2(value) && getTag(value) == weakMapTag;
+          return isObjectLike(value) && getTag(value) == weakMapTag;
         }
         function isWeakSet(value) {
-          return isObjectLike2(value) && baseGetTag(value) == weakSetTag;
+          return isObjectLike(value) && baseGetTag(value) == weakSetTag;
         }
         var lt2 = createRelationalOperation(baseLt);
         var lte = createRelationalOperation(function(value, other) {
@@ -4187,7 +4171,7 @@ var require_lodash = __commonJS({
           if (symIterator && value[symIterator]) {
             return iteratorToArray(value[symIterator]());
           }
-          var tag2 = getTag(value), func = tag2 == mapTag ? mapToArray : tag2 == setTag ? setToArray : values;
+          var tag = getTag(value), func = tag == mapTag ? mapToArray : tag == setTag ? setToArray : values;
           return func(value);
         }
         function toFinite(value) {
@@ -4215,9 +4199,9 @@ var require_lodash = __commonJS({
           if (isSymbol(value)) {
             return NAN;
           }
-          if (isObject2(value)) {
+          if (isObject(value)) {
             var other = typeof value.valueOf == "function" ? value.valueOf() : value;
-            value = isObject2(other) ? other + "" : other;
+            value = isObject(other) ? other + "" : other;
           }
           if (typeof value != "string") {
             return value === 0 ? value : +value;
@@ -4438,7 +4422,7 @@ var require_lodash = __commonJS({
             var Ctor = object && object.constructor;
             if (isArrLike) {
               accumulator = isArr ? new Ctor() : [];
-            } else if (isObject2(object)) {
+            } else if (isObject(object)) {
               accumulator = isFunction3(Ctor) ? baseCreate(getPrototype(object)) : {};
             } else {
               accumulator = {};
@@ -4720,7 +4704,7 @@ var require_lodash = __commonJS({
         }
         function truncate(string, options) {
           var length = DEFAULT_TRUNC_LENGTH, omission = DEFAULT_TRUNC_OMISSION;
-          if (isObject2(options)) {
+          if (isObject(options)) {
             var separator = "separator" in options ? options.separator : separator;
             length = "length" in options ? toInteger2(options.length) : length;
             omission = "omission" in options ? baseToString(options.omission) : omission;
@@ -4850,13 +4834,13 @@ var require_lodash = __commonJS({
         });
         function mixin(object, source, options) {
           var props = keys(source), methodNames = baseFunctions(source, props);
-          if (options == null && !(isObject2(source) && (methodNames.length || !props.length))) {
+          if (options == null && !(isObject(source) && (methodNames.length || !props.length))) {
             options = source;
             source = object;
             object = this;
             methodNames = baseFunctions(source, keys(source));
           }
-          var chain2 = !(isObject2(options) && "chain" in options) || !!options.chain, isFunc = isFunction3(object);
+          var chain2 = !(isObject(options) && "chain" in options) || !!options.chain, isFunc = isFunction3(object);
           arrayEach(methodNames, function(methodName) {
             var func = source[methodName];
             object[methodName] = func;
@@ -4999,7 +4983,7 @@ var require_lodash = __commonJS({
         lodash.chain = chain;
         lodash.chunk = chunk;
         lodash.compact = compact;
-        lodash.concat = concat3;
+        lodash.concat = concat2;
         lodash.cond = cond;
         lodash.conforms = conforms;
         lodash.constant = constant;
@@ -5144,7 +5128,7 @@ var require_lodash = __commonJS({
         lodash.capitalize = capitalize;
         lodash.ceil = ceil;
         lodash.clamp = clamp;
-        lodash.clone = clone2;
+        lodash.clone = clone;
         lodash.cloneDeep = cloneDeep;
         lodash.cloneDeepWith = cloneDeepWith;
         lodash.cloneWith = cloneWith;
@@ -5206,8 +5190,8 @@ var require_lodash = __commonJS({
         lodash.isNil = isNil;
         lodash.isNull = isNull;
         lodash.isNumber = isNumber;
-        lodash.isObject = isObject2;
-        lodash.isObjectLike = isObjectLike2;
+        lodash.isObject = isObject;
+        lodash.isObjectLike = isObjectLike;
         lodash.isPlainObject = isPlainObject;
         lodash.isRegExp = isRegExp;
         lodash.isSafeInteger = isSafeInteger;
@@ -7576,7 +7560,7 @@ var require_moment = __commonJS({
       function isArray3(input2) {
         return input2 instanceof Array || Object.prototype.toString.call(input2) === "[object Array]";
       }
-      function isObject2(input2) {
+      function isObject(input2) {
         return input2 != null && Object.prototype.toString.call(input2) === "[object Object]";
       }
       function hasOwnProp(a, b) {
@@ -7823,7 +7807,7 @@ var require_moment = __commonJS({
         var res = extend({}, parentConfig), prop;
         for (prop in childConfig) {
           if (hasOwnProp(childConfig, prop)) {
-            if (isObject2(parentConfig[prop]) && isObject2(childConfig[prop])) {
+            if (isObject(parentConfig[prop]) && isObject(childConfig[prop])) {
               res[prop] = {};
               extend(res[prop], parentConfig[prop]);
               extend(res[prop], childConfig[prop]);
@@ -7835,7 +7819,7 @@ var require_moment = __commonJS({
           }
         }
         for (prop in parentConfig) {
-          if (hasOwnProp(parentConfig, prop) && !hasOwnProp(childConfig, prop) && isObject2(parentConfig[prop])) {
+          if (hasOwnProp(parentConfig, prop) && !hasOwnProp(childConfig, prop) && isObject(parentConfig[prop])) {
             res[prop] = extend({}, res[prop]);
           }
         }
@@ -8157,8 +8141,8 @@ var require_moment = __commonJS({
           tokens[token2](input2, config3._a, config3, token2);
         }
       }
-      function isLeapYear(year2) {
-        return year2 % 4 === 0 && year2 % 100 !== 0 || year2 % 400 === 0;
+      function isLeapYear(year) {
+        return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
       }
       var YEAR = 0, MONTH = 1, DATE = 2, HOUR = 3, MINUTE = 4, SECOND = 5, MILLISECOND = 6, WEEK = 7, WEEKDAY = 8;
       addFormatToken("Y", 0, 0, function() {
@@ -8186,8 +8170,8 @@ var require_moment = __commonJS({
       addParseToken("Y", function(input2, array) {
         array[YEAR] = parseInt(input2, 10);
       });
-      function daysInYear(year2) {
-        return isLeapYear(year2) ? 366 : 365;
+      function daysInYear(year) {
+        return isLeapYear(year) ? 366 : 365;
       }
       hooks.parseTwoDigitYear = function(input2) {
         return toInt(input2) + (toInt(input2) > 68 ? 1900 : 2e3);
@@ -8234,7 +8218,7 @@ var require_moment = __commonJS({
         }
       }
       function set$1(mom, unit, value) {
-        var d, isUTC, year2, month, date;
+        var d, isUTC, year, month, date;
         if (!mom.isValid() || isNaN(value)) {
           return;
         }
@@ -8261,11 +8245,11 @@ var require_moment = __commonJS({
           default:
             return;
         }
-        year2 = value;
+        year = value;
         month = mom.month();
         date = mom.date();
-        date = date === 29 && month === 1 && !isLeapYear(year2) ? 28 : date;
-        void (isUTC ? d.setUTCFullYear(year2, month, date) : d.setFullYear(year2, month, date));
+        date = date === 29 && month === 1 && !isLeapYear(year) ? 28 : date;
+        void (isUTC ? d.setUTCFullYear(year, month, date) : d.setFullYear(year, month, date));
       }
       function stringGet(units) {
         units = normalizeUnits(units);
@@ -8306,13 +8290,13 @@ var require_moment = __commonJS({
           return -1;
         };
       }
-      function daysInMonth(year2, month) {
-        if (isNaN(year2) || isNaN(month)) {
+      function daysInMonth(year, month) {
+        if (isNaN(year) || isNaN(month)) {
           return NaN;
         }
         var modMonth = mod(month, 12);
-        year2 += (month - modMonth) / 12;
-        return modMonth === 1 ? isLeapYear(year2) ? 29 : 28 : 31 - modMonth % 7 % 2;
+        year += (month - modMonth) / 12;
+        return modMonth === 1 ? isLeapYear(year) ? 29 : 28 : 31 - modMonth % 7 % 2;
       }
       addFormatToken("M", ["MM", 2], "Mo", function() {
         return this.month() + 1;
@@ -8535,20 +8519,20 @@ var require_moment = __commonJS({
         }
         return date;
       }
-      function firstWeekOffset(year2, dow, doy) {
-        var fwd = 7 + dow - doy, fwdlw = (7 + createUTCDate(year2, 0, fwd).getUTCDay() - dow) % 7;
+      function firstWeekOffset(year, dow, doy) {
+        var fwd = 7 + dow - doy, fwdlw = (7 + createUTCDate(year, 0, fwd).getUTCDay() - dow) % 7;
         return -fwdlw + fwd - 1;
       }
-      function dayOfYearFromWeeks(year2, week2, weekday, dow, doy) {
-        var localWeekday = (7 + weekday - dow) % 7, weekOffset = firstWeekOffset(year2, dow, doy), dayOfYear = 1 + 7 * (week2 - 1) + localWeekday + weekOffset, resYear, resDayOfYear;
+      function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
+        var localWeekday = (7 + weekday - dow) % 7, weekOffset = firstWeekOffset(year, dow, doy), dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset, resYear, resDayOfYear;
         if (dayOfYear <= 0) {
-          resYear = year2 - 1;
+          resYear = year - 1;
           resDayOfYear = daysInYear(resYear) + dayOfYear;
-        } else if (dayOfYear > daysInYear(year2)) {
-          resYear = year2 + 1;
-          resDayOfYear = dayOfYear - daysInYear(year2);
+        } else if (dayOfYear > daysInYear(year)) {
+          resYear = year + 1;
+          resDayOfYear = dayOfYear - daysInYear(year);
         } else {
-          resYear = year2;
+          resYear = year;
           resDayOfYear = dayOfYear;
         }
         return {
@@ -8557,25 +8541,25 @@ var require_moment = __commonJS({
         };
       }
       function weekOfYear(mom, dow, doy) {
-        var weekOffset = firstWeekOffset(mom.year(), dow, doy), week2 = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1, resWeek, resYear;
-        if (week2 < 1) {
+        var weekOffset = firstWeekOffset(mom.year(), dow, doy), week = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1, resWeek, resYear;
+        if (week < 1) {
           resYear = mom.year() - 1;
-          resWeek = week2 + weeksInYear(resYear, dow, doy);
-        } else if (week2 > weeksInYear(mom.year(), dow, doy)) {
-          resWeek = week2 - weeksInYear(mom.year(), dow, doy);
+          resWeek = week + weeksInYear(resYear, dow, doy);
+        } else if (week > weeksInYear(mom.year(), dow, doy)) {
+          resWeek = week - weeksInYear(mom.year(), dow, doy);
           resYear = mom.year() + 1;
         } else {
           resYear = mom.year();
-          resWeek = week2;
+          resWeek = week;
         }
         return {
           week: resWeek,
           year: resYear
         };
       }
-      function weeksInYear(year2, dow, doy) {
-        var weekOffset = firstWeekOffset(year2, dow, doy), weekOffsetNext = firstWeekOffset(year2 + 1, dow, doy);
-        return (daysInYear(year2) - weekOffset + weekOffsetNext) / 7;
+      function weeksInYear(year, dow, doy) {
+        var weekOffset = firstWeekOffset(year, dow, doy), weekOffsetNext = firstWeekOffset(year + 1, dow, doy);
+        return (daysInYear(year) - weekOffset + weekOffsetNext) / 7;
       }
       addFormatToken("w", ["ww", 2], "wo", "week");
       addFormatToken("W", ["WW", 2], "Wo", "isoWeek");
@@ -8583,8 +8567,8 @@ var require_moment = __commonJS({
       addRegexToken("ww", match1to2, match2);
       addRegexToken("W", match1to2, match1to2NoLeadingZero);
       addRegexToken("WW", match1to2, match2);
-      addWeekParseToken(["w", "ww", "W", "WW"], function(input2, week2, config3, token2) {
-        week2[token2.substr(0, 1)] = toInt(input2);
+      addWeekParseToken(["w", "ww", "W", "WW"], function(input2, week, config3, token2) {
+        week[token2.substr(0, 1)] = toInt(input2);
       });
       function localeWeek(mom) {
         return weekOfYear(mom, this._week.dow, this._week.doy).week;
@@ -8602,12 +8586,12 @@ var require_moment = __commonJS({
         return this._week.doy;
       }
       function getSetWeek(input2) {
-        var week2 = this.localeData().week(this);
-        return input2 == null ? week2 : this.add((input2 - week2) * 7, "d");
+        var week = this.localeData().week(this);
+        return input2 == null ? week : this.add((input2 - week) * 7, "d");
       }
       function getSetISOWeek(input2) {
-        var week2 = weekOfYear(this, 1, 4).week;
-        return input2 == null ? week2 : this.add((input2 - week2) * 7, "d");
+        var week = weekOfYear(this, 1, 4).week;
+        return input2 == null ? week : this.add((input2 - week) * 7, "d");
       }
       addFormatToken("d", 0, "do", "day");
       addFormatToken("dd", 0, 0, function(format2) {
@@ -8633,16 +8617,16 @@ var require_moment = __commonJS({
       addRegexToken("dddd", function(isStrict, locale2) {
         return locale2.weekdaysRegex(isStrict);
       });
-      addWeekParseToken(["dd", "ddd", "dddd"], function(input2, week2, config3, token2) {
+      addWeekParseToken(["dd", "ddd", "dddd"], function(input2, week, config3, token2) {
         var weekday = config3._locale.weekdaysParse(input2, token2, config3._strict);
         if (weekday != null) {
-          week2.d = weekday;
+          week.d = weekday;
         } else {
           getParsingFlags(config3).invalidWeekday = input2;
         }
       });
-      addWeekParseToken(["d", "e", "E"], function(input2, week2, config3, token2) {
-        week2[token2] = toInt(input2);
+      addWeekParseToken(["d", "e", "E"], function(input2, week, config3, token2) {
+        week[token2] = toInt(input2);
       });
       function parseWeekday(input2, locale2) {
         if (typeof input2 !== "string") {
@@ -8775,12 +8759,12 @@ var require_moment = __commonJS({
         if (!this.isValid()) {
           return input2 != null ? this : NaN;
         }
-        var day2 = get(this, "Day");
+        var day = get(this, "Day");
         if (input2 != null) {
           input2 = parseWeekday(input2, this.localeData());
-          return this.add(input2 - day2, "d");
+          return this.add(input2 - day, "d");
         } else {
-          return day2;
+          return day;
         }
       }
       function getSetLocaleDayOfWeek(input2) {
@@ -9229,13 +9213,13 @@ var require_moment = __commonJS({
         return result;
       }
       function untruncateYear(yearStr) {
-        var year2 = parseInt(yearStr, 10);
-        if (year2 <= 49) {
-          return 2e3 + year2;
-        } else if (year2 <= 999) {
-          return 1900 + year2;
+        var year = parseInt(yearStr, 10);
+        if (year <= 49) {
+          return 2e3 + year;
+        } else if (year <= 999) {
+          return 1900 + year;
         }
-        return year2;
+        return year;
       }
       function preprocessRFC2822(s2) {
         return s2.replace(/\([^()]*\)|[\n\t]/g, " ").replace(/(\s\s+)/g, " ").replace(/^\s\s*/, "").replace(/\s\s*$/, "");
@@ -9361,13 +9345,13 @@ var require_moment = __commonJS({
         }
       }
       function dayOfYearFromWeekInfo(config3) {
-        var w2, weekYear, week2, weekday, dow, doy, temp, weekdayOverflow, curWeek;
+        var w2, weekYear, week, weekday, dow, doy, temp, weekdayOverflow, curWeek;
         w2 = config3._w;
         if (w2.GG != null || w2.W != null || w2.E != null) {
           dow = 1;
           doy = 4;
           weekYear = defaults(w2.GG, config3._a[YEAR], weekOfYear(createLocal(), 1, 4).year);
-          week2 = defaults(w2.W, 1);
+          week = defaults(w2.W, 1);
           weekday = defaults(w2.E, 1);
           if (weekday < 1 || weekday > 7) {
             weekdayOverflow = true;
@@ -9377,7 +9361,7 @@ var require_moment = __commonJS({
           doy = config3._locale._week.doy;
           curWeek = weekOfYear(createLocal(), dow, doy);
           weekYear = defaults(w2.gg, config3._a[YEAR], curWeek.year);
-          week2 = defaults(w2.w, curWeek.week);
+          week = defaults(w2.w, curWeek.week);
           if (w2.d != null) {
             weekday = w2.d;
             if (weekday < 0 || weekday > 6) {
@@ -9392,12 +9376,12 @@ var require_moment = __commonJS({
             weekday = dow;
           }
         }
-        if (week2 < 1 || week2 > weeksInYear(weekYear, dow, doy)) {
+        if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {
           getParsingFlags(config3)._overflowWeeks = true;
         } else if (weekdayOverflow != null) {
           getParsingFlags(config3)._overflowWeekday = true;
         } else {
-          temp = dayOfYearFromWeeks(weekYear, week2, weekday, dow, doy);
+          temp = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy);
           config3._a[YEAR] = temp.year;
           config3._dayOfYear = temp.dayOfYear;
         }
@@ -9459,24 +9443,24 @@ var require_moment = __commonJS({
         configFromArray(config3);
         checkOverflow(config3);
       }
-      function meridiemFixWrap(locale2, hour2, meridiem2) {
+      function meridiemFixWrap(locale2, hour, meridiem2) {
         var isPm;
         if (meridiem2 == null) {
-          return hour2;
+          return hour;
         }
         if (locale2.meridiemHour != null) {
-          return locale2.meridiemHour(hour2, meridiem2);
+          return locale2.meridiemHour(hour, meridiem2);
         } else if (locale2.isPM != null) {
           isPm = locale2.isPM(meridiem2);
-          if (isPm && hour2 < 12) {
-            hour2 += 12;
+          if (isPm && hour < 12) {
+            hour += 12;
           }
-          if (!isPm && hour2 === 12) {
-            hour2 = 0;
+          if (!isPm && hour === 12) {
+            hour = 0;
           }
-          return hour2;
+          return hour;
         } else {
-          return hour2;
+          return hour;
         }
       }
       function configFromStringAndArray(config3) {
@@ -9576,7 +9560,7 @@ var require_moment = __commonJS({
             return parseInt(obj, 10);
           });
           configFromArray(config3);
-        } else if (isObject2(input2)) {
+        } else if (isObject(input2)) {
           configFromObject(config3);
         } else if (isNumber(input2)) {
           config3._d = new Date(input2);
@@ -9594,7 +9578,7 @@ var require_moment = __commonJS({
           strict = locale2;
           locale2 = void 0;
         }
-        if (isObject2(input2) && isObjectEmpty(input2) || isArray3(input2) && input2.length === 0) {
+        if (isObject(input2) && isObjectEmpty(input2) || isArray3(input2) && input2.length === 0) {
           input2 = void 0;
         }
         c._isAMomentObject = true;
@@ -9989,7 +9973,7 @@ var require_moment = __commonJS({
         return isMoment(input2) || isDate2(input2) || isString(input2) || isNumber(input2) || isNumberOrStringArray(input2) || isMomentInputObject(input2) || input2 === null || input2 === void 0;
       }
       function isMomentInputObject(input2) {
-        var objectTest = isObject2(input2) && !isObjectEmpty(input2), propertyTest = false, properties = ["years", "year", "y", "months", "month", "M", "days", "day", "d", "dates", "date", "D", "hours", "hour", "h", "minutes", "minute", "m", "seconds", "second", "s", "milliseconds", "millisecond", "ms"], i, property, propertyLen = properties.length;
+        var objectTest = isObject(input2) && !isObjectEmpty(input2), propertyTest = false, properties = ["years", "year", "y", "months", "month", "M", "days", "day", "d", "dates", "date", "D", "hours", "hour", "h", "minutes", "minute", "m", "seconds", "second", "s", "milliseconds", "millisecond", "ms"], i, property, propertyLen = properties.length;
         for (i = 0; i < propertyLen; i += 1) {
           property = properties[i];
           propertyTest = propertyTest || hasOwnProp(input2, property);
@@ -10006,7 +9990,7 @@ var require_moment = __commonJS({
         return arrayTest && dataTypeTest;
       }
       function isCalendarSpec(input2) {
-        var objectTest = isObject2(input2) && !isObjectEmpty(input2), propertyTest = false, properties = ["sameDay", "nextDay", "lastDay", "nextWeek", "lastWeek", "sameElse"], i, property;
+        var objectTest = isObject(input2) && !isObjectEmpty(input2), propertyTest = false, properties = ["sameDay", "nextDay", "lastDay", "nextWeek", "lastWeek", "sameElse"], i, property;
         for (i = 0; i < properties.length; i += 1) {
           property = properties[i];
           propertyTest = propertyTest || hasOwnProp(input2, property);
@@ -10033,7 +10017,7 @@ var require_moment = __commonJS({
         var now2 = time || createLocal(), sod = cloneWithOffset(now2, this).startOf("day"), format2 = hooks.calendarFormat(this, sod) || "sameElse", output = formats && (isFunction3(formats[format2]) ? formats[format2].call(this, now2) : formats[format2]);
         return this.format(output || this.localeData().calendar(format2, this, createLocal(now2)));
       }
-      function clone2() {
+      function clone() {
         return new Moment(this);
       }
       function isAfter(input2, units) {
@@ -10173,16 +10157,16 @@ var require_moment = __commonJS({
         if (!this.isValid()) {
           return "moment.invalid(/* " + this._i + " */)";
         }
-        var func = "moment", zone = "", prefix, year2, datetime, suffix;
+        var func = "moment", zone = "", prefix, year, datetime, suffix;
         if (!this.isLocal()) {
           func = this.utcOffset() === 0 ? "moment.utc" : "moment.parseZone";
           zone = "Z";
         }
         prefix = "[" + func + '("]';
-        year2 = 0 <= this.year() && this.year() <= 9999 ? "YYYY" : "YYYYYY";
+        year = 0 <= this.year() && this.year() <= 9999 ? "YYYY" : "YYYYYY";
         datetime = "-MM-DD[T]HH:mm:ss.SSS";
         suffix = zone + '[")]';
-        return this.format(prefix + year2 + datetime + suffix);
+        return this.format(prefix + year + datetime + suffix);
       }
       function format(inputString) {
         if (!inputString) {
@@ -10483,12 +10467,12 @@ var require_moment = __commonJS({
           }
         }
       }
-      function localeErasConvertYear(era, year2) {
+      function localeErasConvertYear(era, year) {
         var dir = era.since <= era.until ? 1 : -1;
-        if (year2 === void 0) {
+        if (year === void 0) {
           return hooks(era.since).year();
         } else {
-          return hooks(era.since).year() + (year2 - era.offset) * dir;
+          return hooks(era.since).year() + (year - era.offset) * dir;
         }
       }
       function getEraName() {
@@ -10610,11 +10594,11 @@ var require_moment = __commonJS({
       addRegexToken("gggg", match1to4, match4);
       addRegexToken("GGGGG", match1to6, match6);
       addRegexToken("ggggg", match1to6, match6);
-      addWeekParseToken(["gggg", "ggggg", "GGGG", "GGGGG"], function(input2, week2, config3, token2) {
-        week2[token2.substr(0, 2)] = toInt(input2);
+      addWeekParseToken(["gggg", "ggggg", "GGGG", "GGGGG"], function(input2, week, config3, token2) {
+        week[token2.substr(0, 2)] = toInt(input2);
       });
-      addWeekParseToken(["gg", "GG"], function(input2, week2, config3, token2) {
-        week2[token2] = hooks.parseTwoDigitYear(input2);
+      addWeekParseToken(["gg", "GG"], function(input2, week, config3, token2) {
+        week[token2] = hooks.parseTwoDigitYear(input2);
       });
       function getSetWeekYear(input2) {
         return getSetWeekYearHelper.call(this, input2, this.week(), this.weekday() + this.localeData()._week.dow, this.localeData()._week.dow, this.localeData()._week.doy);
@@ -10636,20 +10620,20 @@ var require_moment = __commonJS({
         var weekInfo = this.localeData()._week;
         return weeksInYear(this.weekYear(), weekInfo.dow, weekInfo.doy);
       }
-      function getSetWeekYearHelper(input2, week2, weekday, dow, doy) {
+      function getSetWeekYearHelper(input2, week, weekday, dow, doy) {
         var weeksTarget;
         if (input2 == null) {
           return weekOfYear(this, dow, doy).year;
         } else {
           weeksTarget = weeksInYear(input2, dow, doy);
-          if (week2 > weeksTarget) {
-            week2 = weeksTarget;
+          if (week > weeksTarget) {
+            week = weeksTarget;
           }
-          return setWeekAll.call(this, input2, week2, weekday, dow, doy);
+          return setWeekAll.call(this, input2, week, weekday, dow, doy);
         }
       }
-      function setWeekAll(weekYear, week2, weekday, dow, doy) {
-        var dayOfYearData = dayOfYearFromWeeks(weekYear, week2, weekday, dow, doy), date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
+      function setWeekAll(weekYear, week, weekday, dow, doy) {
+        var dayOfYearData = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy), date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
         this.year(date.getUTCFullYear());
         this.month(date.getUTCMonth());
         this.date(date.getUTCDate());
@@ -10744,7 +10728,7 @@ var require_moment = __commonJS({
       var proto = Moment.prototype;
       proto.add = add;
       proto.calendar = calendar$1;
-      proto.clone = clone2;
+      proto.clone = clone;
       proto.diff = diff;
       proto.endOf = endOf;
       proto.format = format;
@@ -12873,10 +12857,10 @@ function __values(o2) {
   };
   throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
 }
-function __await2(v) {
-  return this instanceof __await2 ? (this.v = v, this) : new __await2(v);
+function __await(v) {
+  return this instanceof __await ? (this.v = v, this) : new __await(v);
 }
-function __asyncGenerator2(thisArg, _arguments, generator) {
+function __asyncGenerator(thisArg, _arguments, generator) {
   if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
   var g2 = generator.apply(thisArg, _arguments || []), i, q = [];
   return i = Object.create((typeof AsyncIterator === "function" ? AsyncIterator : Object).prototype), verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function() {
@@ -12905,7 +12889,7 @@ function __asyncGenerator2(thisArg, _arguments, generator) {
     }
   }
   function step(r2) {
-    r2.value instanceof __await2 ? Promise.resolve(r2.value.v).then(fulfill, reject) : settle(q[0][2], r2);
+    r2.value instanceof __await ? Promise.resolve(r2.value.v).then(fulfill, reject) : settle(q[0][2], r2);
   }
   function fulfill(value) {
     resume("next", value);
@@ -12979,18 +12963,18 @@ function isIterable(input2) {
 
 // node_modules/rxjs/dist/esm/internal/util/isReadableStreamLike.js
 function readableStreamLikeToAsyncGenerator(readableStream) {
-  return __asyncGenerator2(this, arguments, function* readableStreamLikeToAsyncGenerator_1() {
+  return __asyncGenerator(this, arguments, function* readableStreamLikeToAsyncGenerator_1() {
     const reader = readableStream.getReader();
     try {
       while (true) {
         const {
           value,
           done
-        } = yield __await2(reader.read());
+        } = yield __await(reader.read());
         if (done) {
-          return yield __await2(void 0);
+          return yield __await(void 0);
         }
-        yield yield __await2(value);
+        yield yield __await(value);
       }
     } finally {
       reader.releaseLock();
@@ -14189,14 +14173,14 @@ var ERROR_DETAILS_PAGE_BASE_URL = "https://angular.dev/errors";
 var XSS_SECURITY_URL = "https://g.co/ng/security#xss";
 var RuntimeError = class extends Error {
   code;
-  constructor(code, message2) {
-    super(formatRuntimeError(code, message2));
+  constructor(code, message) {
+    super(formatRuntimeError(code, message));
     this.code = code;
   }
 };
-function formatRuntimeError(code, message2) {
+function formatRuntimeError(code, message) {
   const fullCode = `NG0${Math.abs(code)}`;
-  let errorMessage = `${fullCode}${message2 ? ": " + message2 : ""}`;
+  let errorMessage = `${fullCode}${message ? ": " + message : ""}`;
   if (ngDevMode && code < 0) {
     const addPeriodSeparator = !errorMessage.match(/[.,;!?\n]$/);
     const separator = addPeriodSeparator ? "." : "";
@@ -14846,10 +14830,10 @@ function convertToBitFlags(flags) {
   return 0 | // comment to force a line break in the formatter
   (flags.optional && 8) | (flags.host && 1) | (flags.self && 2) | (flags.skipSelf && 4);
 }
-function injectArgs(types2) {
+function injectArgs(types) {
   const args = [];
-  for (let i = 0; i < types2.length; i++) {
-    const arg = resolveForwardRef(types2[i]);
+  for (let i = 0; i < types.length; i++) {
+    const arg = resolveForwardRef(types[i]);
     if (Array.isArray(arg)) {
       if (arg.length === 0) {
         throw new RuntimeError(900, ngDevMode && "Arguments array must have arguments.");
@@ -15714,25 +15698,25 @@ function getCompilerFacade(request) {
   }
   if (typeof ngDevMode === "undefined" || ngDevMode) {
     console.error(`JIT compilation failed for ${request.kind}`, request.type);
-    let message2 = `The ${request.kind} '${request.type.name}' needs to be compiled using the JIT compiler, but '@angular/compiler' is not available.
+    let message = `The ${request.kind} '${request.type.name}' needs to be compiled using the JIT compiler, but '@angular/compiler' is not available.
 
 `;
     if (request.usage === 1) {
-      message2 += `The ${request.kind} is part of a library that has been partially compiled.
+      message += `The ${request.kind} is part of a library that has been partially compiled.
 `;
-      message2 += `However, the Angular Linker has not processed the library such that JIT compilation is used as fallback.
+      message += `However, the Angular Linker has not processed the library such that JIT compilation is used as fallback.
 `;
-      message2 += "\n";
-      message2 += `Ideally, the library is processed using the Angular Linker to become fully AOT compiled.
+      message += "\n";
+      message += `Ideally, the library is processed using the Angular Linker to become fully AOT compiled.
 `;
     } else {
-      message2 += `JIT compilation is discouraged for production use-cases! Consider using AOT mode instead.
+      message += `JIT compilation is discouraged for production use-cases! Consider using AOT mode instead.
 `;
     }
-    message2 += `Alternatively, the JIT compiler should be loaded by bootstrapping using '@angular/platform-browser-dynamic' or '@angular/platform-server',
+    message += `Alternatively, the JIT compiler should be loaded by bootstrapping using '@angular/platform-browser-dynamic' or '@angular/platform-server',
 `;
-    message2 += `or manually provide the compiler with 'import "@angular/compiler";' before bootstrapping.`;
-    throw new Error(message2);
+    message += `or manually provide the compiler with 'import "@angular/compiler";' before bootstrapping.`;
+    throw new Error(message);
   } else {
     throw new Error("JIT compiler unavailable");
   }
@@ -16838,10 +16822,10 @@ function hasClassInput(tNode) {
 function hasStyleInput(tNode) {
   return (tNode.flags & 16) !== 0;
 }
-function assertTNodeType(tNode, expectedTypes, message2) {
+function assertTNodeType(tNode, expectedTypes, message) {
   assertDefined(tNode, "should be called with a TNode");
   if ((tNode.type & expectedTypes) === 0) {
-    throwError2(message2 || `Expected [${toTNodeTypeAsString(expectedTypes)}] but got ${toTNodeTypeAsString(tNode.type)}.`);
+    throwError2(message || `Expected [${toTNodeTypeAsString(expectedTypes)}] but got ${toTNodeTypeAsString(tNode.type)}.`);
   }
 }
 function assertPureTNodeType(type) {
@@ -20221,14 +20205,14 @@ function \u0275\u0275trustConstantResourceUrl(url) {
   }
   return trustedScriptURLFromString(url[0]);
 }
-function getUrlSanitizer(tag2, prop) {
-  if (prop === "src" && (tag2 === "embed" || tag2 === "frame" || tag2 === "iframe" || tag2 === "media" || tag2 === "script") || prop === "href" && (tag2 === "base" || tag2 === "link")) {
+function getUrlSanitizer(tag, prop) {
+  if (prop === "src" && (tag === "embed" || tag === "frame" || tag === "iframe" || tag === "media" || tag === "script") || prop === "href" && (tag === "base" || tag === "link")) {
     return \u0275\u0275sanitizeResourceUrl;
   }
   return \u0275\u0275sanitizeUrl;
 }
-function \u0275\u0275sanitizeUrlOrResourceUrl(unsafeUrl, tag2, prop) {
-  return getUrlSanitizer(tag2, prop)(unsafeUrl);
+function \u0275\u0275sanitizeUrlOrResourceUrl(unsafeUrl, tag, prop) {
+  return getUrlSanitizer(tag, prop)(unsafeUrl);
 }
 function validateAgainstEventProperties(name) {
   if (name.toLowerCase().startsWith("on")) {
@@ -20288,19 +20272,19 @@ function validateElementIsKnown(element, lView, tagName, schemas, hasDirectives)
       const isHostStandalone = isHostComponentStandalone(lView);
       const templateLocation = getTemplateLocationDetails(lView);
       const schemas2 = `'${isHostStandalone ? "@Component" : "@NgModule"}.schemas'`;
-      let message2 = `'${tagName}' is not a known element${templateLocation}:
+      let message = `'${tagName}' is not a known element${templateLocation}:
 `;
-      message2 += `1. If '${tagName}' is an Angular component, then verify that it is ${isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared"}.
+      message += `1. If '${tagName}' is an Angular component, then verify that it is ${isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared"}.
 `;
       if (tagName && tagName.indexOf("-") > -1) {
-        message2 += `2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas2} of this component to suppress this message.`;
+        message += `2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas2} of this component to suppress this message.`;
       } else {
-        message2 += `2. To allow any element add 'NO_ERRORS_SCHEMA' to the ${schemas2} of this component.`;
+        message += `2. To allow any element add 'NO_ERRORS_SCHEMA' to the ${schemas2} of this component.`;
       }
       if (shouldThrowErrorOnUnknownElement) {
-        throw new RuntimeError(304, message2);
+        throw new RuntimeError(304, message);
       } else {
-        console.error(formatRuntimeError(304, message2));
+        console.error(formatRuntimeError(304, message));
       }
     }
   }
@@ -20318,33 +20302,33 @@ function handleUnknownPropertyError(propName, tagName, nodeType, lView) {
   }
   const isHostStandalone = isHostComponentStandalone(lView);
   const templateLocation = getTemplateLocationDetails(lView);
-  let message2 = `Can't bind to '${propName}' since it isn't a known property of '${tagName}'${templateLocation}.`;
+  let message = `Can't bind to '${propName}' since it isn't a known property of '${tagName}'${templateLocation}.`;
   const schemas = `'${isHostStandalone ? "@Component" : "@NgModule"}.schemas'`;
   const importLocation = isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared";
   if (KNOWN_CONTROL_FLOW_DIRECTIVES.has(propName)) {
     const correspondingImport = KNOWN_CONTROL_FLOW_DIRECTIVES.get(propName);
-    message2 += `
+    message += `
 If the '${propName}' is an Angular control flow directive, please make sure that either the '${correspondingImport}' directive or the 'CommonModule' is ${importLocation}.`;
   } else {
-    message2 += `
+    message += `
 1. If '${tagName}' is an Angular component and it has the '${propName}' input, then verify that it is ${importLocation}.`;
     if (tagName && tagName.indexOf("-") > -1) {
-      message2 += `
+      message += `
 2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas} of this component to suppress this message.`;
-      message2 += `
+      message += `
 3. To allow any property add 'NO_ERRORS_SCHEMA' to the ${schemas} of this component.`;
     } else {
-      message2 += `
+      message += `
 2. To allow any property add 'NO_ERRORS_SCHEMA' to the ${schemas} of this component.`;
     }
   }
-  reportUnknownPropertyError(message2);
+  reportUnknownPropertyError(message);
 }
-function reportUnknownPropertyError(message2) {
+function reportUnknownPropertyError(message) {
   if (shouldThrowErrorOnUnknownProperty) {
-    throw new RuntimeError(303, message2);
+    throw new RuntimeError(303, message);
   } else {
-    console.error(formatRuntimeError(303, message2));
+    console.error(formatRuntimeError(303, message));
   }
 }
 function getDeclarationComponentDef(lView) {
@@ -22767,9 +22751,9 @@ ${describeDomFromNode(node)}
 
 `;
     const footer = getHydrationErrorFooter();
-    const message2 = header + actual + footer;
+    const message = header + actual + footer;
     markRNodeAsHavingHydrationMismatch(node, "", actual);
-    throw new RuntimeError(-501, message2);
+    throw new RuntimeError(-501, message);
   }
 }
 function validateNodeExists(node, lView = null, tNode = null) {
@@ -22818,8 +22802,8 @@ function describeTNode(tNode, innerContent = "\u2026") {
       return `#text${content}`;
     case 2:
       const attrs = stringifyTNodeAttrs(tNode);
-      const tag2 = tNode.value.toLowerCase();
-      return `<${tag2}${attrs ? " " + attrs : ""}>${innerContent}</${tag2}>`;
+      const tag = tNode.value.toLowerCase();
+      return `<${tag}${attrs ? " " + attrs : ""}>${innerContent}</${tag}>`;
     case 8:
       return "<!-- ng-container -->";
     case 4:
@@ -22833,9 +22817,9 @@ function describeRNode(rNode, innerContent = "\u2026") {
   const node = rNode;
   switch (node.nodeType) {
     case Node.ELEMENT_NODE:
-      const tag2 = node.tagName.toLowerCase();
+      const tag = node.tagName.toLowerCase();
       const attrs = stringifyRNodeAttrs(node);
-      return `<${tag2}${attrs ? " " + attrs : ""}>${innerContent}</${tag2}>`;
+      return `<${tag}${attrs ? " " + attrs : ""}>${innerContent}</${tag}>`;
     case Node.TEXT_NODE:
       const content = node.textContent ? shorten(node.textContent) : "";
       return `#text${content ? `(${content})` : ""}`;
@@ -24162,9 +24146,9 @@ var ComponentRef = class extends ComponentRef$1 {
     );
     if (ngDevMode && !hasSetInput) {
       const cmpNameForError = stringifyForError(this.componentType);
-      let message2 = `Can't set value of the '${name}' input on the '${cmpNameForError}' component. `;
-      message2 += `Make sure that the '${name}' property is annotated with @Input() or a mapped @Input('${name}') exists.`;
-      reportUnknownPropertyError(message2);
+      let message = `Can't set value of the '${name}' input on the '${cmpNameForError}' component. `;
+      message += `Make sure that the '${name}' property is annotated with @Input() or a mapped @Input('${name}') exists.`;
+      reportUnknownPropertyError(message);
     }
   }
   get injector() {
@@ -26247,12 +26231,12 @@ function setClassMetadata(type, decorators, ctorParameters, propDecorators) {
   });
 }
 var Console = class _Console {
-  log(message2) {
-    console.log(message2);
+  log(message) {
+    console.log(message);
   }
   // Note: for reporting errors use `DOM.logError()` as it is platform specific
-  warn(message2) {
-    console.warn(message2);
+  warn(message) {
+    console.warn(message);
   }
   static \u0275fac = function Console_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _Console)();
@@ -29544,8 +29528,8 @@ function reconcile(liveCollection, newCollection, trackByFn) {
       }
     }
     if (duplicatedKeysMsg.length > 0) {
-      const message2 = formatRuntimeError(-955, "The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: \n" + duplicatedKeysMsg.join(", \n") + ".");
-      console.warn(message2);
+      const message = formatRuntimeError(-955, "The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: \n" + duplicatedKeysMsg.join(", \n") + ".");
+      console.warn(message);
     }
   }
 }
@@ -29817,8 +29801,8 @@ function \u0275\u0275repeater(collection) {
     const liveCollection = metadata.liveCollection;
     reconcile(liveCollection, collection, metadata.trackByFn);
     if (ngDevMode && metadata.trackByFn === \u0275\u0275repeaterTrackByIdentity && liveCollection.operationsCounter?.wasReCreated(liveCollection.length) && isViewExpensiveToRecreate(getExistingLViewFromLContainer(lContainer, 0))) {
-      const message2 = formatRuntimeError(-956, `The configured tracking expression (track by identity) caused re-creation of the entire collection of size ${liveCollection.length}. This is an expensive operation requiring destruction and subsequent creation of DOM nodes, directives, components etc. Please review the "track expression" and make sure that it uniquely identifies items in a collection.`);
-      console.warn(message2);
+      const message = formatRuntimeError(-956, `The configured tracking expression (track by identity) caused re-creation of the entire collection of size ${liveCollection.length}. This is an expensive operation requiring destruction and subsequent creation of DOM nodes, directives, components etc. Please review the "track expression" and make sure that it uniquely identifies items in a collection.`);
+      console.warn(message);
     }
     liveCollection.updateIndexes();
     if (metadata.hasEmptyBlock) {
@@ -30567,7 +30551,7 @@ function attachDebugGetter(obj, debugGetter) {
     throw new Error("This method should be guarded with `ngDevMode` so that it can be tree shaken in production!");
   }
 }
-function i18nStartFirstCreatePass(tView, parentTNodeIndex, lView, index, message2, subTemplateIndex) {
+function i18nStartFirstCreatePass(tView, parentTNodeIndex, lView, index, message, subTemplateIndex) {
   const rootTNode = getCurrentParentTNode();
   const createOpCodes = [];
   const updateOpCodes = [];
@@ -30577,8 +30561,8 @@ function i18nStartFirstCreatePass(tView, parentTNodeIndex, lView, index, message
     attachDebugGetter(createOpCodes, i18nCreateOpCodesToString);
     attachDebugGetter(updateOpCodes, i18nUpdateOpCodesToString);
   }
-  message2 = getTranslationForTemplate(message2, subTemplateIndex);
-  const msgParts = replaceNgsp(message2).split(PH_REGEXP);
+  message = getTranslationForTemplate(message, subTemplateIndex);
+  const msgParts = replaceNgsp(message).split(PH_REGEXP);
   for (let i = 0; i < msgParts.length; i++) {
     let value = msgParts[i];
     if ((i & 1) === 0) {
@@ -30594,7 +30578,7 @@ function i18nStartFirstCreatePass(tView, parentTNodeIndex, lView, index, message
         } else {
           const icuExpression = part;
           if (typeof icuExpression !== "object") {
-            throw new Error(`Unable to parse ICU expression in "${message2}" message.`);
+            throw new Error(`Unable to parse ICU expression in "${message}" message.`);
           }
           const icuContainerTNode = createTNodeAndAddOpCode(tView, rootTNode, existingTNodeStack[0], lView, createOpCodes, ngDevMode ? `ICU ${index}:${icuExpression.mainBinding}` : "", true);
           const icuNodeIndex = icuContainerTNode.index;
@@ -30689,12 +30673,12 @@ function i18nAttributesFirstPass(tView, index, values) {
   if (tView.firstCreatePass && tView.data[index] === null) {
     for (let i = 0; i < values.length; i += 2) {
       const attrName = values[i];
-      const message2 = values[i + 1];
-      if (message2 !== "") {
-        if (ICU_REGEXP.test(message2)) {
-          throw new Error(`ICU expressions are not supported in attributes. Message: "${message2}".`);
+      const message = values[i + 1];
+      if (message !== "") {
+        if (ICU_REGEXP.test(message)) {
+          throw new Error(`ICU expressions are not supported in attributes. Message: "${message}".`);
         }
-        generateBindingUpdateOpCodes(updateOpCodes, message2, previousElementIndex, attrName, countBindings(updateOpCodes), null);
+        generateBindingUpdateOpCodes(updateOpCodes, message, previousElementIndex, attrName, countBindings(updateOpCodes), null);
       }
     }
     tView.data[index] = updateOpCodes;
@@ -30742,15 +30726,15 @@ function countBindings(opCodes) {
 function toMaskBit(bindingIndex) {
   return 1 << Math.min(bindingIndex, 31);
 }
-function removeInnerTemplateTranslation(message2) {
+function removeInnerTemplateTranslation(message) {
   let match2;
   let res = "";
   let index = 0;
   let inTemplate = false;
   let tagMatched;
-  while ((match2 = SUBTEMPLATE_REGEXP.exec(message2)) !== null) {
+  while ((match2 = SUBTEMPLATE_REGEXP.exec(message)) !== null) {
     if (!inTemplate) {
-      res += message2.substring(index, match2.index + match2[0].length);
+      res += message.substring(index, match2.index + match2[0].length);
       tagMatched = match2[1];
       inTemplate = true;
     } else {
@@ -30760,17 +30744,17 @@ function removeInnerTemplateTranslation(message2) {
       }
     }
   }
-  ngDevMode && assertEqual(inTemplate, false, `Tag mismatch: unable to find the end of the sub-template in the translation "${message2}"`);
-  res += message2.slice(index);
+  ngDevMode && assertEqual(inTemplate, false, `Tag mismatch: unable to find the end of the sub-template in the translation "${message}"`);
+  res += message.slice(index);
   return res;
 }
-function getTranslationForTemplate(message2, subTemplateIndex) {
+function getTranslationForTemplate(message, subTemplateIndex) {
   if (isRootTemplateMessage(subTemplateIndex)) {
-    return removeInnerTemplateTranslation(message2);
+    return removeInnerTemplateTranslation(message);
   } else {
-    const start = message2.indexOf(`:${subTemplateIndex}${MARKER}`) + 2 + subTemplateIndex.toString().length;
-    const end2 = message2.search(new RegExp(`${MARKER}\\/\\*\\d+:${subTemplateIndex}${MARKER}`));
-    return removeInnerTemplateTranslation(message2.substring(start, end2));
+    const start = message.indexOf(`:${subTemplateIndex}${MARKER}`) + 2 + subTemplateIndex.toString().length;
+    const end2 = message.search(new RegExp(`${MARKER}\\/\\*\\d+:${subTemplateIndex}${MARKER}`));
+    return removeInnerTemplateTranslation(message.substring(start, end2));
   }
 }
 function icuStart(ast, tView, lView, updateOpCodes, parentIdx, icuExpression, anchorIdx) {
@@ -31021,9 +31005,9 @@ var PP_ICU_PLACEHOLDERS_REGEXP = /{([A-Z0-9_]+)}/g;
 var PP_ICUS_REGEXP = /�I18N_EXP_(ICU(_\d+)?)�/g;
 var PP_CLOSE_TEMPLATE_REGEXP = /\/\*/;
 var PP_TEMPLATE_ID_REGEXP = /\d+\:(\d+)/;
-function i18nPostprocess(message2, replacements = {}) {
-  let result = message2;
-  if (PP_MULTI_VALUE_PLACEHOLDERS_REGEXP.test(message2)) {
+function i18nPostprocess(message, replacements = {}) {
+  let result = message;
+  if (PP_MULTI_VALUE_PLACEHOLDERS_REGEXP.test(message)) {
     const matches = {};
     const templateIdsStack = [ROOT_TEMPLATE_ID];
     result = result.replace(PP_PLACEHOLDERS_REGEXP, (m, phs, tmpl) => {
@@ -31085,10 +31069,10 @@ function \u0275\u0275i18nStart(index, messageIndex, subTemplateIndex = -1) {
   const lView = getLView();
   const adjustedIndex = HEADER_OFFSET + index;
   ngDevMode && assertDefined(tView, `tView should be defined`);
-  const message2 = getConstant(tView.consts, messageIndex);
+  const message = getConstant(tView.consts, messageIndex);
   const parentTNode = getCurrentParentTNode();
   if (tView.firstCreatePass) {
-    i18nStartFirstCreatePass(tView, parentTNode === null ? 0 : parentTNode.index, lView, adjustedIndex, message2, subTemplateIndex);
+    i18nStartFirstCreatePass(tView, parentTNode === null ? 0 : parentTNode.index, lView, adjustedIndex, message, subTemplateIndex);
   }
   if (tView.type === 2) {
     const componentLView = lView[DECLARATION_COMPONENT_VIEW];
@@ -31125,8 +31109,8 @@ function \u0275\u0275i18nExp(value) {
 function \u0275\u0275i18nApply(index) {
   applyI18n(getTView(), getLView(), index + HEADER_OFFSET);
 }
-function \u0275\u0275i18nPostprocess(message2, replacements = {}) {
-  return i18nPostprocess(message2, replacements);
+function \u0275\u0275i18nPostprocess(message, replacements = {}) {
+  return i18nPostprocess(message, replacements);
 }
 var stashEventListener = (el, eventName, listenerFn) => {
 };
@@ -32202,25 +32186,25 @@ function \u0275\u0275replaceMetadata(type, applyMetadata, namespaces, locals, im
   }
 }
 function mergeWithExistingDefinition(currentDef, newDef) {
-  const clone2 = __spreadValues({}, currentDef);
+  const clone = __spreadValues({}, currentDef);
   const replacement = Object.assign(currentDef, newDef, {
     // We need to keep the existing directive and pipe defs, because they can get patched on
     // by a call to `setComponentScope` from a module file. That call won't make it into the
     // HMR replacement function, because it lives in an entirely different file.
-    directiveDefs: clone2.directiveDefs,
-    pipeDefs: clone2.pipeDefs,
+    directiveDefs: clone.directiveDefs,
+    pipeDefs: clone.pipeDefs,
     // Preserve the old `setInput` function, because it has some state.
     // This is fine, because the component instance is preserved as well.
-    setInput: clone2.setInput,
+    setInput: clone.setInput,
     // Externally this is redundant since we redeclare the definition using the original type.
     // Internally we may receive a definition with an alternate, but identical, type so we have
     // to ensure that the original one is preserved.
-    type: clone2.type
+    type: clone.type
   });
   ngDevMode && assertEqual(replacement, currentDef, "Expected definition to be merged in place");
   return {
     newDef: replacement,
-    oldDef: clone2
+    oldDef: clone
   };
 }
 function recreateMatchingLViews(importMeta, id, newDef, oldDef, rootLView) {
@@ -36893,9 +36877,9 @@ function formatDate(value, format, locale, timezone) {
   });
   return text2;
 }
-function createDate(year2, month, date) {
+function createDate(year, month, date) {
   const newDate = /* @__PURE__ */ new Date(0);
-  newDate.setFullYear(year2, month, date);
+  newDate.setFullYear(year, month, date);
   newDate.setHours(0, 0, 0);
   return newDate;
 }
@@ -37100,9 +37084,9 @@ function timeZoneGetter(width) {
 }
 var JANUARY = 0;
 var THURSDAY = 4;
-function getFirstThursdayOfYear(year2) {
-  const firstDayOfYear = createDate(year2, JANUARY, 1).getDay();
-  return createDate(year2, 0, 1 + (firstDayOfYear <= THURSDAY ? THURSDAY : THURSDAY + 7) - firstDayOfYear);
+function getFirstThursdayOfYear(year) {
+  const firstDayOfYear = createDate(year, JANUARY, 1).getDay();
+  return createDate(year, 0, 1 + (firstDayOfYear <= THURSDAY ? THURSDAY : THURSDAY + 7) - firstDayOfYear);
 }
 function getThursdayThisIsoWeek(datetime) {
   const currentDay = datetime.getDay();
@@ -40918,10 +40902,10 @@ var HttpHeaders = class _HttpHeaders {
     });
   }
   clone(update) {
-    const clone2 = new _HttpHeaders();
-    clone2.lazyInit = !!this.lazyInit && this.lazyInit instanceof _HttpHeaders ? this.lazyInit : this;
-    clone2.lazyUpdate = (this.lazyUpdate || []).concat([update]);
-    return clone2;
+    const clone = new _HttpHeaders();
+    clone.lazyInit = !!this.lazyInit && this.lazyInit instanceof _HttpHeaders ? this.lazyInit : this;
+    clone.lazyUpdate = (this.lazyUpdate || []).concat([update]);
+    return clone;
   }
   applyUpdate(update) {
     const key = update.name.toLowerCase();
@@ -41197,12 +41181,12 @@ var HttpParams = class _HttpParams {
     }).filter((param) => param !== "").join("&");
   }
   clone(update) {
-    const clone2 = new _HttpParams({
+    const clone = new _HttpParams({
       encoder: this.encoder
     });
-    clone2.cloneFrom = this.cloneFrom || this;
-    clone2.updates = (this.updates || []).concat(update);
-    return clone2;
+    clone.cloneFrom = this.cloneFrom || this;
+    clone.updates = (this.updates || []).concat(update);
+    return clone;
   }
   init() {
     if (this.map === null) {
@@ -41978,7 +41962,7 @@ var FetchBackend = class _FetchBackend {
         const chunks = [];
         const reader = response.body.getReader();
         let receivedLength = 0;
-        let decoder2;
+        let decoder;
         let partialText;
         const reqZone = typeof Zone !== "undefined" && Zone.current;
         yield this.ngZone.runOutsideAngular(() => __async(this, null, function* () {
@@ -41993,7 +41977,7 @@ var FetchBackend = class _FetchBackend {
             chunks.push(value);
             receivedLength += value.length;
             if (request.reportProgress) {
-              partialText = request.responseType === "text" ? (partialText ?? "") + (decoder2 ??= new TextDecoder()).decode(value, {
+              partialText = request.responseType === "text" ? (partialText ?? "") + (decoder ??= new TextDecoder()).decode(value, {
                 stream: true
               }) : void 0;
               const reportProgress = () => observer.next({
@@ -42932,7 +42916,7 @@ var HttpResourceImpl = class extends ResourceImpl {
   headers = computed(() => this.status() === ResourceStatus.Resolved || this.status() === ResourceStatus.Error ? this._headers() : void 0);
   progress = this._progress.asReadonly();
   statusCode = this._statusCode.asReadonly();
-  constructor(injector, request, defaultValue, parse3) {
+  constructor(injector, request, defaultValue, parse2) {
     super(request, ({
       request: request2,
       abortSignal
@@ -42958,7 +42942,7 @@ var HttpResourceImpl = class extends ResourceImpl {
               this._statusCode.set(event.status);
               try {
                 send({
-                  value: parse3 ? parse3(event.body) : event.body
+                  value: parse2 ? parse2(event.body) : event.body
                 });
               } catch (error) {
                 send({
@@ -44148,9 +44132,9 @@ var Meta = class _Meta {
    * @returns The existing element with the same attributes and values if found,
    * the new element if no match is found, or `null` if the tag parameter is not defined.
    */
-  addTag(tag2, forceCreation = false) {
-    if (!tag2) return null;
-    return this._getOrCreateElement(tag2, forceCreation);
+  addTag(tag, forceCreation = false) {
+    if (!tag) return null;
+    return this._getOrCreateElement(tag, forceCreation);
   }
   /**
    * Retrieves or creates a set of `<meta>` tag elements in the current HTML document.
@@ -44162,9 +44146,9 @@ var Meta = class _Meta {
    */
   addTags(tags, forceCreation = false) {
     if (!tags) return [];
-    return tags.reduce((result, tag2) => {
-      if (tag2) {
-        result.push(this._getOrCreateElement(tag2, forceCreation));
+    return tags.reduce((result, tag) => {
+      if (tag) {
+        result.push(this._getOrCreateElement(tag, forceCreation));
       }
       return result;
     }, []);
@@ -44199,14 +44183,14 @@ var Meta = class _Meta {
    * replacement tag.
    * @return The modified element.
    */
-  updateTag(tag2, selector) {
-    if (!tag2) return null;
-    selector = selector || this._parseSelector(tag2);
+  updateTag(tag, selector) {
+    if (!tag) return null;
+    selector = selector || this._parseSelector(tag);
     const meta = this.getTag(selector);
     if (meta) {
-      return this._setMetaElementAttributes(tag2, meta);
+      return this._setMetaElementAttributes(tag, meta);
     }
-    return this._getOrCreateElement(tag2, true);
+    return this._getOrCreateElement(tag, true);
   }
   /**
    * Removes an existing `<meta>` tag element from the current HTML document.
@@ -44237,16 +44221,16 @@ var Meta = class _Meta {
     head.appendChild(element);
     return element;
   }
-  _setMetaElementAttributes(tag2, el) {
-    Object.keys(tag2).forEach((prop) => el.setAttribute(this._getMetaKeyMap(prop), tag2[prop]));
+  _setMetaElementAttributes(tag, el) {
+    Object.keys(tag).forEach((prop) => el.setAttribute(this._getMetaKeyMap(prop), tag[prop]));
     return el;
   }
-  _parseSelector(tag2) {
-    const attr = tag2.name ? "name" : "property";
-    return `${attr}="${tag2[attr]}"`;
+  _parseSelector(tag) {
+    const attr = tag.name ? "name" : "property";
+    return `${attr}="${tag[attr]}"`;
   }
-  _containsAttributes(tag2, elem) {
-    return Object.keys(tag2).every((key) => elem.getAttribute(this._getMetaKeyMap(key)) === tag2[key]);
+  _containsAttributes(tag, elem) {
+    return Object.keys(tag).every((key) => elem.getAttribute(this._getMetaKeyMap(key)) === tag[key]);
   }
   _getMetaKeyMap(prop) {
     return META_KEYS_MAP[prop] || prop;
@@ -47193,9 +47177,9 @@ function cleanUpFormContainer(control, dir) {
 function _noControlError(dir) {
   return _throwError(dir, "There is no FormControl instance attached to form control element with");
 }
-function _throwError(dir, message2) {
+function _throwError(dir, message) {
   const messageEnd = _describeControlLocation(dir);
-  throw new Error(`${message2} ${messageEnd}`);
+  throw new Error(`${message} ${messageEnd}`);
 }
 function _describeControlLocation(dir) {
   const path = dir.path;
@@ -53258,8 +53242,8 @@ function redirectingNavigationError(urlSerializer, redirect) {
   error.navigationBehaviorOptions = navigationBehaviorOptions;
   return error;
 }
-function navigationCancelingError(message2, code) {
-  const error = new Error(`NavigationCancelingError: ${message2 || ""}`);
+function navigationCancelingError(message, code) {
+  const error = new Error(`NavigationCancelingError: ${message || ""}`);
   error[NAVIGATION_CANCELING_ERROR] = true;
   error.cancellationCode = code;
   return error;
@@ -54950,10 +54934,10 @@ var NavigationTransitions = class _NavigationTransitions {
                 const navigationErrorHandlerResult = runInInjectionContext(this.environmentInjector, () => this.navigationErrorHandler?.(navigationError));
                 if (navigationErrorHandlerResult instanceof RedirectCommand) {
                   const {
-                    message: message2,
+                    message,
                     cancellationCode
                   } = redirectingNavigationError(this.urlSerializer, navigationErrorHandlerResult);
-                  this.events.next(new NavigationCancel(overallTransitionState.id, this.urlSerializer.serialize(overallTransitionState.extractedUrl), message2, cancellationCode));
+                  this.events.next(new NavigationCancel(overallTransitionState.id, this.urlSerializer.serialize(overallTransitionState.extractedUrl), message, cancellationCode));
                   this.events.next(new RedirectRequest(navigationErrorHandlerResult.redirectTo, navigationErrorHandlerResult.navigationBehaviorOptions));
                 } else {
                   this.events.next(navigationError);
@@ -57422,15 +57406,15 @@ var NGXLoggerMetadataService = class {
     }
     return defaultTimestamp();
   }
-  getMetadata(level, config3, message2, additional) {
+  getMetadata(level, config3, message, additional) {
     const metadata = {
       level,
       additional
     };
-    if (message2 && typeof message2 === "function") {
-      metadata.message = message2();
+    if (message && typeof message === "function") {
+      metadata.message = message();
     } else {
-      metadata.message = message2;
+      metadata.message = message;
     }
     metadata.timestamp = this.computeTimestamp(config3);
     return metadata;
@@ -57457,14 +57441,14 @@ NGXLoggerMetadataService.\u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectab
 })();
 var TOKEN_LOGGER_RULES_SERVICE = "TOKEN_LOGGER_RULES_SERVICE";
 var NGXLoggerRulesService = class {
-  shouldCallWriter(level, config3, message2, additional) {
+  shouldCallWriter(level, config3, message, additional) {
     return !config3.disableConsoleLogging && level >= config3.level;
   }
-  shouldCallServer(level, config3, message2, additional) {
+  shouldCallServer(level, config3, message, additional) {
     return !!config3.serverLoggingUrl && level >= config3.serverLogLevel;
   }
-  shouldCallMonitor(level, config3, message2, additional) {
-    return this.shouldCallWriter(level, config3, message2, additional) || this.shouldCallServer(level, config3, message2, additional);
+  shouldCallMonitor(level, config3, message, additional) {
+    return this.shouldCallWriter(level, config3, message, additional) || this.shouldCallServer(level, config3, message, additional);
   }
 };
 NGXLoggerRulesService.\u0275fac = function NGXLoggerRulesService_Factory(__ngFactoryType__) {
@@ -57535,18 +57519,18 @@ var NGXLoggerServerService = class {
    * @param message the message to be sent
    * @returns the message secured
    */
-  secureMessage(message2) {
+  secureMessage(message) {
     try {
-      if (message2 instanceof Error) {
-        return this.secureErrorObject(message2);
+      if (message instanceof Error) {
+        return this.secureErrorObject(message);
       }
-      if (typeof message2 !== "string") {
-        message2 = JSON.stringify(message2, null, 2);
+      if (typeof message !== "string") {
+        message = JSON.stringify(message, null, 2);
       }
     } catch (e) {
-      message2 = 'The provided "message" value could not be parsed with JSON.stringify().';
+      message = 'The provided "message" value could not be parsed with JSON.stringify().';
     }
-    return message2;
+    return message;
   }
   /**
    * Edits HttpRequest object before sending request to server
@@ -57845,26 +57829,26 @@ var NGXLogger = class {
   get serverLogLevel() {
     return this.configEngine.serverLogLevel;
   }
-  trace(message2, ...additional) {
-    this._log(NgxLoggerLevel.TRACE, message2, additional);
+  trace(message, ...additional) {
+    this._log(NgxLoggerLevel.TRACE, message, additional);
   }
-  debug(message2, ...additional) {
-    this._log(NgxLoggerLevel.DEBUG, message2, additional);
+  debug(message, ...additional) {
+    this._log(NgxLoggerLevel.DEBUG, message, additional);
   }
-  info(message2, ...additional) {
-    this._log(NgxLoggerLevel.INFO, message2, additional);
+  info(message, ...additional) {
+    this._log(NgxLoggerLevel.INFO, message, additional);
   }
-  log(message2, ...additional) {
-    this._log(NgxLoggerLevel.LOG, message2, additional);
+  log(message, ...additional) {
+    this._log(NgxLoggerLevel.LOG, message, additional);
   }
-  warn(message2, ...additional) {
-    this._log(NgxLoggerLevel.WARN, message2, additional);
+  warn(message, ...additional) {
+    this._log(NgxLoggerLevel.WARN, message, additional);
   }
-  error(message2, ...additional) {
-    this._log(NgxLoggerLevel.ERROR, message2, additional);
+  error(message, ...additional) {
+    this._log(NgxLoggerLevel.ERROR, message, additional);
   }
-  fatal(message2, ...additional) {
-    this._log(NgxLoggerLevel.FATAL, message2, additional);
+  fatal(message, ...additional) {
+    this._log(NgxLoggerLevel.FATAL, message, additional);
   }
   /** @deprecated customHttpHeaders is now part of the config, this should be updated via @see updateConfig */
   setCustomHttpHeaders(headers) {
@@ -57913,15 +57897,15 @@ var NGXLogger = class {
   flushServerQueue() {
     this.serverService.flushQueue(this.getConfigSnapshot());
   }
-  _log(level, message2, additional = []) {
+  _log(level, message, additional = []) {
     const config3 = this.configEngine.getConfig();
-    const shouldCallWriter = this.ruleService.shouldCallWriter(level, config3, message2, additional);
-    const shouldCallServer = this.ruleService.shouldCallServer(level, config3, message2, additional);
-    const shouldCallMonitor = this.ruleService.shouldCallMonitor(level, config3, message2, additional);
+    const shouldCallWriter = this.ruleService.shouldCallWriter(level, config3, message, additional);
+    const shouldCallServer = this.ruleService.shouldCallServer(level, config3, message, additional);
+    const shouldCallMonitor = this.ruleService.shouldCallMonitor(level, config3, message, additional);
     if (!shouldCallWriter && !shouldCallServer && !shouldCallMonitor) {
       return;
     }
-    const metadata = this.metadataService.getMetadata(level, config3, message2, additional);
+    const metadata = this.metadataService.getMetadata(level, config3, message, additional);
     this.mapperService.getLogPosition(config3, metadata).pipe(take(1)).subscribe((logPosition) => {
       if (logPosition) {
         metadata.fileName = logPosition.fileName;
@@ -58848,20 +58832,20 @@ function webSocket(urlConfigOrSource) {
 
 // projects/shared-library/src/lib/utils/websocket.ts
 var FastenConnectionError = class extends Error {
-  constructor(message2) {
-    super(message2);
+  constructor(message) {
+    super(message);
     this.name = "FastenConnectionError";
   }
 };
 function waitForWebsocketOrgConnectionOrTimeout(logger, websocketUrl, openedWindow, sdkMode) {
   logger.info(`waiting for websocket notification from popup window`);
   const subject = webSocket(websocketUrl.toString());
-  return subject.pipe(timeout(ConnectWindowTimeout), map((message2) => {
-    logger.debug("websocket message received", message2);
-    if (message2.error) {
-      throw new FastenConnectionError(JSON.stringify(message2));
+  return subject.pipe(timeout(ConnectWindowTimeout), map((message) => {
+    logger.debug("websocket message received", message);
+    if (message.error) {
+      throw new FastenConnectionError(JSON.stringify(message));
     }
-    return message2;
+    return message;
   }), catchError((err) => {
     if (err instanceof TimeoutError) {
       logger.error("websocket connection timed out");
@@ -59128,1435 +59112,9 @@ var environment = {
   org_credential_live_public_id: "public_live_0qoo3vib5xqxnadke7i8fzvkeurcivxonqnj8jrsnji6a"
 };
 
-// node_modules/jose/dist/browser/runtime/webcrypto.js
-var webcrypto_default = crypto;
-var isCryptoKey = (key) => key instanceof CryptoKey;
-
-// node_modules/jose/dist/browser/lib/buffer_utils.js
-var encoder = new TextEncoder();
-var decoder = new TextDecoder();
-var MAX_INT32 = 2 ** 32;
-function concat2(...buffers) {
-  const size = buffers.reduce((acc, {
-    length
-  }) => acc + length, 0);
-  const buf = new Uint8Array(size);
-  let i = 0;
-  for (const buffer of buffers) {
-    buf.set(buffer, i);
-    i += buffer.length;
-  }
-  return buf;
-}
-
-// node_modules/jose/dist/browser/runtime/base64url.js
-var decodeBase64 = (encoded) => {
-  const binary = atob(encoded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-};
-var decode3 = (input2) => {
-  let encoded = input2;
-  if (encoded instanceof Uint8Array) {
-    encoded = decoder.decode(encoded);
-  }
-  encoded = encoded.replace(/-/g, "+").replace(/_/g, "/").replace(/\s/g, "");
-  try {
-    return decodeBase64(encoded);
-  } catch {
-    throw new TypeError("The input to be decoded is not correctly encoded.");
-  }
-};
-
-// node_modules/jose/dist/browser/util/errors.js
-var JOSEError = class extends Error {
-  constructor(message2, options) {
-    super(message2, options);
-    this.code = "ERR_JOSE_GENERIC";
-    this.name = this.constructor.name;
-    Error.captureStackTrace?.(this, this.constructor);
-  }
-};
-JOSEError.code = "ERR_JOSE_GENERIC";
-var JWTClaimValidationFailed = class extends JOSEError {
-  constructor(message2, payload, claim = "unspecified", reason = "unspecified") {
-    super(message2, {
-      cause: {
-        claim,
-        reason,
-        payload
-      }
-    });
-    this.code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-    this.claim = claim;
-    this.reason = reason;
-    this.payload = payload;
-  }
-};
-JWTClaimValidationFailed.code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-var JWTExpired = class extends JOSEError {
-  constructor(message2, payload, claim = "unspecified", reason = "unspecified") {
-    super(message2, {
-      cause: {
-        claim,
-        reason,
-        payload
-      }
-    });
-    this.code = "ERR_JWT_EXPIRED";
-    this.claim = claim;
-    this.reason = reason;
-    this.payload = payload;
-  }
-};
-JWTExpired.code = "ERR_JWT_EXPIRED";
-var JOSEAlgNotAllowed = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JOSE_ALG_NOT_ALLOWED";
-  }
-};
-JOSEAlgNotAllowed.code = "ERR_JOSE_ALG_NOT_ALLOWED";
-var JOSENotSupported = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JOSE_NOT_SUPPORTED";
-  }
-};
-JOSENotSupported.code = "ERR_JOSE_NOT_SUPPORTED";
-var JWEDecryptionFailed = class extends JOSEError {
-  constructor(message2 = "decryption operation failed", options) {
-    super(message2, options);
-    this.code = "ERR_JWE_DECRYPTION_FAILED";
-  }
-};
-JWEDecryptionFailed.code = "ERR_JWE_DECRYPTION_FAILED";
-var JWEInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWE_INVALID";
-  }
-};
-JWEInvalid.code = "ERR_JWE_INVALID";
-var JWSInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWS_INVALID";
-  }
-};
-JWSInvalid.code = "ERR_JWS_INVALID";
-var JWTInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWT_INVALID";
-  }
-};
-JWTInvalid.code = "ERR_JWT_INVALID";
-var JWKInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWK_INVALID";
-  }
-};
-JWKInvalid.code = "ERR_JWK_INVALID";
-var JWKSInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWKS_INVALID";
-  }
-};
-JWKSInvalid.code = "ERR_JWKS_INVALID";
-var JWKSNoMatchingKey = class extends JOSEError {
-  constructor(message2 = "no applicable key found in the JSON Web Key Set", options) {
-    super(message2, options);
-    this.code = "ERR_JWKS_NO_MATCHING_KEY";
-  }
-};
-JWKSNoMatchingKey.code = "ERR_JWKS_NO_MATCHING_KEY";
-var JWKSMultipleMatchingKeys = class extends JOSEError {
-  constructor(message2 = "multiple matching keys found in the JSON Web Key Set", options) {
-    super(message2, options);
-    this.code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-  }
-};
-JWKSMultipleMatchingKeys.code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-var JWKSTimeout = class extends JOSEError {
-  constructor(message2 = "request timed out", options) {
-    super(message2, options);
-    this.code = "ERR_JWKS_TIMEOUT";
-  }
-};
-JWKSTimeout.code = "ERR_JWKS_TIMEOUT";
-var JWSSignatureVerificationFailed = class extends JOSEError {
-  constructor(message2 = "signature verification failed", options) {
-    super(message2, options);
-    this.code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-  }
-};
-JWSSignatureVerificationFailed.code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-
-// node_modules/jose/dist/browser/lib/crypto_key.js
-function unusable(name, prop = "algorithm.name") {
-  return new TypeError(`CryptoKey does not support this operation, its ${prop} must be ${name}`);
-}
-function isAlgorithm(algorithm, name) {
-  return algorithm.name === name;
-}
-function getHashLength(hash) {
-  return parseInt(hash.name.slice(4), 10);
-}
-function getNamedCurve(alg) {
-  switch (alg) {
-    case "ES256":
-      return "P-256";
-    case "ES384":
-      return "P-384";
-    case "ES512":
-      return "P-521";
-    default:
-      throw new Error("unreachable");
-  }
-}
-function checkUsage(key, usages) {
-  if (usages.length && !usages.some((expected) => key.usages.includes(expected))) {
-    let msg = "CryptoKey does not support this operation, its usages must include ";
-    if (usages.length > 2) {
-      const last4 = usages.pop();
-      msg += `one of ${usages.join(", ")}, or ${last4}.`;
-    } else if (usages.length === 2) {
-      msg += `one of ${usages[0]} or ${usages[1]}.`;
-    } else {
-      msg += `${usages[0]}.`;
-    }
-    throw new TypeError(msg);
-  }
-}
-function checkSigCryptoKey(key, alg, ...usages) {
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512": {
-      if (!isAlgorithm(key.algorithm, "HMAC")) throw unusable("HMAC");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected) throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "RS256":
-    case "RS384":
-    case "RS512": {
-      if (!isAlgorithm(key.algorithm, "RSASSA-PKCS1-v1_5")) throw unusable("RSASSA-PKCS1-v1_5");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected) throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "PS256":
-    case "PS384":
-    case "PS512": {
-      if (!isAlgorithm(key.algorithm, "RSA-PSS")) throw unusable("RSA-PSS");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected) throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "EdDSA": {
-      if (key.algorithm.name !== "Ed25519" && key.algorithm.name !== "Ed448") {
-        throw unusable("Ed25519 or Ed448");
-      }
-      break;
-    }
-    case "Ed25519": {
-      if (!isAlgorithm(key.algorithm, "Ed25519")) throw unusable("Ed25519");
-      break;
-    }
-    case "ES256":
-    case "ES384":
-    case "ES512": {
-      if (!isAlgorithm(key.algorithm, "ECDSA")) throw unusable("ECDSA");
-      const expected = getNamedCurve(alg);
-      const actual = key.algorithm.namedCurve;
-      if (actual !== expected) throw unusable(expected, "algorithm.namedCurve");
-      break;
-    }
-    default:
-      throw new TypeError("CryptoKey does not support this operation");
-  }
-  checkUsage(key, usages);
-}
-
-// node_modules/jose/dist/browser/lib/invalid_key_input.js
-function message(msg, actual, ...types2) {
-  types2 = types2.filter(Boolean);
-  if (types2.length > 2) {
-    const last4 = types2.pop();
-    msg += `one of type ${types2.join(", ")}, or ${last4}.`;
-  } else if (types2.length === 2) {
-    msg += `one of type ${types2[0]} or ${types2[1]}.`;
-  } else {
-    msg += `of type ${types2[0]}.`;
-  }
-  if (actual == null) {
-    msg += ` Received ${actual}`;
-  } else if (typeof actual === "function" && actual.name) {
-    msg += ` Received function ${actual.name}`;
-  } else if (typeof actual === "object" && actual != null) {
-    if (actual.constructor?.name) {
-      msg += ` Received an instance of ${actual.constructor.name}`;
-    }
-  }
-  return msg;
-}
-var invalid_key_input_default = (actual, ...types2) => {
-  return message("Key must be ", actual, ...types2);
-};
-function withAlg(alg, actual, ...types2) {
-  return message(`Key for the ${alg} algorithm must be `, actual, ...types2);
-}
-
-// node_modules/jose/dist/browser/runtime/is_key_like.js
-var is_key_like_default = (key) => {
-  if (isCryptoKey(key)) {
-    return true;
-  }
-  return key?.[Symbol.toStringTag] === "KeyObject";
-};
-var types = ["CryptoKey"];
-
-// node_modules/jose/dist/browser/lib/is_disjoint.js
-var isDisjoint = (...headers) => {
-  const sources = headers.filter(Boolean);
-  if (sources.length === 0 || sources.length === 1) {
-    return true;
-  }
-  let acc;
-  for (const header of sources) {
-    const parameters = Object.keys(header);
-    if (!acc || acc.size === 0) {
-      acc = new Set(parameters);
-      continue;
-    }
-    for (const parameter of parameters) {
-      if (acc.has(parameter)) {
-        return false;
-      }
-      acc.add(parameter);
-    }
-  }
-  return true;
-};
-var is_disjoint_default = isDisjoint;
-
-// node_modules/jose/dist/browser/lib/is_object.js
-function isObjectLike(value) {
-  return typeof value === "object" && value !== null;
-}
-function isObject(input2) {
-  if (!isObjectLike(input2) || Object.prototype.toString.call(input2) !== "[object Object]") {
-    return false;
-  }
-  if (Object.getPrototypeOf(input2) === null) {
-    return true;
-  }
-  let proto = input2;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return Object.getPrototypeOf(input2) === proto;
-}
-
-// node_modules/jose/dist/browser/runtime/check_key_length.js
-var check_key_length_default = (alg, key) => {
-  if (alg.startsWith("RS") || alg.startsWith("PS")) {
-    const {
-      modulusLength
-    } = key.algorithm;
-    if (typeof modulusLength !== "number" || modulusLength < 2048) {
-      throw new TypeError(`${alg} requires key modulusLength to be 2048 bits or larger`);
-    }
-  }
-};
-
-// node_modules/jose/dist/browser/lib/is_jwk.js
-function isJWK(key) {
-  return isObject(key) && typeof key.kty === "string";
-}
-function isPrivateJWK(key) {
-  return key.kty !== "oct" && typeof key.d === "string";
-}
-function isPublicJWK(key) {
-  return key.kty !== "oct" && typeof key.d === "undefined";
-}
-function isSecretJWK(key) {
-  return isJWK(key) && key.kty === "oct" && typeof key.k === "string";
-}
-
-// node_modules/jose/dist/browser/runtime/jwk_to_key.js
-function subtleMapping(jwk) {
-  let algorithm;
-  let keyUsages;
-  switch (jwk.kty) {
-    case "RSA": {
-      switch (jwk.alg) {
-        case "PS256":
-        case "PS384":
-        case "PS512":
-          algorithm = {
-            name: "RSA-PSS",
-            hash: `SHA-${jwk.alg.slice(-3)}`
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "RS256":
-        case "RS384":
-        case "RS512":
-          algorithm = {
-            name: "RSASSA-PKCS1-v1_5",
-            hash: `SHA-${jwk.alg.slice(-3)}`
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "RSA-OAEP":
-        case "RSA-OAEP-256":
-        case "RSA-OAEP-384":
-        case "RSA-OAEP-512":
-          algorithm = {
-            name: "RSA-OAEP",
-            hash: `SHA-${parseInt(jwk.alg.slice(-3), 10) || 1}`
-          };
-          keyUsages = jwk.d ? ["decrypt", "unwrapKey"] : ["encrypt", "wrapKey"];
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-      }
-      break;
-    }
-    case "EC": {
-      switch (jwk.alg) {
-        case "ES256":
-          algorithm = {
-            name: "ECDSA",
-            namedCurve: "P-256"
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ES384":
-          algorithm = {
-            name: "ECDSA",
-            namedCurve: "P-384"
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ES512":
-          algorithm = {
-            name: "ECDSA",
-            namedCurve: "P-521"
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW":
-          algorithm = {
-            name: "ECDH",
-            namedCurve: jwk.crv
-          };
-          keyUsages = jwk.d ? ["deriveBits"] : [];
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-      }
-      break;
-    }
-    case "OKP": {
-      switch (jwk.alg) {
-        case "Ed25519":
-          algorithm = {
-            name: "Ed25519"
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "EdDSA":
-          algorithm = {
-            name: jwk.crv
-          };
-          keyUsages = jwk.d ? ["sign"] : ["verify"];
-          break;
-        case "ECDH-ES":
-        case "ECDH-ES+A128KW":
-        case "ECDH-ES+A192KW":
-        case "ECDH-ES+A256KW":
-          algorithm = {
-            name: jwk.crv
-          };
-          keyUsages = jwk.d ? ["deriveBits"] : [];
-          break;
-        default:
-          throw new JOSENotSupported('Invalid or unsupported JWK "alg" (Algorithm) Parameter value');
-      }
-      break;
-    }
-    default:
-      throw new JOSENotSupported('Invalid or unsupported JWK "kty" (Key Type) Parameter value');
-  }
-  return {
-    algorithm,
-    keyUsages
-  };
-}
-var parse = (jwk) => __async(void 0, null, function* () {
-  if (!jwk.alg) {
-    throw new TypeError('"alg" argument is required when "jwk.alg" is not present');
-  }
-  const {
-    algorithm,
-    keyUsages
-  } = subtleMapping(jwk);
-  const rest = [algorithm, jwk.ext ?? false, jwk.key_ops ?? keyUsages];
-  const keyData = __spreadValues({}, jwk);
-  delete keyData.alg;
-  delete keyData.use;
-  return webcrypto_default.subtle.importKey("jwk", keyData, ...rest);
-});
-var jwk_to_key_default = parse;
-
-// node_modules/jose/dist/browser/runtime/normalize_key.js
-var exportKeyValue = (k) => decode3(k);
-var privCache;
-var pubCache;
-var isKeyObject = (key) => {
-  return key?.[Symbol.toStringTag] === "KeyObject";
-};
-var importAndCache = (cache, key, jwk, alg, freeze = false) => __async(void 0, null, function* () {
-  let cached = cache.get(key);
-  if (cached?.[alg]) {
-    return cached[alg];
-  }
-  const cryptoKey = yield jwk_to_key_default(__spreadProps(__spreadValues({}, jwk), {
-    alg
-  }));
-  if (freeze) Object.freeze(key);
-  if (!cached) {
-    cache.set(key, {
-      [alg]: cryptoKey
-    });
-  } else {
-    cached[alg] = cryptoKey;
-  }
-  return cryptoKey;
-});
-var normalizePublicKey = (key, alg) => {
-  if (isKeyObject(key)) {
-    let jwk = key.export({
-      format: "jwk"
-    });
-    delete jwk.d;
-    delete jwk.dp;
-    delete jwk.dq;
-    delete jwk.p;
-    delete jwk.q;
-    delete jwk.qi;
-    if (jwk.k) {
-      return exportKeyValue(jwk.k);
-    }
-    pubCache || (pubCache = /* @__PURE__ */ new WeakMap());
-    return importAndCache(pubCache, key, jwk, alg);
-  }
-  if (isJWK(key)) {
-    if (key.k) return decode3(key.k);
-    pubCache || (pubCache = /* @__PURE__ */ new WeakMap());
-    const cryptoKey = importAndCache(pubCache, key, key, alg, true);
-    return cryptoKey;
-  }
-  return key;
-};
-var normalizePrivateKey = (key, alg) => {
-  if (isKeyObject(key)) {
-    let jwk = key.export({
-      format: "jwk"
-    });
-    if (jwk.k) {
-      return exportKeyValue(jwk.k);
-    }
-    privCache || (privCache = /* @__PURE__ */ new WeakMap());
-    return importAndCache(privCache, key, jwk, alg);
-  }
-  if (isJWK(key)) {
-    if (key.k) return decode3(key.k);
-    privCache || (privCache = /* @__PURE__ */ new WeakMap());
-    const cryptoKey = importAndCache(privCache, key, key, alg, true);
-    return cryptoKey;
-  }
-  return key;
-};
-var normalize_key_default = {
-  normalizePublicKey,
-  normalizePrivateKey
-};
-
-// node_modules/jose/dist/browser/key/import.js
-function importJWK(jwk, alg) {
-  return __async(this, null, function* () {
-    if (!isObject(jwk)) {
-      throw new TypeError("JWK must be an object");
-    }
-    alg || (alg = jwk.alg);
-    switch (jwk.kty) {
-      case "oct":
-        if (typeof jwk.k !== "string" || !jwk.k) {
-          throw new TypeError('missing "k" (Key Value) Parameter value');
-        }
-        return decode3(jwk.k);
-      case "RSA":
-        if ("oth" in jwk && jwk.oth !== void 0) {
-          throw new JOSENotSupported('RSA JWK "oth" (Other Primes Info) Parameter value is not supported');
-        }
-      case "EC":
-      case "OKP":
-        return jwk_to_key_default(__spreadProps(__spreadValues({}, jwk), {
-          alg
-        }));
-      default:
-        throw new JOSENotSupported('Unsupported "kty" (Key Type) Parameter value');
-    }
-  });
-}
-
-// node_modules/jose/dist/browser/lib/check_key_type.js
-var tag = (key) => key?.[Symbol.toStringTag];
-var jwkMatchesOp = (alg, key, usage) => {
-  if (key.use !== void 0 && key.use !== "sig") {
-    throw new TypeError("Invalid key for this operation, when present its use must be sig");
-  }
-  if (key.key_ops !== void 0 && key.key_ops.includes?.(usage) !== true) {
-    throw new TypeError(`Invalid key for this operation, when present its key_ops must include ${usage}`);
-  }
-  if (key.alg !== void 0 && key.alg !== alg) {
-    throw new TypeError(`Invalid key for this operation, when present its alg must be ${alg}`);
-  }
-  return true;
-};
-var symmetricTypeCheck = (alg, key, usage, allowJwk) => {
-  if (key instanceof Uint8Array) return;
-  if (allowJwk && isJWK(key)) {
-    if (isSecretJWK(key) && jwkMatchesOp(alg, key, usage)) return;
-    throw new TypeError(`JSON Web Key for symmetric algorithms must have JWK "kty" (Key Type) equal to "oct" and the JWK "k" (Key Value) present`);
-  }
-  if (!is_key_like_default(key)) {
-    throw new TypeError(withAlg(alg, key, ...types, "Uint8Array", allowJwk ? "JSON Web Key" : null));
-  }
-  if (key.type !== "secret") {
-    throw new TypeError(`${tag(key)} instances for symmetric algorithms must be of type "secret"`);
-  }
-};
-var asymmetricTypeCheck = (alg, key, usage, allowJwk) => {
-  if (allowJwk && isJWK(key)) {
-    switch (usage) {
-      case "sign":
-        if (isPrivateJWK(key) && jwkMatchesOp(alg, key, usage)) return;
-        throw new TypeError(`JSON Web Key for this operation be a private JWK`);
-      case "verify":
-        if (isPublicJWK(key) && jwkMatchesOp(alg, key, usage)) return;
-        throw new TypeError(`JSON Web Key for this operation be a public JWK`);
-    }
-  }
-  if (!is_key_like_default(key)) {
-    throw new TypeError(withAlg(alg, key, ...types, allowJwk ? "JSON Web Key" : null));
-  }
-  if (key.type === "secret") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithms must not be of type "secret"`);
-  }
-  if (usage === "sign" && key.type === "public") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm signing must be of type "private"`);
-  }
-  if (usage === "decrypt" && key.type === "public") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm decryption must be of type "private"`);
-  }
-  if (key.algorithm && usage === "verify" && key.type === "private") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm verifying must be of type "public"`);
-  }
-  if (key.algorithm && usage === "encrypt" && key.type === "private") {
-    throw new TypeError(`${tag(key)} instances for asymmetric algorithm encryption must be of type "public"`);
-  }
-};
-function checkKeyType(allowJwk, alg, key, usage) {
-  const symmetric = alg.startsWith("HS") || alg === "dir" || alg.startsWith("PBES2") || /^A\d{3}(?:GCM)?KW$/.test(alg);
-  if (symmetric) {
-    symmetricTypeCheck(alg, key, usage, allowJwk);
-  } else {
-    asymmetricTypeCheck(alg, key, usage, allowJwk);
-  }
-}
-var check_key_type_default = checkKeyType.bind(void 0, false);
-var checkKeyTypeWithJwk = checkKeyType.bind(void 0, true);
-
-// node_modules/jose/dist/browser/lib/validate_crit.js
-function validateCrit(Err, recognizedDefault, recognizedOption, protectedHeader, joseHeader) {
-  if (joseHeader.crit !== void 0 && protectedHeader?.crit === void 0) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be integrity protected');
-  }
-  if (!protectedHeader || protectedHeader.crit === void 0) {
-    return /* @__PURE__ */ new Set();
-  }
-  if (!Array.isArray(protectedHeader.crit) || protectedHeader.crit.length === 0 || protectedHeader.crit.some((input2) => typeof input2 !== "string" || input2.length === 0)) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be an array of non-empty strings when present');
-  }
-  let recognized;
-  if (recognizedOption !== void 0) {
-    recognized = new Map([...Object.entries(recognizedOption), ...recognizedDefault.entries()]);
-  } else {
-    recognized = recognizedDefault;
-  }
-  for (const parameter of protectedHeader.crit) {
-    if (!recognized.has(parameter)) {
-      throw new JOSENotSupported(`Extension Header Parameter "${parameter}" is not recognized`);
-    }
-    if (joseHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" is missing`);
-    }
-    if (recognized.get(parameter) && protectedHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" MUST be integrity protected`);
-    }
-  }
-  return new Set(protectedHeader.crit);
-}
-var validate_crit_default = validateCrit;
-
-// node_modules/jose/dist/browser/lib/validate_algorithms.js
-var validateAlgorithms = (option, algorithms) => {
-  if (algorithms !== void 0 && (!Array.isArray(algorithms) || algorithms.some((s2) => typeof s2 !== "string"))) {
-    throw new TypeError(`"${option}" option must be an array of strings`);
-  }
-  if (!algorithms) {
-    return void 0;
-  }
-  return new Set(algorithms);
-};
-var validate_algorithms_default = validateAlgorithms;
-
-// node_modules/jose/dist/browser/runtime/subtle_dsa.js
-function subtleDsa(alg, algorithm) {
-  const hash = `SHA-${alg.slice(-3)}`;
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512":
-      return {
-        hash,
-        name: "HMAC"
-      };
-    case "PS256":
-    case "PS384":
-    case "PS512":
-      return {
-        hash,
-        name: "RSA-PSS",
-        saltLength: alg.slice(-3) >> 3
-      };
-    case "RS256":
-    case "RS384":
-    case "RS512":
-      return {
-        hash,
-        name: "RSASSA-PKCS1-v1_5"
-      };
-    case "ES256":
-    case "ES384":
-    case "ES512":
-      return {
-        hash,
-        name: "ECDSA",
-        namedCurve: algorithm.namedCurve
-      };
-    case "Ed25519":
-      return {
-        name: "Ed25519"
-      };
-    case "EdDSA":
-      return {
-        name: algorithm.name
-      };
-    default:
-      throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-  }
-}
-
-// node_modules/jose/dist/browser/runtime/get_sign_verify_key.js
-function getCryptoKey(alg, key, usage) {
-  return __async(this, null, function* () {
-    if (usage === "sign") {
-      key = yield normalize_key_default.normalizePrivateKey(key, alg);
-    }
-    if (usage === "verify") {
-      key = yield normalize_key_default.normalizePublicKey(key, alg);
-    }
-    if (isCryptoKey(key)) {
-      checkSigCryptoKey(key, alg, usage);
-      return key;
-    }
-    if (key instanceof Uint8Array) {
-      if (!alg.startsWith("HS")) {
-        throw new TypeError(invalid_key_input_default(key, ...types));
-      }
-      return webcrypto_default.subtle.importKey("raw", key, {
-        hash: `SHA-${alg.slice(-3)}`,
-        name: "HMAC"
-      }, false, [usage]);
-    }
-    throw new TypeError(invalid_key_input_default(key, ...types, "Uint8Array", "JSON Web Key"));
-  });
-}
-
-// node_modules/jose/dist/browser/runtime/verify.js
-var verify = (alg, key, signature, data) => __async(void 0, null, function* () {
-  const cryptoKey = yield getCryptoKey(alg, key, "verify");
-  check_key_length_default(alg, cryptoKey);
-  const algorithm = subtleDsa(alg, cryptoKey.algorithm);
-  try {
-    return yield webcrypto_default.subtle.verify(algorithm, cryptoKey, signature, data);
-  } catch {
-    return false;
-  }
-});
-var verify_default = verify;
-
-// node_modules/jose/dist/browser/jws/flattened/verify.js
-function flattenedVerify(jws, key, options) {
-  return __async(this, null, function* () {
-    if (!isObject(jws)) {
-      throw new JWSInvalid("Flattened JWS must be an object");
-    }
-    if (jws.protected === void 0 && jws.header === void 0) {
-      throw new JWSInvalid('Flattened JWS must have either of the "protected" or "header" members');
-    }
-    if (jws.protected !== void 0 && typeof jws.protected !== "string") {
-      throw new JWSInvalid("JWS Protected Header incorrect type");
-    }
-    if (jws.payload === void 0) {
-      throw new JWSInvalid("JWS Payload missing");
-    }
-    if (typeof jws.signature !== "string") {
-      throw new JWSInvalid("JWS Signature missing or incorrect type");
-    }
-    if (jws.header !== void 0 && !isObject(jws.header)) {
-      throw new JWSInvalid("JWS Unprotected Header incorrect type");
-    }
-    let parsedProt = {};
-    if (jws.protected) {
-      try {
-        const protectedHeader = decode3(jws.protected);
-        parsedProt = JSON.parse(decoder.decode(protectedHeader));
-      } catch {
-        throw new JWSInvalid("JWS Protected Header is invalid");
-      }
-    }
-    if (!is_disjoint_default(parsedProt, jws.header)) {
-      throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-    }
-    const joseHeader = __spreadValues(__spreadValues({}, parsedProt), jws.header);
-    const extensions = validate_crit_default(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options?.crit, parsedProt, joseHeader);
-    let b64 = true;
-    if (extensions.has("b64")) {
-      b64 = parsedProt.b64;
-      if (typeof b64 !== "boolean") {
-        throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-      }
-    }
-    const {
-      alg
-    } = joseHeader;
-    if (typeof alg !== "string" || !alg) {
-      throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-    }
-    const algorithms = options && validate_algorithms_default("algorithms", options.algorithms);
-    if (algorithms && !algorithms.has(alg)) {
-      throw new JOSEAlgNotAllowed('"alg" (Algorithm) Header Parameter value not allowed');
-    }
-    if (b64) {
-      if (typeof jws.payload !== "string") {
-        throw new JWSInvalid("JWS Payload must be a string");
-      }
-    } else if (typeof jws.payload !== "string" && !(jws.payload instanceof Uint8Array)) {
-      throw new JWSInvalid("JWS Payload must be a string or an Uint8Array instance");
-    }
-    let resolvedKey = false;
-    if (typeof key === "function") {
-      key = yield key(parsedProt, jws);
-      resolvedKey = true;
-      checkKeyTypeWithJwk(alg, key, "verify");
-      if (isJWK(key)) {
-        key = yield importJWK(key, alg);
-      }
-    } else {
-      checkKeyTypeWithJwk(alg, key, "verify");
-    }
-    const data = concat2(encoder.encode(jws.protected ?? ""), encoder.encode("."), typeof jws.payload === "string" ? encoder.encode(jws.payload) : jws.payload);
-    let signature;
-    try {
-      signature = decode3(jws.signature);
-    } catch {
-      throw new JWSInvalid("Failed to base64url decode the signature");
-    }
-    const verified = yield verify_default(alg, key, signature, data);
-    if (!verified) {
-      throw new JWSSignatureVerificationFailed();
-    }
-    let payload;
-    if (b64) {
-      try {
-        payload = decode3(jws.payload);
-      } catch {
-        throw new JWSInvalid("Failed to base64url decode the payload");
-      }
-    } else if (typeof jws.payload === "string") {
-      payload = encoder.encode(jws.payload);
-    } else {
-      payload = jws.payload;
-    }
-    const result = {
-      payload
-    };
-    if (jws.protected !== void 0) {
-      result.protectedHeader = parsedProt;
-    }
-    if (jws.header !== void 0) {
-      result.unprotectedHeader = jws.header;
-    }
-    if (resolvedKey) {
-      return __spreadProps(__spreadValues({}, result), {
-        key
-      });
-    }
-    return result;
-  });
-}
-
-// node_modules/jose/dist/browser/jws/compact/verify.js
-function compactVerify(jws, key, options) {
-  return __async(this, null, function* () {
-    if (jws instanceof Uint8Array) {
-      jws = decoder.decode(jws);
-    }
-    if (typeof jws !== "string") {
-      throw new JWSInvalid("Compact JWS must be a string or Uint8Array");
-    }
-    const {
-      0: protectedHeader,
-      1: payload,
-      2: signature,
-      length
-    } = jws.split(".");
-    if (length !== 3) {
-      throw new JWSInvalid("Invalid Compact JWS");
-    }
-    const verified = yield flattenedVerify({
-      payload,
-      protected: protectedHeader,
-      signature
-    }, key, options);
-    const result = {
-      payload: verified.payload,
-      protectedHeader: verified.protectedHeader
-    };
-    if (typeof key === "function") {
-      return __spreadProps(__spreadValues({}, result), {
-        key: verified.key
-      });
-    }
-    return result;
-  });
-}
-
-// node_modules/jose/dist/browser/lib/epoch.js
-var epoch_default = (date) => Math.floor(date.getTime() / 1e3);
-
-// node_modules/jose/dist/browser/lib/secs.js
-var minute = 60;
-var hour = minute * 60;
-var day = hour * 24;
-var week = day * 7;
-var year = day * 365.25;
-var REGEX = /^(\+|\-)? ?(\d+|\d+\.\d+) ?(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)(?: (ago|from now))?$/i;
-var secs_default = (str) => {
-  const matched = REGEX.exec(str);
-  if (!matched || matched[4] && matched[1]) {
-    throw new TypeError("Invalid time period format");
-  }
-  const value = parseFloat(matched[2]);
-  const unit = matched[3].toLowerCase();
-  let numericDate;
-  switch (unit) {
-    case "sec":
-    case "secs":
-    case "second":
-    case "seconds":
-    case "s":
-      numericDate = Math.round(value);
-      break;
-    case "minute":
-    case "minutes":
-    case "min":
-    case "mins":
-    case "m":
-      numericDate = Math.round(value * minute);
-      break;
-    case "hour":
-    case "hours":
-    case "hr":
-    case "hrs":
-    case "h":
-      numericDate = Math.round(value * hour);
-      break;
-    case "day":
-    case "days":
-    case "d":
-      numericDate = Math.round(value * day);
-      break;
-    case "week":
-    case "weeks":
-    case "w":
-      numericDate = Math.round(value * week);
-      break;
-    default:
-      numericDate = Math.round(value * year);
-      break;
-  }
-  if (matched[1] === "-" || matched[4] === "ago") {
-    return -numericDate;
-  }
-  return numericDate;
-};
-
-// node_modules/jose/dist/browser/lib/jwt_claims_set.js
-var normalizeTyp = (value) => value.toLowerCase().replace(/^application\//, "");
-var checkAudiencePresence = (audPayload, audOption) => {
-  if (typeof audPayload === "string") {
-    return audOption.includes(audPayload);
-  }
-  if (Array.isArray(audPayload)) {
-    return audOption.some(Set.prototype.has.bind(new Set(audPayload)));
-  }
-  return false;
-};
-var jwt_claims_set_default = (protectedHeader, encodedPayload, options = {}) => {
-  let payload;
-  try {
-    payload = JSON.parse(decoder.decode(encodedPayload));
-  } catch {
-  }
-  if (!isObject(payload)) {
-    throw new JWTInvalid("JWT Claims Set must be a top-level JSON object");
-  }
-  const {
-    typ
-  } = options;
-  if (typ && (typeof protectedHeader.typ !== "string" || normalizeTyp(protectedHeader.typ) !== normalizeTyp(typ))) {
-    throw new JWTClaimValidationFailed('unexpected "typ" JWT header value', payload, "typ", "check_failed");
-  }
-  const {
-    requiredClaims = [],
-    issuer,
-    subject,
-    audience,
-    maxTokenAge
-  } = options;
-  const presenceCheck = [...requiredClaims];
-  if (maxTokenAge !== void 0) presenceCheck.push("iat");
-  if (audience !== void 0) presenceCheck.push("aud");
-  if (subject !== void 0) presenceCheck.push("sub");
-  if (issuer !== void 0) presenceCheck.push("iss");
-  for (const claim of new Set(presenceCheck.reverse())) {
-    if (!(claim in payload)) {
-      throw new JWTClaimValidationFailed(`missing required "${claim}" claim`, payload, claim, "missing");
-    }
-  }
-  if (issuer && !(Array.isArray(issuer) ? issuer : [issuer]).includes(payload.iss)) {
-    throw new JWTClaimValidationFailed('unexpected "iss" claim value', payload, "iss", "check_failed");
-  }
-  if (subject && payload.sub !== subject) {
-    throw new JWTClaimValidationFailed('unexpected "sub" claim value', payload, "sub", "check_failed");
-  }
-  if (audience && !checkAudiencePresence(payload.aud, typeof audience === "string" ? [audience] : audience)) {
-    throw new JWTClaimValidationFailed('unexpected "aud" claim value', payload, "aud", "check_failed");
-  }
-  let tolerance;
-  switch (typeof options.clockTolerance) {
-    case "string":
-      tolerance = secs_default(options.clockTolerance);
-      break;
-    case "number":
-      tolerance = options.clockTolerance;
-      break;
-    case "undefined":
-      tolerance = 0;
-      break;
-    default:
-      throw new TypeError("Invalid clockTolerance option type");
-  }
-  const {
-    currentDate
-  } = options;
-  const now = epoch_default(currentDate || /* @__PURE__ */ new Date());
-  if ((payload.iat !== void 0 || maxTokenAge) && typeof payload.iat !== "number") {
-    throw new JWTClaimValidationFailed('"iat" claim must be a number', payload, "iat", "invalid");
-  }
-  if (payload.nbf !== void 0) {
-    if (typeof payload.nbf !== "number") {
-      throw new JWTClaimValidationFailed('"nbf" claim must be a number', payload, "nbf", "invalid");
-    }
-    if (payload.nbf > now + tolerance) {
-      throw new JWTClaimValidationFailed('"nbf" claim timestamp check failed', payload, "nbf", "check_failed");
-    }
-  }
-  if (payload.exp !== void 0) {
-    if (typeof payload.exp !== "number") {
-      throw new JWTClaimValidationFailed('"exp" claim must be a number', payload, "exp", "invalid");
-    }
-    if (payload.exp <= now - tolerance) {
-      throw new JWTExpired('"exp" claim timestamp check failed', payload, "exp", "check_failed");
-    }
-  }
-  if (maxTokenAge) {
-    const age = now - payload.iat;
-    const max = typeof maxTokenAge === "number" ? maxTokenAge : secs_default(maxTokenAge);
-    if (age - tolerance > max) {
-      throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', payload, "iat", "check_failed");
-    }
-    if (age < 0 - tolerance) {
-      throw new JWTClaimValidationFailed('"iat" claim timestamp check failed (it should be in the past)', payload, "iat", "check_failed");
-    }
-  }
-  return payload;
-};
-
-// node_modules/jose/dist/browser/jwt/verify.js
-function jwtVerify(jwt, key, options) {
-  return __async(this, null, function* () {
-    const verified = yield compactVerify(jwt, key, options);
-    if (verified.protectedHeader.crit?.includes("b64") && verified.protectedHeader.b64 === false) {
-      throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-    }
-    const payload = jwt_claims_set_default(verified.protectedHeader, verified.payload, options);
-    const result = {
-      payload,
-      protectedHeader: verified.protectedHeader
-    };
-    if (typeof key === "function") {
-      return __spreadProps(__spreadValues({}, result), {
-        key: verified.key
-      });
-    }
-    return result;
-  });
-}
-
-// node_modules/jose/dist/browser/jwks/local.js
-function getKtyFromAlg(alg) {
-  switch (typeof alg === "string" && alg.slice(0, 2)) {
-    case "RS":
-    case "PS":
-      return "RSA";
-    case "ES":
-      return "EC";
-    case "Ed":
-      return "OKP";
-    default:
-      throw new JOSENotSupported('Unsupported "alg" value for a JSON Web Key Set');
-  }
-}
-function isJWKSLike(jwks) {
-  return jwks && typeof jwks === "object" && Array.isArray(jwks.keys) && jwks.keys.every(isJWKLike);
-}
-function isJWKLike(key) {
-  return isObject(key);
-}
-function clone(obj) {
-  if (typeof structuredClone === "function") {
-    return structuredClone(obj);
-  }
-  return JSON.parse(JSON.stringify(obj));
-}
-var LocalJWKSet = class {
-  constructor(jwks) {
-    this._cached = /* @__PURE__ */ new WeakMap();
-    if (!isJWKSLike(jwks)) {
-      throw new JWKSInvalid("JSON Web Key Set malformed");
-    }
-    this._jwks = clone(jwks);
-  }
-  getKey(protectedHeader, token) {
-    return __async(this, null, function* () {
-      const {
-        alg,
-        kid
-      } = __spreadValues(__spreadValues({}, protectedHeader), token?.header);
-      const kty = getKtyFromAlg(alg);
-      const candidates = this._jwks.keys.filter((jwk2) => {
-        let candidate = kty === jwk2.kty;
-        if (candidate && typeof kid === "string") {
-          candidate = kid === jwk2.kid;
-        }
-        if (candidate && typeof jwk2.alg === "string") {
-          candidate = alg === jwk2.alg;
-        }
-        if (candidate && typeof jwk2.use === "string") {
-          candidate = jwk2.use === "sig";
-        }
-        if (candidate && Array.isArray(jwk2.key_ops)) {
-          candidate = jwk2.key_ops.includes("verify");
-        }
-        if (candidate) {
-          switch (alg) {
-            case "ES256":
-              candidate = jwk2.crv === "P-256";
-              break;
-            case "ES256K":
-              candidate = jwk2.crv === "secp256k1";
-              break;
-            case "ES384":
-              candidate = jwk2.crv === "P-384";
-              break;
-            case "ES512":
-              candidate = jwk2.crv === "P-521";
-              break;
-            case "Ed25519":
-              candidate = jwk2.crv === "Ed25519";
-              break;
-            case "EdDSA":
-              candidate = jwk2.crv === "Ed25519" || jwk2.crv === "Ed448";
-              break;
-          }
-        }
-        return candidate;
-      });
-      const {
-        0: jwk,
-        length
-      } = candidates;
-      if (length === 0) {
-        throw new JWKSNoMatchingKey();
-      }
-      if (length !== 1) {
-        const error = new JWKSMultipleMatchingKeys();
-        const {
-          _cached
-        } = this;
-        error[Symbol.asyncIterator] = function() {
-          return __asyncGenerator(this, null, function* () {
-            for (const jwk2 of candidates) {
-              try {
-                yield yield new __await(importWithAlgCache(_cached, jwk2, alg));
-              } catch {
-              }
-            }
-          });
-        };
-        throw error;
-      }
-      return importWithAlgCache(this._cached, jwk, alg);
-    });
-  }
-};
-function importWithAlgCache(cache, jwk, alg) {
-  return __async(this, null, function* () {
-    const cached = cache.get(jwk) || cache.set(jwk, {}).get(jwk);
-    if (cached[alg] === void 0) {
-      const key = yield importJWK(__spreadProps(__spreadValues({}, jwk), {
-        ext: true
-      }), alg);
-      if (key instanceof Uint8Array || key.type !== "public") {
-        throw new JWKSInvalid("JSON Web Key Set members must be public keys");
-      }
-      cached[alg] = key;
-    }
-    return cached[alg];
-  });
-}
-function createLocalJWKSet(jwks) {
-  const set = new LocalJWKSet(jwks);
-  const localJWKSet = (protectedHeader, token) => __async(this, null, function* () {
-    return set.getKey(protectedHeader, token);
-  });
-  Object.defineProperties(localJWKSet, {
-    jwks: {
-      value: () => clone(set._jwks),
-      enumerable: true,
-      configurable: false,
-      writable: false
-    }
-  });
-  return localJWKSet;
-}
-
-// node_modules/jose/dist/browser/runtime/fetch_jwks.js
-var fetchJwks = (url, timeout2, options) => __async(void 0, null, function* () {
-  let controller;
-  let id;
-  let timedOut = false;
-  if (typeof AbortController === "function") {
-    controller = new AbortController();
-    id = setTimeout(() => {
-      timedOut = true;
-      controller.abort();
-    }, timeout2);
-  }
-  const response = yield fetch(url.href, {
-    signal: controller ? controller.signal : void 0,
-    redirect: "manual",
-    headers: options.headers
-  }).catch((err) => {
-    if (timedOut) throw new JWKSTimeout();
-    throw err;
-  });
-  if (id !== void 0) clearTimeout(id);
-  if (response.status !== 200) {
-    throw new JOSEError("Expected 200 OK from the JSON Web Key Set HTTP response");
-  }
-  try {
-    return yield response.json();
-  } catch {
-    throw new JOSEError("Failed to parse the JSON Web Key Set HTTP response as JSON");
-  }
-});
-var fetch_jwks_default = fetchJwks;
-
-// node_modules/jose/dist/browser/jwks/remote.js
-function isCloudflareWorkers() {
-  return typeof WebSocketPair !== "undefined" || typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers" || typeof EdgeRuntime !== "undefined" && EdgeRuntime === "vercel";
-}
-var USER_AGENT;
-if (typeof navigator === "undefined" || !navigator.userAgent?.startsWith?.("Mozilla/5.0 ")) {
-  const NAME = "jose";
-  const VERSION6 = "v5.10.0";
-  USER_AGENT = `${NAME}/${VERSION6}`;
-}
-var jwksCache = Symbol();
-function isFreshJwksCache(input2, cacheMaxAge) {
-  if (typeof input2 !== "object" || input2 === null) {
-    return false;
-  }
-  if (!("uat" in input2) || typeof input2.uat !== "number" || Date.now() - input2.uat >= cacheMaxAge) {
-    return false;
-  }
-  if (!("jwks" in input2) || !isObject(input2.jwks) || !Array.isArray(input2.jwks.keys) || !Array.prototype.every.call(input2.jwks.keys, isObject)) {
-    return false;
-  }
-  return true;
-}
-var RemoteJWKSet = class {
-  constructor(url, options) {
-    if (!(url instanceof URL)) {
-      throw new TypeError("url must be an instance of URL");
-    }
-    this._url = new URL(url.href);
-    this._options = {
-      agent: options?.agent,
-      headers: options?.headers
-    };
-    this._timeoutDuration = typeof options?.timeoutDuration === "number" ? options?.timeoutDuration : 5e3;
-    this._cooldownDuration = typeof options?.cooldownDuration === "number" ? options?.cooldownDuration : 3e4;
-    this._cacheMaxAge = typeof options?.cacheMaxAge === "number" ? options?.cacheMaxAge : 6e5;
-    if (options?.[jwksCache] !== void 0) {
-      this._cache = options?.[jwksCache];
-      if (isFreshJwksCache(options?.[jwksCache], this._cacheMaxAge)) {
-        this._jwksTimestamp = this._cache.uat;
-        this._local = createLocalJWKSet(this._cache.jwks);
-      }
-    }
-  }
-  coolingDown() {
-    return typeof this._jwksTimestamp === "number" ? Date.now() < this._jwksTimestamp + this._cooldownDuration : false;
-  }
-  fresh() {
-    return typeof this._jwksTimestamp === "number" ? Date.now() < this._jwksTimestamp + this._cacheMaxAge : false;
-  }
-  getKey(protectedHeader, token) {
-    return __async(this, null, function* () {
-      if (!this._local || !this.fresh()) {
-        yield this.reload();
-      }
-      try {
-        return yield this._local(protectedHeader, token);
-      } catch (err) {
-        if (err instanceof JWKSNoMatchingKey) {
-          if (this.coolingDown() === false) {
-            yield this.reload();
-            return this._local(protectedHeader, token);
-          }
-        }
-        throw err;
-      }
-    });
-  }
-  reload() {
-    return __async(this, null, function* () {
-      if (this._pendingFetch && isCloudflareWorkers()) {
-        this._pendingFetch = void 0;
-      }
-      const headers = new Headers(this._options.headers);
-      if (USER_AGENT && !headers.has("User-Agent")) {
-        headers.set("User-Agent", USER_AGENT);
-        this._options.headers = Object.fromEntries(headers.entries());
-      }
-      this._pendingFetch || (this._pendingFetch = fetch_jwks_default(this._url, this._timeoutDuration, this._options).then((json) => {
-        this._local = createLocalJWKSet(json);
-        if (this._cache) {
-          this._cache.uat = Date.now();
-          this._cache.jwks = json;
-        }
-        this._jwksTimestamp = Date.now();
-        this._pendingFetch = void 0;
-      }).catch((err) => {
-        this._pendingFetch = void 0;
-        throw err;
-      }));
-      yield this._pendingFetch;
-    });
-  }
-};
-function createRemoteJWKSet(url, options) {
-  const set = new RemoteJWKSet(url, options);
-  const remoteJWKSet = (protectedHeader, token) => __async(this, null, function* () {
-    return set.getKey(protectedHeader, token);
-  });
-  Object.defineProperties(remoteJWKSet, {
-    coolingDown: {
-      get: () => set.coolingDown(),
-      enumerable: true,
-      configurable: false
-    },
-    fresh: {
-      get: () => set.fresh(),
-      enumerable: true,
-      configurable: false
-    },
-    reload: {
-      value: () => set.reload(),
-      enumerable: true,
-      configurable: false,
-      writable: false
-    },
-    reloading: {
-      get: () => !!set._pendingFetch,
-      enumerable: true,
-      configurable: false
-    },
-    jwks: {
-      value: () => set._local?.jwks(),
-      enumerable: true,
-      configurable: false,
-      writable: false
-    }
-  });
-  return remoteJWKSet;
-}
-
 // projects/fasten-connect-vault/src/app/services/auth.service.ts
 var FASTEN_AUTH_VAULT_COOKIE_NAME = "fasten_connect_auth_vault";
+var FASTEN_AUTH_VAULT_SESSION_CACHE_KEY = "fasten_connect_auth_vault_session";
 var AuthService = class _AuthService {
   constructor(_httpClient, configService) {
     this._httpClient = _httpClient;
@@ -60586,51 +59144,67 @@ var AuthService = class _AuthService {
   Signout() {
     return __async(this, null, function* () {
       this.publishAuthenticationState(false);
+      this.clearSessionCache();
       return this.deleteCookie(FASTEN_AUTH_VAULT_COOKIE_NAME);
     });
   }
-  GetJWTPayload() {
+  GetSessionInfo() {
     return __async(this, null, function* () {
-      let authToken = this.getCookie(FASTEN_AUTH_VAULT_COOKIE_NAME);
-      if (!authToken) {
-        return null;
+      const cachedSessionInfo = this.getCachedSessionInfo();
+      if (cachedSessionInfo) {
+        this.publishAuthenticationState(true);
+        return cachedSessionInfo;
       }
-      let jwks = createRemoteJWKSet(new URL(environment.jwks_uri));
-      let issuerHost = environment.connect_api_jwt_issuer_host;
       try {
-        const { payload, protectedHeader } = yield jwtVerify(authToken, jwks, {
-          issuer: issuerHost,
-          audience: issuerHost
-        });
-        this.configService.systemConfig = { user: payload };
-        return payload;
+        const sessionInfo = yield firstValueFrom(this._httpClient.post(`${environment.identity_api_endpoint_base}/oauth2/introspect`, null, { withCredentials: true }));
+        if (this.isSessionInfoActive(sessionInfo)) {
+          this.cacheSessionInfo(sessionInfo);
+          this.publishAuthenticationState(true);
+          return sessionInfo;
+        }
       } catch (e) {
-        console.error("failed to verify jwt:", e, issuerHost);
-        return null;
+        console.error("failed to introspect auth session:", e);
       }
+      this.clearSessionCache();
+      this.publishAuthenticationState(false);
+      return null;
     });
   }
   IsAuthenticated() {
     return __async(this, null, function* () {
-      let payload = yield this.GetJWTPayload();
-      let isAuthenticated = payload != null;
+      let sessionInfo = yield this.GetSessionInfo();
+      let isAuthenticated = sessionInfo != null;
       this.publishAuthenticationState(isAuthenticated);
       return isAuthenticated;
     });
   }
-  //https://stackoverflow.com/questions/34298133/angular-cookies
-  getCookie(name) {
-    const ca = decodeURIComponent(document.cookie).split(";");
-    const caLen = ca.length;
-    const cookieName = `${name}=`;
-    let c;
-    for (let i = 0; i < caLen; i += 1) {
-      c = ca[i].replace(/^\s+/g, "");
-      if (c.indexOf(cookieName) === 0) {
-        return c.substring(cookieName.length, c.length);
-      }
+  getCachedSessionInfo() {
+    const rawSessionInfo = localStorage.getItem(FASTEN_AUTH_VAULT_SESSION_CACHE_KEY);
+    if (!rawSessionInfo) {
+      return null;
     }
-    return "";
+    try {
+      const sessionInfo = JSON.parse(rawSessionInfo);
+      if (this.isSessionInfoActive(sessionInfo)) {
+        return sessionInfo;
+      }
+    } catch (e) {
+      console.error("failed to parse cached auth session:", e);
+    }
+    this.clearSessionCache();
+    return null;
+  }
+  cacheSessionInfo(sessionInfo) {
+    localStorage.setItem(FASTEN_AUTH_VAULT_SESSION_CACHE_KEY, JSON.stringify(sessionInfo));
+  }
+  clearSessionCache() {
+    localStorage.removeItem(FASTEN_AUTH_VAULT_SESSION_CACHE_KEY);
+  }
+  isSessionInfoActive(sessionInfo) {
+    if (!sessionInfo?.active || !sessionInfo.exp) {
+      return false;
+    }
+    return sessionInfo.exp > Math.floor(Date.now() / 1e3);
   }
   deleteCookie(name) {
     this.setCookie(name, "", -99999);
@@ -60765,10 +59339,10 @@ var VaultSigninComponent = class _VaultSigninComponent {
     console.log("Signin", this.existingVaultProfile.email);
     this.authService.VaultAuthBegin(this.existingVaultProfile.email, environment.csp_prompt_force).then((resp) => {
       if (this.configService.systemConfig$?.apiMode === ApiMode.Test) {
-        return this.authService.GetJWTPayload().then((payload) => {
+        return this.authService.GetSessionInfo().then((sessionInfo) => {
           this.loading = false;
-          if (payload) {
-            const hasVerifiedIdentity = !!(resp?.has_verified_identity || payload?.has_verified_identity);
+          if (sessionInfo) {
+            const hasVerifiedIdentity = !!resp?.has_verified_identity;
             if (resp?.has_verified_identity && resp?.verified_identity_csp_type) {
               this.logger.info("setting verified identity csp_type csp type to", resp.verified_identity_csp_type);
               this.configService.vaultProfileConfig = {
@@ -60916,21 +59490,14 @@ var IsAuthenticatedAuthGuard = class _IsAuthenticatedAuthGuard {
   }
   canActivate(route, state) {
     return __async(this, null, function* () {
-      return this.authService.GetJWTPayload().then((jwtPayload) => {
-        console.log("JWT Payload", jwtPayload);
-        if (!jwtPayload) {
+      return this.authService.GetSessionInfo().then((sessionInfo) => {
+        console.log("Auth Session", sessionInfo);
+        if (!sessionInfo) {
           if (route.url.toString() === "/auth/signin") {
             return true;
           } else {
             this.logger.info("User is not authenticated, redirecting to login page");
             return this.router.navigate(["/auth/signin"]);
-          }
-        } else if (!jwtPayload.has_verified_identity) {
-          if (route.url.toString() === "/auth/identity/verification") {
-            return true;
-          } else {
-            this.logger.info("Profile does not have a verified identity, redirecting to id verification step", jwtPayload);
-            return this.router.navigate(["/auth/identity/verification"]);
           }
         }
         return true;
@@ -64261,7 +62828,7 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     }
     return this.exportType === "pdf" ? this.buildMockDownloadUrl() : "https://example.org/mock-patient-export";
   }
-  handleExportPollingFailure(message2) {
+  handleExportPollingFailure(message) {
     this.clearExportTimers();
     this.recaptchaState = "pending";
     this.exportModalState = "config";
@@ -64274,7 +62841,7 @@ var AccountExportModalComponent = class _AccountExportModalComponent {
     this.patientName = "";
     this.patientDob = "";
     this.verifiedDate = null;
-    this.exportRequestErrorMessage = message2;
+    this.exportRequestErrorMessage = message;
   }
   getExportFailureMessage(exportResponse) {
     const messageParts = [
@@ -78502,14 +77069,14 @@ function domready(fn) {
 }
 function toHtml(abstractNodes) {
   const {
-    tag: tag2,
+    tag,
     attributes = {},
     children = []
   } = abstractNodes;
   if (typeof abstractNodes === "string") {
     return htmlEscape(abstractNodes);
   } else {
-    return "<".concat(tag2, " ").concat(joinAttributes(attributes), ">").concat(children.map(toHtml).join(""), "</").concat(tag2, ">");
+    return "<".concat(tag, " ").concat(joinAttributes(attributes), ">").concat(children.map(toHtml).join(""), "</").concat(tag, ">");
   }
 }
 function iconFromMapping(mapping, prefix, iconName) {
@@ -79042,7 +77609,7 @@ var dom = {
     });
   }
 };
-var parse2 = {
+var parse = {
   icon: (icon2) => {
     if (icon2 === null) {
       return null;
@@ -79083,7 +77650,7 @@ var api = {
   noAuto,
   config: config2,
   dom,
-  parse: parse2,
+  parse,
   library,
   findIconDefinition,
   toHtml
@@ -79442,11 +78009,11 @@ function getMutator() {
   const mutator = mutators[config2.autoReplaceSvg];
   return mutator || mutators.replace;
 }
-function createElementNS(tag2) {
-  return DOCUMENT3.createElementNS("http://www.w3.org/2000/svg", tag2);
+function createElementNS(tag) {
+  return DOCUMENT3.createElementNS("http://www.w3.org/2000/svg", tag);
 }
-function createElement(tag2) {
-  return DOCUMENT3.createElement(tag2);
+function createElement(tag) {
+  return DOCUMENT3.createElement(tag);
 }
 function convertSVG(abstractObj) {
   let params = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -79456,17 +78023,17 @@ function convertSVG(abstractObj) {
   if (typeof abstractObj === "string") {
     return DOCUMENT3.createTextNode(abstractObj);
   }
-  const tag2 = ceFn(abstractObj.tag);
+  const tag = ceFn(abstractObj.tag);
   Object.keys(abstractObj.attributes || []).forEach(function(key) {
-    tag2.setAttribute(key, abstractObj.attributes[key]);
+    tag.setAttribute(key, abstractObj.attributes[key]);
   });
   const children = abstractObj.children || [];
   children.forEach(function(child) {
-    tag2.appendChild(convertSVG(child, {
+    tag.appendChild(convertSVG(child, {
       ceFn
     }));
   });
-  return tag2;
+  return tag;
 }
 function nodeAsComment(node) {
   let comment = " ".concat(node.outerHTML, " ");
