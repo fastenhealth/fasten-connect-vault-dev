@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "sources": ["projects/fasten-connect-vault/src/app/pages/vault-signin/vault-signin.component.css"],
+  "sources": ["projects/fasten-connect-vault/src/app/pages/auth-signin/auth-signin.component.css"],
   "sourcesContent": [".clear-button {\n  border-radius: 32px;\n  background-color: #041A55;\n\n  font-family: \"Inter\", sans-serif;\n  font-weight: 600;\n  font-size: 16px;\n  line-height: 26px;\n\n  height: 56px;\n  width: min(100%, 328px);\n}\n\n.idme-button {\n  background-color: #08833D;\n  font-family: \"Open Sans Light\", sans-serif;\n}\n\n.clear-button:disabled {\n  cursor: not-allowed;\n  opacity: 0.7;\n}\n"],
   "mappings": ";AAAA,CAAC;AACC,iBAAe;AACf,oBAAkB;AAElB,eAAa,OAAO,EAAE;AACtB,eAAa;AACb,aAAW;AACX,eAAa;AAEb,UAAQ;AACR,SAAO,IAAI,IAAI,EAAE;AACnB;AAEA,CAAC;AACC,oBAAkB;AAClB,eAAa,iBAAiB,EAAE;AAClC;AAEA,CAlBC,YAkBY;AACX,UAAQ;AACR,WAAS;AACX;",
   "names": []
