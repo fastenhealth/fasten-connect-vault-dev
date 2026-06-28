@@ -58971,11 +58971,7 @@ function formatPatientDemographicsName(demographics) {
   const parts = [givenNames, familyName, suffix].filter((part) => !!part);
   return parts.length ? parts.join(" ") : "Not available";
 }
-function formatPatientDemographicsAddress(demographics) {
-  if (!demographics?.addressInformation?.length) {
-    return "Not available";
-  }
-  const address = demographics.addressInformation[0];
+function formatPatientDemographicsAddress(address) {
   if (!address) {
     return "Not available";
   }
@@ -63160,7 +63156,7 @@ var AccountDetailsComponent = class _AccountDetailsComponent {
     return formatPatientDemographicsBirthdate(this.patientDemographics);
   }
   get formattedPatientAddress() {
-    return formatPatientDemographicsAddress(this.patientDemographics);
+    return formatPatientDemographicsAddress(this.patientDemographics?.addressInformation?.[0]);
   }
   disconnectMockApp(appName) {
     const confirmed = window.confirm(`Disconnect ${appName} from this connection?`);
