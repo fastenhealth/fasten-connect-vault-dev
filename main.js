@@ -59155,7 +59155,7 @@ var environment = {
   recaptcha_site_key: "6LeDiZwsAAAAAJArjonR8JSj1J8UVDdSNgyJNqGK",
   //specify the lighthouse base that we're going to use to authenticate against all our source/providers. Must not have trailing slash
   lighthouse_api_endpoint_base: "https://lighthouse.fastenhealth.com",
-  connect_base_domain: "connect.fastenlabs.com",
+  connect_base_domain: "my.fastenlabs.com",
   //used to specify the api server that we're going to use (can be relative or absolute). Must not have trailing slash
   // connect_api_endpoint_base: 'https://api.connect.fastenlabs.com/v1',
   // if relative, must start with /
