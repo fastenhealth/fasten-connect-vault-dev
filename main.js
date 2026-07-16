@@ -56904,6 +56904,7 @@ var SDKMode;
 (function(SDKMode2) {
   SDKMode2["None"] = "none";
   SDKMode2["ReactNative"] = "react-native";
+  SDKMode2["Flutter"] = "flutter";
 })(SDKMode || (SDKMode = {}));
 var CommunicationEntity;
 (function(CommunicationEntity2) {
@@ -58568,9 +58569,9 @@ function waitForPostMessageOrgConnectionOrTimeout(logger, openedWindow, sdkMode)
     timeout(ConnectWindowTimeout),
     filter((event) => {
       logger.debug(`received postMessage event, must determine if this message is safe to process`, event);
-      if (sdkMode == SDKMode.ReactNative && window.ReactNativeWebView) {
+      if (sdkMode == SDKMode.ReactNative && window.ReactNativeWebView || sdkMode == SDKMode.Flutter) {
         if (event.source || event.origin) {
-          logger.debug(`ignoring postMessage event from unknown source or origin. React-native webview should be null for both`, event.source, event.origin);
+          logger.debug(`ignoring postMessage event from unknown source or origin. ${sdkMode} webview should be null for both`, event.source, event.origin);
           return false;
         }
         return true;
