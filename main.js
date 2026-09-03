@@ -59573,7 +59573,7 @@ var IsAuthenticatedAuthGuard = class _IsAuthenticatedAuthGuard {
   }
 };
 
-// node_modules/angular-code-input/fesm2022/angular-code-input.mjs
+// node_modules/@fastenhealth/angular-code-input/fesm2022/fastenhealth-angular-code-input.mjs
 var _c0 = ["input"];
 function CodeInputComponent_span_0_Template(rf, ctx) {
   if (rf & 1) {
@@ -59641,14 +59641,13 @@ var CodeInputComponent = class _CodeInputComponent {
     if (!config3) {
       return;
     }
-    for (const prop in config3) {
-      if (!config3.hasOwnProperty(prop)) {
+    for (const prop of Object.keys(config3)) {
+      if (!Object.prototype.hasOwnProperty.call(defaultComponentConfig, prop)) {
         continue;
       }
-      if (!defaultComponentConfig.hasOwnProperty(prop)) {
-        continue;
-      }
-      this[prop] = config3[prop];
+      Object.assign(this, {
+        [prop]: config3[prop]
+      });
     }
   }
   /**
@@ -59694,7 +59693,9 @@ var CodeInputComponent = class _CodeInputComponent {
     if (index >= this._codeLength) {
       throw new Error("The index of the focusing input box should be less than the codeLength.");
     }
-    this.inputs[index].focus();
+    this.inputs[index].focus({
+      preventScroll: true
+    });
   }
   onClick(e) {
     if (!this.isFocusingOnLastByClickIfFilled) {
@@ -59709,7 +59710,9 @@ var CodeInputComponent = class _CodeInputComponent {
     if (!isFilled) {
       return;
     }
-    setTimeout(() => last4.focus());
+    setTimeout(() => last4.focus({
+      preventScroll: true
+    }));
   }
   onInput(e, i) {
     const target = e.target;
@@ -59738,7 +59741,9 @@ var CodeInputComponent = class _CodeInputComponent {
       target.blur();
       return;
     }
-    this.inputs[next].focus();
+    this.inputs[next].focus({
+      preventScroll: true
+    });
   }
   onPaste(e, i) {
     e.preventDefault();
@@ -59785,7 +59790,9 @@ var CodeInputComponent = class _CodeInputComponent {
         return;
       }
       if (isTargetEmpty || this.isPrevFocusableAfterClearing) {
-        this.inputs[prev].focus();
+        this.inputs[prev].focus({
+          preventScroll: true
+        });
       }
     });
   }
@@ -59972,7 +59979,7 @@ var CodeInputComponent = class _CodeInputComponent {
         }
       },
       dependencies: [NgForOf],
-      styles: ["[_nghost-%COMP%]{--text-security-type: disc;--item-spacing: 4px;--item-height: 4.375em;--item-border: 1px solid #dddddd;--item-border-bottom: 1px solid #dddddd;--item-border-has-value: 1px solid #dddddd;--item-border-bottom-has-value: 1px solid #dddddd;--item-border-focused: 1px solid #dddddd;--item-border-bottom-focused: 1px solid #dddddd;--item-shadow-focused: 0px 1px 5px rgba(221, 221, 221, 1);--item-border-radius: 5px;--item-background: transparent;--item-font-weight: 300;--color: #171516;display:flex;transform:translateZ(0);font-size:inherit;color:var(--color)}[_nghost-%COMP%]   span[_ngcontent-%COMP%]{display:block;flex:1;padding-right:var(--item-spacing)}[_nghost-%COMP%]   span[_ngcontent-%COMP%]:first-child{padding-left:var(--item-spacing)}[_nghost-%COMP%]   span.code-hidden[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]{text-security:var(--text-security-type);-webkit-text-security:var(--text-security-type);-moz-text-security:var(--text-security-type)}[_nghost-%COMP%]   input[_ngcontent-%COMP%]{width:100%;height:var(--item-height);color:inherit;background:var(--item-background);text-align:center;font-size:inherit;font-weight:var(--item-font-weight);border:var(--item-border);border-bottom:var(--item-border-bottom);border-radius:var(--item-border-radius);-webkit-appearance:none;transform:translateZ(0);-webkit-transform:translate3d(0,0,0);outline:none}[_nghost-%COMP%]   input.has-value[_ngcontent-%COMP%]{border:var(--item-border-has-value);border-bottom:var(--item-border-bottom-has-value)}[_nghost-%COMP%]   input[_ngcontent-%COMP%]:focus{border:var(--item-border-focused);border-bottom:var(--item-border-bottom-focused);box-shadow:var(--item-shadow-focused)}"]
+      styles: ["[_nghost-%COMP%]{--text-security-type: disc;--item-spacing: 4px;--item-height: 4.375em;--item-border: 1px solid #dddddd;--item-border-bottom: 1px solid #dddddd;--item-border-has-value: 1px solid #dddddd;--item-border-bottom-has-value: 1px solid #dddddd;--item-border-focused: 1px solid #dddddd;--item-border-bottom-focused: 1px solid #dddddd;--item-shadow-focused: 0px 1px 5px rgba(221, 221, 221, 1);--item-border-radius: 5px;--item-background: transparent;--item-font-weight: 300;--color: #171516;display:flex;transform:translateZ(0);font-size:inherit;color:var(--color)}[_nghost-%COMP%]   span[_ngcontent-%COMP%]{display:block;flex:1;padding-right:var(--item-spacing)}[_nghost-%COMP%]   span[_ngcontent-%COMP%]:first-child{padding-left:var(--item-spacing)}[_nghost-%COMP%]   span.code-hidden[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]{text-security:var(--text-security-type);-webkit-text-security:var(--text-security-type);-moz-text-security:var(--text-security-type)}[_nghost-%COMP%]   input[_ngcontent-%COMP%]{width:100%;height:var(--item-height);color:inherit;background:var(--item-background);text-align:center;font-size:inherit;font-weight:var(--item-font-weight);border:var(--item-border);border-bottom:var(--item-border-bottom);border-radius:var(--item-border-radius);-webkit-appearance:none;transform:translateZ(0);-webkit-transform:translate3d(0,0,0);outline:none}[_nghost-%COMP%]   input.has-value[_ngcontent-%COMP%]{border:var(--item-border-has-value);border-bottom:var(--item-border-bottom-has-value)}[_nghost-%COMP%]   input[_ngcontent-%COMP%]:focus{background:var(--item-background-focused, transparent);border:var(--item-border-focused);border-bottom:var(--item-border-bottom-focused);box-shadow:var(--item-shadow-focused)}"]
     });
   }
 };
@@ -59982,7 +59989,7 @@ var CodeInputComponent = class _CodeInputComponent {
     args: [{
       selector: "code-input",
       template: '<span *ngFor="let holder of placeholders; index as i"\n      [class.code-hidden]="isCodeHidden">\n  <input #input\n         (click)="onClick($event)"\n         (paste)="onPaste($event, i)"\n         (input)="onInput($event, i)"\n         (keydown)="onKeydown($event, i)"\n         [type]="inputType"\n         [disabled]="disabled"\n         [attr.inputmode]="inputMode"\n         [attr.autocapitalize]="autocapitalize"\n         autocomplete="one-time-code"/>\n</span>\n',
-      styles: [":host{--text-security-type: disc;--item-spacing: 4px;--item-height: 4.375em;--item-border: 1px solid #dddddd;--item-border-bottom: 1px solid #dddddd;--item-border-has-value: 1px solid #dddddd;--item-border-bottom-has-value: 1px solid #dddddd;--item-border-focused: 1px solid #dddddd;--item-border-bottom-focused: 1px solid #dddddd;--item-shadow-focused: 0px 1px 5px rgba(221, 221, 221, 1);--item-border-radius: 5px;--item-background: transparent;--item-font-weight: 300;--color: #171516;display:flex;transform:translateZ(0);font-size:inherit;color:var(--color)}:host span{display:block;flex:1;padding-right:var(--item-spacing)}:host span:first-child{padding-left:var(--item-spacing)}:host span.code-hidden input{text-security:var(--text-security-type);-webkit-text-security:var(--text-security-type);-moz-text-security:var(--text-security-type)}:host input{width:100%;height:var(--item-height);color:inherit;background:var(--item-background);text-align:center;font-size:inherit;font-weight:var(--item-font-weight);border:var(--item-border);border-bottom:var(--item-border-bottom);border-radius:var(--item-border-radius);-webkit-appearance:none;transform:translateZ(0);-webkit-transform:translate3d(0,0,0);outline:none}:host input.has-value{border:var(--item-border-has-value);border-bottom:var(--item-border-bottom-has-value)}:host input:focus{border:var(--item-border-focused);border-bottom:var(--item-border-bottom-focused);box-shadow:var(--item-shadow-focused)}\n"]
+      styles: [":host{--text-security-type: disc;--item-spacing: 4px;--item-height: 4.375em;--item-border: 1px solid #dddddd;--item-border-bottom: 1px solid #dddddd;--item-border-has-value: 1px solid #dddddd;--item-border-bottom-has-value: 1px solid #dddddd;--item-border-focused: 1px solid #dddddd;--item-border-bottom-focused: 1px solid #dddddd;--item-shadow-focused: 0px 1px 5px rgba(221, 221, 221, 1);--item-border-radius: 5px;--item-background: transparent;--item-font-weight: 300;--color: #171516;display:flex;transform:translateZ(0);font-size:inherit;color:var(--color)}:host span{display:block;flex:1;padding-right:var(--item-spacing)}:host span:first-child{padding-left:var(--item-spacing)}:host span.code-hidden input{text-security:var(--text-security-type);-webkit-text-security:var(--text-security-type);-moz-text-security:var(--text-security-type)}:host input{width:100%;height:var(--item-height);color:inherit;background:var(--item-background);text-align:center;font-size:inherit;font-weight:var(--item-font-weight);border:var(--item-border);border-bottom:var(--item-border-bottom);border-radius:var(--item-border-radius);-webkit-appearance:none;transform:translateZ(0);-webkit-transform:translate3d(0,0,0);outline:none}:host input.has-value{border:var(--item-border-has-value);border-bottom:var(--item-border-bottom-has-value)}:host input:focus{background:var(--item-background-focused, transparent);border:var(--item-border-focused);border-bottom:var(--item-border-bottom-focused);box-shadow:var(--item-shadow-focused)}\n"]
     }]
   }], function() {
     return [{
